@@ -448,4 +448,27 @@ export const api = {
       return handleResponse<{ success: boolean; message: string }>(res);
     },
   },
+
+  publicBooking: {
+    listServices: async (therapistId: string) => {
+      const res = await fetch(`${API_URL}/public-booking/services?therapist_id=${therapistId}`);
+      return handleResponse<any[]>(res);
+    },
+
+    listSlots: async (therapistId: string, serviceId: string, startDate: string, endDate: string) => {
+      const res = await fetch(
+        `${API_URL}/public-booking/slots?therapist_id=${therapistId}&service_id=${serviceId}&start_date=${startDate}&end_date=${endDate}`
+      );
+      return handleResponse<any[]>(res);
+    },
+
+    createBooking: async (data: any) => {
+      const res = await fetch(`${API_URL}/public-booking/bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return handleResponse<any>(res);
+    },
+  },
 };
