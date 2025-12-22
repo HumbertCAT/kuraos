@@ -1,4 +1,6 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+// Use the local API proxy to avoid third-party cookie issues
+// In production, this proxies to the Cloud Run backend
+const API_URL = '/api';
 
 interface ApiError {
   detail: string;

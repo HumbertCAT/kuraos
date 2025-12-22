@@ -94,13 +94,13 @@ async def register(
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
-    # Set httpOnly cookie
+    # Set httpOnly cookie (cross-domain: secure + samesite=none)
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        samesite="lax",
-        secure=False,  # Set to True in production with HTTPS
+        samesite="none",
+        secure=True,
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
@@ -161,13 +161,13 @@ async def login(
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
-    # Set httpOnly cookie
+    # Set httpOnly cookie (cross-domain: secure + samesite=none)
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        samesite="lax",
-        secure=False,  # Set to True in production with HTTPS
+        samesite="none",
+        secure=True,
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
