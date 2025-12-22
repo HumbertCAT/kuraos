@@ -1,0 +1,53 @@
+# Automatizaciones
+
+> Ejecuta acciones automáticas basadas en eventos del sistema.
+
+## 1. Qué son los Playbooks
+
+Los **Playbooks** son plantillas de automatización pre-configuradas.
+
+Ejemplos:
+- "Enviar formulario de intake cuando un paciente reserva"
+- "Alertar si no hay contacto en 7 días"
+- "Recordatorio 24h antes de la cita"
+
+---
+
+## 2. Instalar un Playbook
+
+1. Ve a **Automatizaciones** → **Marketplace**
+2. Busca el playbook que necesitas
+3. Haz clic en **Instalar**
+4. Configura los parámetros (si aplica)
+5. **Activar**
+
+---
+
+## 3. Crear una automatización manual
+
+1. Ve a **Automatizaciones** → **Mis Reglas**
+2. Haz clic en **+ Nueva Regla**
+3. Define:
+   - **Trigger**: Qué evento activa la regla
+   - **Condiciones**: Filtros opcionales
+   - **Acciones**: Qué hacer
+
+---
+
+## 4. Triggers disponibles
+
+| Trigger | Cuándo se activa |
+|---------|------------------|
+| `BOOKING_CREATED` | Nueva reserva |
+| `FORM_SUBMITTED` | Formulario completado |
+| `PATIENT_CREATED` | Nuevo paciente |
+| `JOURNEY_STALE` | Sin actividad X días |
+
+---
+
+## 5. Acciones disponibles
+
+- 📧 Enviar email
+- 📋 Enviar formulario
+- 🔔 Crear alerta interna
+- ✏️ Actualizar estado del journey

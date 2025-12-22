@@ -1,0 +1,63 @@
+# ==============================================================================
+# STAGE 1: Builder - Install dependencies with build tools
+# ==============================================================================
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+# Install build dependencies for psycopg2 and other compiled packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Install gunicorn explicitly (production WSGI server)
+RUN pip install --no-cache-dir --user gunicorn==21.2.0
+
+# ==============================================================================
+# STAGE 2: Production - Minimal runtime image
+# ==============================================================================
+FROM python:3.11-slim AS production
+
+WORKDIR /app
+
+# Install only runtime dependencies (libpq for psycopg2)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create non-root user for security
+RUN groupadd --gid 1000 kura-group \
+    && useradd --uid 1000 --gid kura-group --shell /bin/bash --create-home kura-user
+
+# Copy installed packages from builder stage
+COPY --from=builder /root/.local /home/kura-user/.local
+
+# Ensure scripts in .local are usable
+ENV PATH=/home/kura-user/.local/bin:$PATH
+
+# Copy application code
+COPY --chown=kura-user:kura-group . .
+
+# Make startup script executable
+RUN chmod +x ./scripts/start-prod.sh
+
+# Switch to non-root user
+USER kura-user
+
+# Cloud Run uses PORT env var (default 8080)
+ENV PORT=8080
+
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:${PORT}/api/v1/health')" || exit 1
+
+# Start the application
+ENTRYPOINT ["./scripts/start-prod.sh"]
