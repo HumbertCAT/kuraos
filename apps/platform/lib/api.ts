@@ -4,6 +4,9 @@ let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 if (apiUrl.includes('api.kuraos.ai') && apiUrl.startsWith('http://')) {
   apiUrl = apiUrl.replace('http://', 'https://');
 }
+if (apiUrl.endsWith('/')) {
+  apiUrl = apiUrl.slice(0, -1);
+}
 export const API_URL = apiUrl;
 
 interface ApiError {
