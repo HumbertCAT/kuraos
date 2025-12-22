@@ -30,6 +30,7 @@ export default function RegisterPage() {
       await register(payload);
       router.push('/dashboard');
     } catch (err: any) {
+      console.error('Registration error:', err);
       setError(err.message || t('loginFailed'));
     } finally {
       setLoading(false);
@@ -49,7 +50,7 @@ export default function RegisterPage() {
             <img
               src="/kura-logo-full.png"
               alt="KURA OS"
-              className="h-16 w-auto"
+              className="h-24 w-auto"
             />
           </Link>
           <p className="text-slate-400 text-sm">Crea tu cuenta gratuita</p>
@@ -83,7 +84,7 @@ export default function RegisterPage() {
                   type="text"
                   required
                   placeholder="Mi Consulta / Centro"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
                 />
               </div>
             </div>
@@ -97,7 +98,7 @@ export default function RegisterPage() {
                   type="text"
                   required
                   placeholder="Tu nombre completo"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
                 />
               </div>
             </div>
@@ -111,7 +112,7 @@ export default function RegisterPage() {
                   type="email"
                   required
                   placeholder="tu@email.com"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
                 />
               </div>
             </div>
@@ -125,7 +126,7 @@ export default function RegisterPage() {
                   type="password"
                   required
                   placeholder="Mínimo 8 caracteres"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
                 />
               </div>
             </div>
