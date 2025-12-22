@@ -27,7 +27,8 @@ export default function LoginPage() {
     try {
       await login({ email, password });
       console.log('Login successful, redirecting...');
-      router.push('/dashboard');
+      // Use window.location for hard navigation to ensure cookie is read by middleware
+      window.location.href = '/dashboard';
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || t('loginFailed'));
