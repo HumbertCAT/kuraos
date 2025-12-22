@@ -71,7 +71,7 @@ export default function LoginPage() {
                   type="email"
                   required
                   placeholder="tu@email.com"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-white placeholder:text-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
                 />
               </div>
             </div>
@@ -85,7 +85,7 @@ export default function LoginPage() {
                   type="password"
                   required
                   placeholder="••••••••"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-slate-100 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-white placeholder:text-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all caret-emerald-400"
                 />
               </div>
             </div>
