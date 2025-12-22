@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@/i18n/navigation';
+import Link from 'next/link';
 import { AlertTriangle, ShieldCheck, Activity, FileText } from 'lucide-react';
 
 const Hero: React.FC = () => {

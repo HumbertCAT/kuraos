@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from '@/i18n/navigation';
+import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
 // Simple mushroom SVG icon

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Link } from '@/i18n/navigation';
+import Link from 'next/link';
 import { Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 // Helper component for table rows
