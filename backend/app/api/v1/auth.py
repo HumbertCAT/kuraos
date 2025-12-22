@@ -198,8 +198,15 @@ async def login(
 async def logout(response: Response):
     """
     Logout user by clearing the JWT cookie.
+
+    IMPORTANT: delete_cookie must use same domain and path as set_cookie
+    to properly delete the cookie across subdomains.
     """
-    response.delete_cookie(key="access_token")
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+        domain=".kuraos.ai",  # Must match set_cookie domain
+    )
     return {"message": "Logged out successfully"}
 
 
