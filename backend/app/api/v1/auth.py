@@ -101,6 +101,7 @@ async def register(
         httponly=True,
         samesite="none",
         secure=True,
+        path="/",  # Important: cookie must be accessible from all paths
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
@@ -168,6 +169,7 @@ async def login(
         httponly=True,
         samesite="none",
         secure=True,
+        path="/",  # Important: cookie must be accessible from all paths
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
