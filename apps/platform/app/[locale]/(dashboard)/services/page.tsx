@@ -80,7 +80,7 @@ export default function ServicesPage() {
         setLoading(true);
         try {
             const [servicesRes, formsRes, schedulesRes] = await Promise.all([
-                fetch(`${API_URL}/services?active_only=false`, { credentials: 'include' }),
+                fetch(`${API_URL}/services/?active_only=false`, { credentials: 'include' }),
                 fetch(`${API_URL}/forms/templates`, { credentials: 'include' }),
                 fetch(`${API_URL}/schedules/`, { credentials: 'include' }),
             ]);
@@ -174,7 +174,7 @@ export default function ServicesPage() {
 
             const url = editingService
                 ? `${API_URL}/services/${editingService.id}`
-                : `${API_URL}/services`;
+                : `${API_URL}/services/`;
 
             const response = await fetch(url, {
                 method: editingService ? 'PUT' : 'POST',

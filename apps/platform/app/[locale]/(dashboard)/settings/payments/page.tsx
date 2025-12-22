@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import SectionHeader from '@/components/SectionHeader';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+import { API_URL } from '@/lib/api';
 
 interface ConnectStatus {
     has_account: boolean;
@@ -108,10 +108,10 @@ export default function PaymentsPage() {
                 {/* Message */}
                 {message && (
                     <div className={`p-4 rounded-xl flex items-start gap-3 ${message.type === 'success'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : message.type === 'info'
-                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                                : 'bg-red-50 text-red-700 border border-red-200'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : message.type === 'info'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
                         }`}>
                         {message.type === 'success' && <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />}
                         {message.type === 'info' && <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />}
@@ -139,8 +139,8 @@ export default function PaymentsPage() {
                                     Estado de Cobros
                                 </h3>
                                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${status?.is_enabled
-                                        ? 'bg-emerald-100 text-emerald-700'
-                                        : 'bg-red-100 text-red-700'
+                                    ? 'bg-emerald-100 text-emerald-700'
+                                    : 'bg-red-100 text-red-700'
                                     }`}>
                                     {status?.is_enabled ? 'Activo' : 'Inactivo'}
                                 </span>

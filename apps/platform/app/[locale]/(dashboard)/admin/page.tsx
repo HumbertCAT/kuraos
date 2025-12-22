@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { API_URL } from '@/lib/api';
 import { useTranslations } from 'next-intl';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -160,7 +160,7 @@ export default function AdminPage() {
     }
 
     async function fetchTemplates(): Promise<FormTemplate[]> {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+        const API_URL_LOCAL = API_URL;
         const response = await fetch(`${API_URL}/forms/admin/templates`, { credentials: 'include' });
         if (!response.ok) return [];
         const data = await response.json();
@@ -168,7 +168,7 @@ export default function AdminPage() {
     }
 
     async function fetchAutomations(): Promise<AutomationRule[]> {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+        const API_URL_LOCAL = API_URL;
         const response = await fetch(`${API_URL}/automations/marketplace`, { credentials: 'include' });
         if (!response.ok) return [];
         const data = await response.json();
@@ -214,7 +214,6 @@ export default function AdminPage() {
 
     async function handleDeleteTemplate(id: string) {
         if (!confirm('¿Estás seguro de eliminar este template?')) return;
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
         try {
             const response = await fetch(`${API_URL}/forms/admin/templates/${id}`, {
                 method: 'DELETE',

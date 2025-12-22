@@ -6,7 +6,7 @@ import Link from 'next/link';
 import FormRenderer from '@/components/FormRenderer';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+import { API_URL } from '@/lib/api';
 
 type OrgTier = 'BUILDER' | 'PRO' | 'CENTER';
 

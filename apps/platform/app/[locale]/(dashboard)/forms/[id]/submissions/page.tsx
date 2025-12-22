@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+import { API_URL } from '@/lib/api';
 
 interface Assignment {
     id: string;
@@ -140,8 +140,8 @@ export default function SubmissionsPage() {
                                         <td className="py-3 px-4">
                                             {assignment.risk_level && assignment.risk_level !== 'LOW' && (
                                                 <span className={`px-2 py-1 rounded text-xs font-medium ${assignment.risk_level === 'CRITICAL' ? 'bg-red-100 text-red-700' :
-                                                        assignment.risk_level === 'HIGH' ? 'bg-orange-100 text-orange-700' :
-                                                            'bg-yellow-100 text-yellow-700'
+                                                    assignment.risk_level === 'HIGH' ? 'bg-orange-100 text-orange-700' :
+                                                        'bg-yellow-100 text-yellow-700'
                                                     }`}>
                                                     ⚠️ {assignment.risk_level}
                                                 </span>

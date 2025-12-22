@@ -143,7 +143,7 @@ function getWhatsAppUrl(lead: Lead, userName: string = 'Tu terapeuta'): string {
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+import { API_URL } from '@/lib/api';
 
 export default function LeadsPage() {
     const terminology = useTerminology();
@@ -582,7 +582,7 @@ function LeadDetailSheet({
         if (!firstName || !lastName) return;
         setSaving(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1'}/leads/${lead.id}`, {
+            const response = await fetch(`${API_URL}/leads/${lead.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -607,7 +607,7 @@ function LeadDetailSheet({
     const handleMarkLost = async () => {
         if (!confirm('¿Marcar este lead como perdido?')) return;
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1'}/leads/${lead.id}`, {
+            await fetch(`${API_URL}/leads/${lead.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -624,7 +624,7 @@ function LeadDetailSheet({
         if (!confirm('¿Eliminar este lead permanentemente? Esta acción no se puede deshacer.')) return;
         setDeleting(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1'}/leads/${lead.id}`, {
+            const response = await fetch(`${API_URL}/leads/${lead.id}`, {
                 method: 'DELETE',
                 credentials: 'include',
             });

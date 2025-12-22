@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { ChevronLeft, Zap, Power, Trash2, Download, Sparkles, MessageSquarePlus, Bot, Settings } from 'lucide-react';
 import IconRenderer from '@/components/IconRenderer';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+import { API_URL } from '@/lib/api';
 
 interface AutomationRule {
     id: string;

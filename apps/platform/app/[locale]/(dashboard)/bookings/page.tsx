@@ -10,7 +10,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Calendar, Clock, User, Search, CheckCircle, XCircle, AlertCircle, MoreVertical, Edit, Trash2, Check, X, CalendarCheck } from 'lucide-react';
 import SectionHeader from '@/components/SectionHeader';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+import { API_URL } from '@/lib/api';
 const locales = { es, en: enUS };
 
 interface Booking {

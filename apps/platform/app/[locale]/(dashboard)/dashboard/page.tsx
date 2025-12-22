@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { api } from '@/lib/api';
+import { api, API_URL } from '@/lib/api';
 import { useTerminology } from '@/hooks/use-terminology';
 import {
     Brain, Sparkles, Users, Calendar, FileText, DollarSign,
@@ -169,8 +169,8 @@ export default function DashboardPage() {
                 const [patientsResult, bookingsResult, formsResult, riskAlertsResult] = await Promise.allSettled([
                     api.patients.list(),
                     api.bookings.list({}),
-                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1'}/forms/templates`, { credentials: 'include' }).then(r => r.ok ? r.json() : []),
-                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1'}/monitoring/risk-alerts?hours=48`, { credentials: 'include' }).then(r => r.ok ? r.json() : { alerts: [] }),
+                    fetch(`${API_URL}/forms/templates`, { credentials: 'include' }).then(r => r.ok ? r.json() : []),
+                    fetch(`${API_URL}/monitoring/risk-alerts?hours=48`, { credentials: 'include' }).then(r => r.ok ? r.json() : { alerts: [] }),
                 ]);
 
                 // Log individual results for debugging
