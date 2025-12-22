@@ -1,156 +1,100 @@
 #!/bin/bash
-# ==============================================================================
-# KURA OS - Deployment Script for Cloud Run
-# ==============================================================================
-# Run this script to build and deploy the backend to Cloud Run.
-# Prerequisites: 
-#   - setup_infra.sh has been run
-#   - Docker is installed and running
-#   - gcloud CLI authenticated
-# Usage: ./deploy.sh [--tag TAG]
-# ==============================================================================
+# deploy.sh - Safe deployment script with migration job pattern
+# 
+# Pattern: Build -> Migrate Job -> Deploy Service
+# This prevents race conditions when Cloud Run scales multiple instances
+#
+# Usage: ./scripts/deploy.sh
 
-set -e
-set -o pipefail
+set -e  # Exit on any error
 
-# ==============================================================================
-# CONFIGURATION
-# ==============================================================================
 PROJECT_ID="kura-os"
-REGION="europe-southwest1"
+REGION="europe-west1"
 SERVICE_NAME="kura-backend"
-REPO_NAME="kura-repo"
-INSTANCE_NAME="kura-primary"
+JOB_NAME="kura-migrator"
+# Using Artifact Registry (created by cloud-run-source-deploy)
+IMAGE="europe-west1-docker.pkg.dev/${PROJECT_ID}/cloud-run-source-deploy/${SERVICE_NAME}"
 
-# Docker image path
-IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${SERVICE_NAME}"
+echo "=========================================="
+echo "🚀 KURA OS Safe Deployment"
+echo "=========================================="
+echo ""
 
-# Parse arguments
-TAG="${1:-latest}"
-if [[ "$1" == "--tag" ]]; then
-    TAG="${2:-latest}"
+# Step 1: Build and deploy to get new image in Artifact Registry
+# Using gcloud run deploy --source which handles build automatically
+echo "📦 Step 1: Building new image via Cloud Build..."
+gcloud run deploy ${SERVICE_NAME} \
+  --source=backend \
+  --region=${REGION} \
+  --project=${PROJECT_ID} \
+  --port=8000 \
+  --allow-unauthenticated \
+  --add-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
+  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
+  --update-env-vars-file=scripts/env-vars.yaml \
+  --no-traffic  # Deploy without routing traffic yet
+
+echo "✅ Image built and staged (no traffic yet)"
+echo ""
+
+# Step 2: Update migration job with new image
+echo "🔄 Step 2: Updating migration job..."
+gcloud run jobs update ${JOB_NAME} \
+  --image=${IMAGE}:latest \
+  --region=${REGION} \
+  --project=${PROJECT_ID} \
+  --set-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
+  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
+  --command="alembic" \
+  --args="upgrade,head" \
+  2>/dev/null || {
+    echo "⚠️ Job doesn't exist, creating..."
+    gcloud run jobs create ${JOB_NAME} \
+      --image=${IMAGE}:latest \
+      --region=${REGION} \
+      --project=${PROJECT_ID} \
+      --set-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
+      --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
+      --command="alembic" \
+      --args="upgrade,head"
+  }
+echo "✅ Migration job updated"
+echo ""
+
+# Step 3: Execute migration job and wait
+echo "🗄️ Step 3: Running database migrations..."
+gcloud run jobs execute ${JOB_NAME} \
+  --region=${REGION} \
+  --project=${PROJECT_ID} \
+  --wait
+
+MIGRATION_EXIT_CODE=$?
+if [ $MIGRATION_EXIT_CODE -ne 0 ]; then
+  echo ""
+  echo "❌ MIGRATION FAILED! Deployment aborted."
+  echo "   Check logs: gcloud run jobs executions logs ${JOB_NAME} --region=${REGION}"
+  exit 1
 fi
+echo "✅ Migrations completed successfully"
+echo ""
 
-# Add git commit hash if available
-if git rev-parse --short HEAD &> /dev/null; then
-    GIT_SHA=$(git rev-parse --short HEAD)
-    TAG="${TAG}-${GIT_SHA}"
-fi
-
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
-log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
-log_step() { echo -e "\n${BLUE}══════════════════════════════════════════════════════════════${NC}"; echo -e "${BLUE}▶ $1${NC}"; echo -e "${BLUE}══════════════════════════════════════════════════════════════${NC}"; }
-
-# ==============================================================================
-# STEP 0: Validate Prerequisites
-# ==============================================================================
-log_step "Validating Prerequisites"
-
-if ! command -v docker &> /dev/null; then
-    log_error "Docker not found. Please install Docker."
-    exit 1
-fi
-
-if ! command -v gcloud &> /dev/null; then
-    log_error "gcloud CLI not found. Please install Google Cloud SDK."
-    exit 1
-fi
-
-# Set project
-gcloud config set project "$PROJECT_ID"
-log_info "Project: $PROJECT_ID"
-log_info "Image: ${IMAGE_URI}:${TAG}"
-
-# ==============================================================================
-# STEP 1: Configure Docker for Artifact Registry
-# ==============================================================================
-log_step "Configuring Docker Authentication"
-
-gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
-log_info "✅ Docker configured for Artifact Registry"
-
-# ==============================================================================
-# STEP 2: Build Docker Image
-# ==============================================================================
-log_step "Building Docker Image"
-
-cd "$(dirname "$0")/../backend"
-
-log_info "Building image with Dockerfile.prod..."
-docker build \
-    --platform linux/amd64 \
-    -f Dockerfile.prod \
-    -t "${IMAGE_URI}:${TAG}" \
-    -t "${IMAGE_URI}:latest" \
-    .
-
-log_info "✅ Docker image built successfully"
-
-# ==============================================================================
-# STEP 3: Push to Artifact Registry
-# ==============================================================================
-log_step "Pushing to Artifact Registry"
-
-docker push "${IMAGE_URI}:${TAG}"
-docker push "${IMAGE_URI}:latest"
-
-log_info "✅ Image pushed to Artifact Registry"
-
-# ==============================================================================
-# STEP 4: Deploy to Cloud Run
-# ==============================================================================
-log_step "Deploying to Cloud Run"
-
-CLOUD_SQL_CONNECTION="${PROJECT_ID}:${REGION}:${INSTANCE_NAME}"
-
-gcloud run deploy "$SERVICE_NAME" \
-    --image="${IMAGE_URI}:${TAG}" \
-    --region="$REGION" \
-    --platform=managed \
-    --allow-unauthenticated \
-    --port=8080 \
-    --cpu=1 \
-    --memory=512Mi \
-    --min-instances=0 \
-    --max-instances=10 \
-    --concurrency=80 \
-    --timeout=300 \
-    --add-cloudsql-instances="$CLOUD_SQL_CONNECTION" \
-    --set-secrets="DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest" \
-    --set-env-vars="GOOGLE_PROJECT_ID=${PROJECT_ID},GOOGLE_LOCATION=${REGION}" \
-    --quiet
-
-log_info "✅ Deployed to Cloud Run"
-
-# ==============================================================================
-# STEP 5: Get Service URL
-# ==============================================================================
-log_step "Deployment Complete! 🎉"
-
-SERVICE_URL=$(gcloud run services describe "$SERVICE_NAME" --region="$REGION" --format="value(status.url)")
+# Step 4: Deploy the service (only if migrations succeeded)
+echo "🌐 Step 4: Deploying API service..."
+gcloud run services update ${SERVICE_NAME} \
+  --image=${IMAGE}:latest \
+  --region=${REGION} \
+  --project=${PROJECT_ID} \
+  --port=8000 \
+  --allow-unauthenticated \
+  --add-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
+  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
+  --update-env-vars-file=scripts/env-vars.yaml
 
 echo ""
-echo "═══════════════════════════════════════════════════════════════════════════"
-echo "  KURA OS Backend - Deployment Summary"
-echo "═══════════════════════════════════════════════════════════════════════════"
+echo "=========================================="
+echo "🎉 DEPLOYMENT COMPLETE!"
+echo "=========================================="
 echo ""
-echo "  Service:   $SERVICE_NAME"
-echo "  Region:    $REGION"
-echo "  Image:     ${IMAGE_URI}:${TAG}"
+echo "API URL: https://api.kuraos.ai"
+echo "Dashboard: https://app.kuraos.ai"
 echo ""
-echo "  🌐 Service URL: $SERVICE_URL"
-echo "  📋 API Docs:    ${SERVICE_URL}/docs"
-echo "  ❤️  Health:      ${SERVICE_URL}/api/v1/health"
-echo ""
-echo "═══════════════════════════════════════════════════════════════════════════"
-echo ""
-log_info "Test the deployment:"
-echo "  curl ${SERVICE_URL}/api/v1/health"
