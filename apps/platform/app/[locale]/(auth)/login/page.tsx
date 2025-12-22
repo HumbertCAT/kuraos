@@ -27,8 +27,10 @@ export default function LoginPage() {
     try {
       await login({ email, password });
       console.log('Login successful, redirecting...');
+      // Get current locale from path (e.g., /es/login -> es)
+      const locale = window.location.pathname.split('/')[1] || 'es';
       // Use window.location for hard navigation to ensure cookie is read by middleware
-      window.location.href = '/dashboard';
+      window.location.href = `/${locale}/dashboard`;
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || t('loginFailed'));

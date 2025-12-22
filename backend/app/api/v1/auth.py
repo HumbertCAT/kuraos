@@ -94,14 +94,15 @@ async def register(
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
-    # Set httpOnly cookie (cross-domain: secure + samesite=none)
+    # Set httpOnly cookie (shared across kuraos.ai subdomains)
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        samesite="none",
+        samesite="lax",  # lax is fine for same-site (shared domain)
         secure=True,
-        path="/",  # Important: cookie must be accessible from all paths
+        path="/",
+        domain=".kuraos.ai",  # Share cookie across all subdomains
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
@@ -162,14 +163,15 @@ async def login(
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
-    # Set httpOnly cookie (cross-domain: secure + samesite=none)
+    # Set httpOnly cookie (shared across kuraos.ai subdomains)
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        samesite="none",
+        samesite="lax",  # lax is fine for same-site (shared domain)
         secure=True,
-        path="/",  # Important: cookie must be accessible from all paths
+        path="/",
+        domain=".kuraos.ai",  # Share cookie across all subdomains
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
