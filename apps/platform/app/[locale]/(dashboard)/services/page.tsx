@@ -6,8 +6,7 @@ import { Plus, Edit, Trash2, Clock, Users, Euro, FileText, CalendarPlus, List, X
 import { useAuth } from '@/context/auth-context';
 import SectionHeader from '@/components/SectionHeader';
 
-// TEMP: Hardcoded until Vercel env var issue is resolved
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+import { API_URL } from '@/lib/api';
 
 interface ServiceType {
     id: string;

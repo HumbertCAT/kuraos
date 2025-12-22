@@ -1,5 +1,10 @@
 // Use api.kuraos.ai for production, localhost for development
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
+// Force HTTPS for production domain even if env var says HTTP
+if (apiUrl.includes('api.kuraos.ai') && apiUrl.startsWith('http://')) {
+  apiUrl = apiUrl.replace('http://', 'https://');
+}
+export const API_URL = apiUrl;
 
 interface ApiError {
   detail: string;
