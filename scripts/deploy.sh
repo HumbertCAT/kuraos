@@ -4,9 +4,13 @@
 # Pattern: Build -> Migrate Job -> Deploy Service
 # This prevents race conditions when Cloud Run scales multiple instances
 #
-# Usage: ./scripts/deploy.sh
+# Usage: ./scripts/deploy.sh (run from repo root)
 
 set -e  # Exit on any error
+
+# Change to repo root (script can be run from anywhere)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}/.."
 
 PROJECT_ID="kura-os"
 REGION="europe-west1"
@@ -31,7 +35,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --allow-unauthenticated \
   --add-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
   --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
-  --update-env-vars-file=scripts/env-vars.yaml \
+  --env-vars-file=scripts/env-vars.yaml \
   --no-traffic  # Deploy without routing traffic yet
 
 echo "✅ Image built and staged (no traffic yet)"
@@ -78,17 +82,12 @@ fi
 echo "✅ Migrations completed successfully"
 echo ""
 
-# Step 4: Deploy the service (only if migrations succeeded)
-echo "🌐 Step 4: Deploying API service..."
-gcloud run services update ${SERVICE_NAME} \
-  --image=${IMAGE}:latest \
+# Step 4: Route traffic to the new revision (only if migrations succeeded)
+echo "🌐 Step 4: Routing traffic to new revision..."
+gcloud run services update-traffic ${SERVICE_NAME} \
+  --to-latest \
   --region=${REGION} \
-  --project=${PROJECT_ID} \
-  --port=8000 \
-  --allow-unauthenticated \
-  --add-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
-  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
-  --update-env-vars-file=scripts/env-vars.yaml
+  --project=${PROJECT_ID}
 
 echo ""
 echo "=========================================="

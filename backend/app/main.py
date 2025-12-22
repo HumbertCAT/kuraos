@@ -217,13 +217,6 @@ app.include_router(
     tags=["Self-Service Booking"],
 )
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["Admin"])
-
-# TEMPORARY: Seed endpoints - DELETE AFTER SEEDING
-from app.api.v1 import admin_seed
-
-app.include_router(
-    admin_seed.router, prefix=f"{settings.API_V1_STR}/admin", tags=["Admin Seed"]
-)
 app.include_router(
     schedules.router,
     prefix=f"{settings.API_V1_STR}/schedules",
