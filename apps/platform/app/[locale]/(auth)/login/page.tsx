@@ -15,17 +15,21 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    console.log('Login form submitted');
     setError('');
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
+    console.log('Attempting login for:', email);
 
     try {
       await login({ email, password });
+      console.log('Login successful, redirecting...');
       router.push('/dashboard');
     } catch (err: any) {
+      console.error('Login error:', err);
       setError(err.message || t('loginFailed'));
     } finally {
       setLoading(false);
