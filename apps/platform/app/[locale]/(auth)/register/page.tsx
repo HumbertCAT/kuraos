@@ -48,7 +48,7 @@ export default function RegisterPage() {
         <div className="text-center mb-8 space-y-3">
           <Link href="/" className="inline-flex flex-col items-center gap-3">
             <img
-              src="/kura-logo-full.png"
+              src="/kura-logo-dark.png"
               alt="KURA OS"
               className="h-24 w-auto"
             />
