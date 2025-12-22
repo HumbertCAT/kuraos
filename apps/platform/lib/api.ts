@@ -1,5 +1,5 @@
 // Use api.kuraos.ai for production, localhost for development
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
 interface ApiError {
   detail: string;
