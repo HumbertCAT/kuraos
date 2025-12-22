@@ -34,6 +34,14 @@ export default function middleware(request: NextRequest) {
     
   const hasToken = request.cookies.has('access_token');
   
+  // Debug logging
+  console.log('[Middleware]', {
+    pathname,
+    hasToken,
+    isProtectedRoute,
+    cookies: request.cookies.getAll().map(c => c.name)
+  });
+  
   if (isProtectedRoute && !hasToken) {
     // Get locale from pathname
     const pathLocale = pathname.split('/')[1];

@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (response.organization) {
       setOrganization(response.organization);
     }
-    router.refresh();
+    // Note: Don't call router.refresh() here - the login page handles navigation
   }
 
   async function register(data: RegisterRequest) {
