@@ -169,8 +169,8 @@ export default function DashboardPage() {
                 const [patientsResult, bookingsResult, formsResult, riskAlertsResult] = await Promise.allSettled([
                     api.patients.list(),
                     api.bookings.list({}),
-                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1'}/forms/templates`, { credentials: 'include' }).then(r => r.ok ? r.json() : []),
-                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1'}/monitoring/risk-alerts?hours=48`, { credentials: 'include' }).then(r => r.ok ? r.json() : { alerts: [] }),
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1'}/forms/templates`, { credentials: 'include' }).then(r => r.ok ? r.json() : []),
+                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1'}/monitoring/risk-alerts?hours=48`, { credentials: 'include' }).then(r => r.ok ? r.json() : { alerts: [] }),
                 ]);
 
                 // Log individual results for debugging

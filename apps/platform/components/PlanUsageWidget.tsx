@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Users, Sparkles } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
 interface UsageData {
     active_patients: number;

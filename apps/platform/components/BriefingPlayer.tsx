@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Volume2, ChevronDown, ChevronUp, Sparkles, RefreshCw } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
 interface BriefingData {
     audio_url: string | null;

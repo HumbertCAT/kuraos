@@ -353,7 +353,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
 
             {/* File link */}
             {entry.entry_metadata?.file_url && (() => {
-              const backendBase = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:8001';
+              const backendBase = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'https://api.kuraos.ai';
               const fullUrl = `${backendBase}${entry.entry_metadata.file_url}`;
               return (
                 <a

@@ -9,7 +9,7 @@ import { User, Globe, Link2, ExternalLink, Unlink, MapPin, Phone, MessageCircle,
 import CountrySelect from '@/components/CountrySelect';
 import CityAutocomplete from '@/components/CityAutocomplete';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
 const AI_OUTPUT_OPTIONS = [
   { value: 'AUTO', label: 'Auto (Patient\'s Language)', icon: '🌐' },

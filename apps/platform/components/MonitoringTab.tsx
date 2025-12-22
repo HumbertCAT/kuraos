@@ -5,7 +5,7 @@ import { AlertTriangle, Activity, RefreshCw } from 'lucide-react';
 import SentimentChart from './SentimentChart';
 import DailyInsightsFeed from './DailyInsightsFeed';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
 interface DailyAnalysis {
     id: string;

@@ -10,7 +10,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Plus, Clock, X, CalendarDays, CalendarCheck, Trash2, Ban, Settings2, ChevronDown, Link2 } from 'lucide-react';
 import SectionHeader from '@/components/SectionHeader';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 const locales = { es, en: enUS };
 
 interface AvailabilityBlock {
