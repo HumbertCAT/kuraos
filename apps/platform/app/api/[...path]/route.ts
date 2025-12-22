@@ -75,10 +75,16 @@ async function proxyRequest(request: NextRequest, pathSegments: string[], method
     // Forward important headers
     proxyResponse.headers.set('Content-Type', response.headers.get('Content-Type') || 'application/json');
     
-    // Forward Set-Cookie headers (this will be same-origin now)
+    // Forward Set-Cookie headers (transform for same-origin)
     const setCookie = response.headers.get('Set-Cookie');
     if (setCookie) {
-      proxyResponse.headers.set('Set-Cookie', setCookie);
+      // Transform the cookie for same-origin use:
+      // - Change SameSite=none to SameSite=lax (same-origin doesn't need none)
+      // - Keep Secure if on HTTPS
+      const transformedCookie = setCookie
+        .replace(/SameSite=none/gi, 'SameSite=lax')
+        .replace(/; Secure/gi, ''); // Remove Secure for same-origin
+      proxyResponse.headers.set('Set-Cookie', transformedCookie);
     }
 
     return proxyResponse;
