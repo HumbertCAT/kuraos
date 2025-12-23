@@ -36,9 +36,9 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center space-x-2 rtl:space-x-reverse">
           <img
-            src="/kura-logo-full.png"
+            src="/kura-logo-dark.png"
             alt="KURA OS"
-            className="h-24 w-auto"
+            className="h-30 w-auto"
           />
         </Link>
 
