@@ -26,6 +26,9 @@ from app.api.deps import CurrentUser
 
 router = APIRouter()
 
+# Environment detection for cookie configuration
+_is_localhost = "localhost" in settings.FRONTEND_URL
+
 
 def generate_referral_code() -> str:
     """Generate a unique referral code."""
@@ -94,15 +97,15 @@ async def register(
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
-    # Set httpOnly cookie (shared across kuraos.ai subdomains)
+    # Set httpOnly cookie (environment-aware: localhost vs production)
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        samesite="lax",  # lax is fine for same-site (shared domain)
-        secure=True,
+        samesite="lax",
+        secure=not _is_localhost,  # False for localhost (HTTP), True for production (HTTPS)
         path="/",
-        domain=".kuraos.ai",  # Share cookie across all subdomains
+        domain=None if _is_localhost else ".kuraos.ai",  # None = current domain only
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
@@ -163,15 +166,15 @@ async def login(
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
 
-    # Set httpOnly cookie (shared across kuraos.ai subdomains)
+    # Set httpOnly cookie (environment-aware: localhost vs production)
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        samesite="lax",  # lax is fine for same-site (shared domain)
-        secure=True,
+        samesite="lax",
+        secure=not _is_localhost,  # False for localhost (HTTP), True for production (HTTPS)
         path="/",
-        domain=".kuraos.ai",  # Share cookie across all subdomains
+        domain=None if _is_localhost else ".kuraos.ai",  # None = current domain only
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
 
@@ -205,7 +208,7 @@ async def logout(response: Response):
     response.delete_cookie(
         key="access_token",
         path="/",
-        domain=".kuraos.ai",  # Must match set_cookie domain
+        domain=None if _is_localhost else ".kuraos.ai",  # Must match set_cookie domain
     )
     return {"message": "Logged out successfully"}
 

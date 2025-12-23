@@ -386,8 +386,8 @@ async def google_callback(
 
     await db.commit()
 
-    # Redirect to frontend settings page
-    frontend_url = "http://localhost:3001/es/settings?integration=success"
+    # Redirect to frontend settings page (use configured FRONTEND_URL)
+    frontend_url = f"{settings.FRONTEND_URL}/es/settings?integration=success"
     return RedirectResponse(url=frontend_url)
 
 

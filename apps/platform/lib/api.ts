@@ -23,6 +23,17 @@ async function handleResponse<T>(response: Response): Promise<T> {
                             window.location.pathname.includes('/register') ||
                             window.location.pathname.includes('/f/');  // Public forms
         if (!isPublicPage) {
+          // CRITICAL: Call logout to clear the stale HttpOnly cookie on the backend
+          // Without this, the middleware sees the old cookie and keeps redirecting to dashboard
+          try {
+            await fetch(`${API_URL}/auth/logout`, {
+              method: 'POST',
+              credentials: 'include',
+            });
+          } catch (e) {
+            // Ignore logout errors, proceed to redirect anyway
+            console.warn('[api] Logout failed during 401 cleanup:', e);
+          }
           window.location.href = '/en/login';
           throw new Error('Session expired. Redirecting to login...');
         }
