@@ -470,8 +470,11 @@ textarea::placeholder {
   opacity: 1;
 }
 
-input,
-textarea,
-select {
-  color: #0f172a; /* slate-900 - strong text color */
-}
+/* 
+   NOTE: Do NOT set global input/textarea/select color here!
+   Use Tailwind text-* classes on individual components to support
+   both light and dark backgrounds properly.
+   
+   - For dark backgrounds: text-white
+   - For light backgrounds: text-slate-900
+*/
