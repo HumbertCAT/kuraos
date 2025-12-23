@@ -43,12 +43,12 @@ const Navbar: React.FC = () => {
         </Link>
 
         <div className="flex md:order-2 space-x-3 rtl:space-x-reverse">
-          <Link href="/register" className="text-brand-dark bg-brand-accent hover:bg-brand-glow focus:ring-4 focus:outline-none focus:ring-emerald-800 font-medium rounded-lg text-sm px-4 py-2 text-center transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+          <a href="https://app.kuraos.ai/es/register" className="text-brand-dark bg-brand-accent hover:bg-brand-glow focus:ring-4 focus:outline-none focus:ring-emerald-800 font-medium rounded-lg text-sm px-4 py-2 text-center transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.4)]">
             Empezar Gratis
-          </Link>
-          <Link href="/login" className="text-white bg-white/5 border border-white/20 hover:bg-white/10 font-medium rounded-lg text-sm px-4 py-2 text-center transition-all duration-300">
+          </a>
+          <a href="https://app.kuraos.ai/es/login" className="text-white bg-white/5 border border-white/20 hover:bg-white/10 font-medium rounded-lg text-sm px-4 py-2 text-center transition-all duration-300">
             Login
-          </Link>
+          </a>
           <button
             onClick={() => setIsOpen(!isOpen)}
             type="button"

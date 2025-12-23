@@ -84,9 +84,9 @@ const Pricing: React.FC = () => {
                 <X className="w-4 h-4 mr-3" /> Sin análisis IA
               </li>
             </ul>
-            <Link href="/register" className="w-full block text-center py-3 rounded-lg border border-gray-600 text-white font-medium hover:bg-white/10 transition-colors">
+            <a href="https://app.kuraos.ai/es/register" className="w-full block text-center py-3 rounded-lg border border-gray-600 text-white font-medium hover:bg-white/10 transition-colors">
               Empezar Gratis
-            </Link>
+            </a>
           </div>
 
           {/* Pro Plan */}
@@ -114,9 +114,9 @@ const Pricing: React.FC = () => {
                 <X className="w-4 h-4 mr-3" /> Protocolo Risk Shield™
               </li>
             </ul>
-            <Link href="/register" className="w-full block text-center py-3 rounded-lg bg-brand-accent text-brand-dark font-bold hover:bg-brand-glow transition-colors">
+            <a href="https://app.kuraos.ai/es/register" className="w-full block text-center py-3 rounded-lg bg-brand-accent text-brand-dark font-bold hover:bg-brand-glow transition-colors">
               Comenzar Prueba
-            </Link>
+            </a>
           </div>
 
           {/* Center Plan - The Upsell */}

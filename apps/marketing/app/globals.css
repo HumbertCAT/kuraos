@@ -10,6 +10,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Brand Colors - KURA OS */
+  --color-brand-dark: #0f172a;
+  --color-brand-accent: #10b981;
+  --color-brand-glow: #34d399;
+  --color-brand-warning: #f59e0b;
+  --color-slate-950: #020617;
 }
 
 @media (prefers-color-scheme: dark) {
