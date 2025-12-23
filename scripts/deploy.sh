@@ -34,7 +34,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --port=8000 \
   --allow-unauthenticated \
   --add-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
-  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest,STRIPE_WEBHOOK_SECRET=STRIPE_WEBHOOK_SECRET:latest \
+  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest,STRIPE_SECRET_KEY=STRIPE_SECRET_KEY:latest,STRIPE_WEBHOOK_SECRET=STRIPE_WEBHOOK_SECRET:latest,TWILIO_ACCOUNT_SID=TWILIO_ACCOUNT_SID:latest,TWILIO_AUTH_TOKEN=TWILIO_AUTH_TOKEN:latest,TWILIO_WHATSAPP_NUMBER=TWILIO_WHATSAPP_NUMBER:latest \
   --env-vars-file=scripts/env-vars.yaml \
   --no-traffic  # Deploy without routing traffic yet
 

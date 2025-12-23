@@ -54,3 +54,49 @@ This document tracks known technical debt and incomplete implementations identif
 
 9. **Stripe CLI Dependency** ✅ RESOLVED
    - **Status**: Fixed in start-dev.sh - auto-starts `stripe listen` with proper warning if CLI not installed.
+
+---
+
+## 🚀 Sandbox → Production Migration
+
+> [!IMPORTANT]
+> Both Stripe and Twilio are currently in **TEST/SANDBOX** mode. Follow these steps to go live.
+
+### Stripe (Payments)
+
+| Item | Current (Sandbox) | Production | Action |
+|------|-------------------|------------|--------|
+| API Keys | `sk_test_*` / `pk_test_*` | `sk_live_*` / `pk_live_*` | Generate in [Stripe Dashboard](https://dashboard.stripe.com/apikeys) |
+| Webhook Secret | `whsec_*` (test) | New `whsec_*` (live) | Create webhook in Live mode |
+| Connect | Test accounts | Real bank accounts | Therapists re-onboard in live mode |
+
+**Steps to activate Stripe Live:**
+1. Complete Stripe account verification (identity, business details)
+2. Go to Dashboard → toggle "Test mode" OFF
+3. Generate Live API keys
+4. Update secrets in GCP: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+5. Create Live webhook at `https://api.kuraos.ai/api/v1/payments/webhook`
+6. Update `STRIPE_PRICE_ID_PRO` and `STRIPE_PRICE_ID_CENTER` with Live price IDs
+7. Deploy with `./scripts/deploy.sh`
+
+---
+
+### Twilio WhatsApp (Messaging)
+
+| Item | Current (Sandbox) | Production | Action |
+|------|-------------------|------------|--------|
+| Phone Number | `+14155238886` (shared) | Dedicated number | Purchase via Twilio |
+| Approval | None needed | Meta Business Verification | Submit Business Profile |
+| Message Templates | Any message | Pre-approved only | Create in Twilio Console |
+
+**Steps to activate Twilio Production:**
+1. **Meta Business Verification**: Submit business documents
+2. **WhatsApp Business Profile**: Create and submit for approval
+3. **Purchase Number**: Buy a dedicated phone number for WhatsApp
+4. **Message Templates**: Create and submit templates for approval (required for outbound)
+5. **Update secrets in GCP**: `TWILIO_WHATSAPP_NUMBER` with new number
+6. **Configure Webhook**: Update to production URL in Twilio Console
+7. Deploy with `./scripts/deploy.sh`
+
+> [!WARNING]
+> WhatsApp Business API requires Meta approval which can take 1-2 weeks. Plan ahead.

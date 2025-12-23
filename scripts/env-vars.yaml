@@ -1,9 +1,6 @@
+# Non-sensitive environment variables for Cloud Run
+# Secrets are stored in Google Secret Manager (see deploy.sh --set-secrets)
+
 BACKEND_CORS_ORIGINS: "https://app.kuraos.ai,https://kuraos.ai,http://localhost:3000,http://localhost:3001"
 FRONTEND_URL: "https://app.kuraos.ai"
 GOOGLE_REDIRECT_URI: "https://api.kuraos.ai/api/v1/integrations/google/callback"
-OPENAI_API_KEY: "placeholder"
-STRIPE_SECRET_KEY: "placeholder"
-STRIPE_WEBHOOK_SECRET: "placeholder"
-TWILIO_ACCOUNT_SID: "placeholder"
-TWILIO_AUTH_TOKEN: "placeholder"
-TWILIO_PHONE_NUMBER: "placeholder"
