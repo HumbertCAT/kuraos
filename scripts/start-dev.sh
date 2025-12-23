@@ -48,7 +48,35 @@ else
     NGROK_URL=$(curl -s http://localhost:4040/api/tunnels | grep -o '"public_url":"https://[^"]*' | grep -o 'https://[^"]*' | head -1)
     if [ ! -z "$NGROK_URL" ]; then
         echo "   ngrok URL: $NGROK_URL"
-        echo "   📱 Configure Twilio webhook: $NGROK_URL/api/v1/webhooks/twilio/whatsapp"
+        TWILIO_WEBHOOK_URL="${NGROK_URL}/api/v1/webhooks/twilio/whatsapp"
+        echo "   📱 Twilio webhook: $TWILIO_WEBHOOK_URL"
+        
+        # Auto-configure Twilio Sandbox Webhook (if credentials exist in .env)
+        if [ -f backend/.env ]; then
+            TWILIO_SID=$(grep -E '^TWILIO_ACCOUNT_SID=' backend/.env | cut -d'=' -f2)
+            TWILIO_TOKEN=$(grep -E '^TWILIO_AUTH_TOKEN=' backend/.env | cut -d'=' -f2)
+            TWILIO_PHONE=$(grep -E '^TWILIO_WHATSAPP_NUMBER=' backend/.env | cut -d'=' -f2 | tr -d '+')
+            
+            if [ ! -z "$TWILIO_SID" ] && [ ! -z "$TWILIO_TOKEN" ] && [ "$TWILIO_SID" != "placeholder" ]; then
+                echo "   🔄 Updating Twilio Sandbox webhook via API..."
+                # Update the WhatsApp Sandbox webhook URL
+                TWILIO_RESPONSE=$(curl -s -X POST \
+                    "https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/IncomingPhoneNumbers.json" \
+                    -u "${TWILIO_SID}:${TWILIO_TOKEN}" \
+                    -d "SmsUrl=${TWILIO_WEBHOOK_URL}" \
+                    -d "PhoneNumber=+${TWILIO_PHONE}" 2>/dev/null)
+                
+                if echo "$TWILIO_RESPONSE" | grep -q '"sid"'; then
+                    echo "   ✅ Twilio webhook updated automatically!"
+                else
+                    echo "   ⚠️  Auto-update failed. Configure manually: $TWILIO_WEBHOOK_URL"
+                    echo "      Go to: https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn"
+                fi
+            else
+                echo "   ℹ️  Twilio credentials not found. Configure webhook manually:"
+                echo "      $TWILIO_WEBHOOK_URL"
+            fi
+        fi
     fi
 fi
 

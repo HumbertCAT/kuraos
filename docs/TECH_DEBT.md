@@ -52,7 +52,5 @@ This document tracks known technical debt and incomplete implementations identif
    - **Friction**: Developer must manually copy-paste this new URL into the Twilio Console (Sandbox settings) on every startup.
    - **Solution**: Use static ngrok domains (requires paid plan) or automate Twilio configuration via API.
 
-9. **Stripe CLI Dependency**
-   - **Issue**: Local webhook handling relies on `stripe listen` running in the background.
-   - **Friction**: If the developer forgets to install Stripe CLI, payments seem to work but status never updates.
-   - **Fix**: Add strict check/auto-install or clearer UI warning when webhook listener is absent.
+9. **Stripe CLI Dependency** ✅ RESOLVED
+   - **Status**: Fixed in start-dev.sh - auto-starts `stripe listen` with proper warning if CLI not installed.
