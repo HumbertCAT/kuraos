@@ -171,6 +171,11 @@ async def create_service(
         organization_id=current_user.organization_id,
     )
     db.add(service)
+
+    # Auto-assign the creator (therapist) to this service
+    # This ensures it shows up in their public booking page
+    service.therapists.append(current_user)
+
     await db.commit()
     await db.refresh(service)
 

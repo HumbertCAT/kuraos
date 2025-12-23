@@ -20,9 +20,11 @@ export default function LoginPage() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
+    const email = (formData.get('email') as string).trim();
     const password = formData.get('password') as string;
     console.log('Attempting login for:', email);
+    console.log('Password length:', password.length);
+    console.log('Payload:', JSON.stringify({ email, password }));
 
     try {
       await login({ email, password });

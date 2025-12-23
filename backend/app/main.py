@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.core.config import settings
 from app.core.logging import configure_logging
@@ -148,6 +149,9 @@ def parse_cors_origins(raw: str) -> list:
 
 
 origins = parse_cors_origins(settings.BACKEND_CORS_ORIGINS)
+
+# Trust Cloud Run / Cloudflare proxies to handle HTTPS correctly
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
