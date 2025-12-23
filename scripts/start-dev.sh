@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# TherapistOS Development Startup Script
+# Kura OS Development Startup Script
 # This script starts all services including Stripe webhook listener
 
-echo "🚀 Starting TherapistOS Development Environment..."
+echo "🚀 Starting KuraOS Development Environment..."
 
 # Check if .env files exist
 if [ ! -f backend/.env ]; then
@@ -80,8 +80,8 @@ else
     fi
 fi
 
-# Start marketing app on port 3000
-echo "🌐 Starting Marketing app on port 3000..."
+# Start marketing app on port 3002
+echo "🌐 Starting Marketing app on port 3002..."
 if [ -d "apps/marketing" ]; then
     cd apps/marketing
     # Install deps if needed (silently)
@@ -89,8 +89,8 @@ if [ -d "apps/marketing" ]; then
         echo "   Installing marketing dependencies..."
         npm install --silent
     fi
-    # Start on port 3000 in background
-    PORT=3000 npm run dev > ../../marketing.log 2>&1 &
+    # Start on port 3002 in background
+    npm run dev > ../../marketing.log 2>&1 &
     MARKETING_PID=$!
     echo "   Marketing PID: $MARKETING_PID"
     echo $MARKETING_PID > ../../.marketing.pid
@@ -104,7 +104,7 @@ echo "✅ TherapistOS is running!"
 echo ""
 echo "📍 Services:"
 echo "   - Platform:  http://localhost:3001  (main app)"
-echo "   - Marketing: http://localhost:3000  (landing page)"
+echo "   - Marketing: http://localhost:3002  (landing page)"
 echo "   - Backend:   http://localhost:8001  (API)"
 echo "   - Database:  localhost:5433"
 echo ""
