@@ -59,13 +59,276 @@ KURA OS is now live! A complete operating system for therapists to manage their 
 - HttpOnly cookies prevent XSS token theft
 - CORS properly configured for production and development origins
 
+
 ---
 
-## [Unreleased]
+## [0.9.9.17] - 2025-12-22
 
-### Planned
-- Google OAuth integration
-- Calendar sync (Google Calendar, Outlook)
-- Email notifications and reminders
-- Video session integration
-- Mobile app (React Native)
+### Agente Fantasma
+- **Cold Lead Follow-up Agent**: New automation playbook for re-engaging leads inactive for >48h.
+- **Trigger**: `LEAD_STAGED_TIMEOUT`
+- **Action**: Sends email "¿Sigues interesado/a?"
+
+---
+
+## [0.9.9.16] - 2025-12-22
+
+### Form Editor - Target Entity
+- **Destino de Envío**: Form builder option to target either `PATIENT` (Clinical) or `LEAD` (CRM).
+
+---
+
+## [0.9.9.15] - 2025-12-22
+
+### Lead Stagnation Monitor
+- **Stale Leads Check**: Background job to detect leads stuck in pipeline for >48h.
+- **Integration**: Emits `LEAD_STAGED_TIMEOUT` event for automation.
+
+---
+
+## [0.9.9.14] - 2025-12-22
+
+### Lead Fork in Form Submissions
+- **Smart Routing**: Forms targeting `LEAD` now create CRM entries instead of patients.
+- **Duplicate Check**: Prevents duplicate leads by email.
+
+---
+
+## [0.9.9.13] - 2025-12-22
+
+### Draky Mode & Human-in-the-Loop
+- **Draft Actions**: Automation actions can now be set to `DRAFT_ONLY` requiring manual approval.
+- **Approval UI**: New "Tareas Pendientes" widget for reviewing draft emails.
+
+---
+
+## [0.9.9.12] - 2025-12-22
+
+### Daily Briefing Audio (Spanish)
+- **Localization**: Improved Spanish date formatting for audio briefings.
+- **Caching**: Audio files cached with visual indicator.
+
+---
+
+## [0.9.9.11] - 2025-12-22
+
+### Agent Settings UI
+- **Agent Config**: UI for configuring agent personality (Tone, Mode, Signature).
+
+---
+
+## [0.9.9.9] - 2025-12-22
+
+### Clinical Agents Rebranding
+- **Rebranding**: Renamed "Automations" to "Agentes IA".
+- **CRM Triggers**: Added `LEAD_CREATED`, `LEAD_CONVERTED` triggers.
+
+---
+
+## [0.9.9.8] - 2025-12-22
+
+### Lead CRM & Speed-to-Lead
+- **Lead Model**: Separate CRM table for pre-clinical leads.
+- **Kanban Board**: Drag-and-drop pipeline management.
+- **Speed-to-Lead**: WhatsApp button and Ghost Detector visual cues.
+
+---
+
+## [0.9.9.7] - 2025-12-20
+
+### Dynamic Terminology
+- **Terminology System**: Toggle between PATIENT / CLIENT / CONSULTANT labels globally.
+
+---
+
+## [0.9.9.5] - 2025-12-19
+
+### Help Center & ChatBot
+- **Help Center**: MDX-based documentation in `/settings`.
+- **ChatBot**: AI assistant powered by Gemini 2.5 Flash with query logging.
+
+---
+
+## [0.9.8.2] - 2025-12-16
+
+### Patient Cockpit
+- **AletheiaHUD**: Unified clinical intelligence display.
+- **Daily Insights**: Redesigned feed with accordion view.
+
+---
+
+## [0.9.8.1] - 2025-12-16
+
+### Audio Transcription
+- **Whisper Integration**: Automatic transcription of WhatsApp audio messages.
+- **Hourly Analysis**: Frequency increased to hourly.
+
+---
+
+## [0.9.8] - 2025-12-16
+
+### WhatsApp Integration
+- **Twilio Webhook**: Ingestion of WhatsApp messages.
+- **Conversation Analyzer**: Daily sentiment analysis of chat history.
+
+---
+
+## [0.9.7] - 2025-12-16
+
+### Stripe Fintech Engine
+- **Subscriptions**: SaaS billing for PRO/CENTER tiers.
+- **Stripe Connect**: Marketplace infrastructure for split payments.
+
+---
+
+## [0.9.6] - 2025-12-16
+
+### Landing Page & Patient Photos
+- **Landing Page v2**: Product marketing site.
+- **Patient Photos**: Profile image support.
+
+---
+
+## [0.9.5] - 2025-12-16
+
+### Premium UI
+- **Dashboard Data**: Real-time stats integration.
+- **Section Headers**: Consistent gradient headers.
+
+---
+
+## [0.9.4] - 2025-12-15
+
+### Multi-Tenancy & Tiers
+- **RBAC**: Owner/Therapist/Assistant roles.
+- **Tier System**: BUILDER (3), PRO (50), CENTER (150) limits.
+
+---
+
+## [0.9.3] - 2025-12-14
+
+### Playbook Marketplace
+- **Automation Rules**: Configurable playbooks.
+- **Marketplace UI**: Catalogue of installable agents.
+
+---
+
+## [0.9.2] - 2025-12-14
+
+### The Orchestrator
+- **Journey Engine**: State machine for patient journeys.
+- **Temporal Engine**: APScheduler for time-based triggers.
+
+---
+
+## [0.9.1] - 2025-12-14
+
+### Investor Demo Polish
+- **Demo Data**: Seed scripts for investor demo.
+- **UI Polish**: Typography and color system upgrade.
+
+---
+
+## [0.9.0] - 2025-12-14
+
+### automation Foundations
+- **Event Bus**: SystemEventLog architecture.
+- **Hardcoded Rules**: Initial Python-based rule engine.
+
+---
+
+## [0.8.6] - 2025-12-14
+
+### Bookings Page
+- **Bookings Management**: Dedicated page for reservation oversight.
+- **Google Calendar**: Full bidirectional sync.
+
+---
+
+## [0.8.5] - 2025-12-12
+
+### Availability Engine
+- **Multiple Schedules**: Support for different availability sets.
+- **Service Linking**: Map services to specific schedules.
+
+---
+
+## [0.8.3] - 2025-12-12
+
+### Group Booking
+- **Capacity Management**: Support for group sessions/retreats.
+- **Specific Availability**: Date overrides.
+
+---
+
+## [0.8.2] - 2025-12-12
+
+### Automation & DevEx
+- **Startup Scripts**: Automated dev environment scripts.
+- **Docker Compose**: Enhanced with stripe-webhook service.
+
+---
+
+## [0.6.1] - 2024-12-10
+
+### Governance UI
+- **SuperAdmin Panel**: System settings and org management.
+- **Premium Settings**: Profile card, subscription status, AI preferences.
+- **Credits Display**: Visual feedback on AI credit usage.
+
+---
+
+## [0.6.0] - 2024-12-10
+
+### Governance Architecture
+- **Subscription Tiers**: FREE, PRO, TRIAL with patient limits.
+- **AI Credit System**: Cost tracking for text/audio/image analysis.
+- **Dynamic Config**: Database-driven system settings.
+
+---
+
+## [0.5.5] - 2024-12-10
+
+### Async AI Analysis
+- **Async Processing**: Background task for AI analysis with polling.
+- **Full-Context Audio**: Enhanced prompts for audio session synthesis.
+
+---
+
+## [0.5.0] - 2024-12-09
+
+### AI Observatory & Multimedia
+- **Multiple Analyses**: Support for multiple AI insights per entry.
+- **Multimedia Input**: Audio recording and photo capture in-browser.
+- **Timeline Redesign**: Modern clinical timeline UI.
+
+---
+
+## [0.4.0] - 2024-12-09
+
+### Clinical Journal
+- **ClinicalEntry Model**: Polymorphic entries (Note, Audio, Doc, AI).
+- **Composer**: Rich text editor with file upload.
+
+---
+
+## [0.3.0] - 2024-12-09
+
+### Patient Management
+- **CRUD Operations**: Full patient profile management.
+- **Search**: Patient list filtering.
+
+---
+
+## [0.2.0] - 2024-12-09
+
+### Identity & Persistence
+- **Migrations**: Alembic async setup.
+- **JWT Auth**: HttpOnly cookies, full auth flow.
+- **i18n**: Locale-aware routing (EN/ES).
+
+
+### Project Scaffold
+- **Monorepo**: Next.js + FastAPI + Docker structure.
+- **Authentication**: JWT, HttpOnly cookies, RBAC.
+- **i18n**: Multi-language support foundation.

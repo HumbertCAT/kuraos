@@ -123,7 +123,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="Specialized SaaS for Therapists - System of Record + AI Observatory",
-    version="3.0.0",
+    version="1.0.0",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -279,7 +279,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/health", tags=["System"])
 async def health_check():
     """Health check endpoint for container orchestration."""
-    return {"status": "healthy", "version": "3.0.0"}
+    return {"status": "healthy", "version": "1.0.0"}
 
 
 @app.get("/", tags=["System"])

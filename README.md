@@ -1,28 +1,38 @@
-# Therapist OS
+# KURA OS
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-0.9.9.8-purple.svg)](docs/versions.md)
-[![Status](https://img.shields.io/badge/status-Active%20Beta-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.0.0-purple.svg)](docs/versions.md)
+[![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 [![License](https://img.shields.io/badge/license-Proprietary-blue.svg)]()
 
 ---
 
 ## 🌟 The Vision
 
-**Therapist OS** is a specialized SaaS platform designed for **Therapists, Healers, and Conscious Practitioners**. 
+**KURA OS** is a specialized SaaS platform designed for **Therapists, Healers, and Conscious Practitioners**. 
 
-We believe that every healing journey deserves a system as intentional as the work itself. TherapistOS replaces the chaos of spreadsheets, scattered notes, and disconnected tools with a **unified command center** that honors both clinical rigor and spiritual depth.
+We believe that every healing journey deserves a system as intentional as the work itself. KURA OS replaces the chaos of spreadsheets, scattered notes, and disconnected tools with a **unified command center** that honors both clinical rigor and spiritual depth.
 
 ### The Problem We Solve
 
-| Pain Point | TherapistOS Solution |
-|------------|---------------------|
+| Pain Point | KURA OS Solution |
+|------------|-----------------|
 | **Scattered patient records** | The Soul Record: 360° patient profile with clinical timeline |
-| **Manual follow-ups** | Automation Playbooks: one-click clinical workflows |
+| **Manual follow-ups** | AI Clinical Agents: automated clinical workflows |
 | **Risk blindspots** | AletheIA AI: automatic risk detection in notes and forms |
 | **Booking chaos** | Integrated calendar with Stripe payments + Google sync |
 | **Generic software** | Built specifically for therapy, retreats, and ceremonial work |
+
+---
+
+## 🚀 Live Production
+
+| Environment | URL |
+|-------------|-----|
+| **Platform** | https://app.kuraos.ai |
+| **API** | https://api.kuraos.ai |
+| **Marketing** | https://kuraos.ai |
 
 ---
 
@@ -42,7 +52,7 @@ Your AI-powered clinical assistant that never sleeps.
 - **Risk Detection**: Automatic flagging of suicide risk, self-harm, spiritual emergency
 - **Session Synthesis**: AI-generated clinical summaries from notes and audio
 - **Pattern Recognition**: Multi-session insights and therapeutic suggestions
-- **Credit System**: Fair pricing with monthly quotas + top-ups
+- **Daily Briefing**: Audio summary of your day ahead
 
 ### 3. 📝 Frictionless Forms
 Share intake forms via WhatsApp, QR codes, or magic links—and watch the data flow in automatically.
@@ -60,26 +70,19 @@ A complete booking system with payments, built for the realities of therapeutic 
 - **Google Calendar Sync**: Bidirectional sync for availability + event creation
 - **Group Sessions**: Capacity-based booking for retreats and workshops
 
-### 5. ⚡ Automation Playbooks
+### 5. 🤖 Clinical AI Agents
 Pre-configured automation recipes that work like magic—activate with one click.
 
-| Playbook | Trigger | Action |
-|----------|---------|--------|
+| Agent | Trigger | Action |
+|-------|---------|--------|
 | 🛡️ **Escudo de Seguridad** | High-risk form submission | Block patient + alert therapist |
 | 💸 **Cobrador Automático** | 48h without payment | Send reminder email |
 | ❤️ **Fidelización Post-Retiro** | 7 days after retreat | Send satisfaction survey |
+| 🤝 **Agente Concierge** | New lead created | Welcome email with booking |
 
-**Install from the Biblioteca → Toggle ON → Done.**
+**Install from the Catálogo → Toggle ON → Done.**
 
-### 6. 🎨 Premium Dashboard (NEW in v0.9.5)
-A beautiful, consistent interface across all sections.
-
-- **SectionHeader**: Gradient icons and descriptive subtitles
-- **Real-time Stats**: Patients, bookings, forms, revenue from live API
-- **AletheIA Suggestions**: AI-powered action recommendations
-- **Tier-based Features**: BUILDER/PRO/CENTER with appropriate limits
-
-### 7. 💼 Lead CRM (NEW in v0.9.9.8)
+### 6. 💼 Lead CRM
 Separate your **Sales Pipeline** from **Clinical Operations**.
 
 - **Kanban Board**: Drag-drop leads through NEW → CONTACTED → QUALIFIED
@@ -114,36 +117,35 @@ Separate your **Sales Pipeline** from **Clinical Operations**.
 
 | Layer | Technology |
 |-------|------------|
-| **Frontend** | Next.js 14+ (App Router), TypeScript, TailwindCSS |
+| **Frontend** | Next.js 16 (App Router), TypeScript, TailwindCSS |
 | **Backend** | FastAPI (Python 3.11+), Async SQLAlchemy 2.0 |
 | **Database** | PostgreSQL 15 + Alembic Migrations |
-| **AI Engine** | Google Gemini Pro (Vision + Audio) |
-| **Payments** | Stripe (Checkout + Webhooks) |
+| **AI Engine** | Google Gemini 2.5 Flash |
+| **Payments** | Stripe (Checkout + Webhooks + Connect) |
 | **Email** | Brevo (Transactional) |
 | **Calendar** | Google Calendar API (OAuth + FreeBusy) |
 | **Infra** | Docker Compose (Dev), Google Cloud Run (Prod) |
 
 ---
 
-## ⚡️ Quick Start
+## ⚡️ Quick Start (Local Development)
 
 ### Prerequisites
 - Docker & Docker Compose
-- Node.js 18+ (optional)
+- Node.js 18+
 - Stripe CLI (for webhook testing)
-- ngrok (for Twilio WhatsApp webhooks)
 
 ### 1. Clone & Configure
 ```bash
-git clone https://github.com/HumbertCAT/therapistos-claude.git
-cd therapistos-claude
+git clone https://github.com/HumbertCAT/kuraos.git
+cd kuraos
 
 # Backend environment
 cp backend/.env.example backend/.env
 # Edit backend/.env with your API keys
 
 # Frontend environment
-cp frontend/.env.local.example frontend/.env.local
+cp apps/platform/.env.local.example apps/platform/.env.local
 ```
 
 ### 2. Start Everything
@@ -164,44 +166,30 @@ cp frontend/.env.local.example frontend/.env.local
 
 | Document | Description |
 |----------|-------------|
+| [**CHANGELOG**](CHANGELOG.md) | Version history and release notes |
 | [**Context & Architecture**](docs/context.md) | System design and modules |
-| [**Version History**](docs/versions.md) | Detailed changelog |
 | [**Forms Guide**](docs/howto_forms.md) | How forms work |
 | [**Playbooks Guide**](docs/howto_playbooks.md) | Automation system |
 | [**Plans Guide**](docs/howto_plans.md) | Tier system (BUILDER/PRO/CENTER) |
-| [**Styling Guide**](docs/styling_guide.md) | CSS architecture |
-| [**History Log**](docs/history.md) | Development chronicle |
-
----
-
-## 🧪 Testing
-
-```bash
-# Backend unit tests
-docker-compose exec backend pytest tests/ -v
-
-# E2E tests (Playwright)
-cd frontend && npm run test:e2e
-```
 
 ---
 
 ## 📂 Project Structure
 
 ```
-TherapistOS-Claude/
+kuraos/
 ├── backend/
 │   ├── app/
 │   │   ├── api/v1/           # REST Endpoints
 │   │   ├── db/               # SQLAlchemy Models
 │   │   └── services/         # Business Logic + AI
 │   └── tests/                # Pytest Suite
-├── frontend/
-│   ├── app/[locale]/         # Next.js Pages (i18n)
-│   │   ├── (dashboard)/      # Protected Routes
-│   │   └── (public)/         # Booking + Forms
-│   ├── components/           # React Components
-│   └── messages/             # i18n (en, es, ca, it)
+├── apps/
+│   ├── platform/             # Main Next.js App
+│   │   ├── app/[locale]/     # Pages (i18n)
+│   │   ├── components/       # React Components
+│   │   └── messages/         # i18n (en, es, ca, it)
+│   └── marketing/            # Landing Page
 ├── docs/                     # Documentation
 └── scripts/                  # Dev automation
 ```
@@ -210,29 +198,25 @@ TherapistOS-Claude/
 
 ## 🌱 Roadmap
 
-- [x] **v0.9.6** - Landing Page & Public Marketing Site
-- [x] **v0.9.5** - Premium UI & Real Dashboard Data
-- [x] **v0.9.4** - Multi-Tenancy & Tier System
-- [x] **v0.9.3** - Playbook Marketplace
-- [x] **v0.9.2** - Journey Engine & Temporal Automation
-- [x] **v0.9.1** - AI Insights Dashboard
-- [x] **v0.9.7** - Stripe Checkout & Payment Flow 🚀
-- [x] **v0.9.8** - Telehealth Audio Mixer & UX
-- [x] **v0.9.9.5** - Help Center with AI ChatBot
-- [x] **v0.9.9.6** - Help Quick Wins (Query Logging, Mobile Hide)
-- [x] **v0.9.9.7** - Dynamic Terminology System
-- [x] **v0.9.9.8** - Lead CRM + Speed-to-Lead Features 🔥
-- [ ] **v0.9.10** - WhatsApp Integration
-- [ ] **v1.0.0** - Public Beta Launch
+See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
+
+### Completed
+- [x] **v1.0.0** - Public Launch 🎉 (December 2025)
+- [x] **v0.9.x** - Lead CRM, AI Agents, Daily Briefing, Help Center
+
+### Coming Soon
+- [ ] Google OAuth Integration
+- [ ] WhatsApp Business API (Meta Cloud)
+- [ ] Mobile App (React Native)
 
 ---
 
 ## 💜 Built With Intention
 
-TherapistOS is crafted with the same care and intentionality that you bring to your practice. Every feature is designed to reduce friction, not add complexity.
+KURA OS is crafted with the same care and intentionality that you bring to your practice. Every feature is designed to reduce friction, not add complexity.
 
 **Your work changes lives. Let us handle the rest.**
 
 ---
 
-*© 2024-2025 TherapistOS. All rights reserved.*
+*© 2024-2025 KURA OS. All rights reserved.*

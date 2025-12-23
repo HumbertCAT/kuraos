@@ -1,65 +1,114 @@
-# Strategic Roadmap: 2026-2027
+# KURA OS - Strategic Roadmap
 
-> **Vision:** To become the operating system for the next generation of mental health, starting with Psychedelic Therapy.
-
----
-
-## 📅 Q1 2026: Go-to-Market (Psychedelic Vertical)
-**Goal:** Official Launch & Initial Traction.  
-**Target:** First 50 Paying Clinics.
-
-### Product Readiness (Pre-Launch)
-- [x] **Core CRM:** "The Soul Record" (Patient profiles, timeline)
-- [x] **Booking Engine:** Stripe + Google Calendar sync
-- [x] **Risk AI:** AletheIA real-time risk detection
-- [x] **Audio Intelligence:** WhatsApp voice note transcription
-- [ ] **Meta Cloud API Migration:** Move from Twilio to native WhatsApp API for stability
-
-### Vertical-Specific Features
-- **Protocol Library:** Pre-loaded psychedelic protocols (MAPS, Fadiman, Ketamine)
-- **Group Management:** Specialized booking for Retreats & Ceremonies
-- **Screening Forms:** Standardized medical intake for psychedelic safety
+> **Vision:** To become the operating system for the next generation of mental health, starting with Conscious Practitioners.
 
 ---
 
-## 🚀 2026: Growth & Scale (The "500" Goal)
-**Goal:** 500 Active Therapist Users by EOY 2026.  
-**Focus:** Sales automation, B2B features, and Viral Growth.
+## ✅ Completed: v1.0.0 Public Launch (December 2024)
+
+**Status:** 🎉 LIVE at https://app.kuraos.ai
+
+### Core Platform
+- [x] JWT authentication with shared domain cookies
+- [x] Multi-tenant organizations (SOLO/TEAM)
+- [x] Patient CRM with clinical journey tracking
+- [x] Clinical entries with AI analysis (AletheIA)
+
+### Booking & Payments
+- [x] Service management (1:1 + Group)
+- [x] Availability schedules with overrides
+- [x] Public booking page
+- [x] Stripe checkout + webhooks
+
+### Automation & AI
+- [x] Clinical AI Agents (Playbook system)
+- [x] Human-in-the-loop draft mode
+- [x] Daily audio briefing (Gemini + TTS)
+- [x] Help Center ChatBot (Gemini 2.5 Flash)
+
+### Lead CRM
+- [x] Kanban board with drag-drop
+- [x] Speed-to-lead (WhatsApp, Ghost Detector)
+- [x] Auto-conversion to patients
+
+---
+
+## 📅 Q1 2026: Growth & Polish
+
+**Goal:** First 50 paying organizations
+
+### Product Improvements
+- [ ] **Google OAuth**: One-click login with Google
+- [ ] **WhatsApp Business API**: Native Meta Cloud API (replace Twilio)
+- [ ] **Form Analytics**: Completion rates, drop-off points
+- [ ] **Patient Portal**: Self-service for clients
 
 ### Growth Engine
-- **Self-Service Onboarding:** User-led signup → value flow
-- **Referral Program:** "Therapist-get-Therapist" incentives
-- **Affiliate Network:** Partnerships with training schools (MAPS, Beckley)
+- [ ] **Self-Service Onboarding**: Guided setup wizard
+- [ ] **Referral Program**: Therapist-get-Therapist incentives
+- [ ] **Partner Integrations**: Training school affiliates
+
+---
+
+## 🚀 Q2-Q3 2026: Scale (The "500" Goal)
+
+**Goal:** 500 active therapist users by EOY 2025
+
 
 ### Enterprise Features (B2B)
-- **Multi-Tenancy:** Secure data isolation for larger clinics
-- **Role-Based Access Control:** Granular permissions (Admin, Therapist, Assistant)
-- **Audit Logs:** HIPAA/GDPR compliant activity tracking
-- **API for Developers:** Open API for third-party integrations
+- [ ] **KURA Business (Admin Dashboard)**: Separate app (`admin.kuraos.ai`) for superadmin control.
+- [ ] **Team Management**: Invite therapists to organization
+- [ ] **Advanced RBAC**: Granular permissions
+
+- [ ] **Audit Logs**: HIPAA/GDPR compliant activity tracking
+- [ ] **API for Developers**: Public REST API
+
+### Mobile Experience
+- [ ] **React Native App**: iOS + Android
+- [ ] **Push Notifications**: Booking reminders, risk alerts
+- [ ] **Offline Mode**: View patient data without internet
 
 ---
 
-## 🔮 2027: Horizontal Expansion
-**Goal:** Enter broader Mental Health & Medical markets.
-**Focus:** Psychology, Psychiatry, and Coaching.
+## 🔮 2026: Horizontal Expansion
 
-- **Psychology Vertical:** Adaptation for CBT, DBT, Psychoanalysis
-- **Medical Vertical:** EHR integration, e-prescription support
-- **AI Co-Pilot:** Real-time therapeutic suggestions during sessions
-- **Global Expansion:** Localization for LATAM, US, and EU markets
+**Goal:** Enter broader Mental Health & Medical markets
+
+### New Verticals
+- [ ] **Psychology**: CBT, DBT, Psychoanalysis adaptations
+- [ ] **Psychiatry**: EHR integration, e-prescription support
+- [ ] **Coaching**: Business coaching, life coaching
+
+### AI Co-Pilot
+- [ ] **Real-time Suggestions**: During-session therapeutic prompts
+- [ ] **Transcription**: Live session transcription
+- [ ] **Auto-Documentation**: AI-generated session notes
+
+### Global Expansion
+- [ ] **LATAM**: Spanish-speaking markets
+- [ ] **US**: HIPAA compliance, insurance billing
+- [ ] **EU**: Full GDPR compliance, multilingual
 
 ---
 
-## ✅ Completed Milestones (2025 Build Phase)
+## 🏆 Success Metrics
 
-### v0.9.8 - Audio Intelligence
-- WhatsApp voice note transcription (Whisper)
-- Daily sentiment analysis
+| Metric | Q1 2025 | Q4 2025 | 2026 |
+|--------|---------|---------|------|
+| Active Organizations | 50 | 500 | 2,000 |
+| Monthly Active Users | 100 | 1,000 | 5,000 |
+| MRR | $2,500 | $25,000 | $100,000 |
+| Patient Records | 1,000 | 25,000 | 100,000 |
 
-### v0.9.7 - Payments
-- Stripe Integration complete
-- Checkout flows for services & retreats
+---
 
-### v0.9.5 - Dashboard
-- Real-time analytics
-- Journey status tracking
+## 💜 Guiding Principles
+
+1. **Therapist-First**: Every feature must reduce friction, not add complexity
+2. **Privacy by Default**: Clinical data is sacred
+3. **AI as Ally**: Augment human judgment, never replace it
+4. **Sustainable Growth**: Quality over quantity
+
+---
+
+*Last updated: December 23, 2024*
