@@ -50,7 +50,7 @@ export default function RegisterPage() {
             <img
               src="/kura-logo-dark.png"
               alt="KURA OS"
-              className="h-24 w-auto"
+              className="h-42 w-auto"
             />
           </Link>
           <p className="text-slate-400 text-sm">Crea tu cuenta gratuita</p>
