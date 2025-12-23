@@ -20,6 +20,14 @@ if [ -f .ngrok.pid ]; then
     rm .ngrok.pid
 fi
 
+# Stop Marketing app if running
+if [ -f .marketing.pid ]; then
+    MARKETING_PID=$(cat .marketing.pid)
+    echo "   Stopping Marketing app (PID: $MARKETING_PID)..."
+    kill $MARKETING_PID 2>/dev/null
+    rm .marketing.pid
+fi
+
 # Stop Docker containers
 echo "   Stopping Docker containers..."
 docker-compose down

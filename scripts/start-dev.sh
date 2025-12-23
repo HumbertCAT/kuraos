@@ -80,16 +80,37 @@ else
     fi
 fi
 
+# Start marketing app on port 3000
+echo "🌐 Starting Marketing app on port 3000..."
+if [ -d "apps/marketing" ]; then
+    cd apps/marketing
+    # Install deps if needed (silently)
+    if [ ! -d "node_modules" ]; then
+        echo "   Installing marketing dependencies..."
+        npm install --silent
+    fi
+    # Start on port 3000 in background
+    PORT=3000 npm run dev > ../../marketing.log 2>&1 &
+    MARKETING_PID=$!
+    echo "   Marketing PID: $MARKETING_PID"
+    echo $MARKETING_PID > ../../.marketing.pid
+    cd ../..
+else
+    echo "⚠️  apps/marketing not found. Skipping."
+fi
+
 echo ""
 echo "✅ TherapistOS is running!"
 echo ""
 echo "📍 Services:"
-echo "   - Frontend: http://localhost:3001"
-echo "   - Backend:  http://localhost:8001"
-echo "   - Database: localhost:5433"
+echo "   - Platform:  http://localhost:3001  (main app)"
+echo "   - Marketing: http://localhost:3000  (landing page)"
+echo "   - Backend:   http://localhost:8001  (API)"
+echo "   - Database:  localhost:5433"
 echo ""
 echo "📝 Logs:"
-echo "   - Docker:  docker-compose logs -f"
-echo "   - Stripe:  tail -f stripe-webhook.log"
+echo "   - Docker:    docker-compose logs -f"
+echo "   - Stripe:    tail -f stripe-webhook.log"
+echo "   - Marketing: tail -f marketing.log"
 echo ""
 echo "🛑 To stop: ./scripts/stop-dev.sh"
