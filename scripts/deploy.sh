@@ -34,7 +34,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --port=8000 \
   --allow-unauthenticated \
   --add-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
-  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
+  --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest,STRIPE_WEBHOOK_SECRET=STRIPE_WEBHOOK_SECRET:latest \
   --env-vars-file=scripts/env-vars.yaml \
   --no-traffic  # Deploy without routing traffic yet
 
