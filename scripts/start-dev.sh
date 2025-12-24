@@ -5,9 +5,10 @@
 
 echo "🚀 Starting KuraOS Development Environment..."
 
-# Check if .env files exist
-if [ ! -f backend/.env ]; then
-    echo "⚠️  Warning: backend/.env not found. Copy backend/.env.example and configure it."
+# Check if .env file exists (single source of truth in project root)
+if [ ! -f .env ]; then
+    echo "⚠️  Warning: .env not found. Copy .env.example to .env and configure it."
+    echo "   Run: cp .env.example .env"
 fi
 
 # Start Docker services

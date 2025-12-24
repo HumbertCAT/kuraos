@@ -97,7 +97,7 @@
 
 ## 🏆 Success Metrics
 
-| Metric | Q1 2025 | Q4 2025 | 2026 |
+| Metric | Q1 2026 | Q4 2026 | 2027 |
 |--------|---------|---------|------|
 | Active Organizations | 50 | 500 | 2,000 |
 | Monthly Active Users | 100 | 1,000 | 5,000 |

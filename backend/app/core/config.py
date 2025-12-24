@@ -55,7 +55,9 @@ class Settings(BaseSettings):
     TWILIO_AUTH_TOKEN: Optional[str] = None
     TWILIO_WHATSAPP_NUMBER: Optional[str] = None
 
-    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
+    # Note: env_file not needed - Docker injects envs via docker-compose.yml env_file directive
+    # For local non-Docker development, set envs manually or use: export $(cat .env | xargs)
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 
 settings = Settings()
