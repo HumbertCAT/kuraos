@@ -108,6 +108,49 @@ async def list_backups(current_user: User = Depends(require_super_admin)):
     )
 
 
+def _parse_database_url() -> dict:
+    """Parse DATABASE_URL to extract connection components.
+
+    Supports both formats:
+    - Local: postgresql+asyncpg://user:pass@host:port/dbname
+    - Cloud SQL: postgresql+asyncpg://user:pass@/dbname?host=/cloudsql/project:region:instance
+
+    Returns dict with: host, port, user, password, dbname, socket_path (if Cloud SQL)
+    """
+    from urllib.parse import urlparse, parse_qs
+
+    database_url = os.environ.get("DATABASE_URL", "")
+
+    if not database_url:
+        # Fallback to individual env vars (local Docker)
+        return {
+            "host": os.environ.get("POSTGRES_HOST", "db"),
+            "port": os.environ.get("POSTGRES_PORT", "5432"),
+            "user": os.environ.get("POSTGRES_USER", "postgres"),
+            "password": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+            "dbname": os.environ.get("POSTGRES_DB", "therapistos"),
+            "socket_path": None,
+        }
+
+    # Parse the URL
+    parsed = urlparse(database_url.replace("+asyncpg", ""))
+    query_params = parse_qs(parsed.query)
+
+    # Check for Cloud SQL Unix socket
+    socket_path = None
+    if "host" in query_params:
+        socket_path = query_params["host"][0]
+
+    return {
+        "host": parsed.hostname or "localhost",
+        "port": str(parsed.port) if parsed.port else "5432",
+        "user": parsed.username or "postgres",
+        "password": parsed.password or "",
+        "dbname": parsed.path.lstrip("/") if parsed.path else "therapistos",
+        "socket_path": socket_path,
+    }
+
+
 @router.post("/create", response_model=BackupCreateResponse)
 async def create_backup(current_user: User = Depends(require_super_admin)):
     """Create a new database backup (Super Admin only)."""
@@ -118,32 +161,36 @@ async def create_backup(current_user: User = Depends(require_super_admin)):
     filename = f"backup_{timestamp}.sql.gz"
     filepath = BACKUP_DIR / filename
 
-    # Get database connection details from environment
-    db_host = os.environ.get("POSTGRES_HOST", "db")
-    db_port = os.environ.get("POSTGRES_PORT", "5432")
-    db_name = os.environ.get("POSTGRES_DB", "therapistos")
-    db_user = os.environ.get("POSTGRES_USER", "postgres")
-    db_password = os.environ.get("POSTGRES_PASSWORD", "postgres")
+    # Get database connection details
+    db_config = _parse_database_url()
 
     try:
         # Run pg_dump
         env = os.environ.copy()
-        env["PGPASSWORD"] = db_password
+        env["PGPASSWORD"] = db_config["password"]
+
+        # Build pg_dump command
+        pg_dump_cmd = [
+            "pg_dump",
+            "-U",
+            db_config["user"],
+            "-d",
+            db_config["dbname"],
+            "--no-owner",
+            "--no-acl",
+        ]
+
+        # Use socket or host depending on environment
+        if db_config["socket_path"]:
+            # Cloud SQL Unix socket
+            pg_dump_cmd.extend(["-h", db_config["socket_path"]])
+        else:
+            # TCP connection (localhost/Docker)
+            pg_dump_cmd.extend(["-h", db_config["host"]])
+            pg_dump_cmd.extend(["-p", db_config["port"]])
 
         pg_dump = subprocess.Popen(
-            [
-                "pg_dump",
-                "-h",
-                db_host,
-                "-p",
-                db_port,
-                "-U",
-                db_user,
-                "-d",
-                db_name,
-                "--no-owner",
-                "--no-acl",
-            ],
+            pg_dump_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             env=env,
@@ -205,33 +252,30 @@ async def restore_backup(
         )
 
     # Get database connection details
-    db_host = os.environ.get("POSTGRES_HOST", "db")
-    db_port = os.environ.get("POSTGRES_PORT", "5432")
-    db_name = os.environ.get("POSTGRES_DB", "therapistos")
-    db_user = os.environ.get("POSTGRES_USER", "postgres")
-    db_password = os.environ.get("POSTGRES_PASSWORD", "postgres")
+    db_config = _parse_database_url()
+
+    # Build psql connection args
+    def get_psql_args(target_db: str) -> list:
+        args = ["psql", "-U", db_config["user"], "-d", target_db]
+        if db_config["socket_path"]:
+            args.extend(["-h", db_config["socket_path"]])
+        else:
+            args.extend(["-h", db_config["host"], "-p", db_config["port"]])
+        return args
 
     try:
         env = os.environ.copy()
-        env["PGPASSWORD"] = db_password
+        env["PGPASSWORD"] = db_config["password"]
 
         # Terminate existing connections
         terminate_cmd = subprocess.run(
-            [
-                "psql",
-                "-h",
-                db_host,
-                "-p",
-                db_port,
-                "-U",
-                db_user,
-                "-d",
-                "postgres",
+            get_psql_args("postgres")
+            + [
                 "-c",
                 f"""
                     SELECT pg_terminate_backend(pg_stat_activity.pid)
                     FROM pg_stat_activity
-                    WHERE pg_stat_activity.datname = '{db_name}'
+                    WHERE pg_stat_activity.datname = '{db_config["dbname"]}'
                     AND pid <> pg_backend_pid();
                 """,
             ],
@@ -241,36 +285,20 @@ async def restore_backup(
 
         # Drop and recreate database
         subprocess.run(
-            [
-                "psql",
-                "-h",
-                db_host,
-                "-p",
-                db_port,
-                "-U",
-                db_user,
-                "-d",
-                "postgres",
+            get_psql_args("postgres")
+            + [
                 "-c",
-                f"DROP DATABASE IF EXISTS {db_name};",
+                f"DROP DATABASE IF EXISTS {db_config['dbname']};",
             ],
             env=env,
             capture_output=True,
         )
 
         subprocess.run(
-            [
-                "psql",
-                "-h",
-                db_host,
-                "-p",
-                db_port,
-                "-U",
-                db_user,
-                "-d",
-                "postgres",
+            get_psql_args("postgres")
+            + [
                 "-c",
-                f"CREATE DATABASE {db_name};",
+                f"CREATE DATABASE {db_config['dbname']};",
             ],
             env=env,
             capture_output=True,
@@ -284,18 +312,7 @@ async def restore_backup(
         )
 
         restore = subprocess.Popen(
-            [
-                "psql",
-                "-h",
-                db_host,
-                "-p",
-                db_port,
-                "-U",
-                db_user,
-                "-d",
-                db_name,
-                "--quiet",
-            ],
+            get_psql_args(db_config["dbname"]) + ["--quiet"],
             stdin=gunzip.stdout,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

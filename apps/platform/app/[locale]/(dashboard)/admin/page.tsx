@@ -18,11 +18,14 @@ interface AdminOrganization {
     id: string;
     name: string;
     tier: string;
+    terminology_preference: string;
     ai_credits_monthly_quota: number;
     ai_credits_purchased: number;
     ai_credits_used_this_month: number;
     patient_count: number;
 }
+
+const TERMINOLOGY_OPTIONS = ['CLIENT', 'PATIENT', 'CONSULTANT'] as const;
 
 interface FormTemplate {
     id: string;
@@ -202,6 +205,15 @@ export default function AdminPage() {
         }
     }
 
+    async function handleChangeTerminology(orgId: string, newTerm: string) {
+        try {
+            await api.admin.updateOrganization(orgId, { terminology_preference: newTerm });
+            loadData();
+        } catch (err: any) {
+            alert(err.message);
+        }
+    }
+
     async function handleAddCredits(orgId: string) {
         if (creditsAmount <= 0) return;
         try {
@@ -363,6 +375,7 @@ export default function AdminPage() {
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Name</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Tier</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Term</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Patients</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Credits</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Actions</th>
@@ -380,6 +393,17 @@ export default function AdminPage() {
                                         >
                                             {TIERS.map((tier) => (
                                                 <option key={tier} value={tier}>{tier}</option>
+                                            ))}
+                                        </select>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <select
+                                            value={org.terminology_preference || 'CLIENT'}
+                                            onChange={(e) => handleChangeTerminology(org.id, e.target.value)}
+                                            className="text-sm px-2 py-1 rounded border border-slate-300 bg-white text-slate-700"
+                                        >
+                                            {TERMINOLOGY_OPTIONS.map((term) => (
+                                                <option key={term} value={term}>{term}</option>
                                             ))}
                                         </select>
                                     </td>
