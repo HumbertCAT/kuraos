@@ -117,7 +117,8 @@ def _parse_database_url() -> dict:
 
     Returns dict with: host, port, user, password, dbname, socket_path (if Cloud SQL)
     """
-    from urllib.parse import urlparse, parse_qs
+    import re
+    from urllib.parse import parse_qs, unquote
 
     database_url = os.environ.get("DATABASE_URL", "")
 
@@ -132,21 +133,38 @@ def _parse_database_url() -> dict:
             "socket_path": None,
         }
 
-    # Parse the URL
-    parsed = urlparse(database_url.replace("+asyncpg", ""))
-    query_params = parse_qs(parsed.query)
+    # Use regex to parse URL with potentially special chars in password
+    # Format: scheme://user:password@host:port/dbname?query
+    # Cloud SQL format: scheme://user:password@/dbname?host=/cloudsql/...
+    pattern = r"^(?:postgresql\+asyncpg|postgresql)://([^:]+):([^@]+)@([^/:]*)?(?::(\d+))?/([^?]+)(?:\?(.*))?$"
+    match = re.match(pattern, database_url)
 
-    # Check for Cloud SQL Unix socket
+    if not match:
+        # Fallback for unexpected format
+        return {
+            "host": "localhost",
+            "port": "5432",
+            "user": "postgres",
+            "password": "",
+            "dbname": "therapistos",
+            "socket_path": None,
+        }
+
+    user, password, host, port, dbname, query_string = match.groups()
+
+    # Parse query params for Cloud SQL socket
     socket_path = None
-    if "host" in query_params:
-        socket_path = query_params["host"][0]
+    if query_string:
+        query_params = parse_qs(query_string)
+        if "host" in query_params:
+            socket_path = query_params["host"][0]
 
     return {
-        "host": parsed.hostname or "localhost",
-        "port": str(parsed.port) if parsed.port else "5432",
-        "user": parsed.username or "postgres",
-        "password": parsed.password or "",
-        "dbname": parsed.path.lstrip("/") if parsed.path else "therapistos",
+        "host": host or "localhost",
+        "port": port or "5432",
+        "user": unquote(user) if user else "postgres",
+        "password": unquote(password) if password else "",
+        "dbname": dbname or "therapistos",
         "socket_path": socket_path,
     }
 
