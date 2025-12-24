@@ -44,11 +44,13 @@
 - [ ] **Form Analytics**: Completion rates, drop-off points
 - [ ] **Patient Portal**: Self-service for clients
 
-### Growth Engine
+### Growth Engine: "The Mycelium Protocol" 🍄
+- [ ] **Referral Engine MVP**: `referral_code` + `referred_by` in Organization, signup with `?ref=` param
+- [ ] **Karma Credits**: Reward referrers with AletheIA credits (not cash) for activations
+- [ ] **"Powered By" Attribution**: Footer links on Sanctuary Pages, Booking, Emails with 90-day cookie
+- [ ] **Referral Dashboard**: "Tu enlace de invitación" + stats + WhatsApp/LinkedIn share buttons
 - [ ] **Self-Service Onboarding**: Guided setup wizard
 - [ ] **Demo Mode UI**: Dashboard button to seed demo data for new orgs/investors
-- [ ] **Referral Program**: Therapist-get-Therapist incentives
-- [ ] **Partner Integrations**: Training school affiliates
 
 ---
 
