@@ -113,15 +113,17 @@
 - [ADR-001: Database v2.0](./docs/adr/ADR-001-database-v2-proposal.md) — Hybrid Ledger, Row Level Security (RLS), Biomarkers Schema
 - [ADR-002: Design System](./docs/adr/ADR-002-design-system-proposal.md) — Cyber-Clinical Interface, Dark Mode, Intelligence Rail
 - [ADR-003: Marketing Growth Engine](./docs/adr/ADR-003-marketing-growth-engine.md) — Sanctuary Page, Content Alchemist, Karma Loop
+- [ADR-004: Meta Cloud API](./docs/adr/ADR-004-meta-cloud-api-integration.md) — WhatsApp Business Migration, Instagram Growth Module
 
 ---
 
 ## 💜 Guiding Principles
 
-1. **Therapist-First**: Every feature must reduce friction, not add complexity
-2. **Privacy by Default**: Clinical data is sacred
-3. **AI as Ally**: Augment human judgment, never replace it
-4. **Sustainable Growth**: Quality over quantity
+1. **Prosperity is Clinical**: An underpaid, burnt-out therapist cannot heal effectively. Our duty is not just to save clicks, but to maximize the practitioner's revenue and vital energy. We believe that financial health fuels clinical impact.
+2. **Agents, Not Tools**: Active Intelligence, not passive software. We don't build tools that wait for input; we build Agents that act. If a task is repetitive—scheduling, billing, transcribing—Kura handles it autonomously 24/7. AI is not a feature; it’s a teammate.
+3. **Institutional Trust**: Hospital-grade security for the independent practitioner. Clinical data is sacred, and privacy is our moat. We enforce military-grade encryption and HIPAA/GDPR compliance by default, future-proofing our users for the B2B/Insurance era.
+4. **Radical Simplicity**: Complexity kills adoption. We prioritize "Fast & Easy" workflows to enable viral growth. Every feature must be intuitive enough to require zero training. If it needs a manual, it’s broken.
+
 
 ---
 
