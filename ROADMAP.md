@@ -38,6 +38,7 @@
 **Goal:** First 50 paying organizations
 
 ### Product Improvements
+- [ ] **Lifecycle Megamenu**: Reorganize navigation into 3 pillars (Captación → Clínica → Inteligencia) with Shadcn NavigationMenu
 - [ ] **Google OAuth**: One-click login with Google
 - [ ] **WhatsApp Business API**: Native Meta Cloud API (replace Twilio)
 - [ ] **Form Analytics**: Completion rates, drop-off points
@@ -99,6 +100,16 @@
 | Monthly Active Users | 100 | 1,000 | 5,000 |
 | MRR | $2,500 | $25,000 | $100,000 |
 | Patient Records | 1,000 | 25,000 | 100,000 |
+
+---
+
+## 📐 Architecture Decision Records
+
+> Future-looking technical proposals that are **documented but deferred** until market validation.
+
+- [ADR-001: Database v2.0](./docs/adr/ADR-001-database-v2-proposal.md) — Hybrid Ledger, Row Level Security (RLS), Biomarkers Schema
+- [ADR-002: Design System](./docs/adr/ADR-002-design-system-proposal.md) — Cyber-Clinical Interface, Dark Mode, Intelligence Rail
+- [ADR-003: Marketing Growth Engine](./docs/adr/ADR-003-marketing-growth-engine.md) — Sanctuary Page, Content Alchemist, Karma Loop
 
 ---
 
