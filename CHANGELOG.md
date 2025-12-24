@@ -5,6 +5,35 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2024-12-24
+
+### Fixed
+- **Local Login Loop**: Resolved redirect loop caused by stale HttpOnly cookies after 401 errors
+  - Frontend now calls `/auth/logout` before redirecting to clear server-side session
+  - Backend cookie configuration made environment-aware (`secure=False` for localhost)
+- **OAuth Callback URL**: Google Calendar integration now uses `FRONTEND_URL` environment variable instead of hardcoded localhost
+- **Marketing App Links**: Navigation links now correctly point to `app.kuraos.ai` subdomain
+- **Marketing Styles**: Added missing brand color definitions for Tailwind v4 (`brand-dark`, `brand-accent`, `brand-glow`)
+- **Input Text Visibility**: Removed global CSS rule that forced dark text on inputs, fixing invisible text on dark backgrounds
+
+### Infrastructure
+- **Secret Management**: All sensitive credentials (Stripe, Twilio) now managed via Google Secret Manager
+  - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+  - `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_NUMBER`
+- **Cloud Run Deploy**: Updated `deploy.sh` to inject secrets from Secret Manager via `--set-secrets`
+- **Production Config**: Added `FRONTEND_URL` and `GOOGLE_REDIRECT_URI` to `env-vars.yaml`
+
+### Developer Experience
+- **Stripe CLI Automation**: `start-dev.sh` now auto-starts Stripe webhook listener with PID tracking
+- **Twilio Webhook Automation**: Script attempts to auto-update WhatsApp sandbox webhook URL via Twilio API
+- **Marketing Local Dev**: Marketing app now runs on port 3002 via `start-dev.sh`
+- **Removed Turbopack Flag**: Explicit `--turbo` removed from marketing app (Next.js 16 uses it by default)
+
+### Documentation
+- **TECH_DEBT.md**: Updated with Sandbox-to-Production migration checklist for Stripe and Twilio
+
+---
+
 ## [1.0.0] - 2024-12-23
 
 ### 🎉 Initial Public Release
