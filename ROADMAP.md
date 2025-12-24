@@ -33,6 +33,20 @@
 
 ---
 
+## ✅ Completed: v1.0.2 The Black Box (December 2024)
+
+### Infrastructure
+- [x] Automated PostgreSQL backups (every 6h, 7-day retention)
+- [x] Admin panel Backups tab (create/restore/download/delete)
+- [x] Nuclear confirmation modal for restore operations
+- [x] Cascade delete for pending_actions when leads deleted
+
+### Documentation
+- [x] ADR-005 to ADR-009: Fidelization Stack roadmap
+- [x] ROADMAP_PROPOSAL_v1.1.md consolidated
+
+---
+
 ## 📅 Q1 2026: Growth & Polish
 
 **Goal:** First 50 paying organizations
