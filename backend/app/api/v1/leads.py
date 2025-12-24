@@ -330,6 +330,7 @@ async def delete_lead(
     """Delete a lead.
 
     Cannot delete leads that have been converted to patients.
+    Also cleans up any pending_actions referencing this lead.
     """
     query = select(Lead).where(
         Lead.id == lead_id,
@@ -346,6 +347,17 @@ async def delete_lead(
             status_code=400,
             detail="Cannot delete converted lead. Delete the patient instead.",
         )
+
+    # Cascade delete: Remove any pending_actions referencing this lead
+    from app.db.models import PendingAction
+    from sqlalchemy import delete
+
+    await db.execute(
+        delete(PendingAction).where(
+            PendingAction.recipient_id == lead_id,
+            PendingAction.recipient_type == "lead",
+        )
+    )
 
     await db.delete(lead)
     await db.commit()

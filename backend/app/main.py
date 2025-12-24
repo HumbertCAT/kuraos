@@ -272,6 +272,15 @@ app.include_router(
     tags=["Help"],
 )
 
+# Admin Backups (Super Admin only)
+from app.api.v1 import admin_backups
+
+app.include_router(
+    admin_backups.router,
+    prefix=settings.API_V1_STR,
+    tags=["Admin Backups"],
+)
+
 # Mount static files for serving uploads
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

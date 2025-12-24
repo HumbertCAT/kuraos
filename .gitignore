@@ -47,3 +47,8 @@ venv/
 # Misc
 *.tsbuildinfo
 .vercel/
+
+# Backups (The Black Box)
+backups/*.sql.gz
+backups/*.sql
+!backups/.gitkeep

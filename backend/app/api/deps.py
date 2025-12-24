@@ -97,3 +97,19 @@ async def require_clinical_access(current_user: CurrentUser) -> User:
 # Role-based type aliases
 CurrentOwner = Annotated[User, Depends(require_owner)]
 CurrentClinicalUser = Annotated[User, Depends(require_clinical_access)]
+
+
+async def require_super_admin(current_user: CurrentUser) -> User:
+    """
+    Dependency that requires super_admin flag.
+    Use for: system-wide admin operations like backup/restore.
+    """
+    if not getattr(current_user, "is_superuser", False):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Super admin access required",
+        )
+    return current_user
+
+
+CurrentSuperAdmin = Annotated[User, Depends(require_super_admin)]

@@ -7,10 +7,16 @@ services:
       - ./.env  # Single source of truth - copy .env.example to .env
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/therapistos
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=therapistos
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     depends_on:
       - db
     volumes:
       - ./backend:/app
+      - ./backups:/app/backups  # For backup API access
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
@@ -45,6 +51,27 @@ services:
       - backend
     network_mode: "host"
 
+  # ============================================================
+  # THE BLACK BOX - Automated Backup Service
+  # ============================================================
+  backup:
+    build: ./docker/backup
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=therapistos
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - BACKUP_INTERVAL_HOURS=${BACKUP_INTERVAL_HOURS:-6}
+      - BACKUP_RETENTION_DAYS=${BACKUP_RETENTION_DAYS:-7}
+      - S3_BUCKET=${S3_BUCKET:-}
+    depends_on:
+      - db
+    volumes:
+      - ./backups:/backups
+    restart: unless-stopped
+
 
 volumes:
   postgres_data:
+

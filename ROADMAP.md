@@ -114,6 +114,11 @@
 - [ADR-002: Design System](./docs/adr/ADR-002-design-system-proposal.md) — Cyber-Clinical Interface, Dark Mode, Intelligence Rail
 - [ADR-003: Marketing Growth Engine](./docs/adr/ADR-003-marketing-growth-engine.md) — Sanctuary Page, Content Alchemist, Karma Loop
 - [ADR-004: Meta Cloud API](./docs/adr/ADR-004-meta-cloud-api-integration.md) — WhatsApp Business Migration, Instagram Growth Module
+- [ADR-005: Membership Builder](./docs/adr/ADR-005-membership-builder.md) — Subscriptions, Content Library, Smart Prescription (1/3 Fidelization)
+- [ADR-006: Smart Prescriptions](./docs/adr/ADR-006-smart-prescriptions.md) — AI-Suggested Content, Adherence Tracking (2/3 Fidelization)
+- [ADR-007: The Mirror](./docs/adr/ADR-007-the-mirror.md) — Progress Visualization, Spotify Wrapped Reports (3/3 Fidelization)
+- [ADR-008: Time Capsule](./docs/adr/ADR-008-time-capsule.md) — Delayed Messaging, Hope to the Future (4/4 Loyalty)
+- [ADR-009: Trinity Navigation](./docs/adr/ADR-009-trinity-navigation.md) — Micelio/Clínica/Comunidad + Bento Dashboard
 
 ---
 
