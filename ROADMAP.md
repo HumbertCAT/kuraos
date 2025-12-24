@@ -46,6 +46,7 @@
 
 ### Growth Engine
 - [ ] **Self-Service Onboarding**: Guided setup wizard
+- [ ] **Demo Mode UI**: Dashboard button to seed demo data for new orgs/investors
 - [ ] **Referral Program**: Therapist-get-Therapist incentives
 - [ ] **Partner Integrations**: Training school affiliates
 
