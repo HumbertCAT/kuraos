@@ -522,35 +522,35 @@ export default function PitchDeck() {
                     </div>
                 </div>
 
-                {/* Navigation */}
-                <div className="p-8 flex justify-between items-center">
-                    {/* Slide dots */}
-                    <div className="flex gap-2">
+                {/* Navigation - Fixed for mobile */}
+                <div className="p-4 md:p-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    {/* Slide dots - scrollable on mobile */}
+                    <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
                         {slides.map((_, index) => (
                             <button
                                 key={index}
                                 onClick={() => goToSlide(index)}
-                                className={`w-2 h-2 rounded-full transition-all ${index === currentSlide ? 'bg-emerald-400 w-6' : 'bg-slate-600 hover:bg-slate-500'
+                                className={`w-3 h-3 md:w-2 md:h-2 rounded-full transition-all flex-shrink-0 ${index === currentSlide ? 'bg-emerald-400 w-8 md:w-6' : 'bg-slate-600 hover:bg-slate-500'
                                     }`}
                             />
                         ))}
                     </div>
 
-                    {/* Arrow buttons */}
-                    <div className="flex gap-4 opacity-50 hover:opacity-100 transition-opacity">
+                    {/* Arrow buttons - Always visible on mobile */}
+                    <div className="flex gap-4">
                         <button
                             onClick={() => goToSlide(currentSlide - 1)}
-                            className={`p-2 hover:bg-white/10 rounded-full transition-colors ${currentSlide === 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            className={`p-3 md:p-2 bg-slate-800 md:bg-transparent hover:bg-slate-700 md:hover:bg-white/10 rounded-full transition-colors ${currentSlide === 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
                             disabled={currentSlide === 0}
                         >
-                            <ChevronLeft className="w-6 h-6" />
+                            <ChevronLeft className="w-8 h-8 md:w-6 md:h-6" />
                         </button>
                         <button
                             onClick={() => goToSlide(currentSlide + 1)}
-                            className={`p-2 hover:bg-white/10 rounded-full transition-colors ${currentSlide === slides.length - 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            className={`p-3 md:p-2 bg-emerald-600 md:bg-transparent hover:bg-emerald-700 md:hover:bg-white/10 rounded-full transition-colors ${currentSlide === slides.length - 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
                             disabled={currentSlide === slides.length - 1}
                         >
-                            <ChevronRight className="w-6 h-6" />
+                            <ChevronRight className="w-8 h-8 md:w-6 md:h-6" />
                         </button>
                     </div>
                 </div>
