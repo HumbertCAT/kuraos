@@ -5,6 +5,35 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2024-12-24
+
+### Added
+- **The Black Box Backup System**: Automated PostgreSQL backup infrastructure
+  - Automated backups every 6 hours with 7-day retention
+  - Admin panel "Backups" tab for create/restore/download/delete
+  - Nuclear confirmation modal requiring "RESTAURAR" text input
+  - Path traversal security validation on all filename inputs
+  - Download endpoint for Cloud Run ephemeral storage protection
+
+### Added (ADRs)
+- **ADR-005**: Membership Builder (subscriptions + content library)
+- **ADR-006**: Smart Prescriptions (AI-suggested clinical content)
+- **ADR-007**: The Mirror (progress visualization)
+- **ADR-008**: Time Capsule (delayed messaging)
+- **ADR-009**: Trinity Navigation (UI architecture)
+
+### Fixed
+- **Cascade Delete**: Deleting a Lead now also deletes associated `pending_actions`
+- **Backend Dockerfile**: Added `postgresql-client` for backup/restore operations
+
+### Removed
+- **Pitch Deck**: Deprecated TherapistOS pitch deck at `/pitch`
+
+### Documentation
+- **ROADMAP_PROPOSAL_v1.1.md**: Consolidated 2026 strategic roadmap proposal
+
+---
+
 ## [1.0.1] - 2024-12-24
 
 ### Fixed
