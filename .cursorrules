@@ -1,0 +1,80 @@
+# KURA OS - AI Development Rules
+
+> **SYSTEM INSTRUCTION**: Read and respect these rules at the start of every task.
+
+---
+
+## Core Principles
+
+### 1. Data Separation (HIPAA/GDPR Ready)
+- **Lead** = CRM/Marketing data (disposable)
+- **Patient** = Clinical/Medical data (protected)
+- Route via `FormTemplate.target_entity`: `LEAD` → CRM, `PATIENT` → Clinical
+- Lead → Patient conversion is **manual only**
+
+### 2. Dynamic Terminology
+- **NEVER** hardcode "paciente" or "cliente"
+- Use `Organization.terminology_preference`: `PATIENT | CLIENT | CONSULTANT`
+- Frontend: `const { singular, plural } = useTerminology();`
+
+### 3. Multi-Tenancy
+- **EVERY** query MUST filter by `organization_id`
+- Never expose data across organizations
+
+### 4. Deletion Policy
+| Entity | Delete Type |
+|--------|-------------|
+| `Lead` | **HARD DELETE** - Cascade delete orphans |
+| `Patient` | **SOFT DELETE** - Set `is_active = False`. Requires Super Admin for hard delete |
+
+### 5. i18n
+- All UI strings via `next-intl` in `apps/platform/messages/{locale}.json`
+- Supported: `es`, `en`, `ca`, `it`
+
+### 6. AI Philosophy
+- AI features are "Clinical Agents" (team members), not "bots" or "tools"
+- Human-in-the-Loop for sensitive actions (emails, messages)
+- Draft mode via `PendingAction` table
+
+### 7. Authentication
+- JWT in HttpOnly cookies, domain `.kuraos.ai`
+- Use `Depends(get_current_user)` for auth
+- Use `Depends(require_super_admin)` for admin-only
+
+### 8. Release Process
+Follow `/publish-release` workflow:
+1. CHANGELOG.md
+2. README.md (version badge)
+3. ROADMAP.md
+4. Git tag + push
+5. `./scripts/deploy.sh`
+
+---
+
+## Quick Reference
+
+```python
+# Multi-tenant query
+patients = await db.execute(
+    select(Patient).where(Patient.organization_id == current_user.organization_id)
+)
+
+# Target entity routing
+if template.target_entity == "LEAD":
+    create_lead(...)
+else:
+    create_patient(...)
+```
+
+```tsx
+// Dynamic terminology
+const { singular, plural } = useTerminology();
+
+// i18n
+const t = useTranslations('Dashboard');
+```
+
+---
+
+## Full Documentation
+See `.agent/DEVELOPMENT_PRINCIPLES.md` for complete details.
