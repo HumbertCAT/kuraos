@@ -5,25 +5,14 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { api, API_URL } from '@/lib/api';
 import { useTerminology } from '@/hooks/use-terminology';
+import { CyberCard } from '@/components/ui/CyberCard';
 import {
-    Brain, Sparkles, Users, Calendar, FileText, DollarSign,
-    AlertTriangle, TrendingUp, ChevronRight, Clock, CheckCircle,
-    Zap, Target, ArrowUpRight, ArrowDownRight, LayoutGrid,
-    MessageSquareWarning
+    Brain, Users, Calendar, Target, Wallet,
+    AlertTriangle, ChevronRight, Clock, CheckCircle,
+    Zap, Activity
 } from 'lucide-react';
-import SectionHeader from '@/components/SectionHeader';
 import PendingActionsWidget from '@/components/PendingActionsWidget';
 import BriefingPlayer from '@/components/BriefingPlayer';
-
-/**
- * Main Dashboard - Command Center for TherapistOS
- * 
- * The "wow landing" for investors showing everything at a glance:
- * - AletheIA Suggestions
- * - Priority Patients
- * - Recent Activity
- * - Revenue Summary
- */
 
 interface PatientSummary {
     id: string;
@@ -37,7 +26,7 @@ interface BookingSummary {
     id: string;
     patient_name: string;
     service_title: string;
-    service_price?: number;  // Optional - for pending payment calculations
+    service_price?: number;
     start_time: string;
     status: string;
     amount_paid: number;
@@ -53,9 +42,9 @@ interface DashboardData {
     pendingPayments: number;
     totalForms: number;
     activeForms: number;
+    newLeadsThisWeek: number;
 }
 
-// AletheIA Suggestion type - chat_risk is HIGHEST priority
 interface AISuggestion {
     id: string;
     type: 'chat_risk' | 'critical' | 'warning' | 'action' | 'insight';
@@ -67,90 +56,41 @@ interface AISuggestion {
     actionLink?: string;
 }
 
-// Generate AI suggestions from patient data
 function generateAISuggestions(patients: PatientSummary[]): AISuggestion[] {
     const suggestions: AISuggestion[] = [];
-
     patients.forEach(patient => {
         if (!patient.journey_status) return;
-
-        Object.entries(patient.journey_status).forEach(([journey, status]) => {
+        Object.entries(patient.journey_status).forEach(([, status]) => {
             const fullName = `${patient.first_name} ${patient.last_name}`;
-
             if (status === 'BLOCKED_MEDICAL' || status === 'BLOCKED_HIGH_RISK') {
                 suggestions.push({
                     id: `${patient.id}-blocked`,
                     type: 'critical',
-                    title: `⛔ ${fullName} - Bloqueado`,
-                    description: 'Requiere revisión manual antes de continuar el proceso.',
+                    title: `${fullName} - Bloqueado`,
+                    description: 'Requiere revisión manual antes de continuar.',
                     patientId: patient.id,
                     patientName: fullName,
-                    actionLabel: 'Ver Paciente',
+                    actionLabel: 'Ver',
                     actionLink: `/patients/${patient.id}`,
                 });
             } else if (status === 'STAGNATION_ALERT') {
                 suggestions.push({
                     id: `${patient.id}-stagnant`,
                     type: 'warning',
-                    title: `⚠️ ${fullName} - Sin Actividad`,
-                    description: 'Llevan tiempo sin interacción. Considera contactar para seguimiento.',
+                    title: `${fullName} - Sin Actividad`,
+                    description: 'Sin interacción reciente.',
                     patientId: patient.id,
                     patientName: fullName,
                     actionLabel: 'Contactar',
                     actionLink: `/patients/${patient.id}`,
                 });
-            } else if (status === 'AWAITING_PAYMENT') {
-                suggestions.push({
-                    id: `${patient.id}-payment`,
-                    type: 'action',
-                    title: `💳 ${fullName} - Pago Pendiente`,
-                    description: 'El recordatorio de pago fue enviado automáticamente.',
-                    patientId: patient.id,
-                    patientName: fullName,
-                    actionLabel: 'Ver Estado',
-                    actionLink: `/patients/${patient.id}`,
-                });
-            } else if (status === 'AWAITING_BIRTH_DATA' || status === 'AWAITING_WAIVER') {
-                suggestions.push({
-                    id: `${patient.id}-data`,
-                    type: 'action',
-                    title: `📋 ${fullName} - Datos Pendientes`,
-                    description: 'Esperando información del paciente para continuar.',
-                    patientId: patient.id,
-                    patientName: fullName,
-                    actionLabel: 'Enviar Recordatorio',
-                    actionLink: `/patients/${patient.id}`,
-                });
-            } else if (status === 'PREPARATION_PHASE') {
-                suggestions.push({
-                    id: `${patient.id}-prep`,
-                    type: 'insight',
-                    title: `✨ ${fullName} - En Preparación`,
-                    description: 'Buen momento para enviar material pre-sesión.',
-                    patientId: patient.id,
-                    patientName: fullName,
-                    actionLabel: 'Enviar Material',
-                    actionLink: `/patients/${patient.id}`,
-                });
             }
         });
     });
-
-    // Sort: critical first, then warning, then action, then insight
     const priority: Record<string, number> = { critical: 0, chat_risk: 0, warning: 1, action: 2, insight: 3 };
     suggestions.sort((a, b) => priority[a.type] - priority[b.type]);
-
-    return suggestions.slice(0, 5); // Max 5 suggestions
+    return suggestions.slice(0, 4);
 }
-
-// Suggestion card colors - chat_risk has pulsing red
-const suggestionColors = {
-    chat_risk: { bg: 'bg-red-100', border: 'border-red-400 animate-pulse', icon: 'text-red-600' },
-    critical: { bg: 'bg-red-50', border: 'border-red-200', icon: 'text-red-500' },
-    warning: { bg: 'bg-amber-50', border: 'border-amber-200', icon: 'text-amber-500' },
-    action: { bg: 'bg-blue-50', border: 'border-blue-200', icon: 'text-blue-500' },
-    insight: { bg: 'bg-purple-50', border: 'border-purple-200', icon: 'text-purple-500' },
-};
 
 export default function DashboardPage() {
     const t = useTranslations('Dashboard');
@@ -158,55 +98,24 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<DashboardData | null>(null);
     const [suggestions, setSuggestions] = useState<AISuggestion[]>([]);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         async function loadDashboard() {
             try {
-                console.log('[Dashboard] Starting data load...');
-
-                // Parallel API calls with individual error handling
-                const [patientsResult, bookingsResult, formsResult, riskAlertsResult] = await Promise.allSettled([
+                const [patientsResult, bookingsResult, formsResult, leadsResult] = await Promise.allSettled([
                     api.patients.list(),
                     api.bookings.list({}),
                     fetch(`${API_URL}/forms/templates`, { credentials: 'include' }).then(r => r.ok ? r.json() : []),
-                    fetch(`${API_URL}/monitoring/risk-alerts?hours=48`, { credentials: 'include' }).then(r => r.ok ? r.json() : { alerts: [] }),
+                    fetch(`${API_URL}/leads/?limit=100`, { credentials: 'include' }).then(r => r.ok ? r.json() : { leads: [] }),
                 ]);
 
-                // Log individual results for debugging
-                console.log('[Dashboard] Patients result:', patientsResult);
-                console.log('[Dashboard] Bookings result:', bookingsResult);
-                console.log('[Dashboard] Forms result:', formsResult);
-
-                // Extract data with proper error handling
                 const patientsRes = patientsResult.status === 'fulfilled' ? patientsResult.value : { patients: [], total: 0 };
                 const bookingsRes = bookingsResult.status === 'fulfilled' ? bookingsResult.value : [];
                 const formsRes = formsResult.status === 'fulfilled' ? formsResult.value : [];
-                const riskAlertsRes = riskAlertsResult.status === 'fulfilled' ? riskAlertsResult.value : { alerts: [] };
-
-                // Log any failed requests
-                const failures: string[] = [];
-                if (patientsResult.status === 'rejected') {
-                    console.error('[Dashboard] Patients API failed:', patientsResult.reason);
-                    failures.push('pacientes');
-                }
-                if (bookingsResult.status === 'rejected') {
-                    console.error('[Dashboard] Bookings API failed:', bookingsResult.reason);
-                    failures.push('reservas');
-                }
-                if (formsResult.status === 'rejected') {
-                    console.error('[Dashboard] Forms API failed:', formsResult.reason);
-                    failures.push('formularios');
-                }
-
-                if (failures.length > 0) {
-                    setError(`Error cargando: ${failures.join(', ')}. Revisa la consola del navegador.`);
-                }
+                const leadsRes = leadsResult.status === 'fulfilled' ? leadsResult.value : { leads: [] };
 
                 const patients = patientsRes.patients || [];
                 const totalPatients = patientsRes.total || patients.length;
-                console.log('[Dashboard] Total patients:', totalPatients, 'Array length:', patients.length);
-
                 const bookings = (bookingsRes || []).map((b: any) => ({
                     id: b.id,
                     patient_name: b.patient_name || 'Paciente',
@@ -216,79 +125,55 @@ export default function DashboardPage() {
                     amount_paid: b.amount_paid || 0,
                 }));
 
-                // Forms stats
                 const forms = Array.isArray(formsRes) ? formsRes : [];
-                const totalForms = forms.length;
-                const activeForms = forms.filter((f: any) => f.is_active).length;
-                console.log('[Dashboard] Forms:', totalForms, 'active:', activeForms);
+                const leads = leadsRes.leads || [];
+                const oneWeekAgo = new Date();
+                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                const newLeadsThisWeek = leads.filter((l: any) => new Date(l.created_at) > oneWeekAgo).length;
 
-                // Calculate priority patients (blocked, stagnant, awaiting action)
                 const priorityStatuses = ['BLOCKED_MEDICAL', 'BLOCKED_HIGH_RISK', 'STAGNATION_ALERT', 'AWAITING_PAYMENT'];
                 const priorityPatients = patients.filter((p: PatientSummary) => {
                     if (!p.journey_status) return false;
                     return Object.values(p.journey_status).some(s => priorityStatuses.includes(s));
                 });
 
-                // Calculate revenue (from confirmed bookings)
                 const confirmedBookings = bookings.filter((b: BookingSummary) =>
                     b.status === 'CONFIRMED' || b.status === 'COMPLETED'
                 );
                 const monthlyRevenue = confirmedBookings.reduce((sum: number, b: BookingSummary) => sum + b.amount_paid, 0);
                 const pendingPayments = bookings
                     .filter((b: BookingSummary) => b.status === 'PENDING')
-                    .reduce((sum: number, b: BookingSummary) => sum + (b.service_price || 450), 0); // Fallback to 450€ for demo
+                    .reduce((sum: number, b: BookingSummary) => sum + (b.service_price || 450), 0);
 
-                // Generate AI suggestions from patient journeys
                 const aiSuggestions = generateAISuggestions(patients);
-
-                // Add WhatsApp risk alerts as HIGHEST PRIORITY (chat_risk)
-                const riskAlerts: AISuggestion[] = (riskAlertsRes.alerts || []).map((alert: any) => ({
-                    id: `chat-risk-${alert.id}`,
-                    type: 'chat_risk' as const,
-                    title: `🚨 ${alert.patient_name} - Alerta de Chat`,
-                    description: alert.risk_flags?.join(', ') || alert.summary,
-                    patientId: alert.patient_id,
-                    patientName: alert.patient_name,
-                    actionLabel: 'Ver Monitorización',
-                    actionLink: `/patients/${alert.patient_id}?tab=monitoring`,
-                }));
-
-                // Merge: chat_risk first, then sorted suggestions
-                const priority = { chat_risk: -1, critical: 0, warning: 1, action: 2, insight: 3 };
-                const allSuggestions = [...riskAlerts, ...aiSuggestions];
-                allSuggestions.sort((a, b) => priority[a.type] - priority[b.type]);
-
-                setSuggestions(allSuggestions.slice(0, 6)); // Max 6 suggestions
+                setSuggestions(aiSuggestions);
 
                 setData({
-                    patients: patients.slice(0, 5), // Recent 5 for display
+                    patients: patients.slice(0, 5),
                     totalPatients,
                     priorityPatients,
-                    bookings: bookings.slice(0, 5), // Recent 5 for display
+                    bookings: bookings.slice(0, 5),
                     totalBookings: bookings.length,
                     monthlyRevenue,
                     pendingPayments,
-                    totalForms,
-                    activeForms,
+                    totalForms: forms.length,
+                    activeForms: forms.filter((f: any) => f.is_active).length,
+                    newLeadsThisWeek,
                 });
-                console.log('[Dashboard] Data loaded successfully');
             } catch (error) {
-                console.error('[Dashboard] Failed to load dashboard:', error);
-                setError(`Error general: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                console.error('[Dashboard] Failed to load:', error);
             } finally {
                 setLoading(false);
             }
         }
-
         loadDashboard();
     }, []);
-
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="flex items-center gap-3 text-slate-500">
-                    <Brain className="w-6 h-6 animate-pulse text-purple-500" />
+                <div className="flex items-center gap-3 text-zinc-500">
+                    <Brain className="w-6 h-6 animate-pulse text-ai" />
                     <span>Cargando dashboard...</span>
                 </div>
             </div>
@@ -296,352 +181,235 @@ export default function DashboardPage() {
     }
 
     if (!data) {
-        return <div className="text-center py-12 text-slate-500">Error loading dashboard</div>;
+        return <div className="text-center py-12 text-zinc-500">Error loading dashboard</div>;
     }
 
+    const nextBooking = data.bookings.find(b => new Date(b.start_time) > new Date());
+
     return (
-        <div className="min-h-screen bg-slate-50 py-8 px-6">
-            <div className="max-w-6xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <SectionHeader
-                        icon={LayoutGrid}
-                        title={t('title')}
-                        subtitle={t('subtitle')}
-                        gradientFrom="from-pink-500"
-                        gradientTo="to-rose-500"
-                        shadowColor="shadow-pink-200"
-                    />
-                    <div className="flex items-center gap-2 text-sm text-slate-500">
-                        <Clock className="w-4 h-4" />
-                        {new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
-                    </div>
-                </div>
-
-                {/* Error Banner */}
-                {error && (
-                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
-                        <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                        <div>
-                            <p className="font-medium text-amber-800">{t('loadingError')}</p>
-                            <p className="text-sm text-amber-700">{error}</p>
-                            <p className="text-xs text-amber-600 mt-1">{t('checkConsole')}</p>
-                        </div>
-                    </div>
-                )}
-
-                {/* Chief of Staff - Daily Audio Briefing */}
+        <div className="space-y-6">
+            {/* ZONE A: Chief of Staff (col-span-12) */}
+            <div className="rounded-2xl bg-gradient-to-r from-violet-900 via-indigo-900 to-zinc-900 text-white p-6 shadow-lg border border-white/10">
                 <BriefingPlayer />
+            </div>
 
-                {/* Pending Agent Actions (Human-in-the-Loop) */}
-                <PendingActionsWidget />
+            {/* Pending Actions */}
+            <PendingActionsWidget />
 
-                {/* Quick Stats - Premium Design */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {/* Patients Card */}
-                    <div className="group relative bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 shadow-lg shadow-indigo-200/50 hover:shadow-xl hover:shadow-indigo-300/50 transition-all duration-300 hover:-translate-y-1">
-                        <div className="absolute inset-0 bg-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <div className="relative">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                    <Users className="w-7 h-7 text-white" />
+            {/* ZONE B: Focus Card + Pillar Stack (12-column grid) */}
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                {/* Left: Focus Card (col-span-8) */}
+                <div className="xl:col-span-8 space-y-6">
+                    {/* The Focus Card */}
+                    <CyberCard className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-brand/10 dark:bg-brand/20 flex items-center justify-center">
+                                    <Activity className="w-5 h-5 text-brand" />
                                 </div>
-                                <p className="text-4xl font-bold text-white font-headline">{data.totalPatients}</p>
-                            </div>
-                            <p className="text-sm text-indigo-100 font-medium font-caption uppercase tracking-wide">{terminology.plural} Totales</p>
-                        </div>
-                    </div>
-
-                    {/* Bookings Card */}
-                    <div className="group relative bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-5 shadow-lg shadow-blue-200/50 hover:shadow-xl hover:shadow-blue-300/50 transition-all duration-300 hover:-translate-y-1">
-                        <div className="absolute inset-0 bg-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <span className="absolute top-3 right-3 text-xs text-blue-100 bg-white/20 px-2 py-0.5 rounded-full">{data.totalBookings} {t('total')}</span>
-                        <div className="relative">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                    <Calendar className="w-7 h-7 text-white" />
+                                <div>
+                                    <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">El Foco</h2>
+                                    <p className="text-sm text-zinc-500">Lo más importante ahora</p>
                                 </div>
-                                <p className="text-4xl font-bold text-white font-headline">
-                                    {data.bookings.filter(b => new Date(b.start_time) > new Date()).length}
-                                </p>
                             </div>
-                            <p className="text-sm text-blue-100 font-medium font-caption uppercase tracking-wide">{t('upcomingBookings')}</p>
+                            <span className="text-xs font-mono text-zinc-400">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
-                    </div>
 
-                    {/* Forms Card */}
-                    <div className="group relative bg-gradient-to-br from-fuchsia-500 to-pink-500 rounded-2xl p-5 shadow-lg shadow-fuchsia-200/50 hover:shadow-xl hover:shadow-fuchsia-300/50 transition-all duration-300 hover:-translate-y-1">
-                        <div className="absolute inset-0 bg-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <span className="absolute top-3 right-3 text-xs text-emerald-200 bg-emerald-500/40 px-2 py-0.5 rounded-full">{data.activeForms} {t('active')}</span>
-                        <div className="relative">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                    <FileText className="w-7 h-7 text-white" />
+                        {nextBooking ? (
+                            <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-border-subtle">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-xs font-mono uppercase tracking-wider text-zinc-500 mb-1">Próxima Sesión</p>
+                                        <p className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{nextBooking.service_title}</p>
+                                        <p className="text-sm text-zinc-600 dark:text-zinc-400">{nextBooking.patient_name}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-2xl font-mono font-bold text-brand">
+                                            {new Date(nextBooking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </p>
+                                        <p className="text-xs text-zinc-500">
+                                            {new Date(nextBooking.start_time).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}
+                                        </p>
+                                    </div>
                                 </div>
-                                <p className="text-4xl font-bold text-white font-headline">{data.totalForms}</p>
                             </div>
-                            <p className="text-sm text-pink-100 font-medium font-caption uppercase tracking-wide">{t('forms')}</p>
-                        </div>
-                    </div>
+                        ) : (
+                            <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-border-subtle text-center">
+                                <CheckCircle className="w-8 h-8 mx-auto mb-2 text-brand" />
+                                <p className="text-zinc-600 dark:text-zinc-400">Sin sesiones pendientes hoy</p>
+                            </div>
+                        )}
+                    </CyberCard>
 
-                    {/* Attention Card */}
-                    <div className="group relative bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 shadow-lg shadow-amber-200/50 hover:shadow-xl hover:shadow-amber-300/50 transition-all duration-300 hover:-translate-y-1">
-                        <div className="absolute inset-0 bg-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <div className="relative">
-                            <div className="flex items-center gap-4 mb-2">
-                                <div className="w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                    <AlertTriangle className="w-7 h-7 text-white" />
-                                </div>
-                                <p className="text-4xl font-bold text-white font-headline">{data.priorityPatients.length}</p>
+                    {/* AletheIA Suggestions */}
+                    {suggestions.length > 0 && (
+                        <CyberCard variant="ai" className="p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Brain className="w-5 h-5 text-ai" />
+                                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">AletheIA Sugiere</h3>
+                                <span className="text-xs px-2 py-0.5 rounded bg-ai/10 text-ai font-mono">{suggestions.length}</span>
                             </div>
-                            <p className="text-sm text-amber-100 font-medium font-caption uppercase tracking-wide">{t('needsAttention')}</p>
-                        </div>
-                    </div>
+                            <div className="space-y-2">
+                                {suggestions.map(s => (
+                                    <div key={s.id} className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-border-subtle">
+                                        <div className="flex items-center gap-3">
+                                            <Zap className={`w-4 h-4 ${s.type === 'critical' ? 'text-risk' : s.type === 'warning' ? 'text-amber-500' : 'text-ai'}`} />
+                                            <div>
+                                                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{s.title}</p>
+                                                <p className="text-xs text-zinc-500">{s.description}</p>
+                                            </div>
+                                        </div>
+                                        {s.actionLink && (
+                                            <Link href={s.actionLink} className="text-xs text-brand hover:underline flex items-center gap-1">
+                                                {s.actionLabel} <ChevronRight className="w-3 h-3" />
+                                            </Link>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </CyberCard>
+                    )}
                 </div>
 
-                {/* Main Grid */}
-                <div className="grid lg:grid-cols-3 gap-6">
-                    {/* Left Column - AletheIA Suggestions */}
-                    <div className="lg:col-span-2 space-y-6">
-                        {/* AletheIA Suggestions Card */}
-                        <div className="bg-gradient-to-r from-purple-50 via-indigo-50 to-pink-50 rounded-xl border border-purple-200 overflow-hidden">
-                            <div className="px-5 py-4 flex items-center gap-3 border-b border-purple-200">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                                    <Brain className="w-5 h-5 text-white" />
+                {/* Right: Pillar Stack (col-span-4) */}
+                <div className="xl:col-span-4 space-y-4">
+                    {/* Metric 1: New Leads (Engage) */}
+                    <CyberCard className="p-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                                    <Target className="w-5 h-5 text-blue-500" />
                                 </div>
-                                <div className="flex-1">
-                                    <h2 className="font-bold text-purple-900 flex items-center gap-2 font-headline">
-                                        {t('aletheiaTitle')}
-                                        <span className="text-xs font-normal px-2 py-0.5 bg-purple-200 text-purple-700 rounded-full font-caption">
-                                            ✨ AI
-                                        </span>
-                                    </h2>
-                                    <p className="text-sm text-purple-600">{t('aletheiaSubtitle')}</p>
+                                <div>
+                                    <p className="text-xs font-mono uppercase tracking-wider text-zinc-500">Nuevos Leads</p>
+                                    <p className="text-2xl font-bold font-mono text-zinc-900 dark:text-zinc-100">{data.newLeadsThisWeek}</p>
                                 </div>
-                                {suggestions.length > 0 && (
-                                    <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-caption">
-                                        {suggestions.length} {t('pending')}
-                                    </span>
-                                )}
                             </div>
-
-                            <div className="p-4 space-y-3">
-                                {suggestions.length === 0 ? (
-                                    <div className="text-center py-8 text-purple-600">
-                                        <CheckCircle className="w-12 h-12 mx-auto mb-3 text-emerald-400" />
-                                        <p className="font-medium">{t('allGood')}</p>
-                                        <p className="text-sm text-purple-500">{t('noPriorityActions')}</p>
-                                    </div>
-                                ) : (
-                                    suggestions.map(suggestion => {
-                                        const colors = suggestionColors[suggestion.type];
-                                        return (
-                                            <div
-                                                key={suggestion.id}
-                                                className={`${colors.bg} ${colors.border} border rounded-lg p-4 flex items-start justify-between gap-4`}
-                                            >
-                                                <div className="flex items-start gap-3 flex-1">
-                                                    <Zap className={`w-5 h-5 ${colors.icon} flex-shrink-0 mt-0.5`} />
-                                                    <div>
-                                                        <p className="font-medium text-slate-800">{suggestion.title}</p>
-                                                        <p className="text-sm text-slate-600 mt-1">{suggestion.description}</p>
-                                                    </div>
-                                                </div>
-                                                {suggestion.actionLink && (
-                                                    <Link
-                                                        href={suggestion.actionLink}
-                                                        className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1 whitespace-nowrap"
-                                                    >
-                                                        {suggestion.actionLabel}
-                                                        <ChevronRight className="w-4 h-4" />
-                                                    </Link>
-                                                )}
-                                            </div>
-                                        );
-                                    })
-                                )}
-                            </div>
+                            <span className="text-xs text-zinc-400">esta semana</span>
                         </div>
+                    </CyberCard>
 
-                        {/* Recent Bookings */}
-                        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                            <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100">
-                                <div className="flex items-center gap-3">
-                                    <Calendar className="w-5 h-5 text-blue-500" />
-                                    <h2 className="font-semibold text-slate-800 font-headline">{t('upcomingReservations')}</h2>
+                    {/* Metric 2: Active Patients (Practice) */}
+                    <CyberCard className="p-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center">
+                                    <Users className="w-5 h-5 text-teal-500" />
                                 </div>
-                                <Link href="/bookings" className="text-sm text-indigo-600 hover:underline flex items-center gap-1">
-                                    {t('viewAllBookings')} <ChevronRight className="w-4 h-4" />
-                                </Link>
+                                <div>
+                                    <p className="text-xs font-mono uppercase tracking-wider text-zinc-500">{terminology.plural}</p>
+                                    <p className="text-2xl font-bold font-mono text-zinc-900 dark:text-zinc-100">{data.totalPatients}</p>
+                                </div>
                             </div>
-
-                            <div className="divide-y divide-slate-100">
-                                {data.bookings.length === 0 ? (
-                                    <div className="p-8 text-center text-slate-500">
-                                        {t('noUpcomingBookings')}
-                                    </div>
-                                ) : (
-                                    data.bookings.slice(0, 4).map(booking => (
-                                        <div key={booking.id} className="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                                            <div>
-                                                <p className="font-medium text-slate-800">{booking.service_title}</p>
-                                                <p className="text-sm text-slate-500">{booking.patient_name}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-sm text-slate-600">
-                                                    {new Date(booking.start_time).toLocaleDateString('es-ES', {
-                                                        day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-                                                    })}
-                                                </p>
-                                                <span className={`text-xs px-2 py-0.5 rounded-full font-caption ${booking.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-700' :
-                                                    booking.status === 'COMPLETED' ? 'bg-slate-100 text-slate-600' :
-                                                        'bg-amber-100 text-amber-700'
-                                                    }`}>
-                                                    {booking.status}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
+                            <Link href="/patients" className="text-xs text-brand hover:underline">Ver</Link>
                         </div>
-                    </div>
+                    </CyberCard>
 
-                    {/* Right Column - Quick Access */}
-                    <div className="space-y-6">
-                        {/* Priority Patients */}
-                        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                            <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100 bg-amber-50">
-                                <div className="flex items-center gap-3">
-                                    <AlertTriangle className="w-5 h-5 text-amber-500" />
-                                    <h2 className="font-semibold text-amber-800 font-headline">Requieren Atención</h2>
+                    {/* Metric 3: Month Revenue */}
+                    <CyberCard className="p-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
+                                    <Wallet className="w-5 h-5 text-emerald-500" />
                                 </div>
-                                <span className="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded-full font-caption">
-                                    {data.priorityPatients.length}
-                                </span>
+                                <div>
+                                    <p className="text-xs font-mono uppercase tracking-wider text-zinc-500">Ingresos Mes</p>
+                                    <p className="text-2xl font-bold font-mono text-zinc-900 dark:text-zinc-100">{data.monthlyRevenue.toFixed(0)}€</p>
+                                </div>
                             </div>
-
-                            <div className="divide-y divide-slate-100">
-                                {data.priorityPatients.length === 0 ? (
-                                    <div className="p-6 text-center text-slate-500">
-                                        <CheckCircle className="w-8 h-8 mx-auto mb-2 text-emerald-400" />
-                                        <p className="text-sm">{t('noPriorityPatients')}</p>
-                                    </div>
-                                ) : (
-                                    data.priorityPatients.slice(0, 4).map(patient => {
-                                        const status = patient.journey_status ? Object.values(patient.journey_status)[0] : '';
-                                        const isBlocked = status.includes('BLOCKED');
-
-                                        return (
-                                            <Link
-                                                key={patient.id}
-                                                href={`/patients/${patient.id}`}
-                                                className="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${isBlocked ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
-                                                        }`}>
-                                                        {patient.first_name[0]}{patient.last_name[0]}
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-medium text-slate-800 text-sm">
-                                                            {patient.first_name} {patient.last_name}
-                                                        </p>
-                                                        <p className={`text-xs font-caption ${isBlocked ? 'text-red-600' : 'text-amber-600'}`}>
-                                                            {status.replace(/_/g, ' ')}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <ChevronRight className="w-4 h-4 text-slate-400" />
-                                            </Link>
-                                        );
-                                    })
-                                )}
-                            </div>
+                            {data.pendingPayments > 0 && (
+                                <span className="text-xs text-amber-500 font-mono">+{data.pendingPayments.toFixed(0)}€ pend.</span>
+                            )}
                         </div>
+                    </CyberCard>
 
-                        {/* Recent Patients */}
-                        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                            <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100">
-                                <div className="flex items-center gap-3">
-                                    <Users className="w-5 h-5 text-indigo-500" />
-                                    <h2 className="font-semibold text-slate-800 font-headline">{terminology.plural} Recientes</h2>
-                                </div>
-                                <Link href="/patients" className="text-sm text-indigo-600 hover:underline">
-                                    {t('viewAll')}
-                                </Link>
+                    {/* Priority Patients Alert */}
+                    {data.priorityPatients.length > 0 && (
+                        <CyberCard variant="alert" className="p-4">
+                            <div className="flex items-center gap-3 mb-3">
+                                <AlertTriangle className="w-5 h-5 text-risk" />
+                                <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Requieren Atención</p>
+                                <span className="text-xs px-2 py-0.5 rounded bg-risk/10 text-risk font-mono">{data.priorityPatients.length}</span>
                             </div>
-
-                            <div className="divide-y divide-slate-100">
-                                {data.patients.slice(0, 5).map(patient => (
-                                    <Link
-                                        key={patient.id}
-                                        href={`/patients/${patient.id}`}
-                                        className="px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-medium">
-                                                {patient.first_name[0]}{patient.last_name[0]}
-                                            </div>
-                                            <p className="font-medium text-slate-700 text-sm">
-                                                {patient.first_name} {patient.last_name}
-                                            </p>
-                                        </div>
-                                        <ChevronRight className="w-4 h-4 text-slate-400" />
+                            <div className="space-y-1">
+                                {data.priorityPatients.slice(0, 3).map(p => (
+                                    <Link key={p.id} href={`/patients/${p.id}`} className="flex items-center justify-between p-2 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                        <span className="text-sm text-zinc-700 dark:text-zinc-300">{p.first_name} {p.last_name}</span>
+                                        <ChevronRight className="w-4 h-4 text-zinc-400" />
                                     </Link>
                                 ))}
                             </div>
-                        </div>
-
-                        {/* Revenue Summary - Monthly */}
-                        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl overflow-hidden text-white">
-                            {/* Header with Month Name */}
-                            <div className="px-5 py-3 bg-black/10 flex items-center gap-3">
-                                <DollarSign className="w-5 h-5" />
-                                <h2 className="font-semibold font-headline">
-                                    {new Date().toLocaleString('es', { month: 'long' }).charAt(0).toUpperCase() + new Date().toLocaleString('es', { month: 'long' }).slice(1)}
-                                </h2>
-                            </div>
-
-                            <div className="p-4 space-y-3">
-                                {/* Reservas del Mes */}
-                                <div className="bg-white/10 rounded-lg px-4 py-3 flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <Calendar className="w-5 h-5 text-emerald-200" />
-                                        <span className="text-emerald-100 font-medium">Reservas</span>
-                                    </div>
-                                    <span className="text-2xl font-bold">
-                                        {data.bookings.filter(b => {
-                                            const d = new Date(b.start_time);
-                                            const now = new Date();
-                                            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-                                        }).length}
-                                    </span>
-                                </div>
-
-                                {/* Ingresos del Mes */}
-                                <div className="bg-white/10 rounded-lg px-4 py-3 flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <DollarSign className="w-5 h-5 text-emerald-200" />
-                                        <span className="text-emerald-100 font-medium">Ingresos</span>
-                                    </div>
-                                    <span className="text-2xl font-bold">{data.monthlyRevenue.toFixed(0)}€</span>
-                                </div>
-
-                                {/* Pendiente Total - Amber */}
-                                <div className="bg-amber-500/30 rounded-lg px-4 py-3 flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <AlertTriangle className="w-5 h-5 text-amber-200" />
-                                        <span className="text-amber-100 font-medium">Pendiente</span>
-                                    </div>
-                                    <span className="text-2xl font-bold text-amber-200">{data.pendingPayments.toFixed(0)}€</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        </CyberCard>
+                    )}
                 </div>
+            </div>
+
+            {/* ZONE C: Recent Lists (col-span-12) */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Upcoming Bookings */}
+                <CyberCard>
+                    <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Calendar className="w-5 h-5 text-brand" />
+                            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Próximas Reservas</h3>
+                        </div>
+                        <Link href="/calendar" className="text-xs text-brand hover:underline flex items-center gap-1">
+                            Ver todas <ChevronRight className="w-3 h-3" />
+                        </Link>
+                    </div>
+                    <div className="divide-y divide-border-subtle">
+                        {data.bookings.length === 0 ? (
+                            <div className="p-6 text-center text-zinc-500">Sin reservas próximas</div>
+                        ) : (
+                            data.bookings.slice(0, 4).map(b => (
+                                <div key={b.id} className="px-6 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                    <div>
+                                        <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{b.service_title}</p>
+                                        <p className="text-xs text-zinc-500">{b.patient_name}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-xs font-mono text-zinc-600 dark:text-zinc-400">
+                                            {new Date(b.start_time).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                                        </p>
+                                        <span className={`text-xs px-2 py-0.5 rounded font-mono ${b.status === 'CONFIRMED' ? 'bg-brand/10 text-brand' :
+                                                b.status === 'COMPLETED' ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400' :
+                                                    'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                                            }`}>
+                                            {b.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </CyberCard>
+
+                {/* Recent Patients */}
+                <CyberCard>
+                    <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Users className="w-5 h-5 text-brand" />
+                            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">{terminology.plural} Recientes</h3>
+                        </div>
+                        <Link href="/patients" className="text-xs text-brand hover:underline flex items-center gap-1">
+                            Ver todos <ChevronRight className="w-3 h-3" />
+                        </Link>
+                    </div>
+                    <div className="divide-y divide-border-subtle">
+                        {data.patients.map(p => (
+                            <Link key={p.id} href={`/patients/${p.id}`} className="px-6 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center text-sm font-medium">
+                                        {p.first_name[0]}{p.last_name[0]}
+                                    </div>
+                                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{p.first_name} {p.last_name}</p>
+                                </div>
+                                <ChevronRight className="w-4 h-4 text-zinc-400" />
+                            </Link>
+                        ))}
+                    </div>
+                </CyberCard>
             </div>
         </div>
     );
 }
-
