@@ -4,14 +4,8 @@ import { ReactNode } from 'react';
 interface CyberCardProps {
     children: ReactNode;
     className?: string;
-    variant?: 'default' | 'alert' | 'ai';
+    variant?: 'default' | 'glass' | 'alert' | 'ai';
 }
-
-const variantStyles = {
-    default: '',
-    alert: 'border-rose-200 dark:border-rose-900 bg-rose-50/50 dark:bg-rose-950/20',
-    ai: 'border-violet-200 dark:border-violet-900 bg-violet-50/50 dark:bg-violet-950/20',
-};
 
 /**
  * CyberCard - Universal container component for the Cyber-Clinical Design System.
@@ -19,6 +13,7 @@ const variantStyles = {
  * Usage:
  * ```tsx
  * <CyberCard>Content here</CyberCard>
+ * <CyberCard variant="glass">Glass header</CyberCard>
  * <CyberCard variant="alert">Risk alert</CyberCard>
  * <CyberCard variant="ai">AI-powered section</CyberCard>
  * ```
@@ -27,16 +22,17 @@ export function CyberCard({ children, className, variant = 'default' }: CyberCar
     return (
         <div
             className={cn(
-                // Base styles
-                'bg-white dark:bg-zinc-900',
-                'border border-zinc-200 dark:border-zinc-800',
-                'rounded-lg shadow-sm dark:shadow-none',
-                'transition-all duration-200',
-                // Padding
-                'p-6 md:p-6 sm:p-4',
-                // Variant overrides
-                variantStyles[variant],
-                // Custom classes
+                "relative rounded-xl border transition-all duration-200",
+                // Light Mode Styles
+                "bg-white border-slate-200 shadow-sm",
+                // Dark Mode Styles (The Key Fix)
+                "dark:bg-[#0A0A0A] dark:border-white/10 dark:shadow-none",
+                // Glass Variant (for headers)
+                variant === 'glass' && "backdrop-blur-xl bg-white/80 dark:bg-[#0A0A0A]/80",
+                // Alert Variant
+                variant === 'alert' && "border-red-500/20 bg-red-50 dark:bg-red-500/5 dark:border-red-500/20",
+                // AI Variant
+                variant === 'ai' && "border-violet-500/20 bg-violet-50 dark:bg-violet-500/5 dark:border-violet-500/20",
                 className
             )}
         >
@@ -62,11 +58,11 @@ export function CyberCardHeader({
     return (
         <div className={cn('flex items-start justify-between mb-4', className)}>
             <div>
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                <h3 className="text-lg font-display text-foreground">
                     {title}
                 </h3>
                 {subtitle && (
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                         {subtitle}
                     </p>
                 )}

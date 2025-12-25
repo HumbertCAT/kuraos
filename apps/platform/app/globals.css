@@ -1,88 +1,86 @@
 @import "tailwindcss";
 
 /* ================================================
-   Google Fonts - Architect Typography Stack
+   1. IMPORT FONTS (Google Fonts) - Architect Spec
    ================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap');
 
 /* ================================================
-   Cyber-Clinical Design System v2.1 (Architect Refinement)
-   Tailwind v4 CSS-First Configuration
+   Cyber-Clinical Design System v2.2 (Deep Void)
    ================================================ */
 
 @theme inline {
-  /* Font Family Definitions */
-  --font-display: "Space Grotesk", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-  
-  /* Semantic Color Mapping */
+  /* Semantic Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-border-subtle: var(--border-subtle);
-
-  /* Brand Aliases */
-  --color-brand: var(--brand);
-  --color-brand-foreground: var(--color-teal-50);
-  --color-risk: var(--risk);
-  --color-risk-bg: var(--color-rose-50);
-  --color-ai: var(--ai);
-  --color-ai-accent: var(--ai-accent);
   
-  /* Typography Scale */
-  --font-sans: var(--font-body);
+  /* Brand & Accents (NEON CYBER) */
+  --color-brand: var(--color-teal-500);
+  --color-risk: #ff3366;
+  --color-ai: #8b5cf6;
+  --color-success: #10b981;
+
+  /* Typography Mapping */
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 /* ================================================
-   Light Mode (The Clinic) - Clean White
+   2. THEME VARIABLES (The "Deep Void" Look)
    ================================================ */
 :root {
-  --background: #FAFAFA;     /* Zinc 50 */
-  --foreground: #18181B;     /* Zinc 900 */
-  --surface: #FFFFFF;        /* White */
-  --border-subtle: #E4E4E7;  /* Zinc 200 */
+  /* Light Mode (Clean Clinic) */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --surface: #FFFFFF;
+  --border-subtle: #E2E8F0;
   
-  /* Brand colors - Light mode */
-  --brand: #0D9488;          /* Teal 600 */
-  --risk: #E11D48;           /* Rose 600 */
-  --ai: #7C3AED;             /* Violet 600 */
-  --ai-accent: #0891B2;      /* Cyan 600 */
+  /* Brand - Light */
+  --brand: #14b8a6;
+  --risk: #e11d48;
+  --ai: #8b5cf6;
 }
 
-/* ================================================
-   Dark Mode (The Void) - True Black + Neon
-   Per Architect Spec: #0a0a0a base, #121212 surfaces
-   ================================================ */
 .dark {
-  --background: #0a0a0a;     /* True Black (Architect) */
-  --foreground: #E4E4E7;     /* Zinc 200 */
-  --surface: #121212;        /* Elevated surface (OLED-safe) */
-  --border-subtle: #1f1f1f;  /* Ultra subtle borders */
+  /* Dark Mode (True Void) */
+  --background: #050505;
+  --foreground: #E2E8F0;
+  --surface: #0A0A0A;
+  --border-subtle: #1F1F1F;
   
-  /* Neon accent colors - Dark mode (Architect palette) */
-  --brand: #2DD4BF;          /* Teal 400 */
-  --risk: #ff3366;           /* Neon Red (Architect) */
-  --ai: #A78BFA;             /* Violet 400 */
-  --ai-accent: #00ffcc;      /* Neon Cyan (Architect) */
+  /* Neon Accents - Dark */
+  --brand: #2DD4BF;
+  --risk: #ff3366;
+  --ai: #a78bfa;
 }
 
 /* ================================================
-   Typography System - Architect Stack
+   3. GLOBAL BASE STYLES
    ================================================ */
-
 body {
+  font-family: var(--font-body);
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+}
+
+/* ================================================
+   Typography Utility Classes
+   ================================================ */
+
 /* Display - Space Grotesk (Headers, Titles) */
 .font-display {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.02em;
 }
 
@@ -101,22 +99,18 @@ body {
 .font-label {
   font-family: var(--font-display);
   font-size: 0.65rem;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
-/* Headlines with personality */
+/* Headlines */
 h1, .h1 {
-  font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.03em;
 }
 
 h2, .h2 {
-  font-family: var(--font-display);
   font-weight: 600;
-  letter-spacing: -0.02em;
 }
 
 h3, .h3, h4, .h4, h5, .h5, h6, .h6 {

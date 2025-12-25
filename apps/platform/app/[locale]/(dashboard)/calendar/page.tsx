@@ -743,7 +743,7 @@ export default function CalendarPage() {
                 <button type="button" onClick={() => setShowRecurringModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">
                   {t('cancel')}
                 </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50">
+                <button type="submit" disabled={saving} className="px-4 py-2 bg-brand text-white rounded-lg hover:opacity-90 disabled:opacity-50">
                   {saving ? '...' : t('save')}
                 </button>
               </div>
@@ -841,7 +841,7 @@ export default function CalendarPage() {
                 <button type="button" onClick={() => setShowBlockModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">
                   {t('cancel')}
                 </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50">
+                <button type="submit" disabled={saving} className="px-4 py-2 bg-risk text-white rounded-lg hover:opacity-90 disabled:opacity-50">
                   {saving ? '...' : t('save')}
                 </button>
               </div>

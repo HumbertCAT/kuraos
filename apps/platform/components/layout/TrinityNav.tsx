@@ -108,7 +108,7 @@ export function TrinityNav() {
                     <div key={section.title}>
                         <div className="flex items-center gap-1.5 px-2 mb-2">
                             {section.icon}
-                            <span className="font-label text-zinc-400 dark:text-zinc-500">
+                            <span className="font-display text-[10px] uppercase tracking-widest text-zinc-500">
                                 {section.title}
                             </span>
                         </div>
