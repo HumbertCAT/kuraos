@@ -9,10 +9,10 @@ import { useTranslations } from 'next-intl';
 import { ThemeToggle } from '@/components/theme-toggle';
 import {
     Users,
+    User,
     FileText,
-    Calendar,
     Briefcase,
-    Settings,
+    Calendar,
     LogOut,
     Sparkles,
     Search,
@@ -22,6 +22,7 @@ import {
     LayoutDashboard,
     ChevronLeft,
     ChevronRight,
+    ChevronDown,
     Megaphone,
 } from 'lucide-react';
 
@@ -36,10 +37,12 @@ interface NavSection {
     id: string;
     title: string;
     icon: React.ReactNode;
+    color: string; // Background color for section
     items: NavItem[];
 }
 
 const STORAGE_KEY = 'trinity-nav-collapsed';
+const SECTIONS_KEY = 'trinity-nav-sections';
 
 export function TrinityNav() {
     const pathname = usePathname();
@@ -48,14 +51,22 @@ export function TrinityNav() {
     const t = useTranslations('Navigation');
     const tAuth = useTranslations('Auth');
 
-    // Collapse state with localStorage persistence
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         setMounted(true);
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored === 'true') setIsCollapsed(true);
+
+        // Load section collapse states
+        const sectionsStored = localStorage.getItem(SECTIONS_KEY);
+        if (sectionsStored) {
+            try {
+                setCollapsedSections(JSON.parse(sectionsStored));
+            } catch (e) { }
+        }
     }, []);
 
     const toggleCollapse = () => {
@@ -64,15 +75,20 @@ export function TrinityNav() {
         localStorage.setItem(STORAGE_KEY, String(newState));
     };
 
-    // Dashboard standalone item
-    const dashboardItem: NavItem = { href: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> };
+    const toggleSection = (sectionId: string) => {
+        const newState = { ...collapsedSections, [sectionId]: !collapsedSections[sectionId] };
+        setCollapsedSections(newState);
+        localStorage.setItem(SECTIONS_KEY, JSON.stringify(newState));
+    };
 
     const sections: NavSection[] = [
         {
             id: 'engage',
             title: 'ENGAGE',
-            icon: <Flame className="w-3.5 h-3.5 text-orange-500" />,
+            icon: <Flame className="w-3.5 h-3.5" />,
+            color: 'bg-orange-500/5 dark:bg-orange-500/10',
             items: [
+                { href: '/calendar', label: t('calendar'), icon: <Calendar className="w-4 h-4" /> },
                 { href: '/services', label: t('services'), icon: <Briefcase className="w-4 h-4" /> },
                 { href: '/leads', label: 'CRM', icon: <Users className="w-4 h-4" /> },
             ],
@@ -80,25 +96,23 @@ export function TrinityNav() {
         {
             id: 'practice',
             title: 'PRACTICE',
-            icon: <Stethoscope className="w-3.5 h-3.5 text-teal-500" />,
+            icon: <Stethoscope className="w-3.5 h-3.5" />,
+            color: 'bg-teal-500/5 dark:bg-teal-500/10',
             items: [
-                { href: '/patients', label: terminology.plural, icon: <Users className="w-4 h-4" /> },
+                { href: '/patients', label: terminology.plural, icon: <User className="w-4 h-4" /> },
+                { href: '/bookings', label: 'Bookings', icon: <Calendar className="w-4 h-4" />, comingSoon: true },
                 { href: '/forms', label: t('forms'), icon: <FileText className="w-4 h-4" /> },
             ],
         },
         {
             id: 'nurture',
             title: 'NURTURE',
-            icon: <Sprout className="w-3.5 h-3.5 text-emerald-500" />,
+            icon: <Sprout className="w-3.5 h-3.5" />,
+            color: 'bg-emerald-500/5 dark:bg-emerald-500/10',
             items: [
                 { href: '/campaigns', label: 'Campaigns', icon: <Megaphone className="w-4 h-4" />, comingSoon: true },
             ],
         },
-    ];
-
-    // Only Agents in system items (Settings link via user profile)
-    const systemItems: NavItem[] = [
-        { href: '/settings/automations', label: 'Agentes', icon: <Sparkles className="w-4 h-4" /> },
     ];
 
     const isActive = (href: string) => pathname.includes(href);
@@ -111,10 +125,9 @@ export function TrinityNav() {
                 }`}
         >
             {/* Header: Logo */}
-            <div className={`p-4 border-b border-sidebar-border ${isCollapsed ? 'flex justify-center' : ''}`}>
+            <div className={`p-4 ${isCollapsed ? 'flex justify-center' : ''}`}>
                 <Link href="/dashboard" className="flex items-center justify-center">
                     {isCollapsed ? (
-                        // Icon only when collapsed
                         <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center">
                             <span className="text-brand font-bold text-sm">K</span>
                         </div>
@@ -127,23 +140,23 @@ export function TrinityNav() {
                 </Link>
             </div>
 
-            {/* Search - hidden when collapsed */}
+            {/* Search - cleaner design */}
             {!isCollapsed && (
-                <div className="p-3">
-                    <button className="relative w-full flex items-center gap-2 h-9 px-3 text-xs text-muted-foreground bg-input border border-input-border rounded-md hover:bg-accent transition-all">
+                <div className="px-3 pb-3">
+                    <button className="relative w-full flex items-center gap-2 h-9 px-3 text-xs text-muted-foreground bg-muted/50 rounded-lg hover:bg-muted transition-all">
                         <Search className="w-4 h-4" />
                         <span className="flex-1 text-left">Buscar...</span>
-                        <kbd className="border border-input-border bg-background text-muted-foreground text-[10px] font-mono px-1.5 py-0.5 rounded-[3px]">⌘K</kbd>
+                        <span className="text-[10px] text-muted-foreground/70 font-mono">⌘K</span>
                     </button>
                 </div>
             )}
 
-            {/* Navigation Sections */}
-            <nav className={`flex-1 overflow-y-auto py-2 space-y-4 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+            {/* Navigation */}
+            <nav className={`flex-1 overflow-y-auto py-2 space-y-3 ${isCollapsed ? 'px-2' : 'px-3'}`}>
                 {/* Dashboard - Standalone */}
                 <Link
                     href="/dashboard"
-                    className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
+                    className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
                         } ${pathname.includes('/dashboard')
                             ? 'bg-brand/10 text-brand'
                             : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
@@ -154,88 +167,101 @@ export function TrinityNav() {
                     {!isCollapsed && 'Dashboard'}
                 </Link>
 
-                {/* Divider after Dashboard */}
-                {!isCollapsed && <div className="border-b border-sidebar-border" />}
+                {/* Section Blocks with Background */}
+                {sections.map((section) => {
+                    const isSectionCollapsed = collapsedSections[section.id];
 
-                {sections.map((section) => (
-                    <div key={section.id}>
-                        {/* Section Header */}
-                        {!isCollapsed && (
-                            <div className="flex items-center gap-2 px-2 mb-2">
-                                {section.icon}
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                                    {section.title}
-                                </span>
-                            </div>
-                        )}
+                    return (
+                        <div
+                            key={section.id}
+                            className={`rounded-lg ${section.color} ${isCollapsed ? 'p-1' : 'p-2'} transition-all duration-200`}
+                        >
+                            {/* Section Header - Clickable */}
+                            {!isCollapsed && (
+                                <button
+                                    onClick={() => toggleSection(section.id)}
+                                    className="w-full flex items-center justify-between px-2 py-1.5 mb-1 rounded hover:bg-background/50 transition-colors"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <span className={`${section.id === 'engage' ? 'text-orange-500' :
+                                            section.id === 'practice' ? 'text-teal-500' : 'text-emerald-500'
+                                            }`}>
+                                            {section.icon}
+                                        </span>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                            {section.title}
+                                        </span>
+                                    </div>
+                                    <ChevronDown
+                                        className={`w-3 h-3 text-muted-foreground transition-transform duration-200 ${isSectionCollapsed ? '-rotate-90' : ''
+                                            }`}
+                                    />
+                                </button>
+                            )}
 
-                        {/* Nav Links */}
-                        <ul className="space-y-0.5">
-                            {section.items.map((item) => (
-                                <li key={item.href}>
-                                    {item.comingSoon ? (
-                                        // Coming Soon - Disabled
-                                        <div
-                                            className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg text-muted-foreground/50 cursor-not-allowed ${isCollapsed ? 'justify-center' : ''
-                                                }`}
-                                            title={isCollapsed ? `${item.label} (Coming Soon)` : undefined}
-                                        >
-                                            {item.icon}
-                                            {!isCollapsed && (
-                                                <span className="flex-1">{item.label}</span>
-                                            )}
-                                            {!isCollapsed && (
-                                                <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded">Soon</span>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <Link
-                                            href={item.href}
-                                            className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
-                                                } ${isActive(item.href)
-                                                    ? 'bg-brand/10 text-brand'
-                                                    : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
-                                                }`}
-                                            title={isCollapsed ? item.label : undefined}
-                                        >
-                                            {item.icon}
-                                            {!isCollapsed && item.label}
-                                        </Link>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
+                            {/* Nav Links - Collapsible */}
+                            <ul className={`space-y-0.5 overflow-hidden transition-all duration-200 ${!isCollapsed && isSectionCollapsed ? 'max-h-0 opacity-0' : 'max-h-96 opacity-100'
+                                }`}>
+                                {section.items.map((item) => (
+                                    <li key={item.href}>
+                                        {item.comingSoon ? (
+                                            <div
+                                                className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg text-muted-foreground/50 cursor-not-allowed ${isCollapsed ? 'justify-center' : ''
+                                                    }`}
+                                                title={isCollapsed ? `${item.label} (Coming Soon)` : undefined}
+                                            >
+                                                {item.icon}
+                                                {!isCollapsed && (
+                                                    <>
+                                                        <span className="flex-1">{item.label}</span>
+                                                        <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded">Soon</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <Link
+                                                href={item.href}
+                                                className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
+                                                    } ${isActive(item.href)
+                                                        ? 'bg-card text-foreground shadow-sm'
+                                                        : 'text-sidebar-foreground hover:bg-card/50 hover:text-foreground'
+                                                    }`}
+                                                title={isCollapsed ? item.label : undefined}
+                                            >
+                                                {item.icon}
+                                                {!isCollapsed && item.label}
+                                            </Link>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    );
+                })}
 
-                        {/* Section Divider */}
-                        {!isCollapsed && <div className="mt-4 border-b border-sidebar-border" />}
-                    </div>
-                ))}
+                {/* Agentes - Below Nurture */}
+                <Link
+                    href="/settings/automations"
+                    className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
+                        } ${isActive('/automations')
+                            ? 'bg-ai/10 text-ai'
+                            : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
+                        }`}
+                    title={isCollapsed ? 'Agentes' : undefined}
+                >
+                    <Sparkles className="w-4 h-4" />
+                    {!isCollapsed && 'Agentes'}
+                </Link>
             </nav>
 
-            {/* Footer: System + User */}
-            <div className={`border-t border-sidebar-border space-y-1 ${isCollapsed ? 'p-2' : 'p-3'}`}>
-                {/* System Links */}
-                {systemItems.map((item) => (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
-                            } ${isActive(item.href)
-                                ? item.href.includes('automations') ? 'bg-ai/10 text-ai' : 'bg-brand/10 text-brand'
-                                : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
-                            }`}
-                        title={isCollapsed ? item.label : undefined}
-                    >
-                        {item.icon}
-                        {!isCollapsed && item.label}
-                    </Link>
-                ))}
-
+            {/* Footer: User + Controls */}
+            <div className={`border-t border-sidebar-border ${isCollapsed ? 'p-2' : 'p-3'}`}>
                 {/* User Profile - Links to Settings */}
                 {user && (
                     <Link
                         href="/settings"
-                        className={`flex items-center gap-2 p-2 rounded-lg border border-transparent hover:border-border hover:bg-accent/50 transition-colors ${isCollapsed ? 'justify-center' : ''}`}
+                        className={`flex items-center gap-2 p-2 rounded-lg hover:bg-accent/50 transition-colors ${isCollapsed ? 'justify-center' : ''
+                            }`}
                         title={isCollapsed ? user.full_name : undefined}
                     >
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-brand/70 flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">
@@ -254,35 +280,36 @@ export function TrinityNav() {
                     </Link>
                 )}
 
-                {/* Theme + Logout Row */}
-                {user && !isCollapsed && (
-                    <div className="flex items-center justify-end gap-1 px-2">
-                        <ThemeToggle />
-                        <button
-                            onClick={logout}
-                            className="p-1.5 text-muted-foreground hover:text-risk transition-colors"
-                            title={tAuth('logout')}
-                        >
-                            <LogOut className="w-4 h-4" />
-                        </button>
-                    </div>
-                )}
-
-                {/* Collapse Toggle */}
-                <button
-                    onClick={toggleCollapse}
-                    className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
-                    title={isCollapsed ? 'Expand' : 'Collapse'}
-                >
-                    {isCollapsed ? (
-                        <ChevronRight className="w-4 h-4" />
-                    ) : (
-                        <>
-                            <ChevronLeft className="w-4 h-4" />
-                            <span>Collapse</span>
-                        </>
+                {/* Controls Row: Theme + Logout + Collapse */}
+                <div className={`flex items-center gap-1 mt-2 ${isCollapsed ? 'flex-col' : 'justify-between'}`}>
+                    {!isCollapsed && (
+                        <div className="flex items-center gap-1">
+                            <ThemeToggle />
+                            <button
+                                onClick={logout}
+                                className="p-1.5 text-muted-foreground hover:text-risk transition-colors rounded-md hover:bg-muted"
+                                title={tAuth('logout')}
+                            >
+                                <LogOut className="w-4 h-4" />
+                            </button>
+                        </div>
                     )}
-                </button>
+
+                    <button
+                        onClick={toggleCollapse}
+                        className="flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-all"
+                        title={isCollapsed ? 'Expand' : 'Collapse'}
+                    >
+                        {isCollapsed ? (
+                            <ChevronRight className="w-4 h-4" />
+                        ) : (
+                            <>
+                                <ChevronLeft className="w-3 h-3" />
+                                <span>Collapse</span>
+                            </>
+                        )}
+                    </button>
+                </div>
             </div>
         </aside>
     );
