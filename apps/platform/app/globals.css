@@ -1,9 +1,10 @@
-@import "tailwindcss";
-
 /* ================================================
    1. IMPORT FONTS (Google Fonts) - Architect Spec
+   Must be FIRST before Tailwind
    ================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap');
+
+@import "tailwindcss";
 
 /* ================================================
    Cyber-Clinical Design System v2.2 (Deep Void)
