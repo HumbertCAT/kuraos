@@ -178,7 +178,7 @@ export default function AutomationsPage() {
                 {/* Conditions */}
                 {conditions.length > 0 && (
                     <div className="flex items-start gap-2">
-                        <span className="text-xs font-bold text-slate-400 uppercase min-w-[40px]">Si</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase min-w-[40px]">Si</span>
                         <div className="flex flex-wrap gap-1">
                             {conditions.map((c, i) => (
                                 <span key={i} className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
@@ -191,7 +191,7 @@ export default function AutomationsPage() {
                 {/* Actions */}
                 {actions.length > 0 && (
                     <div className="flex items-start gap-2">
-                        <span className="text-xs font-bold text-slate-400 uppercase min-w-[40px]">→</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase min-w-[40px]">→</span>
                         <div className="flex flex-wrap gap-1">
                             {actions.map((a, i) => (
                                 <span key={i} className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
@@ -213,7 +213,7 @@ export default function AutomationsPage() {
             <div className="mb-8">
                 <button
                     onClick={() => router.push(`/${locale}/settings`)}
-                    className="flex items-center gap-2 text-foreground/60 hover:text-slate-700 mb-4 transition-colors"
+                    className="flex items-center gap-2 text-foreground/60 hover:text-foreground mb-4 transition-colors"
                 >
                     <ChevronLeft className="w-4 h-4" />
                     Volver a Configuración
@@ -249,12 +249,12 @@ export default function AutomationsPage() {
             )}
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-6 p-1 bg-slate-100 rounded-xl">
+            <div className="flex gap-2 mb-6 p-1 bg-muted rounded-xl">
                 <button
                     onClick={() => setActiveTab('my')}
                     className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${activeTab === 'my'
                         ? 'bg-card text-foreground shadow-sm'
-                        : 'text-foreground/60 hover:text-slate-700'
+                        : 'text-foreground/60 hover:text-foreground'
                         }`}
                 >
                     <Sparkles className="w-4 h-4" />
@@ -269,7 +269,7 @@ export default function AutomationsPage() {
                     onClick={() => setActiveTab('marketplace')}
                     className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${activeTab === 'marketplace'
                         ? 'bg-card text-foreground shadow-sm'
-                        : 'text-foreground/60 hover:text-slate-700'
+                        : 'text-foreground/60 hover:text-foreground'
                         }`}
                 >
                     <Download className="w-4 h-4" />
@@ -286,8 +286,8 @@ export default function AutomationsPage() {
                 /* My Automations Tab */
                 <div className="space-y-4">
                     {myRules.length === 0 ? (
-                        <div className="text-center py-16 bg-slate-50 rounded-2xl border-2 border-dashed border-border">
-                            <Bot className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                        <div className="text-center py-16 bg-muted rounded-2xl border-2 border-dashed border-border">
+                            <Bot className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                             <h3 className="text-lg font-semibold text-foreground/70 mb-2">
                                 No tienes agentes activos
                             </h3>
@@ -314,7 +314,7 @@ export default function AutomationsPage() {
                                     {/* Icon */}
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${rule.is_active
                                         ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white'
-                                        : 'bg-slate-100 text-slate-400'
+                                        : 'bg-muted text-muted-foreground'
                                         }`}>
                                         <IconRenderer name={rule.icon} className="w-6 h-6" />
                                     </div>
@@ -323,7 +323,7 @@ export default function AutomationsPage() {
                                     <div className="flex-1 min-w-0">
                                         <h3 className="font-semibold text-foreground text-lg">{rule.name}</h3>
                                         <p className="text-foreground/60 text-sm mt-1">{rule.description}</p>
-                                        <p className="text-xs text-slate-400 mt-2">
+                                        <p className="text-xs text-muted-foreground mt-2">
                                             Habilidad: {triggerLabels[rule.trigger_event] || rule.trigger_event}
                                         </p>
                                         {renderWorkflowSteps(rule)}
@@ -334,7 +334,7 @@ export default function AutomationsPage() {
                                         {/* Configure */}
                                         <button
                                             onClick={() => setEditingAgent(rule)}
-                                            className="p-2 text-slate-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                                            className="p-2 text-muted-foreground hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
                                             title="Configurar personalidad"
                                         >
                                             <Settings className="w-5 h-5" />
@@ -343,7 +343,7 @@ export default function AutomationsPage() {
                                         {/* Toggle */}
                                         <button
                                             onClick={() => handleToggle(rule.id, rule.is_active)}
-                                            className={`relative w-14 h-8 rounded-full transition-colors ${rule.is_active ? 'bg-emerald-500' : 'bg-slate-300'
+                                            className={`relative w-14 h-8 rounded-full transition-colors ${rule.is_active ? 'bg-emerald-500' : 'bg-muted'
                                                 }`}
                                         >
                                             <span
@@ -355,7 +355,7 @@ export default function AutomationsPage() {
                                         {/* Delete */}
                                         <button
                                             onClick={() => handleDelete(rule.id)}
-                                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                         >
                                             <Trash2 className="w-5 h-5" />
                                         </button>
@@ -385,8 +385,8 @@ export default function AutomationsPage() {
                                 <p className="text-foreground/60 text-sm mb-4 line-clamp-2">{template.description}</p>
 
                                 {/* Trigger badge */}
-                                <div className="text-xs text-slate-400 mb-2">
-                                    <span className="px-2 py-1 bg-slate-100 rounded-full">
+                                <div className="text-xs text-muted-foreground mb-2">
+                                    <span className="px-2 py-1 bg-muted rounded-full">
                                         {triggerLabels[template.trigger_event] || template.trigger_event}
                                     </span>
                                 </div>
@@ -424,8 +424,8 @@ export default function AutomationsPage() {
                     })}
 
                     {/* Request Custom Card */}
-                    <div className="p-5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border-2 border-dashed border-slate-300 hover:border-violet-300 transition-all">
-                        <div className="w-14 h-14 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 mb-4">
+                    <div className="p-5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border-2 border-dashed border-border hover:border-violet-300 transition-all">
+                        <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center text-muted-foreground mb-4">
                             <MessageSquarePlus className="w-7 h-7" />
                         </div>
                         <h3 className="font-semibold text-foreground/70 text-lg mb-2">
@@ -436,7 +436,7 @@ export default function AutomationsPage() {
                         </p>
                         <button
                             onClick={() => window.open('mailto:support@therapistos.com?subject=Solicitud de Agente', '_blank')}
-                            className="w-full py-3 bg-card border-2 border-slate-300 text-foreground/70 rounded-xl font-semibold hover:border-violet-400 hover:text-violet-600 transition-all"
+                            className="w-full py-3 bg-card border-2 border-border text-foreground/70 rounded-xl font-semibold hover:border-violet-400 hover:text-violet-600 transition-all"
                         >
                         </button>
                     </div>
@@ -466,7 +466,7 @@ export default function AutomationsPage() {
                         <div className="p-6 space-y-6">
                             {/* Tone Selection */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Tono de Voz
                                 </label>
                                 <select
@@ -490,7 +490,7 @@ export default function AutomationsPage() {
                             <div>
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                                        <label className="block text-sm font-medium text-foreground mb-1">
                                             Requiere Aprobación Humana
                                         </label>
                                         <p className="text-xs text-foreground/60">
@@ -507,7 +507,7 @@ export default function AutomationsPage() {
                                         })}
                                         className={`ml-4 relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${editingAgent.agent_config?.mode === 'DRAFT_ONLY'
                                             ? 'bg-violet-600'
-                                            : 'bg-slate-200'
+                                            : 'bg-muted'
                                             }`}
                                     >
                                         <span
@@ -522,7 +522,7 @@ export default function AutomationsPage() {
 
                             {/* Signature */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Firma Personalizada
                                 </label>
                                 <input
@@ -541,10 +541,10 @@ export default function AutomationsPage() {
                             </div>
                         </div>
 
-                        <div className="border-t px-6 py-4 flex justify-end gap-3 bg-slate-50">
+                        <div className="border-t px-6 py-4 flex justify-end gap-3 bg-muted">
                             <button
                                 onClick={() => setEditingAgent(null)}
-                                className="px-4 py-2 text-foreground/70 hover:bg-slate-100 rounded-lg font-medium transition-colors"
+                                className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-lg font-medium transition-colors"
                             >
                                 Cancelar
                             </button>

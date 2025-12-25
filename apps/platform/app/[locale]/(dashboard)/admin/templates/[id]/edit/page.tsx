@@ -236,19 +236,19 @@ export default function TemplateBuilderPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div>
+            <div className="min-h-screen bg-muted flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-muted">
             {/* Header - Simplified */}
             <div className="bg-card border-b border-border px-6 py-4">
                 <div className="max-w-6xl mx-auto flex justify-between items-center">
                     <div>
-                        <Link href={`/${locale}/admin?tab=templates`} className="text-foreground/60 hover:text-slate-700 text-sm">
+                        <Link href={`/${locale}/admin?tab=templates`} className="text-foreground/60 hover:text-foreground text-sm">
                             ← Volver a formularios
                         </Link>
                         <h1 className="text-xl font-bold text-foreground">
@@ -261,7 +261,7 @@ export default function TemplateBuilderPage() {
                             <button
                                 type="button"
                                 onClick={() => setTemplate({ ...template, is_active: !template.is_active })}
-                                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-slate-800 focus:ring-offset-2 ${template.is_active ? 'bg-emerald-500' : 'bg-slate-300'
+                                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${template.is_active ? 'bg-emerald-500' : 'bg-muted'
                                     }`}
                             >
                                 <span
@@ -274,7 +274,7 @@ export default function TemplateBuilderPage() {
                             </span>
                             {/* Tooltip */}
                             <div className="absolute top-full left-0 mt-2 hidden group-hover:block z-50">
-                                <div className="bg-slate-800 text-white text-xs rounded-lg py-2 px-3 max-w-xs shadow-lg">
+                                <div className="bg-primary text-primary-foreground text-xs rounded-lg py-2 px-3 max-w-xs shadow-lg">
                                     {template.is_active
                                         ? 'Este formulario está visible para ser asignado a pacientes y servicios.'
                                         : 'Este formulario no aparecerá en las listas de selección.'
@@ -284,19 +284,19 @@ export default function TemplateBuilderPage() {
                             </div>
                         </div>
 
-                        <div className="w-px h-6 bg-slate-200"></div>
+                        <div className="w-px h-6 bg-muted"></div>
 
                         {activeTab === 'preview' ? (
                             <button
                                 onClick={() => setActiveTab('builder')}
-                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center gap-2"
+                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-muted text-foreground hover:bg-muted transition-colors flex items-center gap-2"
                             >
                                 ← Volver al editor
                             </button>
                         ) : (
                             <button
                                 onClick={() => setActiveTab('preview')}
-                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center gap-2"
+                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-muted text-foreground hover:bg-muted transition-colors flex items-center gap-2"
                             >
                                 👁 Vista Previa
                             </button>
@@ -304,7 +304,7 @@ export default function TemplateBuilderPage() {
                         <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="bg-slate-800 text-white px-5 py-2.5 rounded-lg hover:bg-slate-700 disabled:opacity-50 text-sm font-medium transition-colors"
+                            className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:bg-primary/90 disabled:opacity-50 text-sm font-medium transition-colors"
                         >
                             {saving ? 'Guardando...' : 'Guardar'}
                         </button>
@@ -342,11 +342,11 @@ export default function TemplateBuilderPage() {
                                                     type="text"
                                                     readOnly
                                                     value={`${typeof window !== 'undefined' ? window.location.origin : ''}/${locale}/f/public/${template.public_token}`}
-                                                    className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 font-mono bg-slate-50"
+                                                    className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 font-mono bg-muted"
                                                 />
                                                 <button
                                                     onClick={() => navigator.clipboard.writeText(`${window.location.origin}/${locale}/f/public/${template.public_token}`)}
-                                                    className="px-4 py-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-colors text-sm font-medium"
+                                                    className="px-4 py-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors text-sm font-medium"
                                                 >
                                                     📋 Copiar
                                                 </button>
@@ -367,12 +367,12 @@ export default function TemplateBuilderPage() {
                                         </div>
                                     ) : (
                                         <div className="space-y-4">
-                                            <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-border">
-                                                <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <div className="flex items-start gap-3 p-4 bg-muted rounded-xl border border-border">
+                                                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
                                                     <span className="text-xl">💡</span>
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-medium text-slate-700">¿Para qué sirve publicar?</p>
+                                                    <p className="text-sm font-medium text-foreground">¿Para qué sirve publicar?</p>
                                                     <p className="text-xs text-foreground/60 mt-1">
                                                         Al publicar, se genera un enlace público que puedes compartir en redes sociales,
                                                         WhatsApp o tu web. Cualquier persona podrá completar el formulario sin necesidad
@@ -402,18 +402,18 @@ export default function TemplateBuilderPage() {
                             </div>
                             <div className="p-6 space-y-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Título</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Título</label>
                                     <input
                                         type="text"
                                         value={template.title}
                                         onChange={(e) => setTemplate({ ...template, title: e.target.value })}
-                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 focus:border-transparent transition-all"
+                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
                                         placeholder="Nombre del formulario"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Descripción</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Descripción</label>
                                     <RichTextEditor
                                         value={template.description}
                                         onChange={(value) => setTemplate({ ...template, description: value })}
@@ -424,7 +424,7 @@ export default function TemplateBuilderPage() {
 
                                 <div className="grid grid-cols-3 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             Nivel de Riesgo
                                             {template.risk_level === 'HIGH' && <span className="ml-2">⚠️</span>}
                                             {template.risk_level === 'CRITICAL' && <span className="ml-2">🚨</span>}
@@ -432,7 +432,7 @@ export default function TemplateBuilderPage() {
                                         <select
                                             value={template.risk_level}
                                             onChange={(e) => setTemplate({ ...template, risk_level: e.target.value })}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 focus:border-transparent bg-card"
+                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring focus:border-transparent bg-card"
                                         >
                                             {RISK_LEVELS.map((level) => (
                                                 <option key={level} value={level}>{level}</option>
@@ -440,11 +440,11 @@ export default function TemplateBuilderPage() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Tipo de Terapia</label>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Tipo de Terapia</label>
                                         <select
                                             value={template.therapy_type}
                                             onChange={(e) => setTemplate({ ...template, therapy_type: e.target.value })}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 focus:border-transparent bg-card"
+                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring focus:border-transparent bg-card"
                                         >
                                             {THERAPY_TYPES.map((type) => (
                                                 <option key={type} value={type}>{type}</option>
@@ -452,11 +452,11 @@ export default function TemplateBuilderPage() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Tipo de Formulario</label>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Tipo de Formulario</label>
                                         <select
                                             value={template.form_type}
                                             onChange={(e) => setTemplate({ ...template, form_type: e.target.value })}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 focus:border-transparent bg-card"
+                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring focus:border-transparent bg-card"
                                         >
                                             {FORM_TYPES.map((type) => (
                                                 <option key={type} value={type}>{type}</option>
@@ -477,14 +477,14 @@ export default function TemplateBuilderPage() {
                             </div>
                             <div className="p-6 space-y-4">
                                 {template.schema.fields.map((field, index) => (
-                                    <div key={field.id} className="bg-slate-50 rounded-xl p-5 border border-border hover:border-slate-300 transition-colors">
+                                    <div key={field.id} className="bg-muted rounded-xl p-5 border border-border hover:border-border transition-colors">
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="flex items-center gap-3">
-                                                <span className="text-slate-400 font-mono text-sm">#{index + 1}</span>
+                                                <span className="text-muted-foreground font-mono text-sm">#{index + 1}</span>
                                                 <select
                                                     value={field.type}
                                                     onChange={(e) => updateField(index, { type: e.target.value })}
-                                                    className="px-3 py-2 border border-border rounded-lg text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-slate-800 focus:border-transparent"
+                                                    className="px-3 py-2 border border-border rounded-lg text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-ring focus:border-transparent"
                                                 >
                                                     {FIELD_TYPES.map((t) => (
                                                         <option key={t.value} value={t.value}>{t.label}</option>
@@ -494,14 +494,14 @@ export default function TemplateBuilderPage() {
                                             <div className="flex gap-1">
                                                 <button
                                                     onClick={() => moveField(index, 'up')}
-                                                    className="p-2 text-slate-400 hover:text-foreground/70 hover:bg-slate-200 rounded-lg transition-colors"
+                                                    className="p-2 text-muted-foreground hover:text-foreground/70 hover:bg-muted rounded-lg transition-colors"
                                                     disabled={index === 0}
                                                 >
                                                     ↑
                                                 </button>
                                                 <button
                                                     onClick={() => moveField(index, 'down')}
-                                                    className="p-2 text-slate-400 hover:text-foreground/70 hover:bg-slate-200 rounded-lg transition-colors"
+                                                    className="p-2 text-muted-foreground hover:text-foreground/70 hover:bg-muted rounded-lg transition-colors"
                                                     disabled={index === template.schema.fields.length - 1}
                                                 >
                                                     ↓
@@ -522,7 +522,7 @@ export default function TemplateBuilderPage() {
                                                     type="text"
                                                     value={field.label}
                                                     onChange={(e) => updateField(index, { label: e.target.value })}
-                                                    className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-slate-800 focus:border-transparent"
+                                                    className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-ring focus:border-transparent"
                                                     placeholder="Pregunta o campo"
                                                 />
                                             </div>
@@ -532,7 +532,7 @@ export default function TemplateBuilderPage() {
                                                     type="text"
                                                     value={field.id}
                                                     onChange={(e) => updateField(index, { id: e.target.value })}
-                                                    className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/60 font-mono bg-card focus:ring-2 focus:ring-slate-800 focus:border-transparent"
+                                                    className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/60 font-mono bg-card focus:ring-2 focus:ring-ring focus:border-transparent"
                                                 />
                                             </div>
                                         </div>
@@ -543,7 +543,7 @@ export default function TemplateBuilderPage() {
                                                     type="checkbox"
                                                     checked={field.required || false}
                                                     onChange={(e) => updateField(index, { required: e.target.checked })}
-                                                    className="w-4 h-4 rounded border-slate-300 text-foreground focus:ring-slate-800"
+                                                    className="w-4 h-4 rounded border-border text-foreground focus:ring-ring"
                                                 />
                                                 <span className="text-foreground/70">Campo obligatorio</span>
                                             </label>
@@ -570,7 +570,7 @@ export default function TemplateBuilderPage() {
                                                     value={(field.options || []).join(', ')}
                                                     onChange={(e) => updateField(index, { options: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
                                                     placeholder="Opción 1, Opción 2, Opción 3"
-                                                    className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-slate-800 focus:border-transparent"
+                                                    className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-ring focus:border-transparent"
                                                 />
                                             </div>
                                         )}
@@ -584,7 +584,7 @@ export default function TemplateBuilderPage() {
                                                         value={field.min_label || ''}
                                                         onChange={(e) => updateField(index, { min_label: e.target.value })}
                                                         placeholder="Ej: Sin dolor"
-                                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-slate-800 focus:border-transparent"
+                                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-ring focus:border-transparent"
                                                     />
                                                 </div>
                                                 <div>
@@ -594,7 +594,7 @@ export default function TemplateBuilderPage() {
                                                         value={field.max_label || ''}
                                                         onChange={(e) => updateField(index, { max_label: e.target.value })}
                                                         placeholder="Ej: Dolor intenso"
-                                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-slate-800 focus:border-transparent"
+                                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-ring focus:border-transparent"
                                                     />
                                                 </div>
                                             </div>
@@ -608,7 +608,7 @@ export default function TemplateBuilderPage() {
                                                     onChange={(e) => updateField(index, { disclaimer: e.target.value })}
                                                     rows={3}
                                                     placeholder="Ingresa el texto legal..."
-                                                    className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-slate-800 focus:border-transparent resize-none"
+                                                    className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-card focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
                                                 />
                                             </div>
                                         )}
@@ -617,7 +617,7 @@ export default function TemplateBuilderPage() {
 
                                 <button
                                     onClick={addField}
-                                    className="w-full py-4 border-2 border-dashed border-slate-300 rounded-xl text-foreground/60 hover:border-slate-400 hover:text-slate-700 hover:bg-slate-50 flex items-center justify-center gap-2 transition-all text-sm font-medium"
+                                    className="w-full py-4 border-2 border-dashed border-border rounded-xl text-foreground/60 hover:border-border hover:text-foreground hover:bg-accent flex items-center justify-center gap-2 transition-all text-sm font-medium"
                                 >
                                     <span className="text-lg">+</span>
                                     Añadir campo
@@ -643,7 +643,7 @@ export default function TemplateBuilderPage() {
                                     submitting={false}
                                 />
                             ) : (
-                                <p className="text-slate-400 text-center py-12">
+                                <p className="text-muted-foreground text-center py-12">
                                     Añade campos en el editor para ver la vista previa
                                 </p>
                             )}

@@ -272,10 +272,10 @@ export default function EditFormPage() {
 
     // Lock Overlay Component
     const LockOverlay = ({ requiredTier, children }: { requiredTier: 'PRO' | 'CENTER', children?: React.ReactNode }) => (
-        <div className="absolute inset-0 bg-slate-100/70 backdrop-blur-[1px] flex items-center justify-center z-10 rounded-2xl">
+        <div className="absolute inset-0 bg-muted/70 backdrop-blur-[1px] flex items-center justify-center z-10 rounded-2xl">
             <div className="text-center bg-card/90 px-6 py-4 rounded-xl shadow-sm">
                 <span className="text-2xl mb-2 block">🔒</span>
-                <p className="text-sm font-medium text-slate-700">
+                <p className="text-sm font-medium text-foreground">
                     {requiredTier === 'PRO' ? 'Mejora a PRO' : 'Mejora a CENTER'}
                 </p>
                 <p className="text-xs text-foreground/60 mt-1">para desbloquear esta función</p>
@@ -286,19 +286,19 @@ export default function EditFormPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div>
+            <div className="min-h-screen bg-muted flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-muted">
             {/* Header */}
             <div className="bg-card border-b border-border px-6 py-4">
                 <div className="max-w-6xl mx-auto flex justify-between items-center">
                     <div>
-                        <Link href={`/${locale}/forms`} className="text-foreground/60 hover:text-slate-700 text-sm">
+                        <Link href={`/${locale}/forms`} className="text-foreground/60 hover:text-foreground text-sm">
                             ← Volver a formularios
                         </Link>
                         <h1 className="text-xl font-bold text-foreground">
@@ -311,7 +311,7 @@ export default function EditFormPage() {
                             <button
                                 type="button"
                                 onClick={() => setTemplate({ ...template, is_active: !template.is_active })}
-                                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${template.is_active ? 'bg-emerald-500' : 'bg-slate-300'
+                                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${template.is_active ? 'bg-emerald-500' : 'bg-muted'
                                     }`}
                             >
                                 <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-card shadow ring-0 transition duration-200 ease-in-out ${template.is_active ? 'translate-x-5' : 'translate-x-0'
@@ -321,7 +321,7 @@ export default function EditFormPage() {
                                 {template.is_active ? 'Activo' : 'Inactivo'}
                             </span>
                             <div className="absolute top-full left-0 mt-2 hidden group-hover:block z-50">
-                                <div className="bg-slate-800 text-white text-xs rounded-lg py-2 px-3 max-w-xs shadow-lg">
+                                <div className="bg-primary text-primary-foreground text-xs rounded-lg py-2 px-3 max-w-xs shadow-lg">
                                     {template.is_active
                                         ? 'Este formulario está visible para ser asignado.'
                                         : 'Este formulario no aparecerá en las listas.'
@@ -331,13 +331,13 @@ export default function EditFormPage() {
                             </div>
                         </div>
 
-                        <div className="w-px h-6 bg-slate-200"></div>
+                        <div className="w-px h-6 bg-muted"></div>
 
                         {/* Duplicate Button */}
                         <button
                             onClick={handleDuplicate}
                             disabled={duplicating}
-                            className="px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                            className="px-4 py-2.5 rounded-lg text-sm font-medium bg-muted text-foreground hover:bg-muted transition-colors"
                         >
                             {duplicating ? '...' : '📋 Duplicar'}
                         </button>
@@ -346,14 +346,14 @@ export default function EditFormPage() {
                         {activeTab === 'preview' ? (
                             <button
                                 onClick={() => setActiveTab('builder')}
-                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-muted text-foreground hover:bg-muted transition-colors"
                             >
                                 ← Volver al editor
                             </button>
                         ) : (
                             <button
                                 onClick={() => setActiveTab('preview')}
-                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-muted text-foreground hover:bg-muted transition-colors"
                             >
                                 👁 Vista Previa
                             </button>
@@ -363,7 +363,7 @@ export default function EditFormPage() {
                         <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="bg-slate-800 text-white px-5 py-2.5 rounded-lg hover:bg-slate-700 disabled:opacity-50 text-sm font-medium transition-colors"
+                            className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:bg-primary/90 disabled:opacity-50 text-sm font-medium transition-colors"
                         >
                             {saving ? 'Guardando...' : 'Guardar'}
                         </button>
@@ -375,7 +375,7 @@ export default function EditFormPage() {
             <div className="max-w-6xl mx-auto px-6 pt-4">
                 <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${tier === 'CENTER' ? 'bg-purple-100 text-purple-700' :
                     tier === 'PRO' ? 'bg-blue-100 text-blue-700' :
-                        'bg-slate-100 text-foreground/70'
+                        'bg-muted text-foreground/70'
                     }`}>
                     {tier === 'CENTER' && '🏢'}
                     {tier === 'PRO' && '⭐'}
@@ -414,11 +414,11 @@ export default function EditFormPage() {
                                                     type="text"
                                                     readOnly
                                                     value={`${typeof window !== 'undefined' ? window.location.origin : ''}/${locale}/f/public/${template.public_token}`}
-                                                    className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 font-mono bg-slate-50"
+                                                    className="flex-1 px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 font-mono bg-muted"
                                                 />
                                                 <button
                                                     onClick={() => navigator.clipboard.writeText(`${window.location.origin}/${locale}/f/public/${template.public_token}`)}
-                                                    className="px-4 py-2.5 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-colors text-sm font-medium"
+                                                    className="px-4 py-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors text-sm font-medium"
                                                 >
                                                     📋 Copiar
                                                 </button>
@@ -439,12 +439,12 @@ export default function EditFormPage() {
                                         </div>
                                     ) : (
                                         <div className="space-y-4">
-                                            <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-border">
-                                                <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <div className="flex items-start gap-3 p-4 bg-muted rounded-xl border border-border">
+                                                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
                                                     <span className="text-xl">💡</span>
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-medium text-slate-700">¿Para qué sirve publicar?</p>
+                                                    <p className="text-sm font-medium text-foreground">¿Para qué sirve publicar?</p>
                                                     <p className="text-xs text-foreground/60 mt-1">
                                                         Al publicar, se genera un enlace público que puedes compartir en redes sociales,
                                                         WhatsApp o tu web. Cualquier persona podrá completar el formulario sin necesidad
@@ -471,24 +471,24 @@ export default function EditFormPage() {
                             <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
                                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                                     <span>⚙️</span> Configuración del formulario
-                                    {!canEditConfig(tier) && <span className="text-xs font-normal text-slate-400 ml-2">PRO</span>}
+                                    {!canEditConfig(tier) && <span className="text-xs font-normal text-muted-foreground ml-2">PRO</span>}
                                 </h3>
                             </div>
                             <div className="p-6 space-y-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Título</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Título</label>
                                     <input
                                         type="text"
                                         value={template.title}
                                         onChange={(e) => setTemplate({ ...template, title: e.target.value })}
                                         disabled={!canEditConfig(tier)}
-                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 focus:border-transparent transition-all disabled:bg-slate-50 disabled:cursor-not-allowed"
+                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring focus:border-transparent transition-all disabled:bg-muted disabled:cursor-not-allowed"
                                         placeholder="Nombre del formulario"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Descripción</label>
+                                    <label className="block text-sm font-medium text-foreground mb-2">Descripción</label>
                                     {canEditConfig(tier) ? (
                                         <RichTextEditor
                                             value={template.description}
@@ -497,19 +497,19 @@ export default function EditFormPage() {
                                             minHeight="100px"
                                         />
                                     ) : (
-                                        <div className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-slate-50 min-h-[100px]"
-                                            dangerouslySetInnerHTML={{ __html: template.description || '<span class="text-slate-400">Sin descripción</span>' }} />
+                                        <div className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 bg-muted min-h-[100px]"
+                                            dangerouslySetInnerHTML={{ __html: template.description || '<span class="text-muted-foreground">Sin descripción</span>' }} />
                                     )}
                                 </div>
 
                                 <div className="grid grid-cols-3 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Nivel de Riesgo</label>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Nivel de Riesgo</label>
                                         <select
                                             value={template.risk_level}
                                             onChange={(e) => setTemplate({ ...template, risk_level: e.target.value })}
                                             disabled={!canEditConfig(tier)}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 disabled:bg-slate-50 disabled:cursor-not-allowed"
+                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring disabled:bg-muted disabled:cursor-not-allowed"
                                         >
                                             {RISK_LEVELS.map((level) => (
                                                 <option key={level} value={level}>{level}</option>
@@ -517,12 +517,12 @@ export default function EditFormPage() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Tipo de Terapia</label>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Tipo de Terapia</label>
                                         <select
                                             value={template.therapy_type}
                                             onChange={(e) => setTemplate({ ...template, therapy_type: e.target.value })}
                                             disabled={!canEditConfig(tier)}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 disabled:bg-slate-50 disabled:cursor-not-allowed"
+                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring disabled:bg-muted disabled:cursor-not-allowed"
                                         >
                                             {THERAPY_TYPES.map((type) => (
                                                 <option key={type} value={type}>{type}</option>
@@ -530,12 +530,12 @@ export default function EditFormPage() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Tipo de Formulario</label>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Tipo de Formulario</label>
                                         <select
                                             value={template.form_type}
                                             onChange={(e) => setTemplate({ ...template, form_type: e.target.value })}
                                             disabled={!canEditConfig(tier)}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 disabled:bg-slate-50 disabled:cursor-not-allowed"
+                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring disabled:bg-muted disabled:cursor-not-allowed"
                                         >
                                             {FORM_TYPES.map((type) => (
                                                 <option key={type} value={type}>{type}</option>
@@ -543,12 +543,12 @@ export default function EditFormPage() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Destino de Envío</label>
+                                        <label className="block text-sm font-medium text-foreground mb-2">Destino de Envío</label>
                                         <select
                                             value={template.target_entity}
                                             onChange={(e) => setTemplate({ ...template, target_entity: e.target.value })}
                                             disabled={!canEditConfig(tier)}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-slate-800 disabled:bg-slate-50 disabled:cursor-not-allowed"
+                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring disabled:bg-muted disabled:cursor-not-allowed"
                                         >
                                             {TARGET_ENTITIES.map((entity) => (
                                                 <option key={entity.value} value={entity.value}>{entity.label}</option>
@@ -570,16 +570,16 @@ export default function EditFormPage() {
                             <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
                                 <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
                                     <span>📝</span> Campos del formulario
-                                    {!canEditFields(tier) && <span className="text-xs font-normal text-slate-400 ml-2">CENTER</span>}
+                                    {!canEditFields(tier) && <span className="text-xs font-normal text-muted-foreground ml-2">CENTER</span>}
                                 </h3>
                             </div>
                             <div className="p-6 space-y-4">
                                 {template.schema.fields.map((field, index) => (
-                                    <div key={field.id} className="border border-border rounded-xl p-4 bg-slate-50">
+                                    <div key={field.id} className="border border-border rounded-xl p-4 bg-muted">
                                         <div className="flex items-start gap-4">
                                             <div className="flex flex-col gap-1">
-                                                <button onClick={() => moveField(index, 'up')} disabled={index === 0 || !canEditFields(tier)} className="p-1 hover:bg-slate-200 rounded disabled:opacity-30">↑</button>
-                                                <button onClick={() => moveField(index, 'down')} disabled={index === template.schema.fields.length - 1 || !canEditFields(tier)} className="p-1 hover:bg-slate-200 rounded disabled:opacity-30">↓</button>
+                                                <button onClick={() => moveField(index, 'up')} disabled={index === 0 || !canEditFields(tier)} className="p-1 hover:bg-muted rounded disabled:opacity-30">↑</button>
+                                                <button onClick={() => moveField(index, 'down')} disabled={index === template.schema.fields.length - 1 || !canEditFields(tier)} className="p-1 hover:bg-muted rounded disabled:opacity-30">↓</button>
                                             </div>
                                             <div className="flex-1 grid grid-cols-3 gap-4">
                                                 <div>
@@ -632,7 +632,7 @@ export default function EditFormPage() {
                                 <button
                                     onClick={addField}
                                     disabled={!canEditFields(tier)}
-                                    className="w-full py-4 border-2 border-dashed border-slate-300 rounded-xl text-foreground/60 hover:border-slate-400 hover:text-slate-700 hover:bg-slate-50 flex items-center justify-center gap-2 transition-all text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full py-4 border-2 border-dashed border-border rounded-xl text-foreground/60 hover:border-border hover:text-foreground hover:bg-accent flex items-center justify-center gap-2 transition-all text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span className="text-lg">+</span>
                                     Añadir campo

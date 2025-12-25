@@ -101,7 +101,7 @@ export default function Composer({ patientId, onEntryCreated }: ComposerProps) {
   return (
     <div className="bg-card p-4 rounded-lg border border-border mb-6">
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-3 text-sm">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-3 py-2 rounded mb-3 text-sm">
           {error}
         </div>
       )}
@@ -118,7 +118,7 @@ export default function Composer({ patientId, onEntryCreated }: ComposerProps) {
         <button
           onClick={handleAddNote}
           disabled={loading || !content.trim()}
-          className="px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 disabled:opacity-50 transition-colors cursor-pointer flex items-center gap-2"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors cursor-pointer flex items-center gap-2"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20h9" />
@@ -127,7 +127,7 @@ export default function Composer({ patientId, onEntryCreated }: ComposerProps) {
           {t('addNote')}
         </button>
 
-        <label className="px-4 py-2 border border-zinc-700 rounded-lg hover:bg-zinc-800 cursor-pointer transition-colors text-zinc-400 flex items-center gap-2">
+        <label className="px-4 py-2 border border-border rounded-lg hover:bg-accent cursor-pointer transition-colors text-muted-foreground flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
           </svg>
@@ -152,6 +152,6 @@ export default function Composer({ patientId, onEntryCreated }: ComposerProps) {
           disabled={loading}
         />
       </div>
-    </div>
+    </div >
   );
 }

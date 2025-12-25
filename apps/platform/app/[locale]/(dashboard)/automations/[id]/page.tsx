@@ -263,7 +263,7 @@ export default function AutomationDetailPage() {
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-foreground/60 hover:text-slate-700 transition-colors cursor-pointer"
+                className="flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors cursor-pointer"
             >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Volver a Automatizaciones</span>
@@ -281,7 +281,7 @@ export default function AutomationDetailPage() {
                                 <h1 className="text-2xl font-bold text-foreground">{automation.name}</h1>
                                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${automation.is_active
                                     ? 'bg-emerald-100 text-emerald-700'
-                                    : 'bg-slate-100 text-foreground/60'
+                                    : 'bg-muted text-foreground/60'
                                     }`}>
                                     {automation.is_active ? 'Activa' : 'Pausada'}
                                 </span>
@@ -381,10 +381,10 @@ export default function AutomationDetailPage() {
                                 </div>
                                 <div className="flex-1 bg-purple-50 border border-purple-200 rounded-xl p-4">
                                     <p className="text-xs font-medium text-purple-400 uppercase tracking-wide">Cuando</p>
-                                    <p className="text-slate-700 text-sm mt-1 italic">
+                                    <p className="text-foreground text-sm mt-1 italic">
                                         "{triggerDescriptions[automation.trigger_event] || 'Se dispara este evento'}"
                                     </p>
-                                    <p className="text-slate-400 text-xs mt-2">
+                                    <p className="text-muted-foreground text-xs mt-2">
                                         {triggerLabels[automation.trigger_event] || automation.trigger_event}
                                     </p>
                                 </div>
@@ -404,7 +404,7 @@ export default function AutomationDetailPage() {
                                         </div>
                                         <div className="flex-1 bg-amber-50 border border-amber-200 rounded-xl p-4">
                                             <p className="text-xs font-medium text-amber-400 uppercase tracking-wide">Si</p>
-                                            <p className="text-slate-700 text-sm mt-1 italic">
+                                            <p className="text-foreground text-sm mt-1 italic">
                                                 "Solo cuando {generateConditionDescription(automation.conditions.rules)}"
                                             </p>
                                             <div className="flex flex-wrap gap-2 mt-2">
@@ -435,10 +435,10 @@ export default function AutomationDetailPage() {
                                             <p className="text-xs font-medium text-emerald-400 uppercase tracking-wide">
                                                 {index === 0 ? 'Entonces' : 'Y también'}
                                             </p>
-                                            <p className="text-slate-700 text-sm mt-1 italic">
+                                            <p className="text-foreground text-sm mt-1 italic">
                                                 "{actionDescriptions[action.type] || 'Ejecuta esta acción'}"
                                             </p>
-                                            <p className="text-slate-400 text-xs mt-2">
+                                            <p className="text-muted-foreground text-xs mt-2">
                                                 {actionLabels[action.type] || action.type}
                                             </p>
                                             {action.params && Object.keys(action.params).length > 0 && (
@@ -467,11 +467,11 @@ export default function AutomationDetailPage() {
                                 <div className="w-0.5 h-4 bg-gradient-to-b from-emerald-300 to-slate-200"></div>
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
-                                    <CheckCircle className="w-6 h-6 text-slate-400" />
+                                <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+                                    <CheckCircle className="w-6 h-6 text-muted-foreground" />
                                 </div>
-                                <div className="flex-1 bg-slate-50 border border-border rounded-xl p-4">
-                                    <p className="text-slate-400 font-medium">Completado ✓</p>
+                                <div className="flex-1 bg-muted border border-border rounded-xl p-4">
+                                    <p className="text-muted-foreground font-medium">Completado ✓</p>
                                 </div>
                             </div>
                         </div>
@@ -482,12 +482,12 @@ export default function AutomationDetailPage() {
                 <div className="col-span-2 bg-card rounded-2xl border border-border p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-semibold text-foreground">Ejecuciones Recientes</h2>
-                        <span className="text-xs text-slate-400">Últimas 24h</span>
+                        <span className="text-xs text-muted-foreground">Últimas 24h</span>
                     </div>
 
                     <div className="space-y-3">
                         {logs.length === 0 ? (
-                            <div className="text-center py-8 text-slate-400">
+                            <div className="text-center py-8 text-muted-foreground">
                                 <p>Sin ejecuciones todavía</p>
                             </div>
                         ) : logs.map((log) => (
@@ -509,7 +509,7 @@ export default function AutomationDetailPage() {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between">
                                             <p className="font-medium text-foreground text-sm truncate">{log.patient_name || 'Sistema'}</p>
-                                            <span className="text-xs text-slate-400">
+                                            <span className="text-xs text-muted-foreground">
                                                 {new Date(log.timestamp).toLocaleTimeString('es-ES', {
                                                     hour: '2-digit', minute: '2-digit'
                                                 })}

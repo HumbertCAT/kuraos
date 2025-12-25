@@ -86,8 +86,8 @@ export default function PatientsPage() {
             <Users className="w-6 h-6 text-brand" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">{terminology.plural}</h1>
-            <p className="text-sm text-foreground/60 dark:text-zinc-400">Gestiona tu cartera de {terminology.plural.toLowerCase()}</p>
+            <h1 className="text-2xl font-bold text-foreground ">{terminology.plural}</h1>
+            <p className="text-sm text-foreground/60 dark:text-muted-foreground">Gestiona tu cartera de {terminology.plural.toLowerCase()}</p>
           </div>
         </div>
         <Link
@@ -106,12 +106,12 @@ export default function PatientsPage() {
             placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-[200px] p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground dark:text-zinc-100 bg-surface"
+            className="flex-1 min-w-[200px] p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground  bg-surface"
           />
           <select
             value={statusFilter}
             onChange={handleStatusChange}
-            className="p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground dark:text-zinc-100 bg-surface min-w-[180px]"
+            className="p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground  bg-surface min-w-[180px]"
           >
             {STATUS_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -121,7 +121,7 @@ export default function PatientsPage() {
           </select>
           <button
             type="submit"
-            className="px-6 py-3 bg-zinc-800 dark:bg-zinc-200 text-white dark:text-foreground rounded-xl hover:opacity-90 transition-opacity"
+            className="px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-opacity"
           >
             {t('search')}
           </button>
@@ -145,7 +145,7 @@ export default function PatientsPage() {
           action={
             <Link
               href="/patients/new"
-              className="inline-flex items-center px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             >
               + Añadir {terminology.singular}
             </Link>
@@ -164,7 +164,7 @@ export default function PatientsPage() {
               // Get journey status badge
               const getStatusBadge = () => {
                 if (!patient.journey_status || Object.keys(patient.journey_status).length === 0) {
-                  return { label: 'Nuevo', bg: 'bg-slate-100', text: 'text-foreground/70' };
+                  return { label: 'Nuevo', bg: 'bg-muted', text: 'text-muted-foreground' };
                 }
 
                 // Get the most relevant status
@@ -198,7 +198,7 @@ export default function PatientsPage() {
                   'COMPLETED': { label: '🏆 Completado', bg: 'bg-emerald-100', text: 'text-emerald-700' },
                 };
 
-                return statusMap[status] || { label: status, bg: 'bg-slate-100', text: 'text-foreground/70' };
+                return statusMap[status] || { label: status, bg: 'bg-muted', text: 'text-muted-foreground' };
               };
 
               const badge = getStatusBadge();
@@ -207,7 +207,7 @@ export default function PatientsPage() {
                 <Link
                   key={patient.id}
                   href={`/patients/${patient.id}`}
-                  className="block p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md hover:border-slate-300 transition-all"
+                  className="block p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md hover:border-border transition-all"
                 >
                   <div className="flex items-start gap-3">
                     {/* Profile Photo or Initials Avatar */}
@@ -235,7 +235,7 @@ export default function PatientsPage() {
                         <p className="text-sm text-foreground/60 truncate">{patient.email}</p>
                       )}
                       {patient.phone && (
-                        <p className="text-sm text-slate-400">{patient.phone}</p>
+                        <p className="text-sm text-muted-foreground">{patient.phone}</p>
                       )}
                     </div>
                   </div>

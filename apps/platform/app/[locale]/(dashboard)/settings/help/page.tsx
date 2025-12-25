@@ -46,7 +46,7 @@ export default function HelpPage() {
                                     </h3>
                                     <p className="text-sm text-foreground/60">{chapter.description}</p>
                                 </div>
-                                <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 transition-colors" />
+                                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-teal-500 transition-colors" />
                             </div>
                         </Link>
                     ))}

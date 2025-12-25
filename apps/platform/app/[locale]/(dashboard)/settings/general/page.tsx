@@ -242,7 +242,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-white">{t('profile') || 'Perfil'}</h2>
-                <p className="text-slate-300 text-sm">{user?.email}</p>
+                <p className="text-muted-foreground text-sm">{user?.email}</p>
               </div>
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function SettingsPage() {
                 <label className="block text-sm font-medium text-foreground/70 mb-2">
                   {t('email') || 'Email'}
                 </label>
-                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-border">
+                <div className="flex items-center gap-3 p-3 bg-muted rounded-xl border border-border">
                   <span className="text-lg">📧</span>
                   <span className="text-foreground/70">{user?.email || '—'}</span>
                 </div>
@@ -285,7 +285,7 @@ export default function SettingsPage() {
                   Teléfono
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                     <Phone className="w-4 h-4" />
                   </span>
                   <input
@@ -304,7 +304,7 @@ export default function SettingsPage() {
                   Página web
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                     <Globe className="w-4 h-4" />
                   </span>
                   <input
@@ -349,10 +349,10 @@ export default function SettingsPage() {
             </div>
 
             <div className="pt-2 border-t border-border mt-2">
-              <p className="text-xs text-slate-400 italic mb-2">
+              <p className="text-xs text-muted-foreground italic mb-2">
                 Estos datos se mostrarán en tu página de reservas pública.
               </p>
-              <p className="text-xs text-slate-300 text-center">
+              <p className="text-xs text-muted-foreground text-center">
                 Geographic data © <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground/60">GeoNames</a>
               </p>
             </div>
@@ -394,14 +394,14 @@ export default function SettingsPage() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">👥</span>
                   <select
                     disabled
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all appearance-none bg-slate-50 cursor-not-allowed"
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all appearance-none bg-muted cursor-not-allowed"
                   >
                     <option value="CLIENT">Cliente (Coaching)</option>
                     <option value="PATIENT">Paciente (Clínico)</option>
                     <option value="CONSULTANT">Consultante (Holístico)</option>
                   </select>
                 </div>
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Determina cómo se llama a tus clientes en la UI. Próximamente editable.
                 </p>
               </div>
@@ -433,7 +433,7 @@ export default function SettingsPage() {
                       key={opt.value}
                       className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${aiOutputPreference === opt.value
                         ? 'border-emerald-500 bg-emerald-50'
-                        : 'border-border hover:border-slate-300'
+                        : 'border-border hover:border-border'
                         }`}
                     >
                       <input
@@ -474,7 +474,7 @@ export default function SettingsPage() {
 
           <div className="p-6">
             {/* Google Calendar */}
-            <div className="p-5 bg-slate-50 rounded-xl border border-border">
+            <div className="p-5 bg-muted rounded-xl border border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-xl bg-card shadow-sm flex items-center justify-center">

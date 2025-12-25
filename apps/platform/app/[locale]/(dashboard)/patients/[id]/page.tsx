@@ -254,14 +254,14 @@ export default function PatientDetailPage() {
       <div className="mb-6">
         {/* Top row: Back + Nav */}
         <div className="flex items-center gap-4 mb-4">
-          <Link href="/patients" className="text-sm text-foreground/60 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
+          <Link href="/patients" className="text-sm text-muted-foreground hover:text-foreground">
             ← {tPatients('backToPatients')}
           </Link>
           <div className="flex items-center gap-1 ml-2">
             {prevPatientId ? (
               <Link
                 href={`/patients/${prevPatientId}`}
-                className="p-2 text-foreground/60 hover:text-foreground hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
                 title="Previous patient"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -269,7 +269,7 @@ export default function PatientDetailPage() {
                 </svg>
               </Link>
             ) : (
-              <span className="p-2 text-slate-300 cursor-not-allowed">
+              <span className="p-2 text-muted-foreground cursor-not-allowed">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
@@ -278,7 +278,7 @@ export default function PatientDetailPage() {
             {nextPatientId ? (
               <Link
                 href={`/patients/${nextPatientId}`}
-                className="p-2 text-foreground/60 hover:text-foreground hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-2 text-foreground/60 hover:text-foreground hover:bg-accent rounded-lg transition-colors"
                 title="Next patient"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -286,7 +286,7 @@ export default function PatientDetailPage() {
                 </svg>
               </Link>
             ) : (
-              <span className="p-2 text-slate-300 cursor-not-allowed">
+              <span className="p-2 text-muted-foreground cursor-not-allowed">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
@@ -310,13 +310,13 @@ export default function PatientDetailPage() {
                 {patient.first_name?.[0]}{patient.last_name?.[0]}
               </div>
             )}
-            <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">
+            <h1 className="text-2xl font-bold text-foreground ">
               {patient.first_name} {patient.last_name}
             </h1>
           </div>
           <Link
             href={`/patients/${patient.id}/edit`}
-            className="px-4 py-2 border border-border-subtle rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+            className="px-4 py-2 border border-border rounded-xl hover:bg-accent text-muted-foreground"
           >
             {t('edit')}
           </Link>
@@ -327,7 +327,7 @@ export default function PatientDetailPage() {
           {patient.email && (
             <a
               href={`mailto:${patient.email}`}
-              className="inline-flex items-center gap-1 px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-lg text-sm hover:bg-zinc-700 transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80 transition-colors"
             >
               📧 {tCommon('email')}
             </a>
@@ -389,7 +389,7 @@ export default function PatientDetailPage() {
             onClick={() => setActiveTab('journal')}
             className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer ${activeTab === 'journal'
               ? 'border-brand text-brand'
-              : 'border-transparent text-foreground/60 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
           >
             📝 {tCommon('clinicalJournal')}
@@ -398,7 +398,7 @@ export default function PatientDetailPage() {
             onClick={() => setActiveTab('monitoring')}
             className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer flex items-center gap-2 ${activeTab === 'monitoring'
               ? 'border-brand text-brand'
-              : 'border-transparent text-foreground/60 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300'
+              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
               }`}
           >
             📊 {tCommon('monitoring')}
@@ -437,7 +437,7 @@ export default function PatientDetailPage() {
                           ? 'bg-green-100 text-green-700'
                           : booking.status === 'PENDING'
                             ? 'bg-amber-100 text-amber-700'
-                            : 'bg-zinc-800 text-zinc-300'
+                            : 'bg-secondary text-secondary-foreground'
                           }`}>
                           {booking.status}
                         </span>

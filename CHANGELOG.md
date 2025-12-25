@@ -7,49 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.3] - 2024-12-25 🎄
 
-### Added - Cyber-Clinical Design System v2.0
+### Added - Semantic Theme Engine
 - **Theme Engine**: Installed `next-themes` for dark/light mode support
   - `ThemeProvider` wrapping the entire application
-  - `ThemeToggle` component (Sun/Moon icons)
-  - Light (`#FAFAFA`) and Dark (`#09090B`) Zinc Protocol colors
-- **Light/Dark Logo Variants**: New transparent PNGs for each theme
+  - `ThemeToggle` component (Sun/Moon icons) in TrinityNav
+  - Light ("The Clinic") and Dark ("The Void") themes
+- **`@custom-variant dark`**: Tailwind v4 class-based dark mode directive
+- **Light/Dark Logo Variants**: Separate PNGs that swap based on theme
 - **`CyberCard` Component**: Universal container with `default`, `alert`, and `ai` variants
+
+### Added - Semantic Design Tokens
+- **Single Source of Truth**: All colors defined in `globals.css` via CSS variables
+- **Token Categories**:
+  - `--sidebar`, `--header` (layout surfaces)
+  - `--card`, `--popover`, `--input` (component surfaces)
+  - `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive` (actions)
+  - `--brand`, `--risk`, `--success`, `--warning`, `--ai` (semantic colors)
+- **Development Principles**: Updated Section 11 with "Abstraction over Implementation" theming protocol
+- **Forbidden Patterns**: Hardcoded `bg-zinc-*`, `text-slate-*`, `border-gray-*` explicitly banned
+
+### Changed - Semantic Token Migration (Static Analysis)
+- **Batch Refactored ~200 violations** using grep + sed:
+  - `text-slate-400/zinc-400` → `text-muted-foreground`
+  - `text-slate-700` → `text-foreground`
+  - `bg-slate-100/200` → `bg-muted`
+  - `hover:bg-slate-*` → `hover:bg-accent`
+  - `border-slate-300` → `border-border`
+  - `bg-slate-800 text-white` → `bg-primary text-primary-foreground`
+- **Pages Migrated**: dashboard, patients, services, calendar, forms, leads, admin, automations, settings
 
 ### Added - Trinity Navigation
 - **`TrinityNav` Sidebar**: New fixed-width navigation organized by pillars
   - 🔥 **ENGAGE**: CRM, Formularios
   - 🩺 **PRACTICE**: Calendario, Clientes, Servicios
-  - 🌱 **NURTURE**: (Coming Soon - commented out)
+  - 🌱 **NURTURE**: (Coming Soon)
 - **3-Column Layout**: Sidebar | Main Content | AletheIA Intelligence Rail
 - **⌘K Search Placeholder**: Ready for Command Palette integration
-- **AletheIA Observatory**: Right sidebar visible on XL screens
+- **AletheIA Observatory**: Right sidebar with Risk Score, Biomarkers, Alerts widgets
+- **Agentes Menu**: New link in TrinityNav footer pointing to `/settings/automations`
 
 ### Changed - Dashboard Bento Grid
 - **Refactored Dashboard Layout**: From vertical stack to 12-column CSS grid
-  - **Zone A**: Chief of Staff with dark violet gradient header
+  - **Zone A**: Chief of Staff with PendingActionsWidget
   - **Zone B**: Focus Card (8 cols) + Pillar Stack metrics (4 cols)
   - **Zone C**: Recent Bookings + Patients lists with `CyberCard`
-- **Removed Bright Gradients**: All cards now use Zinc surfaces with colored icons
+- **Removed Bright Gradients**: All cards now use semantic surfaces with colored icons
 - **Typography**: `font-mono` for all metrics, timestamps, and stats
-- **Code Reduction**: Dashboard reduced from 648 to ~350 lines
 
-### Changed - Tailwind v4 Migration
-- **CSS-First Configuration**: Moved color definitions from `tailwind.config.ts` to `globals.css`
-- **Semantic Variables**: `--background`, `--foreground`, `--surface`, `--border-subtle`, `--brand`, `--risk`, `--ai`
-- **Updated `DEVELOPMENT_PRINCIPLES.md`**: Section 11.E now reflects Tailwind v4 approach
-
-### Changed - Page-Level Styling
-- **CRM/Leads**: Updated header, Kanban columns with dark mode support
-- **Patients**: Simplified header, search/filter forms with brand colors
-- **Patient Detail**: Updated avatar, tabs, back link with Zinc surfaces
-- **Calendar**: Updated schedule selector, calendar preview with Zinc surfaces
-- **Services**: Updated header, card surfaces with border styling
-- **Forms**: Updated header, tabs, form cards, QR modal with dark mode
-
-### Added - Navigation
-- **Agentes Menu**: New "Agentes" link in TrinityNav footer (above Settings) pointing to `/settings/automations`
+### Removed
+- **`/ui-demo` Page**: Obsolete color demo page deleted
 
 ---
+
 
 ## [1.0.2] - 2024-12-24
 

@@ -58,7 +58,7 @@ function CollapsibleSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const colorClasses: Record<string, { bg: string, border: string, icon: string }> = {
-    slate: { bg: 'bg-slate-50', border: 'border-border', icon: 'text-foreground/60' },
+    slate: { bg: 'bg-muted', border: 'border-border', icon: 'text-foreground/60' },
     violet: { bg: 'bg-violet-50', border: 'border-violet-200', icon: 'text-violet-500' },
     emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'text-emerald-500' },
     fuchsia: { bg: 'bg-fuchsia-50', border: 'border-fuchsia-200', icon: 'text-fuchsia-500' },
@@ -75,12 +75,12 @@ function CollapsibleSection({
       >
         <div className="flex items-center gap-2">
           <Icon className={`w-5 h-5 ${colors.icon}`} />
-          <span className="font-medium text-slate-700">{title}</span>
+          <span className="font-medium text-foreground">{title}</span>
         </div>
         {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-slate-400" />
+          <ChevronUp className="w-5 h-5 text-muted-foreground" />
         ) : (
-          <ChevronDown className="w-5 h-5 text-slate-400" />
+          <ChevronDown className="w-5 h-5 text-muted-foreground" />
         )}
       </button>
       {isOpen && (
@@ -237,7 +237,7 @@ export default function EditPatientPage() {
               )}
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Foto de perfil (URL)</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Foto de perfil (URL)</label>
               <input
                 name="profile_image_url"
                 type="url"
@@ -245,14 +245,14 @@ export default function EditPatientPage() {
                 defaultValue={patient.profile_image_url || ''}
                 className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground text-sm"
               />
-              <p className="text-xs text-slate-400 mt-1">Pega la URL de una imagen de perfil</p>
+              <p className="text-xs text-muted-foreground mt-1">Pega la URL de una imagen de perfil</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('firstName')} *</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t('firstName')} *</label>
                 <input
                   name="first_name"
                   type="text"
@@ -262,7 +262,7 @@ export default function EditPatientPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('lastName')} *</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t('lastName')} *</label>
                 <input
                   name="last_name"
                   type="text"
@@ -275,7 +275,7 @@ export default function EditPatientPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t('email')}</label>
                 <input
                   name="email"
                   type="email"
@@ -284,7 +284,7 @@ export default function EditPatientPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('phone')}</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">{t('phone')}</label>
                 <input
                   name="phone"
                   type="tel"
@@ -295,7 +295,7 @@ export default function EditPatientPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{t('language')}</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">{t('language')}</label>
               <select
                 name="language"
                 value={languageValue}
@@ -317,7 +317,7 @@ export default function EditPatientPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Género</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Género</label>
                 <select
                   name="gender"
                   defaultValue={profile.gender || ''}
@@ -329,7 +329,7 @@ export default function EditPatientPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pronombres</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Pronombres</label>
                 <input
                   name="pronouns"
                   type="text"
@@ -342,7 +342,7 @@ export default function EditPatientPage() {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha Nacimiento</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Fecha Nacimiento</label>
                 <input
                   name="birth_date"
                   type="date"
@@ -351,7 +351,7 @@ export default function EditPatientPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Hora Nacimiento</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Hora Nacimiento</label>
                 <input
                   name="birth_time"
                   type="time"
@@ -360,7 +360,7 @@ export default function EditPatientPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Lugar Nacimiento</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Lugar Nacimiento</label>
                 <input
                   name="birth_place"
                   type="text"
@@ -373,7 +373,7 @@ export default function EditPatientPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nacionalidad</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Nacionalidad</label>
                 <CountrySelect
                   value={nationalityCountry || undefined}
                   onChange={setNationalityCountry}
@@ -381,7 +381,7 @@ export default function EditPatientPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ocupación</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Ocupación</label>
                 <input
                   name="occupation"
                   type="text"
@@ -394,7 +394,7 @@ export default function EditPatientPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">País de Residencia</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">País de Residencia</label>
                 <CountrySelect
                   value={selectedCountry || undefined}
                   onChange={(code) => {
@@ -405,7 +405,7 @@ export default function EditPatientPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Ciudad</label>
                 <CityAutocomplete
                   value={cityValue}
                   onChange={setCityValue}
@@ -421,7 +421,7 @@ export default function EditPatientPage() {
         <CollapsibleSection title="Contacto y Redes" icon={Phone} color="emerald">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Método de contacto preferido</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Método de contacto preferido</label>
               <select
                 name="preferred_contact"
                 defaultValue={profile.preferred_contact || ''}
@@ -435,7 +435,7 @@ export default function EditPatientPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Instagram</label>
                 <input
                   name="instagram"
                   type="text"
@@ -445,7 +445,7 @@ export default function EditPatientPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">LinkedIn</label>
                 <input
                   name="linkedin"
                   type="text"
@@ -460,7 +460,7 @@ export default function EditPatientPage() {
               <h4 className="text-sm font-medium text-foreground/70 mb-3">Contacto de Emergencia</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">Nombre</label>
                   <input
                     name="emergency_contact_name"
                     type="text"
@@ -470,7 +470,7 @@ export default function EditPatientPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">Teléfono</label>
                   <input
                     name="emergency_contact_phone"
                     type="tel"
@@ -488,7 +488,7 @@ export default function EditPatientPage() {
         <CollapsibleSection title="Información Clínica" icon={HeartPulse} color="fuchsia">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">¿Cómo me encontraste?</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">¿Cómo me encontraste?</label>
               <input
                 name="referral_source"
                 type="text"
@@ -499,7 +499,7 @@ export default function EditPatientPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">¿Ha hecho terapia anteriormente?</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">¿Ha hecho terapia anteriormente?</label>
               <select
                 name="previous_therapy"
                 defaultValue={profile.previous_therapy === true ? 'true' : profile.previous_therapy === false ? 'false' : ''}
@@ -512,7 +512,7 @@ export default function EditPatientPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Medicamentos actuales</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Medicamentos actuales</label>
               <textarea
                 name="current_medications"
                 rows={2}
@@ -523,7 +523,7 @@ export default function EditPatientPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Condiciones médicas relevantes</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Condiciones médicas relevantes</label>
               <textarea
                 name="medical_conditions"
                 rows={2}
@@ -534,7 +534,7 @@ export default function EditPatientPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Objetivos / ¿Qué espera lograr?</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Objetivos / ¿Qué espera lograr?</label>
               <textarea
                 name="goals"
                 rows={3}
@@ -545,7 +545,7 @@ export default function EditPatientPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notas internas (solo terapeuta)</label>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Notas internas (solo terapeuta)</label>
               <textarea
                 name="notes"
                 rows={3}
@@ -569,7 +569,7 @@ export default function EditPatientPage() {
           <button
             type="button"
             onClick={() => router.push(`/patients/${patientId}`)}
-            className="px-6 py-3 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-slate-700"
+            className="px-6 py-3 border border-border rounded-lg hover:bg-accent transition-colors text-foreground"
           >
             {t('cancel')}
           </button>
@@ -603,7 +603,7 @@ export default function EditPatientPage() {
       </div>
 
       {/* GeoNames Attribution - CC BY 4.0 */}
-      <p className="mt-6 text-xs text-slate-400 text-center">
+      <p className="mt-6 text-xs text-muted-foreground text-center">
         Geographic data © <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground/70">GeoNames</a>
       </p>
     </div >

@@ -252,7 +252,7 @@ export default function BookingsPage() {
     if (loading) return <div className="p-6 text-center text-foreground/60">Loading...</div>;
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8 px-6">
+        <div className="min-h-screen bg-muted py-8 px-6">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <SectionHeader
@@ -267,7 +267,7 @@ export default function BookingsPage() {
                 {/* Tabs + Filters Row */}
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                     {/* Tabs */}
-                    <div className="flex gap-1 bg-slate-200 p-1 rounded-lg">
+                    <div className="flex gap-1 bg-muted p-1 rounded-lg">
                         <button
                             onClick={() => setActiveTab('future')}
                             className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'future' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
@@ -287,7 +287,7 @@ export default function BookingsPage() {
                     {/* Filters */}
                     <div className="flex items-center gap-3">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <input
                                 type="text"
                                 placeholder={t.search}
@@ -313,14 +313,14 @@ export default function BookingsPage() {
                 {/* Bookings List */}
                 {filteredBookings.length === 0 ? (
                     <div className="text-center py-16 bg-card rounded-xl border border-border">
-                        <Calendar className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-                        <h3 className="text-lg font-semibold text-slate-700">{t.noBookings}</h3>
+                        <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-semibold text-foreground">{t.noBookings}</h3>
                         <p className="text-foreground/60 mt-1">{t.noBookingsDesc}</p>
                     </div>
                 ) : (
                     <div className="bg-card rounded-xl border border-border overflow-hidden">
                         <table className="w-full">
-                            <thead className="bg-slate-50 border-b">
+                            <thead className="bg-muted border-b">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.patient}</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.service}</th>
@@ -336,7 +336,7 @@ export default function BookingsPage() {
                                     const config = statusConfig[booking.status] || statusConfig.PENDING;
 
                                     return (
-                                        <tr key={booking.id} className="hover:bg-slate-50 transition-colors">
+                                        <tr key={booking.id} className="hover:bg-accent transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-medium text-sm">
@@ -372,7 +372,7 @@ export default function BookingsPage() {
                                                 <div className="relative inline-block">
                                                     <button
                                                         onClick={() => setOpenMenu(openMenu === booking.id ? null : booking.id)}
-                                                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                                                        className="p-2 hover:bg-accent rounded-lg transition-colors"
                                                     >
                                                         <MoreVertical className="w-4 h-4 text-foreground/60" />
                                                     </button>

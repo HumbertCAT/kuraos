@@ -85,7 +85,7 @@ export default function PaymentsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 py-8 px-6">
+            <div className="min-h-screen bg-muted py-8 px-6">
                 <div className="max-w-4xl mx-auto flex items-center justify-center h-64">
                     <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
                 </div>
@@ -94,7 +94,7 @@ export default function PaymentsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8 px-6">
+        <div className="min-h-screen bg-muted py-8 px-6">
             <div className="max-w-4xl mx-auto space-y-8">
                 <SectionHeader
                     icon={Wallet}
@@ -201,7 +201,7 @@ export default function PaymentsPage() {
                 <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
                     <h4 className="font-semibold text-foreground mb-4">Comisiones por Plan</h4>
                     <div className="grid sm:grid-cols-3 gap-4">
-                        <div className="p-4 bg-slate-50 rounded-xl text-center">
+                        <div className="p-4 bg-muted rounded-xl text-center">
                             <p className="text-2xl font-bold text-foreground">5%</p>
                             <p className="text-sm text-foreground/60">Builder (Gratis)</p>
                         </div>
@@ -214,7 +214,7 @@ export default function PaymentsPage() {
                             <p className="text-sm text-foreground/60">Center (149€/mes)</p>
                         </div>
                     </div>
-                    <p className="text-xs text-slate-400 mt-4 text-center">
+                    <p className="text-xs text-muted-foreground mt-4 text-center">
                         * Además de las tarifas estándar de Stripe (~1.5% + 0.25€)
                     </p>
                 </div>

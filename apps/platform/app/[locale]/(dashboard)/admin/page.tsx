@@ -67,7 +67,7 @@ const AI_MODELS = [
 ];
 
 const TIER_COLORS: Record<string, string> = {
-    BUILDER: 'bg-slate-100 border-slate-300 text-slate-700',
+    BUILDER: 'bg-muted border-border text-foreground',
     PRO: 'bg-purple-100 border-purple-300 text-purple-700',
     CENTER: 'bg-amber-100 border-amber-300 text-amber-700',
 };
@@ -277,7 +277,7 @@ export default function AdminPage() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 bg-slate-100 p-1 rounded-lg w-fit">
+            <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
                 {tabs.map((tab) => (
                     <button
                         key={tab.key}
@@ -296,8 +296,8 @@ export default function AdminPage() {
             {/* Settings Tab */}
             {activeTab === 'settings' && (
                 <section className="bg-card rounded-xl border border-border overflow-hidden">
-                    <div className="px-6 py-4 border-b border-border bg-slate-50">
-                        <h2 className="text-lg font-semibold text-slate-700">System Settings</h2>
+                    <div className="px-6 py-4 border-b border-border bg-muted">
+                        <h2 className="text-lg font-semibold text-foreground">System Settings</h2>
                         <p className="text-sm text-foreground/60">Global configuration values stored in database</p>
                     </div>
                     <div className="divide-y divide-slate-100">
@@ -314,7 +314,7 @@ export default function AdminPage() {
                                                 <select
                                                     value={editValue.replace(/"/g, '')}
                                                     onChange={(e) => setEditValue(`"${e.target.value}"`)}
-                                                    className="w-48 text-sm border border-slate-300 rounded px-2 py-1 font-mono text-foreground bg-card"
+                                                    className="w-48 text-sm border border-border rounded px-2 py-1 font-mono text-foreground bg-card"
                                                 >
                                                     {AI_MODELS.map((model) => (
                                                         <option key={model} value={model}>{model}</option>
@@ -324,7 +324,7 @@ export default function AdminPage() {
                                                 <textarea
                                                     value={editValue}
                                                     onChange={(e) => setEditValue(e.target.value)}
-                                                    className="w-48 h-20 text-sm border border-slate-300 rounded px-2 py-1 font-mono text-foreground bg-card"
+                                                    className="w-48 h-20 text-sm border border-border rounded px-2 py-1 font-mono text-foreground bg-card"
                                                 />
                                             )}
                                             <button
@@ -335,14 +335,14 @@ export default function AdminPage() {
                                             </button>
                                             <button
                                                 onClick={() => setEditingKey(null)}
-                                                className="px-3 py-1 bg-slate-200 text-slate-700 text-sm rounded hover:bg-slate-300"
+                                                className="px-3 py-1 bg-muted text-foreground text-sm rounded hover:bg-accent"
                                             >
                                                 Cancel
                                             </button>
                                         </>
                                     ) : (
                                         <>
-                                            <code className="text-sm bg-slate-100 px-3 py-1 rounded text-slate-700 max-w-xs truncate">
+                                            <code className="text-sm bg-muted px-3 py-1 rounded text-foreground max-w-xs truncate">
                                                 {JSON.stringify(setting.value)}
                                             </code>
                                             <button
@@ -366,12 +366,12 @@ export default function AdminPage() {
             {/* Organizations Tab */}
             {activeTab === 'organizations' && (
                 <section className="bg-card rounded-xl border border-border overflow-hidden">
-                    <div className="px-6 py-4 border-b border-border bg-slate-50">
-                        <h2 className="text-lg font-semibold text-slate-700">Organizations</h2>
+                    <div className="px-6 py-4 border-b border-border bg-muted">
+                        <h2 className="text-lg font-semibold text-foreground">Organizations</h2>
                         <p className="text-sm text-foreground/60">Manage organization tiers and credits</p>
                     </div>
                     <table className="w-full">
-                        <thead className="bg-slate-50 border-b border-border">
+                        <thead className="bg-muted border-b border-border">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Name</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Tier</th>
@@ -400,7 +400,7 @@ export default function AdminPage() {
                                         <select
                                             value={org.terminology_preference || 'CLIENT'}
                                             onChange={(e) => handleChangeTerminology(org.id, e.target.value)}
-                                            className="text-sm px-2 py-1 rounded border border-slate-300 bg-card text-slate-700"
+                                            className="text-sm px-2 py-1 rounded border border-border bg-card text-foreground"
                                         >
                                             {TERMINOLOGY_OPTIONS.map((term) => (
                                                 <option key={term} value={term}>{term}</option>
@@ -426,7 +426,7 @@ export default function AdminPage() {
                                                     type="number"
                                                     value={creditsAmount}
                                                     onChange={(e) => setCreditsAmount(Number(e.target.value))}
-                                                    className="w-20 text-sm border border-slate-300 rounded px-2 py-1 text-foreground"
+                                                    className="w-20 text-sm border border-border rounded px-2 py-1 text-foreground"
                                                     min="1"
                                                 />
                                                 <button
@@ -437,7 +437,7 @@ export default function AdminPage() {
                                                 </button>
                                                 <button
                                                     onClick={() => setAddCreditsOrgId(null)}
-                                                    className="px-2 py-1 bg-slate-200 text-slate-700 text-xs rounded"
+                                                    className="px-2 py-1 bg-muted text-foreground text-xs rounded"
                                                 >
                                                     ✕
                                                 </button>
@@ -464,14 +464,14 @@ export default function AdminPage() {
             {/* Templates Tab */}
             {activeTab === 'templates' && (
                 <section className="bg-card rounded-xl border border-border overflow-hidden">
-                    <div className="px-6 py-4 border-b border-border bg-slate-50 flex justify-between items-center">
+                    <div className="px-6 py-4 border-b border-border bg-muted flex justify-between items-center">
                         <div>
-                            <h2 className="text-lg font-semibold text-slate-700">Form Templates</h2>
+                            <h2 className="text-lg font-semibold text-foreground">Form Templates</h2>
                             <p className="text-sm text-foreground/60">Manage system form templates</p>
                         </div>
                         <Link
                             href={`/${locale}/admin/templates/new/edit`}
-                            className="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 flex items-center gap-2 text-sm"
+                            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 flex items-center gap-2 text-sm"
                         >
                             + New Template
                         </Link>
@@ -485,8 +485,8 @@ export default function AdminPage() {
                                 key={f}
                                 onClick={() => setTemplatesFilter(f)}
                                 className={`px-3 py-1 text-xs rounded-full transition-colors ${templatesFilter === f
-                                    ? 'bg-slate-800 text-white'
-                                    : 'bg-slate-100 text-foreground/70 hover:bg-slate-200'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted text-foreground/70 hover:bg-muted'
                                     }`}
                             >
                                 {f === 'all' ? 'All' : f === 'system' ? '🌐 System' : '🏢 Org'}
@@ -494,7 +494,7 @@ export default function AdminPage() {
                         ))}
                     </div>
                     <table className="w-full">
-                        <thead className="bg-slate-50 border-b border-border">
+                        <thead className="bg-muted border-b border-border">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Template</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Type</th>
@@ -508,7 +508,7 @@ export default function AdminPage() {
                             {templates
                                 .filter(t => templatesFilter === 'all' || (templatesFilter === 'system' ? t.is_system : !t.is_system))
                                 .map((template) => (
-                                    <tr key={template.id} className="hover:bg-slate-50">
+                                    <tr key={template.id} className="hover:bg-accent">
                                         <td className="px-6 py-4">
                                             <p className="font-medium text-foreground">{template.title}</p>
                                             {template.description && (
@@ -530,12 +530,12 @@ export default function AdminPage() {
                                                     {template.is_system ? '🌐 System' : '🏢 Org'}
                                                 </span>
                                                 {!template.is_system && template.organization_id && (
-                                                    <p className="text-xs text-slate-400 mt-0.5">{getOrgName(template.organization_id)}</p>
+                                                    <p className="text-xs text-muted-foreground mt-0.5">{getOrgName(template.organization_id)}</p>
                                                 )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 rounded text-xs ${template.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-foreground/60'}`}>
+                                            <span className={`px-2 py-1 rounded text-xs ${template.is_active ? 'bg-green-100 text-green-700' : 'bg-muted text-foreground/60'}`}>
                                                 {template.is_active ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
@@ -572,8 +572,8 @@ export default function AdminPage() {
             {/* Automations Tab */}
             {activeTab === 'automations' && (
                 <section className="bg-card rounded-xl border border-border overflow-hidden">
-                    <div className="px-6 py-4 border-b border-border bg-slate-50">
-                        <h2 className="text-lg font-semibold text-slate-700">System Automations</h2>
+                    <div className="px-6 py-4 border-b border-border bg-muted">
+                        <h2 className="text-lg font-semibold text-foreground">System Automations</h2>
                         <p className="text-sm text-foreground/60">Playbook templates available in the marketplace</p>
                     </div>
 
@@ -585,8 +585,8 @@ export default function AdminPage() {
                                 key={f}
                                 onClick={() => setAutomationsFilter(f)}
                                 className={`px-3 py-1 text-xs rounded-full transition-colors ${automationsFilter === f
-                                    ? 'bg-slate-800 text-white'
-                                    : 'bg-slate-100 text-foreground/70 hover:bg-slate-200'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted text-foreground/70 hover:bg-muted'
                                     }`}
                             >
                                 {f === 'all' ? 'All' : f === 'system' ? '🌐 System' : '🏢 Org'}
@@ -594,7 +594,7 @@ export default function AdminPage() {
                         ))}
                     </div>
                     <table className="w-full">
-                        <thead className="bg-slate-50 border-b border-border">
+                        <thead className="bg-muted border-b border-border">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Playbook</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Trigger</th>
@@ -620,7 +620,7 @@ export default function AdminPage() {
                                     const emoji = iconMap[rule.icon] || '🤖';
 
                                     return (
-                                        <tr key={rule.id} className="hover:bg-slate-50">
+                                        <tr key={rule.id} className="hover:bg-accent">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <span className="text-2xl">{emoji}</span>
@@ -658,14 +658,14 @@ export default function AdminPage() {
                                                         {rule.is_system_template ? '🌐 System' : '🏢 Org'}
                                                     </span>
                                                     {!rule.is_system_template && rule.organization_id && (
-                                                        <p className="text-xs text-slate-400 mt-0.5">{getOrgName(rule.organization_id)}</p>
+                                                        <p className="text-xs text-muted-foreground mt-0.5">{getOrgName(rule.organization_id)}</p>
                                                     )}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`px-2 py-1 rounded text-xs font-medium ${rule.is_active
                                                     ? 'bg-green-100 text-green-700'
-                                                    : 'bg-slate-100 text-foreground/60'
+                                                    : 'bg-muted text-foreground/60'
                                                     }`}>
                                                     {rule.is_active ? 'Active' : 'Inactive'}
                                                 </span>
@@ -810,9 +810,9 @@ function BackupsTab() {
     return (
         <>
             <section className="bg-card rounded-xl border border-border overflow-hidden">
-                <div className="px-6 py-4 border-b border-border bg-slate-50 flex justify-between items-center">
+                <div className="px-6 py-4 border-b border-border bg-muted flex justify-between items-center">
                     <div>
-                        <h2 className="text-lg font-semibold text-slate-700">🛡️ Database Backups</h2>
+                        <h2 className="text-lg font-semibold text-foreground">🛡️ Database Backups</h2>
                         <p className="text-sm text-foreground/60">Create and restore database backups (Super Admin only)</p>
                     </div>
                     <button
@@ -831,7 +831,7 @@ function BackupsTab() {
                 )}
 
                 <table className="w-full">
-                    <thead className="bg-slate-50 border-b border-border">
+                    <thead className="bg-muted border-b border-border">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Filename</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Size</th>
@@ -842,7 +842,7 @@ function BackupsTab() {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {backups.map((backup) => (
-                            <tr key={backup.filename} className="hover:bg-slate-50">
+                            <tr key={backup.filename} className="hover:bg-accent">
                                 <td className="px-6 py-4 font-mono text-sm text-foreground">{backup.filename}</td>
                                 <td className="px-6 py-4 text-sm text-foreground/70">{backup.size_human}</td>
                                 <td className="px-6 py-4 text-sm text-foreground/70">
@@ -897,14 +897,14 @@ function BackupsTab() {
                             </h3>
                             <p className="text-foreground/70 mb-4">
                                 Estás a punto de <span className="font-bold text-red-600">sobrescribir la base de datos actual</span> con
-                                la copia <code className="bg-slate-100 px-1 rounded">{restoreModal.filename}</code>.
+                                la copia <code className="bg-muted px-1 rounded">{restoreModal.filename}</code>.
                             </p>
                             <p className="text-red-700 font-semibold mb-6">
                                 ⚠️ TODOS LOS DATOS POSTERIORES A ESA FECHA SE PERDERÁN PERMANENTEMENTE.
                             </p>
 
                             <div className="mb-6">
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     Escribe <span className="font-mono font-bold text-red-600">RESTAURAR</span> para confirmar:
                                 </label>
                                 <input
@@ -920,7 +920,7 @@ function BackupsTab() {
                             <div className="flex gap-3 justify-center">
                                 <button
                                     onClick={closeRestoreModal}
-                                    className="px-6 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300"
+                                    className="px-6 py-2 bg-muted text-foreground rounded-lg hover:bg-accent"
                                 >
                                     Cancelar
                                 </button>

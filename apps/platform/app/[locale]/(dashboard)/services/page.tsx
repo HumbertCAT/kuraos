@@ -303,10 +303,10 @@ export default function ServicesPage() {
         return (
             <div className="p-6">
                 <div className="animate-pulse space-y-4">
-                    <div className="h-8 bg-slate-200 rounded w-1/3"></div>
+                    <div className="h-8 bg-muted rounded w-1/3"></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="h-48 bg-slate-200 rounded-xl"></div>
+                            <div key={i} className="h-48 bg-muted rounded-xl"></div>
                         ))}
                     </div>
                 </div>
@@ -324,13 +324,13 @@ export default function ServicesPage() {
                             <Package className="w-6 h-6 text-brand" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">{t.title}</h1>
-                            <p className="text-sm text-foreground/60 dark:text-zinc-400">{t.subtitle}</p>
+                            <h1 className="text-2xl font-bold text-foreground">{t.title}</h1>
+                            <p className="text-sm text-muted-foreground">{t.subtitle}</p>
                         </div>
                     </div>
                     <button
                         onClick={openCreateModal}
-                        className="flex items-center gap-2 px-4 py-2 bg-white text-black dark:bg-white dark:text-black uppercase font-bold tracking-wider font-mono rounded-sm h-8 hover:opacity-90 transition-opacity"
+                        className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground uppercase font-bold tracking-wider font-mono rounded-sm h-8 hover:bg-primary/90 transition-opacity"
                     >
                         <Plus size={20} />
                         {t.addService}
@@ -601,7 +601,7 @@ export default function ServicesPage() {
                             <div className="p-6 border-t flex justify-end gap-3">
                                 <button
                                     onClick={() => setShowModal(false)}
-                                    className="px-4 py-2 text-foreground/70 hover:bg-slate-100 rounded-lg transition-colors"
+                                    className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-lg transition-colors"
                                 >
                                     {t.cancel}
                                 </button>
@@ -631,7 +631,7 @@ export default function ServicesPage() {
                                 </div>
                                 <button
                                     onClick={() => setShowBookingsModal(false)}
-                                    className="p-2 hover:bg-slate-100 rounded-lg"
+                                    className="p-2 hover:bg-accent rounded-lg"
                                 >
                                     <X size={20} />
                                 </button>
@@ -671,7 +671,7 @@ export default function ServicesPage() {
                                                         ? 'bg-green-100 text-green-700'
                                                         : booking.status === 'PENDING'
                                                             ? 'bg-amber-100 text-amber-700'
-                                                            : 'bg-slate-100 text-foreground/70'
+                                                            : 'bg-muted text-foreground/70'
                                                         }`}>
                                                         {booking.status}
                                                     </span>

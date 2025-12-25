@@ -167,118 +167,112 @@ const { singular, plural } = useTerminology();
 
 ---
 
-## 11. CYBER-CLINICAL DESIGN SYSTEM v2.1 (The Zinc Protocol - Architect Refinement)
+## 11. SEMANTIC DESIGN SYSTEM (Theming Protocol)
 
-**Philosophy:** "Precision & Void". A sterile, sophisticated interface inspired by medical HUDs.
-**Core Rule:** Design for **Light Mode ("The Clinic")** cleanliness, but verify **Dark Mode ("The Void")** immersion.
-**Tech Stack:** Tailwind CSS v4 (CSS-first, no tailwind.config.ts).
+**Philosophy:** "Abstraction over Implementation". We style with **Intent**, not with Color.
+**Core Objective:** The application must support instant re-theming (Light/Dark/Custom) via a future Admin Panel. This requires 100% abstraction.
 
-### A. The Color Architecture (Zinc-Based + Neon Accents)
-We strictly use the **Zinc** scale for neutrals, with **neon accents** in dark mode.
+### A. The Golden Rule: NO HARDCODED COLORS
+It is **STRICTLY FORBIDDEN** to use raw color utility classes in components.
 
-| Token | Purpose | Light Mode | Dark Mode |
-| :--- | :--- | :--- | :--- |
-| **Canvas** | App Background | `#FAFAFA` | `#0a0a0a` (True Black) |
-| **Surface** | Cards/Panels | `#FFFFFF` | `#121212` (Elevated) |
-| **Border** | Structural Lines | `#E4E4E7` | `#1f1f1f` (Ultra subtle) |
-| **Brand** | Primary Accent | `#0D9488` (Teal 600) | `#2DD4BF` (Teal 400) |
-| **Risk** | Alerts/Danger | `#E11D48` (Rose 600) | `#ff3366` (Neon Red) |
-| **AI** | Intelligence | `#7C3AED` (Violet 600) | `#A78BFA` (Violet 400) |
-| **AI Accent** | Cyan Highlights | `#0891B2` (Cyan 600) | `#00ffcc` (Neon Cyan) |
+* ❌ **FORBIDDEN (Hardcoded):**
+    * `bg-white`, `bg-black`, `bg-zinc-900`, `bg-[#0A0A0A]`
+    * `text-white`, `text-zinc-500`, `text-teal-500`
+    * `border-gray-200`, `border-zinc-800`
 
-### B. Typography System (Architect Stack)
+* ✅ **REQUIRED (Semantic Tokens):**
+    * `bg-card`, `bg-background`, `bg-sidebar`
+    * `text-foreground`, `text-muted-foreground`, `text-brand`
+    * `border-border`, `border-input`
 
-**⚠️ CRITICAL: We use Tailwind v4 - configure fonts in `globals.css` via `@theme`, NOT tailwind.config.ts.**
+### B. The Token Dictionary (Tailwind v4)
+All styles must be derived from `app/globals.css`.
 
-| Role | Font | Use Case |
+| Area | Token Class | Purpose |
 | :--- | :--- | :--- |
-| **Display** | `Space Grotesk` | Headers, titles - cyber/technical |
-| **Body** | `Inter` | Content, paragraphs - clean/functional |
-| **Mono** | `JetBrains Mono` | Stats, IDs, timestamps, biomarkers |
+| **Lienzo Global** | `bg-background` | El fondo base de la página (App Shell). |
+| **Contenedores** | `bg-card` | Tarjetas, paneles, bloques de contenido. |
+| **Navegación** | `bg-sidebar` | Barra lateral izquierda (Trinity Nav). |
+| **Cabeceras** | `bg-header` / `bg-card` | Barras superiores (Sticky Headers). |
+| **Overlays** | `bg-popover` | Dropdowns, Modales, Tooltips. |
+| **Inputs** | `bg-input` | Campos de texto, Search bars. |
+| **Bordes** | `border-border` | Líneas estructurales genéricas. |
+| **Acción Principal** | `bg-primary` | Botones principales (Tactical Look). |
+| **Texto Base** | `text-foreground` | Texto principal de lectura. |
+| **Texto Secundario**| `text-muted-foreground`| Metadatos, etiquetas, subtítulos. |
 
-**Utility Classes:**
-- `.font-display` - Space Grotesk, weight 600, tracking tight
-- `.font-body` - Inter (default)
-- `.font-mono` / `.font-stats` - JetBrains Mono with tabular nums
-- `.font-label` - ALL CAPS, 0.1em tracking, 0.65rem
+### C. Component Construction Rules
 
-**⚠️ Architect Note:** Never use Serif fonts in dashboards - they create "Magazine" feel instead of "Herramienta/Software".
+1.  **The "CyberCard" Standard:**
+    * Always use the `<CyberCard>` component for containers.
+    * If building a custom container, it MUST use `bg-card border-border text-card-foreground`.
+    * **Never** assume a card is white or black. It is simply "Card Color".
 
-### C. Component Patterns (The Atoms)
+2.  **Buttons (Tactical):**
+    * Primary Actions: `bg-primary text-primary-foreground` (This handles the White/Black inversion automatically).
+    * Secondary Actions: `bg-secondary text-secondary-foreground`.
 
-#### 1. The "CyberCard" (Universal Container)
-* **Classes:** `bg-surface border border-border-subtle rounded-xl`
-* **Shadow:** Light mode only with `shadow-sm`
+3.  **Brand & Status:**
+    * Use `text-brand` for the main identity color (Teal).
+    * Use `text-risk` for alerts (Rose/Neon Red).
+    * Use `text-ai` for Intelligence features (Violet).
 
-#### 2. The "Action Button" (High Contrast)
-* **Classes:** `bg-brand text-white rounded-xl hover:opacity-90`
+### D. CSS Variables as Source of Truth
+Configuration happens **ONLY** in `app/globals.css` inside `:root` and `.dark`.
 
-#### 3. Status Badges (The "Pill")
-* **High Risk:** `bg-risk/10 text-risk`
-* **AI/Beta:** `bg-ai/10 text-ai`
-
-### D. Layout Architecture (The Trinity Shell)
-
-* **Left:** Navigation Sidebar (`w-64`, Fixed).
-* **Center:** Main Stage (Fluid, Scrollable).
-* **Right:** Intelligence Rail (`w-80`, Collapsible, reserved for AletheIA).
-
-### E. Implementation Strategy (Tailwind v4 CSS-First)
-
-**1. CSS Configuration (`app/globals.css`)**
-We define the theme directly in CSS using `@theme inline`. We do NOT use `tailwind.config.ts`.
-
+**Example Configuration:**
 ```css
 @import "tailwindcss";
 
-@theme {
-  /* Semantic Color Mapping */
+/* Enable class-based dark mode (required for next-themes) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
-  --color-surface: var(--surface);
-  --color-border-subtle: var(--border-subtle);
-
-  /* Brand Aliases */
-  --color-brand: var(--color-teal-600);
-  --color-brand-foreground: var(--color-teal-50);
-  
-  --color-risk: var(--color-rose-600);
-  --color-risk-bg: var(--color-rose-50);
-
-  --color-ai: var(--color-violet-600);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-risk: var(--risk);
+  --color-ai: var(--ai);
 }
 
-/* 2. The Variables (Zinc Protocol) */
 :root {
-  /* Light Mode (The Clinic) - Zinc 50 Base */
-  --background: #FAFAFA; 
-  --foreground: #18181B; /* Zinc 900 */
-  --surface: #FFFFFF;
-  --border-subtle: #E4E4E7; /* Zinc 200 */
+  /* Light Mode */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --border: #E2E8F0;
+  --brand: #0D9488;
+  --risk: #E11D48;
+  --ai: #8b5cf6;
 }
 
-/* Dark Mode (The Void) - Zinc 950 Base */
 .dark {
-  --background: #09090B; 
-  --foreground: #E4E4E7; /* Zinc 200 */
-  --surface: #18181B; /* Zinc 900 */
-  --border-subtle: #27272A; /* Zinc 800 */
-  
-  /* Re-map brand colors for dark mode contrast */
-  --color-brand: var(--color-teal-400);
-  --color-risk: var(--color-rose-400);
+  /* Dark Mode */
+  --background: #09090b;
+  --foreground: #E4E4E7;
+  --card: #121212;
+  --border: #27272a;
+  --brand: #2DD4BF;
+  --risk: #FB7185;
+  --ai: #a78bfa;
 }
 ```
 
-**2. Usage in Components**
-- Use semantic names: `bg-background`, `text-foreground`, `border-border-subtle`
-- Use specific accents: `text-brand`, `bg-risk`
+### E. Typography System (Architect Stack)
 
-**3. Theme Toggle (next-themes)**
-- `next-themes` injects `.dark` class on `<html>` element
-- CSS variables in `.dark { ... }` override `:root` automatically
-- Components just use `bg-background` - browser decides the color based on mode
+| Role | Font | Use Case |
+| :--- | :--- | :--- |
+| **Serif** | `Playfair Display` | Elegant headings (h1-h6 default) |
+| **Display** | `Space Grotesk` | Technical headers (`.font-display`) |
+| **Body** | `Inter` | Content, paragraphs (default) |
+| **Mono** | `JetBrains Mono` | Stats, IDs, timestamps, biomarkers |
+
+### F. Theming Principle
+* To change the app from "Zinc" to "Slate", we modify **ONLY** the CSS variables in `globals.css`.
+* **NEVER** touch React components to change colors.
+* Components use `bg-card` - whether that's white, gray, or purple is decided by the theme.
 
 ---
 

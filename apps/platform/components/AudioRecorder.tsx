@@ -245,7 +245,7 @@ export default function AudioRecorder({ onRecordingComplete, disabled }: AudioRe
                     {t('stopRecording')} ({formatTime(recordingTime)})
                 </button>
                 {mode === 'meeting' && (
-                    <span className="text-xs text-amber-400 bg-amber-500/10 px-2 py-1 rounded-lg flex items-center gap-1">
+                    <span className="text-xs text-amber-400 bg-amber-500/100/10 px-2 py-1 rounded-lg flex items-center gap-1">
                         <Monitor className="w-3 h-3" />
                         Reunión
                     </span>
@@ -261,7 +261,7 @@ export default function AudioRecorder({ onRecordingComplete, disabled }: AudioRe
             <button
                 onClick={() => setShowModeSelector(!showModeSelector)}
                 disabled={disabled}
-                className="px-4 py-2 border border-zinc-700 rounded-lg hover:bg-zinc-800 transition-colors text-zinc-400 cursor-pointer disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors text-muted-foreground cursor-pointer disabled:opacity-50 flex items-center gap-2"
             >
                 {mode === 'voice' ? (
                     <Mic className="w-4 h-4" />
@@ -280,14 +280,14 @@ export default function AudioRecorder({ onRecordingComplete, disabled }: AudioRe
                     {/* Voice Note Mode */}
                     <button
                         onClick={() => { setMode('voice'); startRecording(); }}
-                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors text-left ${mode === 'voice' ? 'bg-emerald-500/10' : ''}`}
+                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-accent transition-colors text-left ${mode === 'voice' ? 'bg-brand/10' : ''}`}
                     >
-                        <div className={`p-2 rounded-lg ${mode === 'voice' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-foreground/70'}`}>
+                        <div className={`p-2 rounded-lg ${mode === 'voice' ? 'bg-brand/20 text-brand' : 'bg-muted text-muted-foreground'}`}>
                             <Mic className="w-5 h-5" />
                         </div>
                         <div>
                             <p className="font-medium text-foreground">🎙️ Nota de Voz</p>
-                            <p className="text-xs text-foreground/60">Solo micrófono</p>
+                            <p className="text-xs text-muted-foreground">Solo micrófono</p>
                         </div>
                     </button>
 
@@ -296,22 +296,22 @@ export default function AudioRecorder({ onRecordingComplete, disabled }: AudioRe
                     {/* Meeting Mode */}
                     <button
                         onClick={() => { setMode('meeting'); startRecording(); }}
-                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors text-left ${mode === 'meeting' ? 'bg-ai/10' : ''}`}
+                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-accent transition-colors text-left ${mode === 'meeting' ? 'bg-ai/10' : ''}`}
                     >
-                        <div className={`p-2 rounded-lg ${mode === 'meeting' ? 'bg-ai/20 text-ai' : 'bg-zinc-800 text-foreground/70'}`}>
+                        <div className={`p-2 rounded-lg ${mode === 'meeting' ? 'bg-ai/20 text-ai' : 'bg-muted text-muted-foreground'}`}>
                             <Monitor className="w-5 h-5" />
                         </div>
                         <div>
                             <p className="font-medium text-foreground">💻 Grabar Reunión</p>
-                            <p className="text-xs text-foreground/60">Sistema + Micrófono (Zoom, Meet...)</p>
+                            <p className="text-xs text-muted-foreground">Sistema + Micrófono (Zoom, Meet...)</p>
                         </div>
                     </button>
 
                     {/* Warning for Meeting Mode */}
-                    <div className="border-t border-border px-4 py-3 bg-amber-500/10">
+                    <div className="border-t border-border px-4 py-3 bg-warning/10">
                         <div className="flex items-start gap-2">
-                            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                            <p className="text-xs text-amber-400">
+                            <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-warning">
                                 <strong>Importante:</strong> Al seleccionar la ventana, marca la casilla{' '}
                                 <span className="font-semibold">"Compartir audio de la pestaña"</span>{' '}
                                 o el audio de la reunión no se grabará.

@@ -138,7 +138,7 @@ export default function BillingPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 py-8 px-6">
+            <div className="min-h-screen bg-muted py-8 px-6">
                 <div className="max-w-6xl mx-auto flex items-center justify-center h-64">
                     <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
                 </div>
@@ -185,7 +185,7 @@ export default function BillingPage() {
                         <button
                             onClick={handleManageSubscription}
                             disabled={actionLoading === 'portal'}
-                            className="flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                            className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-foreground hover:bg-accent transition-colors disabled:opacity-50"
                         >
                             {actionLoading === 'portal' ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -217,13 +217,13 @@ export default function BillingPage() {
                         )}
 
                         {plan.current && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-slate-900 text-white text-xs font-medium rounded-full">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-medium rounded-full">
                                 Plan Actual
                             </div>
                         )}
 
                         <div className="text-center mb-6">
-                            <div className={`inline-flex p-3 rounded-xl mb-4 ${plan.current ? 'bg-emerald-100' : 'bg-slate-100'}`}>
+                            <div className={`inline-flex p-3 rounded-xl mb-4 ${plan.current ? 'bg-emerald-100' : 'bg-muted'}`}>
                                 <plan.icon className={`w-6 h-6 ${plan.current ? 'text-emerald-600' : 'text-foreground/70'}`} />
                             </div>
                             <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
@@ -247,14 +247,14 @@ export default function BillingPage() {
                         {plan.current ? (
                             <button
                                 disabled
-                                className="w-full py-3 bg-slate-100 text-slate-400 font-medium rounded-xl cursor-not-allowed"
+                                className="w-full py-3 bg-muted text-muted-foreground font-medium rounded-xl cursor-not-allowed"
                             >
                                 Plan Actual
                             </button>
                         ) : plan.id === 'BUILDER' ? (
                             <button
                                 disabled
-                                className="w-full py-3 border border-border text-slate-400 font-medium rounded-xl cursor-not-allowed"
+                                className="w-full py-3 border border-border text-muted-foreground font-medium rounded-xl cursor-not-allowed"
                             >
                                 Plan Gratuito
                             </button>

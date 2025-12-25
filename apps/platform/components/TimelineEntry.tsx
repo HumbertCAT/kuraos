@@ -97,13 +97,14 @@ const ENTRY_ICONS: Record<string, React.ReactNode> = {
   FORM_SUBMISSION: Icons.document,
 };
 
+// Entry colors with dual mode support (light pastel, dark transparent)
 const ENTRY_COLORS: Record<string, string> = {
-  SESSION_NOTE: 'bg-blue-50 text-blue-600 border-blue-200',
-  AUDIO: 'bg-amber-50 text-amber-600 border-amber-200',
-  DOCUMENT: 'bg-slate-50 text-foreground/70 border-border',
-  AI_ANALYSIS: 'bg-purple-50 text-purple-600 border-purple-200',
-  ASSESSMENT: 'bg-green-50 text-green-600 border-green-200',
-  FORM_SUBMISSION: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+  SESSION_NOTE: 'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/30',
+  AUDIO: 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30',
+  DOCUMENT: 'bg-slate-50 text-foreground/70 border-border dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
+  AI_ANALYSIS: 'bg-purple-50 text-ai border-purple-200 dark:bg-ai/10 dark:text-ai dark:border-ai/30',
+  ASSESSMENT: 'bg-green-50 text-green-600 border-green-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30',
+  FORM_SUBMISSION: 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-brand/10 dark:text-brand dark:border-brand/30',
 };
 
 const MAX_LINES = 10;
@@ -216,7 +217,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
 
   return (
     <>
-      <div className="bg-card rounded-xl border border-border hover:border-slate-300 transition-all hover:shadow-sm">
+      <div className="bg-card rounded-xl border border-border hover:border-border dark:hover:border-zinc-700 transition-all hover:shadow-sm">
         {/* Header */}
         <div className="flex items-start gap-3 p-4">
           {/* Type Icon */}
@@ -228,15 +229,15 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
           <div className="flex-1 min-w-0">
             {/* Meta row */}
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-sm font-medium text-slate-700">{label}</span>
-              <span className="text-slate-300">·</span>
-              <span className="text-xs text-slate-400">{happenedAt}</span>
+              <span className="text-sm font-medium text-foreground dark:text-zinc-200">{label}</span>
+              <span className="text-border dark:text-zinc-600">·</span>
+              <span className="text-xs text-foreground/50 dark:text-zinc-500">{happenedAt}</span>
               {entry.is_private && (
-                <span className="text-xs bg-slate-100 text-foreground/60 px-2 py-0.5 rounded-full">{t('private')}</span>
+                <span className="text-xs bg-muted dark:bg-zinc-800 text-foreground/60 px-2 py-0.5 rounded-full">{t('private')}</span>
               )}
               {/* Processing status indicator */}
               {(entry.processing_status === 'PENDING' || entry.processing_status === 'PROCESSING') && (
-                <span className="flex items-center gap-1 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full animate-pulse">
+                <span className="flex items-center gap-1 text-xs bg-ai/10 dark:bg-ai/20 text-ai px-2 py-0.5 rounded-full animate-pulse">
                   {Icons.loading}
                   <span>{entry.processing_status === 'PENDING' ? 'En cola...' : 'Analizando...'}</span>
                 </span>
@@ -244,7 +245,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
               {entry.processing_status === 'FAILED' && (
                 <button
                   onClick={() => setShowErrorModal(true)}
-                  className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full cursor-pointer hover:bg-red-200 transition-colors"
+                  className="text-xs bg-red-500/10 dark:bg-red-500/20 text-red-500 px-2 py-0.5 rounded-full cursor-pointer hover:bg-red-500/20 dark:hover:bg-red-500/30 transition-colors"
                 >
                   ⚠️ Error
                 </button>
@@ -265,7 +266,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={handleCancelEdit}
-                        className="px-3 py-1.5 text-sm text-foreground/70 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+                        className="px-3 py-1.5 text-sm text-foreground/70 bg-muted dark:bg-zinc-800 hover:bg-muted/80 dark:hover:bg-zinc-700 rounded-lg transition-colors cursor-pointer"
                       >
                         {t('cancel')}
                       </button>
@@ -283,7 +284,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                   <>
                     <div
                       ref={contentRef}
-                      className="text-slate-700 text-sm leading-relaxed"
+                      className="text-foreground dark:text-zinc-200 text-sm leading-relaxed"
                       style={!contentExpanded && isContentTruncated ? {
                         display: '-webkit-box',
                         WebkitLineClamp: 10,
@@ -330,7 +331,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                         <span className="text-xs font-medium text-emerald-700 uppercase tracking-wide">
                           {key.replace(/_/g, ' ')}
                         </span>
-                        <span className="text-sm text-slate-700 mt-0.5">
+                        <span className="text-sm text-foreground dark:text-zinc-200 mt-0.5">
                           {typeof value === 'boolean' ? (value ? '✓ Sí' : '✗ No') : String(value)}
                         </span>
                       </div>
@@ -338,7 +339,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                     {entry.entry_metadata.risk_level && (
                       <div className="pt-2 border-t border-emerald-200">
                         <span className="text-xs font-medium text-foreground/60">Nivel de riesgo: </span>
-                        <span className={`text-xs font-semibold ${entry.entry_metadata.risk_level === 'HIGH' ? 'text-red-600' :
+                        <span className={`text-xs font-semibold ${entry.entry_metadata.risk_level === 'HIGH' ? 'text-red-500' :
                           entry.entry_metadata.risk_level === 'MEDIUM' ? 'text-orange-600' :
                             'text-green-600'
                           }`}>
@@ -376,7 +377,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
               <button
                 onClick={handleAnalyze}
                 disabled={analyzing}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-ai bg-purple-50 hover:bg-ai/10 dark:bg-ai/20 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
                 title={t('analyzeWithAI')}
               >
                 {analyzing ? Icons.loading : Icons.sparkles}
@@ -388,7 +389,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
             {onUpdateContent && entry.entry_type === 'SESSION_NOTE' && !isEditing && (
               <button
                 onClick={handleStartEdit}
-                className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                className="p-2 text-foreground/50 dark:text-zinc-500 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                 title={t('edit') || 'Edit'}
               >
                 {Icons.edit}
@@ -399,7 +400,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
             {onDelete && (
               <button
                 onClick={() => onDelete(entry.id)}
-                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                className="p-2 text-foreground/50 dark:text-zinc-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                 title={t('confirmDeleteEntry')}
               >
                 {Icons.trash}
@@ -416,11 +417,11 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
               className="w-full flex items-center justify-between mb-3 cursor-pointer"
             >
               <div className="flex items-center gap-2">
-                <div className="text-purple-600">{Icons.sparkles}</div>
+                <div className="text-ai">{Icons.sparkles}</div>
                 <span className="text-sm font-medium text-purple-700">{t('analysisComplete')}</span>
                 <span className="text-xs text-purple-400">({savedAnalyses.length + (pendingAnalysis ? 1 : 0)})</span>
               </div>
-              <div className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1">
+              <div className="text-xs text-ai hover:text-purple-700 flex items-center gap-1">
                 <span>{analysisExpanded ? t('collapse') : t('expand')}</span>
                 <span className={`transform transition-transform ${analysisExpanded ? 'rotate-180' : ''}`}>
                   {Icons.chevronDown}
@@ -461,7 +462,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                           <button
                             onClick={() => handleDeleteAnalysis(analysis.id)}
                             disabled={deleting === analysis.id}
-                            className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                            className="text-xs text-red-400 hover:text-red-500 flex items-center gap-1 cursor-pointer disabled:opacity-50"
                           >
                             {deleting === analysis.id ? Icons.loading : Icons.trash}
                             <span>{t('delete')}</span>
@@ -480,7 +481,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => setEditingAnalysisId(null)}
-                            className="px-3 py-1.5 text-sm text-foreground/70 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+                            className="px-3 py-1.5 text-sm text-foreground/70 bg-muted dark:bg-zinc-800 hover:bg-muted/80 dark:hover:bg-zinc-700 rounded-lg transition-colors cursor-pointer"
                           >
                             {t('cancel')}
                           </button>
@@ -530,7 +531,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                       </button>
                       <button
                         onClick={() => setPendingAnalysis(null)}
-                        className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-foreground/70 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+                        className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-foreground/70 bg-muted dark:bg-zinc-800 hover:bg-muted/80 dark:hover:bg-zinc-700 rounded-lg transition-colors cursor-pointer"
                       >
                         {Icons.trash}
                         <span>{t('cancel')}</span>
@@ -571,7 +572,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                   </a>
                   <button
                     onClick={() => setShowErrorModal(false)}
-                    className="px-4 py-2 text-foreground/70 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors cursor-pointer"
+                    className="px-4 py-2 text-foreground/70 bg-muted dark:bg-zinc-800 hover:bg-muted/80 dark:hover:bg-zinc-700 rounded-lg font-medium transition-colors cursor-pointer"
                   >
                     Cerrar
                   </button>
@@ -580,7 +581,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
             ) : (
               <>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-red-500/10 dark:bg-red-500/20 rounded-full flex items-center justify-center">
                     <span className="text-2xl">⚠️</span>
                   </div>
                   <div>

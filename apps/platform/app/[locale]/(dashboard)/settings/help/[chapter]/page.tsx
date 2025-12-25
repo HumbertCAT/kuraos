@@ -77,7 +77,7 @@ export default async function ChapterPage({ params }: Props) {
                 <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
                     {/* Render markdown content as HTML-safe text for now */}
                     {/* TODO: Use proper MDX rendering with compile() */}
-                    <div className="whitespace-pre-wrap text-slate-700 leading-relaxed">
+                    <div className="whitespace-pre-wrap text-foreground leading-relaxed">
                         {content.split('\n').map((line, i) => {
                             // Basic markdown rendering
                             if (line.startsWith('# ')) {
@@ -93,10 +93,10 @@ export default async function ChapterPage({ params }: Props) {
                                 return <hr key={i} className="my-8 border-border" />;
                             }
                             if (line.startsWith('- ')) {
-                                return <li key={i} className="ml-4 text-slate-700">{line.slice(2)}</li>;
+                                return <li key={i} className="ml-4 text-foreground">{line.slice(2)}</li>;
                             }
                             if (line.match(/^\d+\. /)) {
-                                return <li key={i} className="ml-4 list-decimal text-slate-700">{line.replace(/^\d+\. /, '')}</li>;
+                                return <li key={i} className="ml-4 list-decimal text-foreground">{line.replace(/^\d+\. /, '')}</li>;
                             }
                             if (line.startsWith('💡') || line.startsWith('⚠️')) {
                                 return <div key={i} className="p-4 bg-amber-50 border border-amber-200 rounded-xl my-4">{line}</div>;

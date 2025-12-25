@@ -27,7 +27,7 @@ export default function SettingsLayout({
     const activeTab = getActiveTab();
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8 px-6">
+        <div className="min-h-screen bg-muted py-8 px-6">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
@@ -39,7 +39,7 @@ export default function SettingsLayout({
 
                 {/* Tab Navigation */}
                 <div className="mb-8">
-                    <div className="flex gap-2 p-1 bg-slate-100 rounded-xl w-fit">
+                    <div className="flex gap-2 p-1 bg-muted rounded-xl w-fit">
                         {TABS.map((tab) => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.href;

@@ -65,7 +65,7 @@ export default function NewPatientPage() {
       <h1 className="text-2xl font-bold text-foreground mb-6">{t('newPatient')}</h1>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
@@ -73,18 +73,18 @@ export default function NewPatientPage() {
       <form onSubmit={handleSubmit} className="space-y-4 bg-card p-6 rounded-lg border border-border">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-muted-foreground mb-1">
               {t('firstName')} {t('required')}
             </label>
             <input
               name="first_name"
               type="text"
               required
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground"
+              className="w-full p-3 border border-input-border bg-input rounded-lg focus:ring-2 focus:ring-ring outline-none text-foreground"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-muted-foreground mb-1">
               {t('lastName')} {t('required')}
             </label>
             <input
@@ -97,7 +97,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
+          <label className="block text-sm font-medium text-muted-foreground mb-1">{t('email')}</label>
           <input
             name="email"
             type="email"
@@ -106,7 +106,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('phone')}</label>
+          <label className="block text-sm font-medium text-muted-foreground mb-1">{t('phone')}</label>
           <input
             name="phone"
             type="tel"
@@ -115,7 +115,7 @@ export default function NewPatientPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('language')}</label>
+          <label className="block text-sm font-medium text-muted-foreground mb-1">{t('language')}</label>
           <select
             name="language"
             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground bg-card"
@@ -132,14 +132,14 @@ export default function NewPatientPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-slate-800 text-white p-3 rounded-lg hover:bg-slate-700 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-primary text-primary-foreground p-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
           >
             {loading ? t('creating') : t('create')}
           </button>
           <button
             type="button"
             onClick={() => router.push('/patients')}
-            className="px-6 py-3 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-slate-700"
+            className="px-6 py-3 border border-border rounded-lg hover:bg-accent transition-colors text-muted-foreground"
           >
             {t('cancel')}
           </button>

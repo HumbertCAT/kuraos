@@ -116,11 +116,11 @@ export default function FormsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 py-8 px-6">
+            <div className="min-h-screen bg-muted py-8 px-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8">
-                        <div className="h-8 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
-                        <div className="h-4 w-64 bg-slate-200 rounded animate-pulse"></div>
+                        <div className="h-8 w-32 bg-muted rounded animate-pulse mb-2"></div>
+                        <div className="h-4 w-64 bg-muted rounded animate-pulse"></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {[...Array(6)].map((_, i) => (
@@ -140,18 +140,18 @@ export default function FormsPage() {
                     <FileText className="w-6 h-6 text-brand" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">{t('title')}</h1>
-                    <p className="text-sm text-foreground/60 dark:text-zinc-400">{t('subtitle')}</p>
+                    <h1 className="text-2xl font-bold text-foreground ">{t('title')}</h1>
+                    <p className="text-sm text-foreground/60 dark:text-muted-foreground">{t('subtitle')}</p>
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 mb-6 bg-zinc-200 dark:bg-zinc-800 p-1 rounded-lg w-fit">
+            <div className="flex gap-1 mb-6 bg-muted p-1 rounded-lg w-fit">
                 <button
                     onClick={() => setActiveTab('my-forms')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'my-forms'
-                        ? 'bg-card text-foreground dark:text-zinc-100 shadow-sm'
-                        : 'text-foreground/70 dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200'
+                        ? 'bg-card text-foreground  shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
                         }`}
                 >
                     {t('myForms')} ({myForms.length})
@@ -159,8 +159,8 @@ export default function FormsPage() {
                 <button
                     onClick={() => setActiveTab('library')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'library'
-                        ? 'bg-card text-foreground dark:text-zinc-100 shadow-sm'
-                        : 'text-foreground/70 dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200'
+                        ? 'bg-card text-foreground  shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
                         }`}
                 >
                     {t('templateLibrary')} ({systemTemplates.length})
@@ -178,7 +178,7 @@ export default function FormsPage() {
                             action={
                                 <button
                                     onClick={() => setActiveTab('library')}
-                                    className="inline-flex items-center px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors"
+                                    className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                                 >
                                     {t('browseLibrary')} →
                                 </button>
@@ -272,7 +272,7 @@ export default function FormsPage() {
                                     <button
                                         onClick={() => handleClone(template.id)}
                                         disabled={cloning === template.id}
-                                        className="w-full px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-700 disabled:opacity-50 transition-colors"
+                                        className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors"
                                     >
                                         {cloning === template.id ? 'Adding...' : '+ Add to My Forms'}
                                     </button>
@@ -288,10 +288,10 @@ export default function FormsPage() {
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                     <div className="bg-card rounded-xl shadow-xl max-w-sm w-full p-6 text-center">
                         <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-lg font-semibold text-foreground dark:text-zinc-100">{qrModal.title}</h3>
+                            <h3 className="text-lg font-semibold text-foreground ">{qrModal.title}</h3>
                             <button
                                 onClick={() => setQrModal(null)}
-                                className="text-zinc-400 hover:text-foreground/70 dark:hover:text-zinc-200"
+                                className="text-muted-foreground hover:text-foreground"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -308,7 +308,7 @@ export default function FormsPage() {
                             />
                         </div>
 
-                        <p className="text-sm text-foreground/60 dark:text-zinc-400 mb-4">
+                        <p className="text-sm text-foreground/60 dark:text-muted-foreground mb-4">
                             Scan to open the form instantly
                         </p>
 
@@ -318,7 +318,7 @@ export default function FormsPage() {
                                 setCopied('qr');
                                 setTimeout(() => setCopied(null), 2000);
                             }}
-                            className="w-full px-4 py-2 bg-zinc-800 dark:bg-zinc-200 text-white dark:text-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+                            className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-opacity"
                         >
                             {copied === 'qr' ? '✓ Copied!' : 'Copy Link'}
                         </button>

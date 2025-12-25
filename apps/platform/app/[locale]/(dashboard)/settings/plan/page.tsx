@@ -34,7 +34,7 @@ export default function PlanPage() {
     }
 
     const tierConfig = {
-        BUILDER: { color: 'bg-slate-100 text-slate-700', label: 'Builder', icon: '🆓' },
+        BUILDER: { color: 'bg-muted text-foreground', label: 'Builder', icon: '🆓' },
         PRO: { color: 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white', label: 'Pro', icon: '⭐' },
         CENTER: { color: 'bg-gradient-to-r from-amber-400 to-orange-500 text-white', label: 'Center', icon: '🏢' },
     };
@@ -79,7 +79,7 @@ export default function PlanPage() {
                             <span>{t('creditsUsed') || 'Usados este mes'}</span>
                             <span>{credits?.used_this_month || 0} / {credits?.monthly_quota || 0}</span>
                         </div>
-                        <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-3 bg-muted rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-500"
                                 style={{ width: `${Math.min(creditsPercentUsed, 100)}%` }}
@@ -89,11 +89,11 @@ export default function PlanPage() {
 
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="p-3 bg-slate-50 rounded-xl text-center">
+                        <div className="p-3 bg-muted rounded-xl text-center">
                             <p className="text-2xl font-bold text-foreground">{credits?.monthly_quota || 0}</p>
                             <p className="text-xs text-foreground/60">{t('creditsQuota') || 'Cuota Mensual'}</p>
                         </div>
-                        <div className="p-3 bg-slate-50 rounded-xl text-center">
+                        <div className="p-3 bg-muted rounded-xl text-center">
                             <p className="text-2xl font-bold text-emerald-600">{credits?.purchased || 0}</p>
                             <p className="text-xs text-foreground/60">{t('creditsPurchased') || 'Comprados'}</p>
                         </div>

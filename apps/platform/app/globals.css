@@ -2,89 +2,200 @@
    1. IMPORT FONTS (Google Fonts) - Architect Spec
    Must be FIRST before Tailwind
    ================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
 
 @import "tailwindcss";
 
-/* ================================================
-   Cyber-Clinical Design System v3.0 (Semantic Tokens)
-   Clean Design: One source of truth per color.
-   ================================================ */
+/* -------------------------------------------------------------------------- */
+/* THEME ENGINE                               */
+/* -------------------------------------------------------------------------- */
+/* PHILOSOPHY: 
+   - Light Mode: "The Clinic" (Sterile, High Light, Zinc-50 base)
+   - Dark Mode:  "The Void" (Deep, Immersive, Zinc-950 base)
+*/
 
-@theme inline {
-  /* Semantic Color Map */
+/* Enable class-based dark mode (required for next-themes) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* STRUCTURAL MAPPING */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  
+  --color-header: var(--header);
+  
+  /* COMPONENT MAPPING */
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  --color-border: var(--border);
   
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  
+  --color-input: var(--input);
+  --color-input-border: var(--input-border);
+  
+  /* INTERACTIVE MAPPING */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  /* BRAND & STATUS (Semantic) */
   --color-brand: var(--brand);
   --color-risk: var(--risk);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-ai: var(--ai);
-  --color-success: #10b981;
 
   /* Typography */
   --font-display: "Space Grotesk", sans-serif;
+  --font-serif: "Playfair Display", serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 }
 
-/* ================================================
-   THEME VALUES - Single Source of Truth
-   ================================================ */
+/* -------------------------------------------------------------------------- */
+/* COLOR VALUES                                 */
+/* -------------------------------------------------------------------------- */
+
 :root {
-  /* LIGHT MODE (The Clinic) */
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  /* ☀️ LIGHT MODE (Zinc Scale) */
   
-  --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  /* Base Layer */
+  --background: #FAFAFA;       /* Zinc 50 - Clinical Canvas */
+  --foreground: #09090B;       /* Zinc 950 - Sharp Ink */
   
-  --border: #E2E8F0;
+  /* Layout Areas */
+  --sidebar: #FFFFFF;          /* White Sidebar */
+  --sidebar-foreground: #52525B; /* Zinc 600 - Muted Text */
+  --sidebar-border: #E4E4E7;   /* Zinc 200 - Subtle Divider */
+  --header: #FFFFFF;           /* Glass header base */
+
+  /* Surfaces (Cards) */
+  --card: #FFFFFF;             /* Pure White Cards */
+  --card-foreground: #09090B;
   
-  --brand: #0D9488;
-  --risk: #E11D48;
-  --ai: #8b5cf6;
+  --popover: #FFFFFF;
+  --popover-foreground: #09090B;
+  
+  /* Controls & Inputs */
+  --primary: #18181B;          /* Zinc 900 - Black Button */
+  --primary-foreground: #FAFAFA; /* White Text */
+  
+  --secondary: #F4F4F5;        /* Zinc 100 - Light Gray Button */
+  --secondary-foreground: #18181B;
+  
+  --muted: #F4F4F5;            /* Zinc 100 - Backgrounds */
+  --muted-foreground: #71717A; /* Zinc 500 - Metadata text */
+  
+  --accent: #F4F4F5;           /* Hover states */
+  --accent-foreground: #18181B;
+  
+  --destructive: #EF4444;
+  --destructive-foreground: #FAFAFA;
+  
+  --border: #E4E4E7;           /* Zinc 200 - Borders */
+  --input: #FFFFFF;            /* White Input */
+  --input-border: #E4E4E7;
+  --ring: #18181B;
+
+  /* Brand Palette (Day) */
+  --brand: #0D9488;    /* Teal 600 - Readable on White */
+  --risk: #E11D48;     /* Rose 600 */
+  --success: #059669;  /* Emerald 600 */
+  --warning: #D97706;  /* Amber 600 */
+  --ai: #7C3AED;       /* Violet 600 */
 }
 
 .dark {
-  /* DARK MODE (The Void) - RENDER MATCH */
-  --background: #09090b;  /* zinc-950 - True void */
-  --foreground: #E4E4E7;  /* zinc-200 */
+  /* 🌑 DARK MODE (The Void) */
   
-  --card: #121212;        /* zinc-925 (between 900-950) - Subtle depth */
-  --card-foreground: #E4E4E7;
+  /* Base Layer */
+  --background: #09090B;       /* Zinc 950 - The Void */
+  --foreground: #FAFAFA;       /* Zinc 50 - Light Text */
   
-  --border: #27272a;      /* zinc-800 - Subtle structural line */
+  /* Layout Areas */
+  --sidebar: #09090B;          /* Match BG for seamless look */
+  --sidebar-foreground: #A1A1AA; /* Zinc 400 */
+  --sidebar-border: #27272A;   /* Zinc 800 - The Structural Line */
+  --header: #09090B;
+
+  /* Surfaces (Cards) */
+  --card: #121212;             /* Zinc 925 - Depth Layer (Not pitch black) */
+  --card-foreground: #FAFAFA;
   
-  --brand: #2DD4BF;       /* teal-400 */
-  --risk: #FB7185;        /* rose-400 */
-  --ai: #a78bfa;          /* violet-400 */
+  --popover: #0C0C0E;          /* Deep Black for menus */
+  --popover-foreground: #FAFAFA;
+  
+  /* Controls & Inputs */
+  --primary: #FAFAFA;          /* White Button (Tactical High Contrast) */
+  --primary-foreground: #18181B; /* Black Text */
+  
+  --secondary: #27272A;        /* Zinc 800 - Dark Button */
+  --secondary-foreground: #FAFAFA;
+  
+  --muted: #27272A;            /* Zinc 800 */
+  --muted-foreground: #A1A1AA; /* Zinc 400 */
+  
+  --accent: #27272A;
+  --accent-foreground: #FAFAFA;
+  
+  --destructive: #7F1D1D;
+  --destructive-foreground: #FAFAFA;
+  
+  --border: #27272A;           /* Zinc 800 - Visible on OLED */
+  --input: #18181B;            /* Zinc 900 - Input Field */
+  --input-border: #27272A;
+  --ring: #D4D4D8;
+
+  /* Brand Palette (Night - Brighter/Neon) */
+  --brand: #2DD4BF;    /* Teal 400 - Neon Teal */
+  --risk: #FB7185;     /* Rose 400 - Neon Pink/Red */
+  --success: #34D399;  /* Emerald 400 */
+  --warning: #FBBF24;  /* Amber 400 */
+  --ai: #A78BFA;       /* Violet 400 */
 }
 
-/* ================================================
-   GLOBAL BASE STYLES
-   ================================================ */
+/* GLOBAL RESET */
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  @apply bg-background text-foreground antialiased;
+  font-feature-settings: "rlig" 1, "calt" 1;
 }
 
+/* Headings use elegant Serif font (Playfair Display) */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  letter-spacing: -0.025em;
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
 }
 
 /* ================================================
    Typography Utility Classes
    ================================================ */
 
-/* Display - Space Grotesk (Headers, Titles) */
+/* Serif - Playfair Display (Elegant headings) */
+.font-serif {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
+/* Display - Space Grotesk (Technical headers) */
 .font-display {
   font-family: var(--font-display);
   font-weight: 500;

@@ -188,10 +188,10 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            {/* ZONE A: Chief of Staff (col-span-12) - CYBER-GLASS */}
-            <div className="rounded-2xl border border-ai/30 bg-zinc-900/80 backdrop-blur-md p-6 shadow-[0_0_15px_rgba(139,92,246,0.1)] relative overflow-hidden">
-                {/* Subtle internal glow layer */}
-                <div className="absolute inset-0 bg-gradient-to-r from-ai/5 to-brand/5 opacity-50 pointer-events-none"></div>
+            {/* ZONE A: Chief of Staff (col-span-12) - Elegant Glass */}
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm relative overflow-hidden dark:border-ai/30 dark:shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+                {/* Subtle internal glow layer (dark mode only) */}
+                <div className="absolute inset-0 bg-gradient-to-r from-ai/5 to-brand/5 opacity-0 pointer-events-none dark:opacity-50"></div>
                 <div className="relative z-10">
                     <BriefingPlayer />
                 </div>
@@ -212,20 +212,20 @@ export default function DashboardPage() {
                                     <Activity className="w-5 h-5 text-brand" />
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-display text-foreground dark:text-zinc-100">El Foco</h2>
-                                    <p className="text-sm text-foreground/60">Lo más importante ahora</p>
+                                    <h2 className="text-lg font-display text-foreground">El Foco</h2>
+                                    <p className="text-sm text-muted-foreground">Lo más importante ahora</p>
                                 </div>
                             </div>
-                            <span className="text-xs font-mono text-zinc-400">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            <span className="text-xs font-mono text-muted-foreground">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
 
                         {nextBooking ? (
-                            <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-border-subtle">
+                            <div className="p-4 rounded-lg bg-muted border border-border">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-label text-foreground/60 mb-1">Próxima Sesión</p>
-                                        <p className="text-xl font-display text-foreground dark:text-zinc-100">{nextBooking.service_title}</p>
-                                        <p className="text-sm text-foreground/70 dark:text-zinc-400">{nextBooking.patient_name}</p>
+                                        <p className="font-label text-muted-foreground mb-1">Próxima Sesión</p>
+                                        <p className="text-xl font-display text-foreground">{nextBooking.service_title}</p>
+                                        <p className="text-sm text-muted-foreground">{nextBooking.patient_name}</p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-2xl font-stats font-bold text-brand">
@@ -238,9 +238,9 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-border-subtle text-center">
+                            <div className="p-4 rounded-lg bg-muted border border-border text-center">
                                 <CheckCircle className="w-8 h-8 mx-auto mb-2 text-brand" />
-                                <p className="text-foreground/70 dark:text-zinc-400">Sin sesiones pendientes hoy</p>
+                                <p className="text-muted-foreground">Sin sesiones pendientes hoy</p>
                             </div>
                         )}
                     </CyberCard>
@@ -250,16 +250,16 @@ export default function DashboardPage() {
                         <CyberCard variant="ai" className="p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <Brain className="w-5 h-5 text-ai" />
-                                <h3 className="font-display text-foreground dark:text-zinc-100">AletheIA Sugiere</h3>
+                                <h3 className="font-display text-foreground ">AletheIA Sugiere</h3>
                                 <span className="text-xs px-2 py-0.5 rounded bg-ai/10 text-ai font-stats">{suggestions.length}</span>
                             </div>
                             <div className="space-y-2">
                                 {suggestions.map(s => (
-                                    <div key={s.id} className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-border-subtle">
+                                    <div key={s.id} className="flex items-center justify-between p-3 rounded-lg bg-muted border border-border">
                                         <div className="flex items-center gap-3">
                                             <Zap className={`w-4 h-4 ${s.type === 'critical' ? 'text-risk' : s.type === 'warning' ? 'text-amber-500' : 'text-ai'}`} />
                                             <div>
-                                                <p className="text-sm font-medium text-foreground dark:text-zinc-100">{s.title}</p>
+                                                <p className="text-sm font-medium text-foreground ">{s.title}</p>
                                                 <p className="text-xs text-foreground/60">{s.description}</p>
                                             </div>
                                         </div>
@@ -285,11 +285,11 @@ export default function DashboardPage() {
                                     <Target className="w-5 h-5 text-blue-500" />
                                 </div>
                                 <div>
-                                    <p className="font-label text-foreground/60">Nuevos Leads</p>
-                                    <p className="text-2xl font-bold font-stats text-foreground dark:text-zinc-100">{data.newLeadsThisWeek}</p>
+                                    <p className="font-label text-muted-foreground">Nuevos Leads</p>
+                                    <p className="text-2xl font-bold font-stats text-foreground">{data.newLeadsThisWeek}</p>
                                 </div>
                             </div>
-                            <span className="text-xs text-zinc-400">esta semana</span>
+                            <span className="text-xs text-muted-foreground">esta semana</span>
                         </div>
                     </CyberCard>
 
@@ -301,8 +301,8 @@ export default function DashboardPage() {
                                     <Users className="w-5 h-5 text-teal-500" />
                                 </div>
                                 <div>
-                                    <p className="font-label text-foreground/60">{terminology.plural}</p>
-                                    <p className="text-2xl font-bold font-stats text-foreground dark:text-zinc-100">{data.totalPatients}</p>
+                                    <p className="font-label text-muted-foreground">{terminology.plural}</p>
+                                    <p className="text-2xl font-bold font-stats text-foreground">{data.totalPatients}</p>
                                 </div>
                             </div>
                             <Link href="/patients" className="text-xs text-brand hover:underline">Ver</Link>
@@ -317,8 +317,8 @@ export default function DashboardPage() {
                                     <Wallet className="w-5 h-5 text-emerald-500" />
                                 </div>
                                 <div>
-                                    <p className="font-label text-foreground/60">Ingresos Mes</p>
-                                    <p className="text-2xl font-bold font-stats text-foreground dark:text-zinc-100">{data.monthlyRevenue.toFixed(0)}€</p>
+                                    <p className="font-label text-muted-foreground">Ingresos Mes</p>
+                                    <p className="text-2xl font-bold font-stats text-foreground">{data.monthlyRevenue.toFixed(0)}€</p>
                                 </div>
                             </div>
                             {data.pendingPayments > 0 && (
@@ -332,14 +332,14 @@ export default function DashboardPage() {
                         <CyberCard variant="alert" className="p-4">
                             <div className="flex items-center gap-3 mb-3">
                                 <AlertTriangle className="w-5 h-5 text-risk" />
-                                <p className="text-sm font-display text-foreground dark:text-zinc-100">Requieren Atención</p>
+                                <p className="text-sm font-display text-foreground">Requieren Atención</p>
                                 <span className="text-xs px-2 py-0.5 rounded bg-risk/10 text-risk font-stats">{data.priorityPatients.length}</span>
                             </div>
                             <div className="space-y-1">
                                 {data.priorityPatients.slice(0, 3).map(p => (
-                                    <Link key={p.id} href={`/patients/${p.id}`} className="flex items-center justify-between p-2 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                                        <span className="text-sm text-zinc-700 dark:text-zinc-300">{p.first_name} {p.last_name}</span>
-                                        <ChevronRight className="w-4 h-4 text-zinc-400" />
+                                    <Link key={p.id} href={`/patients/${p.id}`} className="flex items-center justify-between p-2 rounded hover:bg-accent transition-colors">
+                                        <span className="text-sm text-foreground">{p.first_name} {p.last_name}</span>
+                                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
                                     </Link>
                                 ))}
                             </div>
@@ -355,7 +355,7 @@ export default function DashboardPage() {
                     <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Calendar className="w-5 h-5 text-brand" />
-                            <h3 className="font-semibold text-foreground dark:text-zinc-100">Próximas Reservas</h3>
+                            <h3 className="font-semibold text-foreground">Próximas Reservas</h3>
                         </div>
                         <Link href="/calendar" className="text-xs text-brand hover:underline flex items-center gap-1">
                             Ver todas <ChevronRight className="w-3 h-3" />
@@ -366,18 +366,18 @@ export default function DashboardPage() {
                             <div className="p-6 text-center text-foreground/60">Sin reservas próximas</div>
                         ) : (
                             data.bookings.slice(0, 4).map(b => (
-                                <div key={b.id} className="px-6 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                                <div key={b.id} className="px-6 py-3 flex items-center justify-between hover:bg-accent transition-colors">
                                     <div>
-                                        <p className="text-sm font-medium text-foreground dark:text-zinc-100">{b.service_title}</p>
-                                        <p className="text-xs text-foreground/60">{b.patient_name}</p>
+                                        <p className="text-sm font-medium text-foreground">{b.service_title}</p>
+                                        <p className="text-xs text-muted-foreground">{b.patient_name}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xs font-mono text-foreground/70 dark:text-zinc-400">
+                                        <p className="text-xs font-mono text-muted-foreground">
                                             {new Date(b.start_time).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
                                         </p>
                                         <span className={`text-xs px-2 py-0.5 rounded font-mono ${b.status === 'CONFIRMED' ? 'bg-brand/10 text-brand' :
-                                            b.status === 'COMPLETED' ? 'bg-zinc-100 dark:bg-zinc-800 text-foreground/70 dark:text-zinc-400' :
-                                                'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                                            b.status === 'COMPLETED' ? 'bg-muted text-muted-foreground' :
+                                                'bg-warning/10 text-warning'
                                             }`}>
                                             {b.status}
                                         </span>
@@ -393,7 +393,7 @@ export default function DashboardPage() {
                     <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Users className="w-5 h-5 text-brand" />
-                            <h3 className="font-semibold text-foreground dark:text-zinc-100">{terminology.plural} Recientes</h3>
+                            <h3 className="font-semibold text-foreground">{terminology.plural} Recientes</h3>
                         </div>
                         <Link href="/patients" className="text-xs text-brand hover:underline flex items-center gap-1">
                             Ver todos <ChevronRight className="w-3 h-3" />
@@ -401,19 +401,19 @@ export default function DashboardPage() {
                     </div>
                     <div className="divide-y divide-border-subtle">
                         {data.patients.map(p => (
-                            <Link key={p.id} href={`/patients/${p.id}`} className="px-6 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                            <Link key={p.id} href={`/patients/${p.id}`} className="px-6 py-3 flex items-center justify-between hover:bg-accent transition-colors">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center text-sm font-medium">
                                         {p.first_name[0]}{p.last_name[0]}
                                     </div>
-                                    <p className="text-sm font-medium text-foreground dark:text-zinc-100">{p.first_name} {p.last_name}</p>
+                                    <p className="text-sm font-medium text-foreground ">{p.first_name} {p.last_name}</p>
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-zinc-400" />
+                                <ChevronRight className="w-4 h-4 text-muted-foreground" />
                             </Link>
                         ))}
                     </div>
                 </CyberCard>
             </div>
-        </div>
+        </div >
     );
 }

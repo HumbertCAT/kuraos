@@ -25,7 +25,7 @@ const STATUS_STYLES: Record<string, string> = {
     SENT: 'bg-blue-100 text-blue-700',
     OPENED: 'bg-yellow-100 text-yellow-700',
     COMPLETED: 'bg-green-100 text-green-700',
-    EXPIRED: 'bg-slate-100 text-foreground/60',
+    EXPIRED: 'bg-muted text-foreground/60',
 };
 
 export default function SubmissionsPage() {
@@ -73,20 +73,20 @@ export default function SubmissionsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div>
+            <div className="min-h-screen bg-muted flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8 px-6">
+        <div className="min-h-screen bg-muted py-8 px-6">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="mb-6">
                     <Link
                         href={`/${locale}/forms`}
-                        className="text-sm text-foreground/60 hover:text-slate-700 mb-2 inline-block"
+                        className="text-sm text-foreground/60 hover:text-foreground mb-2 inline-block"
                     >
                         ← Back to Forms
                     </Link>
@@ -106,7 +106,7 @@ export default function SubmissionsPage() {
                         </div>
                     ) : (
                         <table className="w-full">
-                            <thead className="bg-slate-50 border-b border-border">
+                            <thead className="bg-muted border-b border-border">
                                 <tr>
                                     <th className="text-left py-3 px-4 text-sm font-medium text-foreground/70">Patient</th>
                                     <th className="text-left py-3 px-4 text-sm font-medium text-foreground/70">Status</th>
@@ -119,7 +119,7 @@ export default function SubmissionsPage() {
                                 {assignments.map((assignment) => (
                                     <tr
                                         key={assignment.id}
-                                        className="border-b border-border hover:bg-slate-50 transition-colors"
+                                        className="border-b border-border hover:bg-accent transition-colors"
                                     >
                                         <td className="py-3 px-4">
                                             <span className="font-medium text-foreground">
@@ -127,7 +127,7 @@ export default function SubmissionsPage() {
                                             </span>
                                         </td>
                                         <td className="py-3 px-4">
-                                            <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_STYLES[assignment.status] || 'bg-slate-100 text-foreground/70'}`}>
+                                            <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_STYLES[assignment.status] || 'bg-muted text-foreground/70'}`}>
                                                 {assignment.status}
                                             </span>
                                         </td>
