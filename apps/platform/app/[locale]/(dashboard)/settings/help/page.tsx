@@ -25,8 +25,8 @@ export default function HelpPage() {
                         <BookOpen className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-slate-800">Centro de Ayuda</h2>
-                        <p className="text-slate-500 text-sm">Guías rápidas para dominar TherapistOS</p>
+                        <h2 className="text-xl font-bold text-foreground">Centro de Ayuda</h2>
+                        <p className="text-foreground/60 text-sm">Guías rápidas para dominar TherapistOS</p>
                     </div>
                 </div>
 
@@ -36,15 +36,15 @@ export default function HelpPage() {
                         <Link
                             key={chapter.slug}
                             href={`/settings/help/${chapter.slug}`}
-                            className="group p-5 bg-white rounded-xl border border-slate-200 hover:border-teal-300 hover:shadow-md transition-all"
+                            className="group p-5 bg-card rounded-xl border border-border hover:border-teal-300 hover:shadow-md transition-all"
                         >
                             <div className="flex items-center gap-4">
                                 <span className="text-3xl">{chapter.icon}</span>
                                 <div className="flex-1">
-                                    <h3 className="font-semibold text-slate-800 group-hover:text-teal-600 transition-colors">
+                                    <h3 className="font-semibold text-foreground group-hover:text-teal-600 transition-colors">
                                         {chapter.title}
                                     </h3>
-                                    <p className="text-sm text-slate-500">{chapter.description}</p>
+                                    <p className="text-sm text-foreground/60">{chapter.description}</p>
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-teal-500 transition-colors" />
                             </div>

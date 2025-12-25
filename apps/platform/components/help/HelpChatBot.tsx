@@ -102,7 +102,7 @@ export default function HelpChatBot() {
 
             {/* Chat Panel */}
             {isOpen && (
-                <div className="fixed bottom-24 right-6 w-96 h-[500px] bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-teal-200 z-50 flex flex-col overflow-hidden">
+                <div className="fixed bottom-24 right-6 w-96 h-[500px] bg-card/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-teal-200 z-50 flex flex-col overflow-hidden">
                     {/* Header */}
                     <div className="p-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white flex-shrink-0">
                         <div className="flex items-center justify-between">
@@ -112,7 +112,7 @@ export default function HelpChatBot() {
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+                                className="p-1 hover:bg-card/20 rounded-lg transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -131,7 +131,7 @@ export default function HelpChatBot() {
                         {/* Quick Actions (only if no messages) */}
                         {messages.length === 0 && (
                             <div className="space-y-2">
-                                <p className="text-xs text-slate-500 uppercase font-medium">Preguntas frecuentes:</p>
+                                <p className="text-xs text-foreground/60 uppercase font-medium">Preguntas frecuentes:</p>
                                 {QUICK_ACTIONS.map((action, idx) => (
                                     <button
                                         key={idx}
@@ -166,7 +166,7 @@ export default function HelpChatBot() {
                             <div className="flex justify-start">
                                 <div className="bg-slate-100 p-3 rounded-xl flex items-center gap-2">
                                     <Loader2 className="w-4 h-4 animate-spin text-teal-600" />
-                                    <span className="text-sm text-slate-500">Pensando...</span>
+                                    <span className="text-sm text-foreground/60">Pensando...</span>
                                 </div>
                             </div>
                         )}
@@ -175,7 +175,7 @@ export default function HelpChatBot() {
                     </div>
 
                     {/* Input */}
-                    <div className="p-4 border-t border-slate-200 flex-shrink-0">
+                    <div className="p-4 border-t border-border flex-shrink-0">
                         <div className="flex gap-2">
                             <input
                                 type="text"
@@ -183,7 +183,7 @@ export default function HelpChatBot() {
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 placeholder="Escribe tu pregunta..."
-                                className="flex-1 px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none text-slate-800"
+                                className="flex-1 px-4 py-2 border border-border rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none text-foreground"
                                 disabled={isLoading}
                             />
                             <button

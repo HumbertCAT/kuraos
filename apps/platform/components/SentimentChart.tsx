@@ -52,9 +52,9 @@ export default function SentimentChart({ analyses }: SentimentChartProps) {
         if (active && payload && payload.length) {
             const data = payload[0].payload;
             return (
-                <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3 max-w-xs">
-                    <p className="font-medium text-slate-900 text-sm">{data.date}</p>
-                    <p className="text-xs text-slate-500 mt-1">{data.summary}</p>
+                <div className="bg-card border border-border rounded-lg shadow-lg p-3 max-w-xs">
+                    <p className="font-medium text-foreground text-sm">{data.date}</p>
+                    <p className="text-xs text-foreground/60 mt-1">{data.summary}</p>
                     {data.emotional_state && (
                         <p className="text-xs text-purple-600 mt-1">
                             Estado: {data.emotional_state}
@@ -81,15 +81,15 @@ export default function SentimentChart({ analyses }: SentimentChartProps) {
     }
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <h3 className="text-lg font-semibold text-slate-900">Evolución Emocional</h3>
+                    <h3 className="text-lg font-semibold text-foreground">Evolución Emocional</h3>
                     <p className="text-xs text-slate-400">Últimos 7 días</p>
                 </div>
                 <div className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${trend > 0.1 ? 'bg-emerald-100 text-emerald-700' :
-                        trend < -0.1 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'
+                        trend < -0.1 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-foreground/70'
                     }`}>
                     {trend > 0.1 ? <TrendingUp className="w-4 h-4" /> :
                         trend < -0.1 ? <TrendingDown className="w-4 h-4" /> :
@@ -152,7 +152,7 @@ export default function SentimentChart({ analyses }: SentimentChartProps) {
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-6 mt-4 text-xs text-slate-500">
+            <div className="flex items-center justify-center gap-6 mt-4 text-xs text-foreground/60">
                 <div className="flex items-center gap-1">
                     <div className="w-3 h-3 rounded-full bg-emerald-100 border border-emerald-300"></div>
                     <span>Positivo (&gt;0.3)</span>

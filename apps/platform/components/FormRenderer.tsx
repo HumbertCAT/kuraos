@@ -104,7 +104,7 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
 
     function renderField(field: FormField) {
         // Mobile-first: 16px minimum font to prevent iOS zoom, larger touch targets
-        const baseInputClass = `w-full px-4 py-4 border rounded-xl text-base focus:ring-2 focus:ring-slate-500 focus:border-slate-500 outline-none transition-all text-slate-800 ${errors[field.id] ? 'border-red-400 bg-red-50' : 'border-slate-300 hover:border-slate-400'
+        const baseInputClass = `w-full px-4 py-4 border rounded-xl text-base focus:ring-2 focus:ring-slate-500 focus:border-slate-500 outline-none transition-all text-foreground ${errors[field.id] ? 'border-red-400 bg-red-50' : 'border-slate-300 hover:border-slate-400'
             }`;
 
         // Normalize field type to lowercase (DB might have UPPERCASE)
@@ -173,7 +173,7 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
                             id={field.id}
                             checked={answers[field.id] || false}
                             onChange={(e) => handleChange(field.id, e.target.checked)}
-                            className="w-5 h-5 rounded border-slate-300 text-slate-800 focus:ring-slate-500"
+                            className="w-5 h-5 rounded border-slate-300 text-foreground focus:ring-slate-500"
                             disabled={submitting}
                         />
                         <span className="text-slate-700">{field.label}</span>
@@ -235,7 +235,7 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
                                 disabled={submitting}
                                 className={`flex-1 py-3 px-4 rounded-lg border-2 font-medium transition-colors ${answers[field.id] === false
                                     ? 'border-green-500 bg-green-50 text-green-700'
-                                    : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+                                    : 'border-slate-300 bg-card text-foreground/70 hover:border-slate-400'
                                     }`}
                             >
                                 No
@@ -246,7 +246,7 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
                                 disabled={submitting}
                                 className={`flex-1 py-3 px-4 rounded-lg border-2 font-medium transition-colors ${answers[field.id] === true
                                     ? 'border-amber-500 bg-amber-50 text-amber-700'
-                                    : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+                                    : 'border-slate-300 bg-card text-foreground/70 hover:border-slate-400'
                                     }`}
                             >
                                 Sí
@@ -268,18 +268,18 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
                     <div className="space-y-3">
                         {field.disclaimer && (
                             <div className="bg-slate-100 border border-slate-300 rounded-lg p-4 max-h-40 overflow-y-auto">
-                                <p className="text-xs text-slate-600 font-mono leading-relaxed">
+                                <p className="text-xs text-foreground/70 font-mono leading-relaxed">
                                     {field.disclaimer}
                                 </p>
                             </div>
                         )}
-                        <label className="flex items-start gap-3 cursor-pointer p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <label className="flex items-start gap-3 cursor-pointer p-3 bg-slate-50 rounded-lg border border-border">
                             <input
                                 type="checkbox"
                                 id={field.id}
                                 checked={answers[field.id] || false}
                                 onChange={(e) => handleChange(field.id, e.target.checked)}
-                                className="w-5 h-5 mt-0.5 rounded border-slate-300 text-slate-800 focus:ring-slate-500"
+                                className="w-5 h-5 mt-0.5 rounded border-slate-300 text-foreground focus:ring-slate-500"
                                 disabled={submitting}
                             />
                             <span className="text-sm text-slate-700 font-medium">{field.label}</span>
@@ -295,9 +295,9 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
 
                 return (
                     <div className="space-y-3">
-                        <div className="flex justify-between text-sm text-slate-500">
+                        <div className="flex justify-between text-sm text-foreground/60">
                             <span>{field.min_label || minVal}</span>
-                            <span className="text-lg font-bold text-slate-800">{currentVal}</span>
+                            <span className="text-lg font-bold text-foreground">{currentVal}</span>
                             <span>{field.max_label || maxVal}</span>
                         </div>
                         <input
@@ -338,7 +338,7 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
                                 disabled={submitting}
                                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedEmotions.includes(opt.value)
                                     ? 'bg-slate-800 text-white'
-                                    : 'bg-white border border-slate-300 text-slate-600 hover:border-slate-400'
+                                    : 'bg-card border border-slate-300 text-foreground/70 hover:border-slate-400'
                                     }`}
                             >
                                 {opt.label}
@@ -358,7 +358,7 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
                             disabled={submitting}
                             className={`flex-1 py-3 px-4 rounded-lg border-2 font-medium transition-colors ${answers[field.id] === false
                                 ? 'border-green-500 bg-green-50 text-green-700'
-                                : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+                                : 'border-slate-300 bg-card text-foreground/70 hover:border-slate-400'
                                 }`}
                         >
                             No
@@ -369,7 +369,7 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
                             disabled={submitting}
                             className={`flex-1 py-3 px-4 rounded-lg border-2 font-medium transition-colors ${answers[field.id] === true
                                 ? 'border-amber-500 bg-amber-50 text-amber-700'
-                                : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+                                : 'border-slate-300 bg-card text-foreground/70 hover:border-slate-400'
                                 }`}
                         >
                             Sí
@@ -405,8 +405,8 @@ export default function FormRenderer({ schema, onSubmit, submitting, initialValu
         <form onSubmit={handleSubmit} className="space-y-8">
             {/* Conditional Progress Bar */}
             {showProgressBar && (
-                <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm -mx-4 px-4 py-3 -mt-4 mb-6">
-                    <div className="flex items-center justify-between text-sm text-slate-500 mb-2">
+                <div className="sticky top-0 z-10 bg-card/80 backdrop-blur-sm -mx-4 px-4 py-3 -mt-4 mb-6">
+                    <div className="flex items-center justify-between text-sm text-foreground/60 mb-2">
                         <span>Progress</span>
                         <span>{progressPercent}%</span>
                     </div>

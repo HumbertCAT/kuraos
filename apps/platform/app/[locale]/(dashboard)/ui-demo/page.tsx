@@ -8,13 +8,13 @@ export default function UITestPage() {
     return (
         <div className="space-y-12">
             <div>
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">UI Demo</h1>
-                <p className="text-slate-600">Explorando componentes y estilos disponibles</p>
+                <h1 className="text-3xl font-bold text-foreground mb-2">UI Demo</h1>
+                <p className="text-foreground/70">Explorando componentes y estilos disponibles</p>
             </div>
 
             {/* Colors */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">🎨 Paleta de Colores</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">🎨 Paleta de Colores</h2>
                 <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
                     {['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'].map(shade => (
                         <div key={shade} className="text-center">
@@ -22,7 +22,7 @@ export default function UITestPage() {
                                 className={`w-full h-16 rounded-lg bg-slate-${shade}`}
                                 style={{ backgroundColor: `var(--tw-color-slate-${shade}, inherit)` }}
                             />
-                            <span className="text-xs text-slate-600">{shade}</span>
+                            <span className="text-xs text-foreground/70">{shade}</span>
                         </div>
                     ))}
                 </div>
@@ -52,23 +52,23 @@ export default function UITestPage() {
 
             {/* Typography */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">📝 Tipografía</h2>
-                <div className="space-y-3 bg-white p-6 rounded-lg border">
-                    <p className="text-5xl font-bold text-slate-900">Heading 1 - 5xl Bold</p>
-                    <p className="text-4xl font-bold text-slate-900">Heading 2 - 4xl Bold</p>
-                    <p className="text-3xl font-bold text-slate-800">Heading 3 - 3xl Bold</p>
-                    <p className="text-2xl font-semibold text-slate-800">Heading 4 - 2xl Semibold</p>
-                    <p className="text-xl font-semibold text-slate-800">Heading 5 - xl Semibold</p>
+                <h2 className="text-xl font-semibold text-foreground mb-4">📝 Tipografía</h2>
+                <div className="space-y-3 bg-card p-6 rounded-lg border">
+                    <p className="text-5xl font-bold text-foreground">Heading 1 - 5xl Bold</p>
+                    <p className="text-4xl font-bold text-foreground">Heading 2 - 4xl Bold</p>
+                    <p className="text-3xl font-bold text-foreground">Heading 3 - 3xl Bold</p>
+                    <p className="text-2xl font-semibold text-foreground">Heading 4 - 2xl Semibold</p>
+                    <p className="text-xl font-semibold text-foreground">Heading 5 - xl Semibold</p>
                     <p className="text-lg font-medium text-slate-700">Large Text - lg Medium</p>
-                    <p className="text-base text-slate-600">Body Text - base</p>
-                    <p className="text-sm text-slate-500">Small Text - sm</p>
+                    <p className="text-base text-foreground/70">Body Text - base</p>
+                    <p className="text-sm text-foreground/60">Small Text - sm</p>
                     <p className="text-xs text-slate-400">Extra Small - xs</p>
                 </div>
             </section>
 
             {/* Buttons */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">🔘 Botones</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">🔘 Botones</h2>
                 <div className="flex flex-wrap gap-4">
                     <button className="px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors cursor-pointer">
                         Primary Button
@@ -101,14 +101,14 @@ export default function UITestPage() {
 
             {/* Forms */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">📋 Formularios</h2>
-                <div className="bg-white p-6 rounded-lg border space-y-4 max-w-md">
+                <h2 className="text-xl font-semibold text-foreground mb-4">📋 Formularios</h2>
+                <div className="bg-card p-6 rounded-lg border space-y-4 max-w-md">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Input de texto</label>
                         <input
                             type="text"
                             placeholder="Escribe algo..."
-                            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-slate-900"
+                            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground"
                         />
                     </div>
                     <div>
@@ -116,12 +116,12 @@ export default function UITestPage() {
                         <textarea
                             placeholder="Escribe un mensaje largo..."
                             rows={3}
-                            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-slate-900 resize-none"
+                            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground resize-none"
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Select</label>
-                        <select className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-slate-900 bg-white">
+                        <select className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground bg-card">
                             <option>Opción 1</option>
                             <option>Opción 2</option>
                             <option>Opción 3</option>
@@ -132,15 +132,15 @@ export default function UITestPage() {
 
             {/* Cards */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">🃏 Cards</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">🃏 Cards</h2>
                 <div className="grid md:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-lg border border-slate-200 hover:border-slate-400 transition-colors">
-                        <h3 className="font-semibold text-slate-800 mb-2">Card Simple</h3>
-                        <p className="text-slate-600 text-sm">Contenido de ejemplo para mostrar cómo se ve una card básica.</p>
+                    <div className="bg-card p-6 rounded-lg border border-border hover:border-slate-400 transition-colors">
+                        <h3 className="font-semibold text-foreground mb-2">Card Simple</h3>
+                        <p className="text-foreground/70 text-sm">Contenido de ejemplo para mostrar cómo se ve una card básica.</p>
                     </div>
-                    <div className="bg-white p-6 rounded-lg shadow-lg">
-                        <h3 className="font-semibold text-slate-800 mb-2">Card con Sombra</h3>
-                        <p className="text-slate-600 text-sm">Esta card tiene shadow-lg para destacar más.</p>
+                    <div className="bg-card p-6 rounded-lg shadow-lg">
+                        <h3 className="font-semibold text-foreground mb-2">Card con Sombra</h3>
+                        <p className="text-foreground/70 text-sm">Esta card tiene shadow-lg para destacar más.</p>
                     </div>
                     <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-lg text-white">
                         <h3 className="font-semibold mb-2">Card Dark</h3>
@@ -151,9 +151,9 @@ export default function UITestPage() {
 
             {/* Badges */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">🏷️ Badges</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">🏷️ Badges</h2>
                 <div className="flex flex-wrap gap-3">
-                    <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-sm">Default</span>
+                    <span className="px-3 py-1 bg-slate-100 text-foreground/70 rounded-full text-sm">Default</span>
                     <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">Success</span>
                     <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm">Error</span>
                     <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm">Warning</span>
@@ -164,7 +164,7 @@ export default function UITestPage() {
 
             {/* Alerts */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">⚠️ Alertas</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">⚠️ Alertas</h2>
                 <div className="space-y-3">
                     <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
                         ✅ Success: Operación completada correctamente.
@@ -183,8 +183,8 @@ export default function UITestPage() {
 
             {/* Iconos Emoji */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">😀 Iconos (Emoji)</h2>
-                <p className="text-slate-600 mb-3">Usamos emojis como iconos para simplicidad:</p>
+                <h2 className="text-xl font-semibold text-foreground mb-4">😀 Iconos (Emoji)</h2>
+                <p className="text-foreground/70 mb-3">Usamos emojis como iconos para simplicidad:</p>
                 <div className="flex flex-wrap gap-4 text-2xl">
                     <span title="Session Note">📝</span>
                     <span title="Audio">🎙️</span>
@@ -203,7 +203,7 @@ export default function UITestPage() {
 
             {/* Spacing */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">📏 Espaciado</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">📏 Espaciado</h2>
                 <div className="flex gap-2 items-end">
                     {[1, 2, 3, 4, 6, 8, 12, 16].map(size => (
                         <div key={size} className="text-center">
@@ -211,7 +211,7 @@ export default function UITestPage() {
                                 className="bg-slate-800 rounded"
                                 style={{ width: `${size * 4}px`, height: `${size * 4}px` }}
                             />
-                            <span className="text-xs text-slate-500 mt-1 block">{size}</span>
+                            <span className="text-xs text-foreground/60 mt-1 block">{size}</span>
                         </div>
                     ))}
                 </div>
@@ -219,7 +219,7 @@ export default function UITestPage() {
 
             {/* Border Radius */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">🔲 Border Radius</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">🔲 Border Radius</h2>
                 <div className="flex gap-4">
                     <div className="w-16 h-16 bg-slate-800 rounded-none flex items-center justify-center text-white text-xs">none</div>
                     <div className="w-16 h-16 bg-slate-800 rounded-sm flex items-center justify-center text-white text-xs">sm</div>
@@ -232,14 +232,14 @@ export default function UITestPage() {
 
             {/* Shadows */}
             <section>
-                <h2 className="text-xl font-semibold text-slate-800 mb-4">🌑 Sombras</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-4">🌑 Sombras</h2>
                 <div className="flex gap-6">
-                    <div className="w-24 h-24 bg-white shadow-sm flex items-center justify-center rounded-lg text-xs text-slate-500">sm</div>
-                    <div className="w-24 h-24 bg-white shadow flex items-center justify-center rounded-lg text-xs text-slate-500">default</div>
-                    <div className="w-24 h-24 bg-white shadow-md flex items-center justify-center rounded-lg text-xs text-slate-500">md</div>
-                    <div className="w-24 h-24 bg-white shadow-lg flex items-center justify-center rounded-lg text-xs text-slate-500">lg</div>
-                    <div className="w-24 h-24 bg-white shadow-xl flex items-center justify-center rounded-lg text-xs text-slate-500">xl</div>
-                    <div className="w-24 h-24 bg-white shadow-2xl flex items-center justify-center rounded-lg text-xs text-slate-500">2xl</div>
+                    <div className="w-24 h-24 bg-card shadow-sm flex items-center justify-center rounded-lg text-xs text-foreground/60">sm</div>
+                    <div className="w-24 h-24 bg-card shadow flex items-center justify-center rounded-lg text-xs text-foreground/60">default</div>
+                    <div className="w-24 h-24 bg-card shadow-md flex items-center justify-center rounded-lg text-xs text-foreground/60">md</div>
+                    <div className="w-24 h-24 bg-card shadow-lg flex items-center justify-center rounded-lg text-xs text-foreground/60">lg</div>
+                    <div className="w-24 h-24 bg-card shadow-xl flex items-center justify-center rounded-lg text-xs text-foreground/60">xl</div>
+                    <div className="w-24 h-24 bg-card shadow-2xl flex items-center justify-center rounded-lg text-xs text-foreground/60">2xl</div>
                 </div>
             </section>
         </div>

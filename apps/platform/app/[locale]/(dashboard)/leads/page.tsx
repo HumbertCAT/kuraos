@@ -42,22 +42,22 @@ const COLUMNS: Column[] = [
         id: 'NEW',
         title: 'Nuevos',
         color: 'text-blue-600 dark:text-blue-400',
-        bgColor: 'bg-blue-50 dark:bg-blue-950/30',
-        borderColor: 'border-blue-200 dark:border-blue-800',
+        bgColor: 'bg-blue-50 dark:bg-zinc-900',
+        borderColor: 'border-blue-200 dark:border-blue-500/30',
     },
     {
         id: 'CONTACTED',
         title: 'Contactados',
-        color: 'text-amber-700 dark:text-amber-300',
-        bgColor: 'bg-amber-50 dark:bg-amber-900/30',
-        borderColor: 'border-amber-200 dark:border-amber-700',
+        color: 'text-amber-700 dark:text-amber-400',
+        bgColor: 'bg-amber-50 dark:bg-zinc-900',
+        borderColor: 'border-amber-200 dark:border-amber-500/30',
     },
     {
         id: 'QUALIFIED',
         title: 'Cualificados',
-        color: 'text-teal-700 dark:text-teal-300',
-        bgColor: 'bg-teal-50 dark:bg-teal-900/30',
-        borderColor: 'border-teal-200 dark:border-teal-700',
+        color: 'text-teal-700 dark:text-teal-400',
+        bgColor: 'bg-teal-50 dark:bg-zinc-900',
+        borderColor: 'border-teal-200 dark:border-teal-500/30',
     },
 ];
 
@@ -291,10 +291,10 @@ export default function LeadsPage() {
                         <UserPlus className="w-6 h-6 text-brand" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+                        <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">
                             CRM - Interesados
                         </h1>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">Gestiona tu pipeline antes de convertir a {terminology.plural.toLowerCase()}</p>
+                        <p className="text-sm text-foreground/60 dark:text-zinc-400">Gestiona tu pipeline antes de convertir a {terminology.plural.toLowerCase()}</p>
                     </div>
                 </div>
                 <button
@@ -314,7 +314,7 @@ export default function LeadsPage() {
                     placeholder="Buscar por nombre, email o teléfono..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 border border-border-subtle bg-surface rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
+                    className="w-full pl-10 pr-4 py-2.5 border border-border-subtle bg-surface rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground dark:text-zinc-100 placeholder:text-zinc-400"
                 />
             </div>
 
@@ -342,7 +342,7 @@ export default function LeadsPage() {
                                     <div
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
-                                        className={`min-h-[400px] space-y-3 transition-colors rounded-xl p-2 ${snapshot.isDraggingOver ? 'bg-white/50' : ''
+                                        className={`min-h-[400px] space-y-3 transition-colors rounded-xl p-2 ${snapshot.isDraggingOver ? 'bg-card/50' : ''
                                             }`}
                                     >
                                         {getColumnLeads(column.id).map((lead, index) => (
@@ -365,7 +365,7 @@ export default function LeadsPage() {
                                                             <div className="flex items-start justify-between">
                                                                 <div>
                                                                     <div className="flex items-center gap-2">
-                                                                        <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                                                                        <p className="font-medium text-foreground dark:text-zinc-100">
                                                                             {lead.first_name} {lead.last_name}
                                                                         </p>
                                                                         {urgency.badge && (
@@ -375,7 +375,7 @@ export default function LeadsPage() {
                                                                         )}
                                                                     </div>
                                                                     {lead.email && (
-                                                                        <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate max-w-[180px]">
+                                                                        <p className="text-sm text-foreground/60 dark:text-zinc-400 truncate max-w-[180px]">
                                                                             {lead.email}
                                                                         </p>
                                                                     )}
@@ -404,7 +404,7 @@ export default function LeadsPage() {
                                                                 <Clock className="w-3 h-3" />
                                                                 <span>{formatTimeAgo(lead.created_at)}</span>
                                                                 {lead.source !== 'Manual' && (
-                                                                    <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-500">
+                                                                    <span className="px-1.5 py-0.5 bg-slate-100 rounded text-foreground/60">
                                                                         {lead.source}
                                                                     </span>
                                                                 )}
@@ -461,59 +461,59 @@ function CreateLeadModal({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
-                <h2 className="text-xl font-bold text-slate-900 mb-4">Nuevo Lead</h2>
+            <div className="bg-card rounded-2xl p-6 w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+                <h2 className="text-xl font-bold text-foreground mb-4">Nuevo Lead</h2>
 
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-600 mb-1">Nombre *</label>
+                            <label className="block text-sm font-medium text-foreground/70 mb-1">Nombre *</label>
                             <input
                                 type="text"
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-slate-900 placeholder:text-slate-400"
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-slate-400"
                                 placeholder="Juan"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-600 mb-1">Apellido *</label>
+                            <label className="block text-sm font-medium text-foreground/70 mb-1">Apellido *</label>
                             <input
                                 type="text"
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-slate-900 placeholder:text-slate-400"
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-slate-400"
                                 placeholder="Pérez"
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                        <label className="block text-sm font-medium text-foreground/70 mb-1">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-slate-900 placeholder:text-slate-400"
+                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-slate-400"
                             placeholder="juan@ejemplo.com"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-600 mb-1">Teléfono</label>
+                        <label className="block text-sm font-medium text-foreground/70 mb-1">Teléfono</label>
                         <input
                             type="tel"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-slate-900 placeholder:text-slate-400"
+                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-slate-400"
                             placeholder="+34 600 000 000"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-600 mb-1">Notas</label>
+                        <label className="block text-sm font-medium text-foreground/70 mb-1">Notas</label>
                         <textarea
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                             rows={3}
-                            className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none text-slate-900 placeholder:text-slate-400"
+                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none text-foreground placeholder:text-slate-400"
                             placeholder="Interesado en retiro de Ibiza..."
                         />
                     </div>
@@ -522,7 +522,7 @@ function CreateLeadModal({
                 <div className="flex justify-end gap-3 mt-6">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                        className="px-4 py-2 text-foreground/70 hover:bg-slate-100 rounded-xl transition-colors"
                     >
                         Cancelar
                     </button>
@@ -645,7 +645,7 @@ function LeadDetailSheet({
     return (
         <div className="fixed inset-0 bg-black/50 flex justify-end z-50" onClick={onClose}>
             <div
-                className="bg-white w-full max-w-lg h-full shadow-2xl animate-slide-in-right overflow-y-auto"
+                className="bg-card w-full max-w-lg h-full shadow-2xl animate-slide-in-right overflow-y-auto"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header */}
@@ -659,14 +659,14 @@ function LeadDetailSheet({
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                            className="p-2 hover:bg-card/10 rounded-lg transition-colors"
                         >
                             <XCircle className="w-5 h-5" />
                         </button>
                     </div>
                     <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center gap-3">
-                            <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                            <span className="px-3 py-1 bg-card/20 rounded-full text-sm font-medium">
                                 {lead.status}
                             </span>
                             <span className="text-sm text-purple-200">
@@ -680,7 +680,7 @@ function LeadDetailSheet({
                                     href={getWhatsAppUrl(lead)}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                                    className="p-2 bg-card/10 hover:bg-card/20 rounded-lg transition-colors"
                                     title="Enviar WhatsApp"
                                 >
                                     <MessageCircle className="w-4 h-4" />
@@ -692,7 +692,7 @@ function LeadDetailSheet({
                                     navigator.clipboard.writeText(bookingUrl);
                                     alert('Link de reserva copiado al portapapeles');
                                 }}
-                                className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                                className="p-2 bg-card/10 hover:bg-card/20 rounded-lg transition-colors"
                                 title="Copiar link de reserva"
                             >
                                 <Link className="w-4 h-4" />
@@ -708,41 +708,41 @@ function LeadDetailSheet({
                         <h3 className="font-medium text-slate-700">Información de Contacto</h3>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm text-slate-500 mb-1">Nombre</label>
+                                <label className="block text-sm text-foreground/60 mb-1">Nombre</label>
                                 <input
                                     type="text"
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
-                                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
+                                    className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-slate-500 mb-1">Apellido</label>
+                                <label className="block text-sm text-foreground/60 mb-1">Apellido</label>
                                 <input
                                     type="text"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
-                                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
+                                    className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
                                 />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm text-slate-500 mb-1">Email</label>
+                            <label className="block text-sm text-foreground/60 mb-1">Email</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
                                 placeholder="email@ejemplo.com"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm text-slate-500 mb-1">Teléfono</label>
+                            <label className="block text-sm text-foreground/60 mb-1">Teléfono</label>
                             <input
                                 type="tel"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
                                 placeholder="+34 600 000 000"
                             />
                         </div>
@@ -750,13 +750,13 @@ function LeadDetailSheet({
 
                     {/* Source Details */}
                     {lead.source_details && Object.keys(lead.source_details).length > 0 && (
-                        <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                            <h3 className="font-medium text-blue-700 mb-2">Origen del Lead</h3>
+                        <div className="bg-blue-50 dark:bg-zinc-900 rounded-xl p-4 border border-blue-100 dark:border-blue-500/30">
+                            <h3 className="font-medium text-blue-700 dark:text-blue-400 mb-2">Origen del Lead</h3>
                             <div className="space-y-1 text-sm">
                                 {Object.entries(lead.source_details).map(([key, value]) => (
                                     <div key={key} className="flex items-center gap-2">
-                                        <span className="text-blue-500 capitalize">{key.replace(/_/g, ' ')}:</span>
-                                        <span className="text-blue-800">{String(value)}</span>
+                                        <span className="text-blue-500 dark:text-blue-400/70 capitalize">{key.replace(/_/g, ' ')}:</span>
+                                        <span className="text-blue-800 dark:text-blue-300">{String(value)}</span>
                                     </div>
                                 ))}
                             </div>
@@ -781,7 +781,7 @@ function LeadDetailSheet({
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                             rows={5}
-                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none"
+                            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none"
                             placeholder="Añade notas sobre este lead..."
                         />
                     </div>
@@ -798,7 +798,7 @@ function LeadDetailSheet({
                     )}
 
                     {/* Danger Zone */}
-                    <div className="border-t border-slate-200 pt-4">
+                    <div className="border-t border-border pt-4">
                         <button
                             onClick={handleDelete}
                             disabled={deleting}
@@ -810,10 +810,10 @@ function LeadDetailSheet({
                 </div>
 
                 {/* Actions */}
-                <div className="sticky bottom-0 bg-white border-t border-slate-200 p-4 flex items-center gap-3">
+                <div className="sticky bottom-0 bg-card border-t border-border p-4 flex items-center gap-3">
                     <button
                         onClick={handleMarkLost}
-                        className="flex-1 px-4 py-3 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors font-medium"
+                        className="flex-1 px-4 py-3 border border-red-200 text-red-600 rounded-xl hover:bg-red-500/10 dark:hover:bg-red-500/20 transition-colors font-medium"
                     >
                         <XCircle className="w-4 h-4 inline mr-2" />
                         Perdido

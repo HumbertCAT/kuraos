@@ -124,9 +124,9 @@ export default function CityAutocomplete({
                     onFocus={() => search.length > 0 && cities.length > 0 && setIsOpen(true)}
                     placeholder={placeholder}
                     disabled={!countryCode}
-                    className={`w-full p-3 pl-10 border rounded-lg outline-none text-slate-900 transition-colors
+                    className={`w-full p-3 pl-10 border rounded-lg outline-none text-foreground transition-colors
             ${countryCode
-                            ? 'bg-white focus:ring-2 focus:ring-violet-500 focus:border-violet-500'
+                            ? 'bg-card focus:ring-2 focus:ring-violet-500 focus:border-violet-500'
                             : 'bg-slate-50 cursor-not-allowed text-slate-400'
                         }`}
                 />
@@ -146,7 +146,7 @@ export default function CityAutocomplete({
 
             {/* Suggestions dropdown */}
             {showSuggestions && (
-                <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
                     {filteredCities.map((city, index) => (
                         <div
                             key={`${city.name}-${index}`}
@@ -154,7 +154,7 @@ export default function CityAutocomplete({
                             className="p-3 cursor-pointer hover:bg-violet-50 transition-colors flex items-center gap-2"
                         >
                             <MapPin className="w-4 h-4 text-violet-400" />
-                            <span className="text-slate-900">{city.name}</span>
+                            <span className="text-foreground">{city.name}</span>
                             {city.region && (
                                 <span className="text-xs text-slate-400">({city.region})</span>
                             )}

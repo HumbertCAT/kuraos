@@ -380,7 +380,7 @@ export default function CalendarPage() {
   }
 
   if (loading) {
-    return <div className="p-6 text-center text-slate-500">Loading...</div>;
+    return <div className="p-6 text-center text-foreground/60">Loading...</div>;
   }
 
   return (
@@ -391,8 +391,8 @@ export default function CalendarPage() {
           <CalendarDays className="w-6 h-6 text-brand" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t('title')}</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{t('subtitle') || 'Configura tu disponibilidad y sincroniza con Google Calendar'}</p>
+          <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">{t('title')}</h1>
+          <p className="text-sm text-foreground/60 dark:text-zinc-400">{t('subtitle') || 'Configura tu disponibilidad y sincroniza con Google Calendar'}</p>
         </div>
       </div>
 
@@ -402,11 +402,11 @@ export default function CalendarPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Left: Title and description */}
             <div>
-              <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <Settings2 size={20} className="text-purple-600" />
                 {t('selectSchedule') || 'Seleccionar Horario'}
               </h3>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-foreground/60 mt-1">
                 {t('scheduleDescription')}
               </p>
             </div>
@@ -418,13 +418,13 @@ export default function CalendarPage() {
                   key={s.id}
                   onClick={() => setCurrentScheduleId(s.id)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${s.id === currentScheduleId
-                    ? 'bg-purple-600 text-white shadow-md'
+                    ? 'bg-purple-600 text-foreground shadow-md'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                 >
                   {s.name}
                   {s.is_default && (
-                    <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${s.id === currentScheduleId ? 'bg-white/20' : 'bg-emerald-100 text-emerald-700'
+                    <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${s.id === currentScheduleId ? 'bg-card/20' : 'bg-emerald-100 text-emerald-700'
                       }`}>
                       ✓
                     </span>
@@ -439,11 +439,11 @@ export default function CalendarPage() {
                   className="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
                   title={t('createSchedule') || 'Create Schedule'}
                 >
-                  <Plus size={20} className="text-slate-600" />
+                  <Plus size={20} className="text-foreground/70" />
                 </button>
 
                 {showScheduleMenu && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white border rounded-xl shadow-lg z-50 p-3">
+                  <div className="absolute right-0 mt-2 w-64 bg-card border rounded-xl shadow-lg z-50 p-3">
                     <input
                       type="text"
                       placeholder={t('newSchedulePlaceholder') || 'New schedule name...'}
@@ -470,7 +470,7 @@ export default function CalendarPage() {
                           setShowScheduleMenu(false);
                         }
                       }}
-                      className="w-full p-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full p-2 bg-purple-600 text-foreground rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       <Plus size={16} />
                       {t('createSchedule') || 'Create Schedule'}
@@ -493,21 +493,21 @@ export default function CalendarPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
             {/* Recurring Card */}
-            <div className="bg-white dark:bg-zinc-900 border rounded-xl overflow-hidden">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4">
+            <div className="bg-card dark:bg-zinc-900 border rounded-xl overflow-hidden">
+              <div className="bg-brand/5 border-b border-brand/30 p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white">
+                  <div className="flex items-center gap-2 text-foreground">
                     <Clock size={20} />
                     <span className="font-semibold">{t('recurringHours')}</span>
                   </div>
                   <button
                     onClick={() => setShowRecurringModal(true)}
-                    className="p-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-white"
+                    className="p-1.5 bg-card/20 hover:bg-card/30 rounded-lg text-foreground"
                   >
                     <Plus size={18} />
                   </button>
                 </div>
-                <p className="text-green-100 text-sm mt-1">{t('recurringDescription')}</p>
+                <p className="text-brand/80 text-sm mt-1">{t('recurringDescription')}</p>
               </div>
               <div className="p-4 max-h-64 overflow-y-auto">
                 {availabilityBlocks.filter(b => b.schedule_id === currentScheduleId).length === 0 ? (
@@ -518,7 +518,7 @@ export default function CalendarPage() {
                       <div key={b.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
                         <div>
                           <span className="font-medium text-slate-700">{dayNames[b.day_of_week]}</span>
-                          <span className="text-slate-500 text-sm ml-2">{b.start_time} - {b.end_time}</span>
+                          <span className="text-foreground/60 text-sm ml-2">{b.start_time} - {b.end_time}</span>
                         </div>
                         <button onClick={() => handleDeleteRecurring(b.id)} className="text-slate-400 hover:text-red-500">
                           <Trash2 size={16} />
@@ -531,21 +531,21 @@ export default function CalendarPage() {
             </div>
 
             {/* Specific Card */}
-            <div className="bg-white border rounded-xl overflow-hidden">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4">
+            <div className="bg-card border rounded-xl overflow-hidden">
+              <div className="bg-brand/5 border-b border-brand/30 p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white">
+                  <div className="flex items-center gap-2 text-foreground">
                     <CalendarDays size={20} />
                     <span className="font-semibold">{t('specificDates')}</span>
                   </div>
                   <button
                     onClick={() => setShowSpecificModal(true)}
-                    className="p-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-white"
+                    className="p-1.5 bg-card/20 hover:bg-card/30 rounded-lg text-foreground"
                   >
                     <Plus size={18} />
                   </button>
                 </div>
-                <p className="text-green-100 text-sm mt-1">{t('specificDescription')}</p>
+                <p className="text-brand/80 text-sm mt-1">{t('specificDescription')}</p>
               </div>
               <div className="p-4 max-h-64 overflow-y-auto">
                 {specificAvailability.length === 0 ? (
@@ -558,7 +558,7 @@ export default function CalendarPage() {
                           <div className="font-medium text-slate-700">
                             {new Date(sa.start_datetime).toLocaleDateString(locale)}
                           </div>
-                          <div className="text-slate-500">
+                          <div className="text-foreground/60">
                             {new Date(sa.start_datetime).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })} - {new Date(sa.end_datetime).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </div>
@@ -573,16 +573,16 @@ export default function CalendarPage() {
             </div>
 
             {/* Blocks Card */}
-            <div className="bg-white border rounded-xl overflow-hidden">
+            <div className="bg-card border rounded-xl overflow-hidden">
               <div className="bg-gradient-to-r from-red-500 to-rose-600 p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-white">
+                  <div className="flex items-center gap-2 text-foreground">
                     <Ban size={20} />
                     <span className="font-semibold">{t('dateBlocks')}</span>
                   </div>
                   <button
                     onClick={() => setShowBlockModal(true)}
-                    className="p-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-white"
+                    className="p-1.5 bg-card/20 hover:bg-card/30 rounded-lg text-foreground"
                   >
                     <Plus size={18} />
                   </button>
@@ -598,7 +598,7 @@ export default function CalendarPage() {
                       <div key={to.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
                         <div className="text-sm">
                           <div className="font-medium text-slate-700">{to.reason || t('dateBlocks')}</div>
-                          <div className="text-slate-500">
+                          <div className="text-foreground/60">
                             {new Date(to.start_datetime).toLocaleDateString(locale)} - {new Date(to.end_datetime).toLocaleDateString(locale)}
                           </div>
                         </div>
@@ -613,9 +613,9 @@ export default function CalendarPage() {
             </div>
 
             {/* Google Calendar Card */}
-            <div className="bg-white border rounded-xl overflow-hidden">
+            <div className="bg-card border rounded-xl overflow-hidden">
               <div className="bg-gradient-to-r from-red-500 to-rose-600 p-4">
-                <div className="flex items-center gap-2 text-white">
+                <div className="flex items-center gap-2 text-foreground">
                   <Link2 size={20} />
                   <span className="font-semibold">Google Calendar</span>
                 </div>
@@ -626,7 +626,7 @@ export default function CalendarPage() {
               <div className="p-4">
                 {!googleConnected ? (
                   <div className="text-center py-4">
-                    <p className="text-slate-500 text-sm mb-3">
+                    <p className="text-foreground/60 text-sm mb-3">
                       Conecta Google Calendar en <strong>Configuración</strong> para bloquear
                       automáticamente tu disponibilidad cuando tengas eventos.
                     </p>
@@ -639,7 +639,7 @@ export default function CalendarPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-sm text-slate-600 mb-3">
+                    <p className="text-sm text-foreground/70 mb-3">
                       Los eventos de estos calendarios bloquearán tu disponibilidad:
                     </p>
                     {googleCalendars.length === 0 ? (
@@ -699,10 +699,10 @@ export default function CalendarPage() {
       {/* Recurring Modal */}
       {showRecurringModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+          <div className="bg-card rounded-xl shadow-xl w-full max-w-md">
             <div className="p-6 border-b flex justify-between items-center">
               <h2 className="text-lg font-semibold">{t('addRecurring')}</h2>
-              <button onClick={() => setShowRecurringModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowRecurringModal(false)} className="text-slate-400 hover:text-foreground/70">
                 <X size={20} />
               </button>
             </div>
@@ -712,7 +712,7 @@ export default function CalendarPage() {
                 <select
                   value={newRecurring.day_of_week}
                   onChange={e => setNewRecurring({ ...newRecurring, day_of_week: Number(e.target.value) })}
-                  className="w-full border rounded-lg px-3 py-2 text-slate-800"
+                  className="w-full border rounded-lg px-3 py-2 text-foreground"
                 >
                   {dayNames.map((name, i) => (
                     <option key={i} value={i}>{name}</option>
@@ -726,7 +726,7 @@ export default function CalendarPage() {
                     type="time"
                     value={newRecurring.start_time}
                     onChange={e => setNewRecurring({ ...newRecurring, start_time: e.target.value })}
-                    className="w-full border rounded-lg px-3 py-2 text-slate-800"
+                    className="w-full border rounded-lg px-3 py-2 text-foreground"
                   />
                 </div>
                 <div>
@@ -735,15 +735,15 @@ export default function CalendarPage() {
                     type="time"
                     value={newRecurring.end_time}
                     onChange={e => setNewRecurring({ ...newRecurring, end_time: e.target.value })}
-                    className="w-full border rounded-lg px-3 py-2 text-slate-800"
+                    className="w-full border rounded-lg px-3 py-2 text-foreground"
                   />
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setShowRecurringModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                <button type="button" onClick={() => setShowRecurringModal(false)} className="px-4 py-2 text-foreground/70 hover:bg-slate-100 rounded-lg">
                   {t('cancel')}
                 </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-brand text-white rounded-lg hover:opacity-90 disabled:opacity-50">
+                <button type="submit" disabled={saving} className="px-4 py-2 bg-brand text-foreground rounded-lg hover:opacity-90 disabled:opacity-50">
                   {saving ? '...' : t('save')}
                 </button>
               </div>
@@ -755,10 +755,10 @@ export default function CalendarPage() {
       {/* Specific Modal */}
       {showSpecificModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+          <div className="bg-card rounded-xl shadow-xl w-full max-w-md">
             <div className="p-6 border-b flex justify-between items-center">
               <h2 className="text-lg font-semibold">{t('addSpecific')}</h2>
-              <button onClick={() => setShowSpecificModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowSpecificModal(false)} className="text-slate-400 hover:text-foreground/70">
                 <X size={20} />
               </button>
             </div>
@@ -769,7 +769,7 @@ export default function CalendarPage() {
                   type="datetime-local"
                   value={newSpecific.start}
                   onChange={e => setNewSpecific({ ...newSpecific, start: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2 text-slate-800"
+                  className="w-full border rounded-lg px-3 py-2 text-foreground"
                   required
                 />
               </div>
@@ -779,15 +779,15 @@ export default function CalendarPage() {
                   type="datetime-local"
                   value={newSpecific.end}
                   onChange={e => setNewSpecific({ ...newSpecific, end: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2 text-slate-800"
+                  className="w-full border rounded-lg px-3 py-2 text-foreground"
                   required
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setShowSpecificModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                <button type="button" onClick={() => setShowSpecificModal(false)} className="px-4 py-2 text-foreground/70 hover:bg-slate-100 rounded-lg">
                   {t('cancel')}
                 </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50">
+                <button type="submit" disabled={saving} className="px-4 py-2 bg-purple-600 text-foreground rounded-lg hover:bg-purple-700 disabled:opacity-50">
                   {saving ? '...' : t('save')}
                 </button>
               </div>
@@ -799,10 +799,10 @@ export default function CalendarPage() {
       {/* Block Modal */}
       {showBlockModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+          <div className="bg-card rounded-xl shadow-xl w-full max-w-md">
             <div className="p-6 border-b flex justify-between items-center">
               <h2 className="text-lg font-semibold">{t('addBlock')}</h2>
-              <button onClick={() => setShowBlockModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowBlockModal(false)} className="text-slate-400 hover:text-foreground/70">
                 <X size={20} />
               </button>
             </div>
@@ -814,7 +814,7 @@ export default function CalendarPage() {
                   value={newBlock.reason}
                   onChange={e => setNewBlock({ ...newBlock, reason: e.target.value })}
                   placeholder="Navidad, Vacaciones..."
-                  className="w-full border rounded-lg px-3 py-2 text-slate-800"
+                  className="w-full border rounded-lg px-3 py-2 text-foreground"
                 />
               </div>
               <div>
@@ -823,7 +823,7 @@ export default function CalendarPage() {
                   type="datetime-local"
                   value={newBlock.start}
                   onChange={e => setNewBlock({ ...newBlock, start: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2 text-slate-800"
+                  className="w-full border rounded-lg px-3 py-2 text-foreground"
                   required
                 />
               </div>
@@ -833,15 +833,15 @@ export default function CalendarPage() {
                   type="datetime-local"
                   value={newBlock.end}
                   onChange={e => setNewBlock({ ...newBlock, end: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2 text-slate-800"
+                  className="w-full border rounded-lg px-3 py-2 text-foreground"
                   required
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setShowBlockModal(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                <button type="button" onClick={() => setShowBlockModal(false)} className="px-4 py-2 text-foreground/70 hover:bg-slate-100 rounded-lg">
                   {t('cancel')}
                 </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-risk text-white rounded-lg hover:opacity-90 disabled:opacity-50">
+                <button type="submit" disabled={saving} className="px-4 py-2 bg-risk text-foreground rounded-lg hover:opacity-90 disabled:opacity-50">
                   {saving ? '...' : t('save')}
                 </button>
               </div>

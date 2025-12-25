@@ -225,7 +225,7 @@ export default function AudioRecorder({ onRecordingComplete, disabled }: AudioRe
         return (
             <button
                 disabled
-                className="px-4 py-2 border border-slate-300 rounded-lg opacity-50 text-slate-400 cursor-not-allowed flex items-center gap-2"
+                className="px-4 py-2 border border-zinc-700 rounded-lg opacity-50 text-zinc-500 cursor-not-allowed flex items-center gap-2"
                 title={t('micNotAvailable')}
             >
                 <Mic className="w-4 h-4" />
@@ -245,7 +245,7 @@ export default function AudioRecorder({ onRecordingComplete, disabled }: AudioRe
                     {t('stopRecording')} ({formatTime(recordingTime)})
                 </button>
                 {mode === 'meeting' && (
-                    <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-lg flex items-center gap-1">
+                    <span className="text-xs text-amber-400 bg-amber-500/10 px-2 py-1 rounded-lg flex items-center gap-1">
                         <Monitor className="w-3 h-3" />
                         Reunión
                     </span>
@@ -261,7 +261,7 @@ export default function AudioRecorder({ onRecordingComplete, disabled }: AudioRe
             <button
                 onClick={() => setShowModeSelector(!showModeSelector)}
                 disabled={disabled}
-                className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors text-slate-700 cursor-pointer disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 border border-zinc-700 rounded-lg hover:bg-zinc-800 transition-colors text-zinc-400 cursor-pointer disabled:opacity-50 flex items-center gap-2"
             >
                 {mode === 'voice' ? (
                     <Mic className="w-4 h-4" />
@@ -276,42 +276,42 @@ export default function AudioRecorder({ onRecordingComplete, disabled }: AudioRe
 
             {/* Mode Selector Dropdown */}
             {showModeSelector && (
-                <div ref={dropdownRef} className="absolute top-full left-0 mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                <div ref={dropdownRef} className="absolute top-full left-0 mt-2 w-80 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden">
                     {/* Voice Note Mode */}
                     <button
                         onClick={() => { setMode('voice'); startRecording(); }}
-                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors text-left ${mode === 'voice' ? 'bg-emerald-50' : ''}`}
+                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors text-left ${mode === 'voice' ? 'bg-emerald-500/10' : ''}`}
                     >
-                        <div className={`p-2 rounded-lg ${mode === 'voice' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'}`}>
+                        <div className={`p-2 rounded-lg ${mode === 'voice' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800 text-foreground/70'}`}>
                             <Mic className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="font-medium text-slate-900">🎙️ Nota de Voz</p>
-                            <p className="text-xs text-slate-500">Solo micrófono</p>
+                            <p className="font-medium text-foreground">🎙️ Nota de Voz</p>
+                            <p className="text-xs text-foreground/60">Solo micrófono</p>
                         </div>
                     </button>
 
-                    <div className="border-t border-slate-100" />
+                    <div className="border-t border-border" />
 
                     {/* Meeting Mode */}
                     <button
                         onClick={() => { setMode('meeting'); startRecording(); }}
-                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-slate-50 transition-colors text-left ${mode === 'meeting' ? 'bg-violet-50' : ''}`}
+                        className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors text-left ${mode === 'meeting' ? 'bg-ai/10' : ''}`}
                     >
-                        <div className={`p-2 rounded-lg ${mode === 'meeting' ? 'bg-violet-100 text-violet-600' : 'bg-slate-100 text-slate-600'}`}>
+                        <div className={`p-2 rounded-lg ${mode === 'meeting' ? 'bg-ai/20 text-ai' : 'bg-zinc-800 text-foreground/70'}`}>
                             <Monitor className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="font-medium text-slate-900">💻 Grabar Reunión</p>
-                            <p className="text-xs text-slate-500">Sistema + Micrófono (Zoom, Meet...)</p>
+                            <p className="font-medium text-foreground">💻 Grabar Reunión</p>
+                            <p className="text-xs text-foreground/60">Sistema + Micrófono (Zoom, Meet...)</p>
                         </div>
                     </button>
 
                     {/* Warning for Meeting Mode */}
-                    <div className="border-t border-slate-100 px-4 py-3 bg-amber-50">
+                    <div className="border-t border-border px-4 py-3 bg-amber-500/10">
                         <div className="flex items-start gap-2">
-                            <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-                            <p className="text-xs text-amber-700">
+                            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-amber-400">
                                 <strong>Importante:</strong> Al seleccionar la ventana, marca la casilla{' '}
                                 <span className="font-semibold">"Compartir audio de la pestaña"</span>{' '}
                                 o el audio de la reunión no se grabará.

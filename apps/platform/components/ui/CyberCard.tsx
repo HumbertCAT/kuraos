@@ -1,23 +1,23 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-// Definimos los estilos para cada variante usando las nuevas variables semánticas.
+// Definimos los estilos para cada variante.
+// Uses CSS variables from globals.css for consistent theming.
 const cardVariants = {
-    // La tarjeta estándar (sólida)
+    // La tarjeta estándar (sólida) - Uses --card and --border
     default: "bg-card text-card-foreground border-border shadow-sm dark:shadow-none",
 
-    // Variante 'ghost' (transparente, solo borde sutil) - Útil para contenedores secundarios
-    ghost: "bg-transparent border-border/40 text-foreground shadow-none",
+    // Variante 'ghost' (transparente, solo borde sutil)
+    ghost: "bg-transparent border-border/50 text-foreground shadow-none",
 
-    // Variante 'glass' (translúcida con desenfoque) - Útil para elementos flotantes o headers sticky
-    // Usa bg-card pero con opacidad para el efecto cristal.
-    glass: "bg-card/80 backdrop-blur-md border-border/80 text-card-foreground shadow-sm dark:shadow-none supports-[backdrop-filter]:bg-card/60",
+    // Variante 'glass' (translúcida con desenfoque)
+    glass: "backdrop-blur-xl bg-white/80 border-border/80 text-card-foreground shadow-sm dark:bg-card/80 dark:border-border dark:shadow-none",
 
     // Variante 'ai' (acentuada con tono violeta sutil)
-    ai: "bg-card text-card-foreground border-ai/30 shadow-sm dark:shadow-none",
+    ai: "bg-card text-card-foreground border-ai/30 shadow-sm dark:border-ai/40 dark:shadow-none",
 
     // Variante 'alert' (acentuada con tono riesgo sutil)
-    alert: "bg-card text-card-foreground border-risk/30 shadow-sm dark:shadow-none",
+    alert: "bg-card text-card-foreground border-risk/30 shadow-sm dark:border-risk/40 dark:shadow-none",
 };
 
 // Extendemos las props estándar de un DIV HTML

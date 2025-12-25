@@ -87,7 +87,7 @@ export default function CountrySelect({
                     setIsOpen(true);
                     setTimeout(() => inputRef.current?.focus(), 0);
                 }}
-                className="w-full p-3 border rounded-lg bg-white cursor-pointer flex items-center justify-between hover:border-violet-300 focus-within:ring-2 focus-within:ring-violet-500 focus-within:border-violet-500 transition-colors"
+                className="w-full p-3 border rounded-lg bg-card cursor-pointer flex items-center justify-between hover:border-violet-300 focus-within:ring-2 focus-within:ring-violet-500 focus-within:border-violet-500 transition-colors"
             >
                 {isOpen ? (
                     <div className="flex items-center gap-2 flex-1">
@@ -98,12 +98,12 @@ export default function CountrySelect({
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Buscar país..."
-                            className="flex-1 outline-none text-slate-900 placeholder:text-slate-400"
+                            className="flex-1 outline-none text-foreground placeholder:text-slate-400"
                             onClick={(e) => e.stopPropagation()}
                         />
                     </div>
                 ) : selectedCountry ? (
-                    <span className="text-slate-900 flex items-center gap-2">
+                    <span className="text-foreground flex items-center gap-2">
                         <span className="text-lg">{selectedCountry.flag}</span>
                         {selectedCountry.name}
                     </span>
@@ -127,9 +127,9 @@ export default function CountrySelect({
 
             {/* Dropdown */}
             {isOpen && (
-                <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     {filteredCountries.length === 0 ? (
-                        <div className="p-3 text-slate-500 text-center">
+                        <div className="p-3 text-foreground/60 text-center">
                             No se encontraron países
                         </div>
                     ) : (
@@ -142,7 +142,7 @@ export default function CountrySelect({
                             >
                                 <span className="flex items-center gap-2">
                                     <span className="text-lg">{country.flag}</span>
-                                    <span className="text-slate-900">{country.name}</span>
+                                    <span className="text-foreground">{country.name}</span>
                                     <span className="text-xs text-slate-400">{country.code}</span>
                                 </span>
                                 {selectedCountry?.code === country.code && (

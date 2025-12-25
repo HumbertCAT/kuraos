@@ -74,14 +74,14 @@ export default function BriefingPlayer() {
     // Loading state
     if (loading) {
         return (
-            <div className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-500 rounded-2xl p-6 text-white">
+            <div className="bg-card border border-brand/30 rounded-2xl p-6 text-foreground">
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center animate-pulse">
+                    <div className="w-14 h-14 rounded-xl bg-card/20 flex items-center justify-center animate-pulse">
                         <Sparkles className="w-7 h-7" />
                     </div>
                     <div className="flex-1">
-                        <div className="h-5 bg-white/30 rounded w-48 mb-2 animate-pulse"></div>
-                        <div className="h-4 bg-white/20 rounded w-32 animate-pulse"></div>
+                        <div className="h-5 bg-card/30 rounded w-48 mb-2 animate-pulse"></div>
+                        <div className="h-4 bg-card/20 rounded w-32 animate-pulse"></div>
                     </div>
                 </div>
             </div>
@@ -91,23 +91,23 @@ export default function BriefingPlayer() {
     // Error or no briefing - show error for debugging
     if (error || !briefing) {
         return (
-            <div className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-500 rounded-2xl p-6 text-white">
+            <div className="bg-card border border-brand/30 rounded-2xl p-6 text-foreground">
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-xl bg-card/20 flex items-center justify-center">
                         <Sparkles className="w-7 h-7" />
                     </div>
                     <div className="flex-1">
                         <h3 className="text-lg font-semibold">Tu Resumen Diario</h3>
-                        <p className="text-sm text-white/80">
+                        <p className="text-sm text-foreground/80">
                             {error || 'Cargando...'}
                         </p>
                     </div>
                     <button
                         onClick={loadBriefing}
-                        className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                        className="p-2 rounded-lg bg-card/10 hover:bg-card/20 transition-colors"
                         title="Reintentar"
                     >
-                        <RefreshCw className="w-4 h-4 text-white" />
+                        <RefreshCw className="w-4 h-4 text-foreground" />
                     </button>
                 </div>
             </div>
@@ -117,7 +117,7 @@ export default function BriefingPlayer() {
     const hasAudio = briefing.audio_url && briefing.audio_url !== 'null' && briefing.audio_url.length > 0;
 
     return (
-        <div className="bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-500 rounded-2xl overflow-hidden shadow-xl shadow-purple-200/50">
+        <div className="bg-card border border-brand/30 rounded-2xl overflow-hidden shadow-lg">
             {/* Main Player Section */}
             <div className="p-6">
                 <div className="flex items-center gap-4">
@@ -125,27 +125,27 @@ export default function BriefingPlayer() {
                     {hasAudio ? (
                         <button
                             onClick={handlePlayPause}
-                            className="w-14 h-14 rounded-xl bg-white flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                            className="w-14 h-14 rounded-xl bg-card flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
                         >
                             {isPlaying ? (
-                                <Pause className="w-7 h-7 text-violet-600" />
+                                <Pause className="w-7 h-7 text-brand" />
                             ) : (
-                                <Play className="w-7 h-7 text-violet-600 ml-1" />
+                                <Play className="w-7 h-7 text-brand ml-1" />
                             )}
                         </button>
                     ) : (
-                        <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
-                            <Volume2 className="w-7 h-7 text-white/60" />
+                        <div className="w-14 h-14 rounded-xl bg-card/20 flex items-center justify-center">
+                            <Volume2 className="w-7 h-7 text-foreground/60" />
                         </div>
                     )}
 
                     {/* Title & Status */}
                     <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                             <Sparkles className="w-5 h-5" />
                             Tu Resumen Diario
                         </h3>
-                        <p className="text-sm text-white/80">
+                        <p className="text-sm text-foreground/80">
                             {hasAudio ? (
                                 isPlaying ? '🎙️ Reproduciendo...' : '▶️ Escucha tu briefing'
                             ) : (
@@ -157,16 +157,16 @@ export default function BriefingPlayer() {
                     {/* Time/Refresh */}
                     <div className="flex items-center gap-2">
                         {briefing.cached && (
-                            <span className="text-xs text-white/60 bg-white/10 px-2 py-1 rounded">
+                            <span className="text-xs text-foreground/60 bg-card/10 px-2 py-1 rounded">
                                 En caché
                             </span>
                         )}
                         <button
                             onClick={loadBriefing}
-                            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                            className="p-2 rounded-lg bg-card/10 hover:bg-card/20 transition-colors"
                             title="Regenerar"
                         >
-                            <RefreshCw className="w-4 h-4 text-white" />
+                            <RefreshCw className="w-4 h-4 text-foreground" />
                         </button>
                     </div>
                 </div>
@@ -174,9 +174,9 @@ export default function BriefingPlayer() {
                 {/* Audio Progress Bar */}
                 {hasAudio && (
                     <div className="mt-4">
-                        <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-card/20 rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-white rounded-full transition-all duration-200"
+                                className="h-full bg-card rounded-full transition-all duration-200"
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
@@ -189,7 +189,7 @@ export default function BriefingPlayer() {
                         {[...Array(20)].map((_, i) => (
                             <div
                                 key={i}
-                                className="w-1 bg-white/60 rounded-full animate-pulse"
+                                className="w-1 bg-card/60 rounded-full animate-pulse"
                                 style={{
                                     height: `${Math.random() * 100}%`,
                                     animationDelay: `${i * 50}ms`,
@@ -204,7 +204,7 @@ export default function BriefingPlayer() {
             <div className="border-t border-white/10">
                 <button
                     onClick={() => setShowTranscript(!showTranscript)}
-                    className="w-full px-6 py-3 flex items-center justify-between text-white/80 hover:bg-white/5 transition-colors"
+                    className="w-full px-6 py-3 flex items-center justify-between text-foreground/80 hover:bg-card/5 transition-colors"
                 >
                     <span className="text-sm font-medium">
                         {showTranscript ? 'Ocultar transcripción' : 'Ver transcripción'}
@@ -218,10 +218,10 @@ export default function BriefingPlayer() {
 
                 {showTranscript && (
                     <div className="px-6 pb-6">
-                        <div className="p-4 bg-white/10 rounded-xl text-white/90 text-sm leading-relaxed">
+                        <div className="p-4 bg-card/10 rounded-xl text-foreground/90 text-sm leading-relaxed">
                             {briefing.text_script}
                         </div>
-                        <p className="text-xs text-white/50 mt-2">
+                        <p className="text-xs text-foreground/50 mt-2">
                             Generado: {new Date(briefing.generated_at).toLocaleString('es-ES')}
                         </p>
                     </div>

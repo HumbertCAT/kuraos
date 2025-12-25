@@ -140,8 +140,8 @@ export default function FormsPage() {
                     <FileText className="w-6 h-6 text-brand" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t('title')}</h1>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">{t('subtitle')}</p>
+                    <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">{t('title')}</h1>
+                    <p className="text-sm text-foreground/60 dark:text-zinc-400">{t('subtitle')}</p>
                 </div>
             </div>
 
@@ -150,8 +150,8 @@ export default function FormsPage() {
                 <button
                     onClick={() => setActiveTab('my-forms')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'my-forms'
-                        ? 'bg-surface text-zinc-900 dark:text-zinc-100 shadow-sm'
-                        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'
+                        ? 'bg-card text-foreground dark:text-zinc-100 shadow-sm'
+                        : 'text-foreground/70 dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200'
                         }`}
                 >
                     {t('myForms')} ({myForms.length})
@@ -159,8 +159,8 @@ export default function FormsPage() {
                 <button
                     onClick={() => setActiveTab('library')}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'library'
-                        ? 'bg-surface text-zinc-900 dark:text-zinc-100 shadow-sm'
-                        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'
+                        ? 'bg-card text-foreground dark:text-zinc-100 shadow-sm'
+                        : 'text-foreground/70 dark:text-zinc-400 hover:text-foreground dark:hover:text-zinc-200'
                         }`}
                 >
                     {t('templateLibrary')} ({systemTemplates.length})
@@ -187,30 +187,30 @@ export default function FormsPage() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {myForms.map((form) => (
-                                <div key={form.id} className="bg-surface rounded-xl border border-border-subtle p-5 hover:shadow-sm transition-shadow">
+                                <div key={form.id} className="bg-card rounded-xl border border-border p-5 hover:shadow-sm transition-shadow">
                                     <div className="flex justify-between items-start mb-3">
                                         <span className="text-2xl">{THERAPY_ICONS[form.therapy_type] || '📋'}</span>
                                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${RISK_COLORS[form.risk_level]}`}>
                                             {form.risk_level}
                                         </span>
                                     </div>
-                                    <h3 className="font-semibold text-slate-800 mb-1">{form.title}</h3>
-                                    <p className="text-sm text-slate-500 mb-4 line-clamp-2">
+                                    <h3 className="font-semibold text-foreground mb-1">{form.title}</h3>
+                                    <p className="text-sm text-foreground/60 mb-4 line-clamp-2">
                                         {form.description || 'No description'}
                                     </p>
 
-                                    <div className="flex gap-2 pt-3 border-t border-slate-100">
+                                    <div className="flex gap-2 pt-3 border-t border-border">
                                         {form.public_token ? (
                                             <>
                                                 <button
                                                     onClick={() => copyPublicLink(form.public_token!)}
-                                                    className="flex-1 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+                                                    className="flex-1 px-3 py-2 bg-brand/10 text-brand rounded-lg text-sm font-medium hover:bg-brand/20 transition-colors"
                                                 >
                                                     {copied === form.public_token ? '✓ Copied!' : '🔗 Copy Link'}
                                                 </button>
                                                 <button
                                                     onClick={() => showQRCode(form)}
-                                                    className="px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors"
+                                                    className="px-3 py-2 bg-border/30 text-foreground/70 rounded-lg text-sm font-medium hover:bg-border/50 transition-colors"
                                                     title="Show QR Code"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
@@ -219,19 +219,19 @@ export default function FormsPage() {
                                                 </button>
                                             </>
                                         ) : (
-                                            <span className="flex-1 px-3 py-2 bg-slate-50 text-slate-400 rounded-lg text-sm text-center">
+                                            <span className="flex-1 px-3 py-2 bg-card text-foreground/40 rounded-lg text-sm text-center">
                                                 Not published
                                             </span>
                                         )}
                                         <Link
                                             href={`/${locale}/forms/${form.id}/submissions`}
-                                            className="px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors"
+                                            className="px-3 py-2 bg-border/30 text-foreground/70 rounded-lg text-sm font-medium hover:bg-border/50 transition-colors"
                                         >
                                             📊
                                         </Link>
                                         <Link
                                             href={`/${locale}/forms/${form.id}/edit`}
-                                            className="px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors"
+                                            className="px-3 py-2 bg-border/30 text-foreground/70 rounded-lg text-sm font-medium hover:bg-border/50 transition-colors"
                                         >
                                             ⚙️
                                         </Link>
@@ -246,13 +246,13 @@ export default function FormsPage() {
             {activeTab === 'library' && (
                 <div>
                     {systemTemplates.length === 0 ? (
-                        <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-                            <p className="text-slate-500">No system templates available</p>
+                        <div className="text-center py-16 bg-card rounded-xl shadow-sm">
+                            <p className="text-foreground/60">No system templates available</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {systemTemplates.map((template) => (
-                                <div key={template.id} className="bg-white rounded-xl shadow-sm p-5 border-2 border-transparent hover:border-slate-200 transition-all">
+                                <div key={template.id} className="bg-card rounded-xl shadow-sm p-5 border-2 border-transparent hover:border-border transition-all">
                                     <div className="flex justify-between items-start mb-3">
                                         <span className="text-2xl">{THERAPY_ICONS[template.therapy_type] || '📋'}</span>
                                         <div className="flex gap-1">
@@ -264,8 +264,8 @@ export default function FormsPage() {
                                             </span>
                                         </div>
                                     </div>
-                                    <h3 className="font-semibold text-slate-800 mb-1">{template.title}</h3>
-                                    <p className="text-sm text-slate-500 mb-4 line-clamp-2">
+                                    <h3 className="font-semibold text-foreground mb-1">{template.title}</h3>
+                                    <p className="text-sm text-foreground/60 mb-4 line-clamp-2">
                                         {template.description || 'System template'}
                                     </p>
 
@@ -286,12 +286,12 @@ export default function FormsPage() {
             {/* QR Code Modal */}
             {qrModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-surface rounded-xl shadow-xl max-w-sm w-full p-6 text-center">
+                    <div className="bg-card rounded-xl shadow-xl max-w-sm w-full p-6 text-center">
                         <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{qrModal.title}</h3>
+                            <h3 className="text-lg font-semibold text-foreground dark:text-zinc-100">{qrModal.title}</h3>
                             <button
                                 onClick={() => setQrModal(null)}
-                                className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                                className="text-zinc-400 hover:text-foreground/70 dark:hover:text-zinc-200"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -299,7 +299,7 @@ export default function FormsPage() {
                             </button>
                         </div>
 
-                        <div className="bg-white p-4 rounded-lg inline-block mx-auto mb-4">
+                        <div className="bg-card p-4 rounded-lg inline-block mx-auto mb-4">
                             <img
                                 src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrModal.url)}`}
                                 alt="QR Code"
@@ -308,7 +308,7 @@ export default function FormsPage() {
                             />
                         </div>
 
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+                        <p className="text-sm text-foreground/60 dark:text-zinc-400 mb-4">
                             Scan to open the form instantly
                         </p>
 
@@ -318,7 +318,7 @@ export default function FormsPage() {
                                 setCopied('qr');
                                 setTimeout(() => setCopied(null), 2000);
                             }}
-                            className="w-full px-4 py-2 bg-zinc-800 dark:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg font-medium hover:opacity-90 transition-opacity"
+                            className="w-full px-4 py-2 bg-zinc-800 dark:bg-zinc-200 text-white dark:text-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
                         >
                             {copied === 'qr' ? '✓ Copied!' : 'Copy Link'}
                         </button>

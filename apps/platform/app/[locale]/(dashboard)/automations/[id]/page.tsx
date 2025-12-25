@@ -250,7 +250,7 @@ export default function AutomationDetailPage() {
     if (!automation) {
         return (
             <div className="text-center py-12">
-                <p className="text-slate-500">Automatización no encontrada</p>
+                <p className="text-foreground/60">Automatización no encontrada</p>
                 <button onClick={() => router.back()} className="mt-4 text-purple-600 hover:underline">
                     ← Volver
                 </button>
@@ -263,14 +263,14 @@ export default function AutomationDetailPage() {
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
+                className="flex items-center gap-2 text-foreground/60 hover:text-slate-700 transition-colors cursor-pointer"
             >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Volver a Automatizaciones</span>
             </button>
 
             {/* Header */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-200">
@@ -278,15 +278,15 @@ export default function AutomationDetailPage() {
                         </div>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold text-slate-900">{automation.name}</h1>
+                                <h1 className="text-2xl font-bold text-foreground">{automation.name}</h1>
                                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${automation.is_active
                                     ? 'bg-emerald-100 text-emerald-700'
-                                    : 'bg-slate-100 text-slate-500'
+                                    : 'bg-slate-100 text-foreground/60'
                                     }`}>
                                     {automation.is_active ? 'Activa' : 'Pausada'}
                                 </span>
                             </div>
-                            <p className="text-slate-500 mt-1">{automation.description}</p>
+                            <p className="text-foreground/60 mt-1">{automation.description}</p>
                         </div>
                     </div>
 
@@ -309,49 +309,49 @@ export default function AutomationDetailPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                <div className="bg-card rounded-xl border border-border p-5 shadow-sm">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                             <Zap className="w-5 h-5 text-purple-600" />
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-slate-900">{stats?.total_executions ?? 0}</p>
-                            <p className="text-xs text-slate-500">Ejecuciones Totales</p>
+                            <p className="text-2xl font-bold text-foreground">{stats?.total_executions ?? 0}</p>
+                            <p className="text-xs text-foreground/60">Ejecuciones Totales</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                <div className="bg-card rounded-xl border border-border p-5 shadow-sm">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
                             <TrendingUp className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-slate-900">{successRate}%</p>
-                            <p className="text-xs text-slate-500">Tasa de Éxito</p>
+                            <p className="text-2xl font-bold text-foreground">{successRate}%</p>
+                            <p className="text-xs text-foreground/60">Tasa de Éxito</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                <div className="bg-card rounded-xl border border-border p-5 shadow-sm">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                             <Activity className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-slate-900">{stats?.this_month ?? 0}</p>
-                            <p className="text-xs text-slate-500">Este Mes</p>
+                            <p className="text-2xl font-bold text-foreground">{stats?.this_month ?? 0}</p>
+                            <p className="text-xs text-foreground/60">Este Mes</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                <div className="bg-card rounded-xl border border-border p-5 shadow-sm">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
                             <Clock className="w-5 h-5 text-amber-600" />
                         </div>
                         <div>
-                            <p className="text-sm font-bold text-slate-900">
+                            <p className="text-sm font-bold text-foreground">
                                 {stats?.last_execution
                                     ? new Date(stats.last_execution).toLocaleDateString('es-ES', {
                                         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
@@ -359,7 +359,7 @@ export default function AutomationDetailPage() {
                                     : 'Sin ejecuciones'
                                 }
                             </p>
-                            <p className="text-xs text-slate-500">Última Ejecución</p>
+                            <p className="text-xs text-foreground/60">Última Ejecución</p>
                         </div>
                     </div>
                 </div>
@@ -368,8 +368,8 @@ export default function AutomationDetailPage() {
             {/* Visual Flow + Execution Log */}
             <div className="grid grid-cols-5 gap-6">
                 {/* Visual Flow Diagram - 3 columns */}
-                <div className="col-span-3 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold text-slate-900 mb-6">Flujo de Automatización</h2>
+                <div className="col-span-3 bg-card rounded-2xl border border-border p-6 shadow-sm">
+                    <h2 className="text-lg font-semibold text-foreground mb-6">Flujo de Automatización</h2>
 
                     <div className="relative">
                         {/* Flow Container */}
@@ -409,7 +409,7 @@ export default function AutomationDetailPage() {
                                             </p>
                                             <div className="flex flex-wrap gap-2 mt-2">
                                                 {automation.conditions.rules.map((rule, i) => (
-                                                    <span key={i} className="bg-white border border-amber-200 text-slate-500 px-3 py-1 rounded-full text-xs">
+                                                    <span key={i} className="bg-card border border-amber-200 text-foreground/60 px-3 py-1 rounded-full text-xs">
                                                         {conditionLabels[rule.field] || rule.field} = <strong>{rule.value}</strong>
                                                     </span>
                                                 ))}
@@ -444,7 +444,7 @@ export default function AutomationDetailPage() {
                                             {action.params && Object.keys(action.params).length > 0 && (
                                                 <div className="flex flex-wrap gap-2 mt-2">
                                                     {Object.entries(action.params).map(([key, value]) => (
-                                                        <span key={key} className="bg-white border border-emerald-200 text-slate-500 px-2 py-0.5 rounded text-xs">
+                                                        <span key={key} className="bg-card border border-emerald-200 text-foreground/60 px-2 py-0.5 rounded text-xs">
                                                             {key}: <strong>{value}</strong>
                                                         </span>
                                                     ))}
@@ -470,7 +470,7 @@ export default function AutomationDetailPage() {
                                 <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
                                     <CheckCircle className="w-6 h-6 text-slate-400" />
                                 </div>
-                                <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                <div className="flex-1 bg-slate-50 border border-border rounded-xl p-4">
                                     <p className="text-slate-400 font-medium">Completado ✓</p>
                                 </div>
                             </div>
@@ -479,9 +479,9 @@ export default function AutomationDetailPage() {
                 </div>
 
                 {/* Execution Log - 2 columns */}
-                <div className="col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                <div className="col-span-2 bg-card rounded-2xl border border-border p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold text-slate-900">Ejecuciones Recientes</h2>
+                        <h2 className="text-lg font-semibold text-foreground">Ejecuciones Recientes</h2>
                         <span className="text-xs text-slate-400">Últimas 24h</span>
                     </div>
 
@@ -508,14 +508,14 @@ export default function AutomationDetailPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between">
-                                            <p className="font-medium text-slate-900 text-sm truncate">{log.patient_name || 'Sistema'}</p>
+                                            <p className="font-medium text-foreground text-sm truncate">{log.patient_name || 'Sistema'}</p>
                                             <span className="text-xs text-slate-400">
                                                 {new Date(log.timestamp).toLocaleTimeString('es-ES', {
                                                     hour: '2-digit', minute: '2-digit'
                                                 })}
                                             </span>
                                         </div>
-                                        <p className="text-xs text-slate-500 mt-0.5">{actionLabels[log.action] || log.action}</p>
+                                        <p className="text-xs text-foreground/60 mt-0.5">{actionLabels[log.action] || log.action}</p>
                                         {log.error && (
                                             <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
                                                 <AlertCircle className="w-3 h-3" />

@@ -235,7 +235,7 @@ export default function AletheIAInsightsCard({
                         <div className="flex items-center gap-1.5">
                             <TrendingUp className={`w-4 h-4 ${scoreColor}`} />
                             <span className={`font-bold font-headline ${scoreColor}`}>{insights.engagementScore}%</span>
-                            <span className="text-slate-500 font-caption">ENGAGEMENT</span>
+                            <span className="text-foreground/60 font-caption">ENGAGEMENT</span>
                         </div>
                         <div className={`px-2 py-1 rounded-full text-xs font-caption ${riskBadge.bg} ${riskBadge.text}`}>
                             <Shield className="w-3 h-3 inline mr-1" />
@@ -268,7 +268,7 @@ export default function AletheIAInsightsCard({
             {expanded && (
                 <div className="px-5 pb-5 space-y-4">
                     {/* Summary */}
-                    <div className="bg-white/60 rounded-lg p-4 border border-purple-100">
+                    <div className="bg-card/60 rounded-lg p-4 border border-purple-100">
                         <div className="flex items-start gap-3">
                             <MessageCircle className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
                             <p className="text-slate-700 leading-relaxed">{insights.summary}</p>
@@ -305,14 +305,14 @@ export default function AletheIAInsightsCard({
                     <div className="grid md:grid-cols-2 gap-4">
                         {/* Suggestions */}
                         {insights.suggestions.length > 0 && (
-                            <div className="bg-white/60 rounded-lg p-4 border border-purple-100">
+                            <div className="bg-card/60 rounded-lg p-4 border border-purple-100">
                                 <h4 className="text-sm font-semibold text-purple-800 mb-3 flex items-center gap-2">
                                     <Lightbulb className="w-4 h-4 text-yellow-500" />
                                     Sugerencias
                                 </h4>
                                 <ul className="space-y-2">
                                     {insights.suggestions.map((suggestion, idx) => (
-                                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
+                                        <li key={idx} className="flex items-start gap-2 text-sm text-foreground/70">
                                             <Zap className="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5" />
                                             {suggestion}
                                         </li>
@@ -322,7 +322,7 @@ export default function AletheIAInsightsCard({
                         )}
 
                         {/* Key Themes & Stats */}
-                        <div className="bg-white/60 rounded-lg p-4 border border-purple-100">
+                        <div className="bg-card/60 rounded-lg p-4 border border-purple-100">
                             <h4 className="text-sm font-semibold text-purple-800 mb-3 flex items-center gap-2">
                                 <Target className="w-4 h-4 text-purple-500" />
                                 Estado Actual
@@ -353,7 +353,7 @@ export default function AletheIAInsightsCard({
 
                                 {/* Last analysis */}
                                 {insights.lastAnalysis && (
-                                    <div className="flex items-center gap-2 text-xs text-slate-500 pt-2 border-t border-purple-100">
+                                    <div className="flex items-center gap-2 text-xs text-foreground/60 pt-2 border-t border-purple-100">
                                         <Clock className="w-3 h-3" />
                                         Último análisis: {insights.lastAnalysis}
                                     </div>

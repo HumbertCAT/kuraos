@@ -104,7 +104,7 @@ export default function MonitoringTab({ patientId }: MonitoringTabProps) {
             {latestRisks.length > 0 && (
                 <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-xl shadow-lg">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                        <div className="w-10 h-10 bg-card/20 rounded-lg flex items-center justify-center">
                             <AlertTriangle className="w-6 h-6" />
                         </div>
                         <div>
@@ -115,7 +115,7 @@ export default function MonitoringTab({ patientId }: MonitoringTabProps) {
                         </div>
                         <button
                             onClick={loadData}
-                            className="ml-auto p-2 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                            className="ml-auto p-2 hover:bg-card/10 rounded-lg transition-colors cursor-pointer"
                             title="Actualizar datos"
                         >
                             <RefreshCw className="w-5 h-5" />
@@ -128,7 +128,7 @@ export default function MonitoringTab({ patientId }: MonitoringTabProps) {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Activity className="w-5 h-5 text-purple-600" />
-                    <h2 className="text-lg font-semibold text-slate-900">Monitorización AletheIA</h2>
+                    <h2 className="text-lg font-semibold text-foreground">Monitorización AletheIA</h2>
                     {hasActiveRisks && (
                         <span className="relative flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -138,7 +138,7 @@ export default function MonitoringTab({ patientId }: MonitoringTabProps) {
                 </div>
                 <button
                     onClick={loadData}
-                    className="flex items-center gap-1 text-sm text-slate-500 hover:text-purple-600 transition-colors cursor-pointer"
+                    className="flex items-center gap-1 text-sm text-foreground/60 hover:text-purple-600 transition-colors cursor-pointer"
                 >
                     <RefreshCw className="w-4 h-4" />
                     Actualizar

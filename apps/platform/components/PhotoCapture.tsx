@@ -96,7 +96,7 @@ export default function PhotoCapture({ onPhotoCapture, disabled }: PhotoCaptureP
                         <button
                             onClick={capturePhoto}
                             disabled={!videoReady}
-                            className="px-8 py-4 bg-white text-slate-800 rounded-full hover:bg-slate-100 transition-colors cursor-pointer font-semibold disabled:opacity-50 text-lg"
+                            className="px-8 py-4 bg-card text-foreground rounded-full hover:bg-slate-100 transition-colors cursor-pointer font-semibold disabled:opacity-50 text-lg"
                         >
                             📸 {t('capture')}
                         </button>

@@ -40,7 +40,7 @@ export default function SectionHeader({
                 <h1 className={`text-3xl font-bold bg-gradient-to-r ${gradientFrom} ${gradientTo} bg-clip-text text-transparent`}>
                     {title}
                 </h1>
-                <p className="text-slate-500">{subtitle}</p>
+                <p className="text-foreground/60">{subtitle}</p>
             </div>
         </div>
     );

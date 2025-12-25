@@ -165,15 +165,15 @@ export default function BillingPage() {
             )}
 
             {/* Current Plan Badge */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-emerald-100 rounded-xl">
                             <Crown className="w-6 h-6 text-emerald-600" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-semibold text-slate-900">Plan Actual</h3>
-                            <p className="text-slate-500">
+                            <h3 className="text-lg font-semibold text-foreground">Plan Actual</h3>
+                            <p className="text-foreground/60">
                                 {status?.tier === 'BUILDER' && 'Builder (Gratis)'}
                                 {status?.tier === 'PRO' && 'Pro (49€/mes)'}
                                 {status?.tier === 'CENTER' && 'Center (149€/mes)'}
@@ -203,11 +203,11 @@ export default function BillingPage() {
                 {plans.map((plan) => (
                     <div
                         key={plan.id}
-                        className={`relative bg-white rounded-2xl p-6 shadow-sm border-2 transition-all ${plan.current
+                        className={`relative bg-card rounded-2xl p-6 shadow-sm border-2 transition-all ${plan.current
                             ? 'border-emerald-500 ring-2 ring-emerald-500/20'
                             : plan.popular
                                 ? 'border-emerald-200'
-                                : 'border-slate-200'
+                                : 'border-border'
                             }`}
                     >
                         {plan.popular && !plan.current && (
@@ -224,20 +224,20 @@ export default function BillingPage() {
 
                         <div className="text-center mb-6">
                             <div className={`inline-flex p-3 rounded-xl mb-4 ${plan.current ? 'bg-emerald-100' : 'bg-slate-100'}`}>
-                                <plan.icon className={`w-6 h-6 ${plan.current ? 'text-emerald-600' : 'text-slate-600'}`} />
+                                <plan.icon className={`w-6 h-6 ${plan.current ? 'text-emerald-600' : 'text-foreground/70'}`} />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
-                            <p className="text-slate-500 text-sm mt-1">{plan.description}</p>
+                            <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+                            <p className="text-foreground/60 text-sm mt-1">{plan.description}</p>
                         </div>
 
                         <div className="text-center mb-6">
-                            <span className="text-3xl font-bold text-slate-900">{plan.price}</span>
-                            {plan.period && <span className="text-slate-500">{plan.period}</span>}
+                            <span className="text-3xl font-bold text-foreground">{plan.price}</span>
+                            {plan.period && <span className="text-foreground/60">{plan.period}</span>}
                         </div>
 
                         <ul className="space-y-3 mb-6">
                             {plan.features.map((feature, idx) => (
-                                <li key={idx} className="flex items-center gap-2 text-slate-600">
+                                <li key={idx} className="flex items-center gap-2 text-foreground/70">
                                     <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                                     <span className="text-sm">{feature}</span>
                                 </li>
@@ -254,7 +254,7 @@ export default function BillingPage() {
                         ) : plan.id === 'BUILDER' ? (
                             <button
                                 disabled
-                                className="w-full py-3 border border-slate-200 text-slate-400 font-medium rounded-xl cursor-not-allowed"
+                                className="w-full py-3 border border-border text-slate-400 font-medium rounded-xl cursor-not-allowed"
                             >
                                 Plan Gratuito
                             </button>

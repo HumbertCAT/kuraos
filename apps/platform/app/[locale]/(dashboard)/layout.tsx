@@ -2,7 +2,7 @@
 
 import { TrinityNav } from '@/components/layout/TrinityNav';
 import HelpChatBot from '@/components/help/HelpChatBot';
-import { BrainCircuit } from 'lucide-react';
+import AletheiaObservatory from '@/components/AletheiaObservatory';
 
 export default function DashboardLayout({
   children,
@@ -21,19 +21,12 @@ export default function DashboardLayout({
         </div>
       </main>
 
-      {/* COL 3: Intelligence Rail (Desktop only, XL screens) */}
-      <aside className="hidden xl:flex w-80 flex-col border-l border-border-subtle bg-surface/50 p-4">
-        <div className="flex items-center gap-2 text-ai mb-4">
-          <BrainCircuit className="w-4 h-4" />
-          <span className="text-xs font-bold uppercase tracking-wider">AletheIA Observatory</span>
-        </div>
-        <div className="flex-1 rounded-lg border border-dashed border-border-subtle flex items-center justify-center text-xs text-zinc-400 dark:text-zinc-500">
-          AI Context Window Active
-        </div>
-      </aside>
+      {/* COL 3: AletheIA Observatory (Desktop only, XL screens) */}
+      <AletheiaObservatory />
 
       {/* Global Help ChatBot */}
       <HelpChatBot />
     </div>
   );
 }
+

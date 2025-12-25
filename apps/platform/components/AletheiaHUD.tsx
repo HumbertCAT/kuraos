@@ -196,92 +196,90 @@ export default function AletheiaHUD({
         }
     }
 
-    // Visual config based on priority - SOLID COLORS, HIGH CONTRAST
+    // Visual config based on priority - NEUTRAL BACKGROUNDS, ACCENT BORDERS
     const getVisualConfig = () => {
         switch (hudState.priority) {
             case 'CRISIS':
                 return {
-                    bg: 'bg-gradient-to-r from-red-600 to-rose-600',
-                    border: 'border-red-700',
-                    scoreColor: 'text-white',
-                    badgeBg: 'bg-white/20 text-white border-white/30',
+                    bg: 'bg-card border-2 border-red-500/50',
+                    border: '',
+                    scoreColor: 'text-red-400',
+                    badgeBg: 'bg-red-500/10 text-red-400 border-red-500/30',
                     statusBadge: (
-                        <span className="px-3 py-1 bg-white/20 border border-white/40 text-white rounded-full text-sm font-bold uppercase tracking-wide animate-pulse">
+                        <span className="px-3 py-1 bg-red-500/10 border border-red-500/30 text-red-400 rounded-full text-sm font-bold uppercase tracking-wide animate-pulse">
                             ⚠ Crisis
                         </span>
                     ),
-                    icon: <AlertTriangle className="w-5 h-5 text-white" />,
+                    icon: <AlertTriangle className="w-5 h-5 text-red-400" />,
                 };
             case 'STAGNATION':
                 return {
-                    bg: 'bg-gradient-to-r from-amber-500 to-orange-500',
-                    border: 'border-amber-600',
-                    scoreColor: 'text-white',
-                    badgeBg: 'bg-white/20 text-white border-white/30',
+                    bg: 'bg-card border-2 border-amber-500/50',
+                    border: '',
+                    scoreColor: 'text-amber-400',
+                    badgeBg: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
                     statusBadge: (
-                        <span className="px-3 py-1 bg-white/20 border border-white/40 text-white rounded-full text-sm font-bold uppercase tracking-wide">
+                        <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full text-sm font-bold uppercase tracking-wide">
                             ⏸ Estancado
                         </span>
                     ),
-                    icon: <Clock className="w-5 h-5 text-white" />,
+                    icon: <Clock className="w-5 h-5 text-amber-400" />,
                 };
             case 'INSIGHT':
+                const isPositive = hudState.score && hudState.score > 0.3;
                 return {
-                    bg: hudState.score && hudState.score > 0.3
-                        ? 'bg-gradient-to-r from-emerald-500 to-teal-500'
-                        : 'bg-gradient-to-r from-violet-600 to-purple-600',
-                    border: hudState.score && hudState.score > 0.3 ? 'border-emerald-600' : 'border-violet-700',
-                    scoreColor: 'text-white',
-                    badgeBg: 'bg-white/20 text-white border-white/30',
-                    statusBadge: hudState.score && hudState.score > 0.3 ? (
-                        <span className="px-3 py-1 bg-white/20 border border-white/40 text-white rounded-full text-sm font-bold uppercase tracking-wide">
+                    bg: isPositive ? 'bg-card border-2 border-emerald-500/50' : 'bg-card border-2 border-ai/50',
+                    border: '',
+                    scoreColor: isPositive ? 'text-emerald-400' : 'text-ai',
+                    badgeBg: isPositive ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-ai/10 text-ai border-ai/30',
+                    statusBadge: isPositive ? (
+                        <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-sm font-bold uppercase tracking-wide">
                             ✓ Estable
                         </span>
                     ) : (
-                        <span className="px-3 py-1 bg-white/20 border border-white/40 text-white rounded-full text-sm font-bold uppercase tracking-wide">
+                        <span className="px-3 py-1 bg-ai/10 border border-ai/30 text-ai rounded-full text-sm font-bold uppercase tracking-wide">
                             ~ Neutral
                         </span>
                     ),
-                    icon: <Activity className="w-5 h-5 text-white" />,
+                    icon: <Activity className={`w-5 h-5 ${isPositive ? 'text-emerald-400' : 'text-ai'}`} />,
                 };
             case 'EMPTY':
             default:
                 return {
-                    bg: 'bg-slate-100',
-                    border: 'border-slate-200',
-                    scoreColor: 'text-slate-400',
-                    badgeBg: 'bg-slate-200 text-slate-600 border-slate-300',
+                    bg: 'bg-card border border-ai/30',
+                    border: '',
+                    scoreColor: 'text-ai',
+                    badgeBg: 'bg-ai/10 text-ai border-ai/30',
                     statusBadge: null,
-                    icon: <Sparkles className="w-5 h-5 text-slate-400" />,
+                    icon: <Sparkles className="w-5 h-5 text-ai" />,
                 };
         }
     };
 
     const config = getVisualConfig();
-    const isColorful = hudState.priority !== 'EMPTY';
-    const textColor = isColorful ? 'text-white' : 'text-slate-900';
-    const subTextColor = isColorful ? 'text-white/80' : 'text-slate-600';
+    const textColor = 'text-foreground';
+    const subTextColor = 'text-foreground/70';
 
     // Trend indicator
     const getTrendIndicator = () => {
-        if (!isColorful) return null;
+        if (hudState.priority === 'EMPTY') return null;
         const iconClass = "w-4 h-4";
         if (hudState.trend === 'up') {
-            return <div className="flex items-center gap-1 text-white/90 text-sm"><TrendingUp className={iconClass} /><span>Mejorando</span></div>;
+            return <div className="flex items-center gap-1 text-emerald-400 text-sm"><TrendingUp className={iconClass} /><span>Mejorando</span></div>;
         }
         if (hudState.trend === 'down') {
-            return <div className="flex items-center gap-1 text-white/90 text-sm"><TrendingDown className={iconClass} /><span>Decayendo</span></div>;
+            return <div className="flex items-center gap-1 text-red-400 text-sm"><TrendingDown className={iconClass} /><span>Decayendo</span></div>;
         }
-        return <div className="flex items-center gap-1 text-white/90 text-sm"><Minus className={iconClass} /><span>Estable</span></div>;
+        return <div className="flex items-center gap-1 text-foreground/60 text-sm"><Minus className={iconClass} /><span>Estable</span></div>;
     };
 
     // Loading state
     if (loading) {
         return (
-            <div className="bg-slate-100 rounded-2xl border border-slate-200 p-6 mb-6">
+            <div className="bg-card rounded-2xl border border-border p-6 mb-6">
                 <div className="flex items-center justify-center gap-2">
-                    <RefreshCw className="w-5 h-5 text-slate-400 animate-spin" />
-                    <span className="text-slate-500">Cargando análisis...</span>
+                    <RefreshCw className="w-5 h-5 text-ai animate-spin" />
+                    <span className="text-foreground/60">Cargando análisis...</span>
                 </div>
             </div>
         );
@@ -316,7 +314,7 @@ export default function AletheiaHUD({
                             {config.icon}
                             <h3 className={`text-lg font-semibold ${textColor}`}>{hudState.title}</h3>
                             {hudState.hasAudio && (
-                                <span className="flex items-center gap-1 px-2 py-0.5 bg-white/20 border border-white/30 rounded-full text-xs text-white">
+                                <span className="flex items-center gap-1 px-2 py-0.5 bg-card/20 border border-white/30 rounded-full text-xs text-white">
                                     <Mic className="w-3 h-3" />
                                     Audio Transcrito
                                 </span>
@@ -341,7 +339,7 @@ export default function AletheiaHUD({
 
                         {/* Meta */}
                         {hudState.date && (
-                            <div className={`mt-4 text-xs ${isColorful ? 'text-white/60' : 'text-slate-400'}`}>
+                            <div className="mt-4 text-xs text-foreground/50">
                                 Último análisis: {new Date(hudState.date).toLocaleDateString('es-ES', {
                                     weekday: 'long',
                                     day: 'numeric',
@@ -352,23 +350,17 @@ export default function AletheiaHUD({
                     </div>
 
                     {/* RIGHT: Actions */}
-                    <div className="col-span-3 flex flex-col justify-center gap-3 border-l border-white/20 pl-6">
+                    <div className="col-span-3 flex flex-col justify-center gap-3 border-l border-border pl-6">
                         <button
                             onClick={onViewChat}
-                            className={`w-full px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-medium transition-colors ${isColorful
-                                ? 'border border-white/40 text-white hover:bg-white/10'
-                                : 'border border-slate-300 text-slate-700 hover:bg-slate-50'
-                                }`}
+                            className="w-full px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-medium transition-colors border border-border text-foreground hover:bg-card"
                         >
                             <MessageCircle className="w-5 h-5" />
                             Ver Chat Original
                         </button>
                         <button
                             onClick={onContact}
-                            className={`w-full px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-medium shadow-lg transition-colors ${isColorful
-                                ? 'bg-white text-slate-900 hover:bg-slate-100'
-                                : 'bg-violet-600 text-white hover:bg-violet-700'
-                                }`}
+                            className="w-full px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-medium shadow-lg transition-colors bg-brand text-white hover:opacity-90"
                         >
                             <Phone className="w-5 h-5" />
                             Contactar

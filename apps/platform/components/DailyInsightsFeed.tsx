@@ -127,19 +127,19 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
 
     if (analyses.length === 0) {
         return (
-            <div className="bg-slate-50 rounded-xl p-8 text-center border border-slate-200">
+            <div className="bg-slate-50 rounded-xl p-8 text-center border border-border">
                 <Calendar className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                <p className="text-slate-600 font-medium">Sin análisis de conversación</p>
-                <p className="text-slate-500 text-sm mt-1">Los análisis aparecerán cuando haya mensajes de WhatsApp</p>
+                <p className="text-foreground/70 font-medium">Sin análisis de conversación</p>
+                <p className="text-foreground/60 text-sm mt-1">Los análisis aparecerán cuando haya mensajes de WhatsApp</p>
             </div>
         );
     }
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+        <div className="bg-card rounded-2xl border border-border shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-slate-900">Análisis Diarios</h3>
-                <span className="text-sm text-slate-500">{analyses.length} días</span>
+                <h3 className="text-lg font-semibold text-foreground">Análisis Diarios</h3>
+                <span className="text-sm text-foreground/60">{analyses.length} días</span>
             </div>
 
             <div className="space-y-3">
@@ -154,7 +154,7 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
                             key={analysis.id}
                             className={`rounded-xl overflow-hidden transition-all border ${hasRisk
                                     ? 'bg-red-50 border-l-4 border-l-red-500 border-red-200'
-                                    : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                                    : 'bg-card border-border hover:border-slate-300 hover:shadow-sm'
                                 }`}
                         >
                             {/* Header - Collapsed View */}
@@ -175,14 +175,14 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
                                     ) : hasAudio ? (
                                         <Mic className="w-5 h-5 text-violet-600" />
                                     ) : (
-                                        <MessageSquare className="w-5 h-5 text-slate-500" />
+                                        <MessageSquare className="w-5 h-5 text-foreground/60" />
                                     )}
                                 </div>
 
                                 {/* Content */}
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                                        <span className="font-semibold text-slate-900">
+                                        <span className="font-semibold text-foreground">
                                             {new Date(analysis.date).toLocaleDateString('es-ES', {
                                                 weekday: 'long',
                                                 day: 'numeric',
@@ -210,8 +210,8 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
 
                                 {/* Expand Button - VISIBLE */}
                                 <div className="flex items-center gap-2">
-                                    <span className="text-sm text-slate-500">{analysis.message_count} msgs</span>
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isExpanded ? 'bg-violet-100 text-violet-600' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                    <span className="text-sm text-foreground/60">{analysis.message_count} msgs</span>
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isExpanded ? 'bg-violet-100 text-violet-600' : 'bg-slate-100 text-foreground/60 hover:bg-slate-200'
                                         }`}>
                                         {isExpanded ? (
                                             <ChevronDown className="w-5 h-5" />
@@ -224,10 +224,10 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
 
                             {/* Expanded Content */}
                             {isExpanded && (
-                                <div className={`border-t p-4 space-y-4 ${hasRisk ? 'border-red-200 bg-red-50/50' : 'border-slate-100 bg-slate-50'}`}>
+                                <div className={`border-t p-4 space-y-4 ${hasRisk ? 'border-red-200 bg-red-50/50' : 'border-border bg-slate-50'}`}>
 
                                     {/* AI Summary */}
-                                    <div className="p-4 bg-white rounded-lg border border-slate-200 shadow-sm">
+                                    <div className="p-4 bg-card rounded-lg border border-border shadow-sm">
                                         <p className="text-sm text-slate-700 leading-relaxed">
                                             {analysis.summary}
                                         </p>
@@ -247,7 +247,7 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
                                     {/* Messages/Transcription */}
                                     {dayMessages.length > 0 && (
                                         <div>
-                                            <p className="text-xs font-semibold text-slate-500 mb-3 flex items-center gap-1.5 uppercase tracking-wide">
+                                            <p className="text-xs font-semibold text-foreground/60 mb-3 flex items-center gap-1.5 uppercase tracking-wide">
                                                 <MessageCircle className="w-4 h-4" />
                                                 Conversación del día
                                             </p>
@@ -260,7 +260,7 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
                                                         <div
                                                             key={msg.id}
                                                             className={`p-3 rounded-xl text-sm ${msg.direction === 'INBOUND'
-                                                                    ? 'bg-white border border-slate-200 mr-8 shadow-sm'
+                                                                    ? 'bg-card border border-border mr-8 shadow-sm'
                                                                     : 'bg-violet-100 text-violet-900 ml-8 border border-violet-200'
                                                                 }`}
                                                         >

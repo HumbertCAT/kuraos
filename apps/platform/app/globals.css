@@ -50,18 +50,18 @@
 }
 
 .dark {
-  /* DARK MODE (The Void) */
-  --background: #050505;
-  --foreground: #E4E4E7;
+  /* DARK MODE (The Void) - RENDER MATCH */
+  --background: #09090b;  /* zinc-950 - True void */
+  --foreground: #E4E4E7;  /* zinc-200 */
   
-  --card: #0A0A0A;
+  --card: #121212;        /* zinc-925 (between 900-950) - Subtle depth */
   --card-foreground: #E4E4E7;
   
-  --border: #27272A;
+  --border: #27272a;      /* zinc-800 - Subtle structural line */
   
-  --brand: #2DD4BF;
-  --risk: #FB7185;
-  --ai: #a78bfa;
+  --brand: #2DD4BF;       /* teal-400 */
+  --risk: #FB7185;        /* rose-400 */
+  --ai: #a78bfa;          /* violet-400 */
 }
 
 /* ================================================

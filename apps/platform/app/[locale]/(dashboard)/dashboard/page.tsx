@@ -172,7 +172,7 @@ export default function DashboardPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="flex items-center gap-3 text-zinc-500">
+                <div className="flex items-center gap-3 text-foreground/60">
                     <Brain className="w-6 h-6 animate-pulse text-ai" />
                     <span>Cargando dashboard...</span>
                 </div>
@@ -181,16 +181,20 @@ export default function DashboardPage() {
     }
 
     if (!data) {
-        return <div className="text-center py-12 text-zinc-500">Error loading dashboard</div>;
+        return <div className="text-center py-12 text-foreground/60">Error loading dashboard</div>;
     }
 
     const nextBooking = data.bookings.find(b => new Date(b.start_time) > new Date());
 
     return (
         <div className="space-y-6">
-            {/* ZONE A: Chief of Staff (col-span-12) */}
-            <div className="rounded-2xl bg-gradient-to-r from-violet-900 via-indigo-900 to-zinc-900 text-white p-6 shadow-lg border border-white/10">
-                <BriefingPlayer />
+            {/* ZONE A: Chief of Staff (col-span-12) - CYBER-GLASS */}
+            <div className="rounded-2xl border border-ai/30 bg-zinc-900/80 backdrop-blur-md p-6 shadow-[0_0_15px_rgba(139,92,246,0.1)] relative overflow-hidden">
+                {/* Subtle internal glow layer */}
+                <div className="absolute inset-0 bg-gradient-to-r from-ai/5 to-brand/5 opacity-50 pointer-events-none"></div>
+                <div className="relative z-10">
+                    <BriefingPlayer />
+                </div>
             </div>
 
             {/* Pending Actions */}
@@ -208,8 +212,8 @@ export default function DashboardPage() {
                                     <Activity className="w-5 h-5 text-brand" />
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-display text-zinc-900 dark:text-zinc-100">El Foco</h2>
-                                    <p className="text-sm text-zinc-500">Lo más importante ahora</p>
+                                    <h2 className="text-lg font-display text-foreground dark:text-zinc-100">El Foco</h2>
+                                    <p className="text-sm text-foreground/60">Lo más importante ahora</p>
                                 </div>
                             </div>
                             <span className="text-xs font-mono text-zinc-400">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -219,15 +223,15 @@ export default function DashboardPage() {
                             <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-border-subtle">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-label text-zinc-500 mb-1">Próxima Sesión</p>
-                                        <p className="text-xl font-display text-zinc-900 dark:text-zinc-100">{nextBooking.service_title}</p>
-                                        <p className="text-sm text-zinc-600 dark:text-zinc-400">{nextBooking.patient_name}</p>
+                                        <p className="font-label text-foreground/60 mb-1">Próxima Sesión</p>
+                                        <p className="text-xl font-display text-foreground dark:text-zinc-100">{nextBooking.service_title}</p>
+                                        <p className="text-sm text-foreground/70 dark:text-zinc-400">{nextBooking.patient_name}</p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-2xl font-stats font-bold text-brand">
                                             {new Date(nextBooking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </p>
-                                        <p className="text-xs text-zinc-500">
+                                        <p className="text-xs text-foreground/60">
                                             {new Date(nextBooking.start_time).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}
                                         </p>
                                     </div>
@@ -236,7 +240,7 @@ export default function DashboardPage() {
                         ) : (
                             <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-border-subtle text-center">
                                 <CheckCircle className="w-8 h-8 mx-auto mb-2 text-brand" />
-                                <p className="text-zinc-600 dark:text-zinc-400">Sin sesiones pendientes hoy</p>
+                                <p className="text-foreground/70 dark:text-zinc-400">Sin sesiones pendientes hoy</p>
                             </div>
                         )}
                     </CyberCard>
@@ -246,7 +250,7 @@ export default function DashboardPage() {
                         <CyberCard variant="ai" className="p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <Brain className="w-5 h-5 text-ai" />
-                                <h3 className="font-display text-zinc-900 dark:text-zinc-100">AletheIA Sugiere</h3>
+                                <h3 className="font-display text-foreground dark:text-zinc-100">AletheIA Sugiere</h3>
                                 <span className="text-xs px-2 py-0.5 rounded bg-ai/10 text-ai font-stats">{suggestions.length}</span>
                             </div>
                             <div className="space-y-2">
@@ -255,8 +259,8 @@ export default function DashboardPage() {
                                         <div className="flex items-center gap-3">
                                             <Zap className={`w-4 h-4 ${s.type === 'critical' ? 'text-risk' : s.type === 'warning' ? 'text-amber-500' : 'text-ai'}`} />
                                             <div>
-                                                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{s.title}</p>
-                                                <p className="text-xs text-zinc-500">{s.description}</p>
+                                                <p className="text-sm font-medium text-foreground dark:text-zinc-100">{s.title}</p>
+                                                <p className="text-xs text-foreground/60">{s.description}</p>
                                             </div>
                                         </div>
                                         {s.actionLink && (
@@ -281,8 +285,8 @@ export default function DashboardPage() {
                                     <Target className="w-5 h-5 text-blue-500" />
                                 </div>
                                 <div>
-                                    <p className="font-label text-zinc-500">Nuevos Leads</p>
-                                    <p className="text-2xl font-bold font-stats text-zinc-900 dark:text-zinc-100">{data.newLeadsThisWeek}</p>
+                                    <p className="font-label text-foreground/60">Nuevos Leads</p>
+                                    <p className="text-2xl font-bold font-stats text-foreground dark:text-zinc-100">{data.newLeadsThisWeek}</p>
                                 </div>
                             </div>
                             <span className="text-xs text-zinc-400">esta semana</span>
@@ -297,8 +301,8 @@ export default function DashboardPage() {
                                     <Users className="w-5 h-5 text-teal-500" />
                                 </div>
                                 <div>
-                                    <p className="font-label text-zinc-500">{terminology.plural}</p>
-                                    <p className="text-2xl font-bold font-stats text-zinc-900 dark:text-zinc-100">{data.totalPatients}</p>
+                                    <p className="font-label text-foreground/60">{terminology.plural}</p>
+                                    <p className="text-2xl font-bold font-stats text-foreground dark:text-zinc-100">{data.totalPatients}</p>
                                 </div>
                             </div>
                             <Link href="/patients" className="text-xs text-brand hover:underline">Ver</Link>
@@ -313,8 +317,8 @@ export default function DashboardPage() {
                                     <Wallet className="w-5 h-5 text-emerald-500" />
                                 </div>
                                 <div>
-                                    <p className="font-label text-zinc-500">Ingresos Mes</p>
-                                    <p className="text-2xl font-bold font-stats text-zinc-900 dark:text-zinc-100">{data.monthlyRevenue.toFixed(0)}€</p>
+                                    <p className="font-label text-foreground/60">Ingresos Mes</p>
+                                    <p className="text-2xl font-bold font-stats text-foreground dark:text-zinc-100">{data.monthlyRevenue.toFixed(0)}€</p>
                                 </div>
                             </div>
                             {data.pendingPayments > 0 && (
@@ -328,7 +332,7 @@ export default function DashboardPage() {
                         <CyberCard variant="alert" className="p-4">
                             <div className="flex items-center gap-3 mb-3">
                                 <AlertTriangle className="w-5 h-5 text-risk" />
-                                <p className="text-sm font-display text-zinc-900 dark:text-zinc-100">Requieren Atención</p>
+                                <p className="text-sm font-display text-foreground dark:text-zinc-100">Requieren Atención</p>
                                 <span className="text-xs px-2 py-0.5 rounded bg-risk/10 text-risk font-stats">{data.priorityPatients.length}</span>
                             </div>
                             <div className="space-y-1">
@@ -351,7 +355,7 @@ export default function DashboardPage() {
                     <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Calendar className="w-5 h-5 text-brand" />
-                            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">Próximas Reservas</h3>
+                            <h3 className="font-semibold text-foreground dark:text-zinc-100">Próximas Reservas</h3>
                         </div>
                         <Link href="/calendar" className="text-xs text-brand hover:underline flex items-center gap-1">
                             Ver todas <ChevronRight className="w-3 h-3" />
@@ -359,20 +363,20 @@ export default function DashboardPage() {
                     </div>
                     <div className="divide-y divide-border-subtle">
                         {data.bookings.length === 0 ? (
-                            <div className="p-6 text-center text-zinc-500">Sin reservas próximas</div>
+                            <div className="p-6 text-center text-foreground/60">Sin reservas próximas</div>
                         ) : (
                             data.bookings.slice(0, 4).map(b => (
                                 <div key={b.id} className="px-6 py-3 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
                                     <div>
-                                        <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{b.service_title}</p>
-                                        <p className="text-xs text-zinc-500">{b.patient_name}</p>
+                                        <p className="text-sm font-medium text-foreground dark:text-zinc-100">{b.service_title}</p>
+                                        <p className="text-xs text-foreground/60">{b.patient_name}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xs font-mono text-zinc-600 dark:text-zinc-400">
+                                        <p className="text-xs font-mono text-foreground/70 dark:text-zinc-400">
                                             {new Date(b.start_time).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
                                         </p>
                                         <span className={`text-xs px-2 py-0.5 rounded font-mono ${b.status === 'CONFIRMED' ? 'bg-brand/10 text-brand' :
-                                            b.status === 'COMPLETED' ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400' :
+                                            b.status === 'COMPLETED' ? 'bg-zinc-100 dark:bg-zinc-800 text-foreground/70 dark:text-zinc-400' :
                                                 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
                                             }`}>
                                             {b.status}
@@ -389,7 +393,7 @@ export default function DashboardPage() {
                     <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Users className="w-5 h-5 text-brand" />
-                            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">{terminology.plural} Recientes</h3>
+                            <h3 className="font-semibold text-foreground dark:text-zinc-100">{terminology.plural} Recientes</h3>
                         </div>
                         <Link href="/patients" className="text-xs text-brand hover:underline flex items-center gap-1">
                             Ver todos <ChevronRight className="w-3 h-3" />
@@ -402,7 +406,7 @@ export default function DashboardPage() {
                                     <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center text-sm font-medium">
                                         {p.first_name[0]}{p.last_name[0]}
                                     </div>
-                                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{p.first_name} {p.last_name}</p>
+                                    <p className="text-sm font-medium text-foreground dark:text-zinc-100">{p.first_name} {p.last_name}</p>
                                 </div>
                                 <ChevronRight className="w-4 h-4 text-zinc-400" />
                             </Link>

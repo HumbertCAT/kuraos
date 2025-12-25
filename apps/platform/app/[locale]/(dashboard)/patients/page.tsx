@@ -86,8 +86,8 @@ export default function PatientsPage() {
             <Users className="w-6 h-6 text-brand" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{terminology.plural}</h1>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Gestiona tu cartera de {terminology.plural.toLowerCase()}</p>
+            <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">{terminology.plural}</h1>
+            <p className="text-sm text-foreground/60 dark:text-zinc-400">Gestiona tu cartera de {terminology.plural.toLowerCase()}</p>
           </div>
         </div>
         <Link
@@ -106,12 +106,12 @@ export default function PatientsPage() {
             placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-[200px] p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-zinc-900 dark:text-zinc-100 bg-surface"
+            className="flex-1 min-w-[200px] p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground dark:text-zinc-100 bg-surface"
           />
           <select
             value={statusFilter}
             onChange={handleStatusChange}
-            className="p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-zinc-900 dark:text-zinc-100 bg-surface min-w-[180px]"
+            className="p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground dark:text-zinc-100 bg-surface min-w-[180px]"
           >
             {STATUS_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -121,7 +121,7 @@ export default function PatientsPage() {
           </select>
           <button
             type="submit"
-            className="px-6 py-3 bg-zinc-800 dark:bg-zinc-200 text-white dark:text-zinc-900 rounded-xl hover:opacity-90 transition-opacity"
+            className="px-6 py-3 bg-zinc-800 dark:bg-zinc-200 text-white dark:text-foreground rounded-xl hover:opacity-90 transition-opacity"
           >
             {t('search')}
           </button>
@@ -153,7 +153,7 @@ export default function PatientsPage() {
         />
       ) : (
         <>
-          <p className="text-sm text-slate-500 mb-4">{total} {terminology.plural.toLowerCase()} encontrados</p>
+          <p className="text-sm text-foreground/60 mb-4">{total} {terminology.plural.toLowerCase()} encontrados</p>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {patients.map((patient) => {
               // Generate color based on name
@@ -164,7 +164,7 @@ export default function PatientsPage() {
               // Get journey status badge
               const getStatusBadge = () => {
                 if (!patient.journey_status || Object.keys(patient.journey_status).length === 0) {
-                  return { label: 'Nuevo', bg: 'bg-slate-100', text: 'text-slate-600' };
+                  return { label: 'Nuevo', bg: 'bg-slate-100', text: 'text-foreground/70' };
                 }
 
                 // Get the most relevant status
@@ -198,7 +198,7 @@ export default function PatientsPage() {
                   'COMPLETED': { label: '🏆 Completado', bg: 'bg-emerald-100', text: 'text-emerald-700' },
                 };
 
-                return statusMap[status] || { label: status, bg: 'bg-slate-100', text: 'text-slate-600' };
+                return statusMap[status] || { label: status, bg: 'bg-slate-100', text: 'text-foreground/70' };
               };
 
               const badge = getStatusBadge();
@@ -207,7 +207,7 @@ export default function PatientsPage() {
                 <Link
                   key={patient.id}
                   href={`/patients/${patient.id}`}
-                  className="block p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all"
+                  className="block p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md hover:border-slate-300 transition-all"
                 >
                   <div className="flex items-start gap-3">
                     {/* Profile Photo or Initials Avatar */}
@@ -215,7 +215,7 @@ export default function PatientsPage() {
                       <img
                         src={patient.profile_image_url}
                         alt={`${patient.first_name} ${patient.last_name}`}
-                        className="w-[72px] h-[72px] rounded-full object-cover border-2 border-slate-200 flex-shrink-0"
+                        className="w-[72px] h-[72px] rounded-full object-cover border-2 border-border flex-shrink-0"
                       />
                     ) : (
                       <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-500 flex items-center justify-center text-white font-semibold text-xl flex-shrink-0">
@@ -224,7 +224,7 @@ export default function PatientsPage() {
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-slate-800 truncate">
+                        <h3 className="font-semibold text-foreground truncate">
                           {patient.first_name} {patient.last_name}
                         </h3>
                         <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${badge.bg} ${badge.text} flex-shrink-0`}>
@@ -232,7 +232,7 @@ export default function PatientsPage() {
                         </span>
                       </div>
                       {patient.email && (
-                        <p className="text-sm text-slate-500 truncate">{patient.email}</p>
+                        <p className="text-sm text-foreground/60 truncate">{patient.email}</p>
                       )}
                       {patient.phone && (
                         <p className="text-sm text-slate-400">{patient.phone}</p>

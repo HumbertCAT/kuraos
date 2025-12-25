@@ -249,7 +249,7 @@ export default function BookingsPage() {
         COMPLETED: { color: 'text-indigo-600 bg-indigo-50', icon: <CheckCircle className="w-4 h-4" />, label: t.completed },
     };
 
-    if (loading) return <div className="p-6 text-center text-slate-500">Loading...</div>;
+    if (loading) return <div className="p-6 text-center text-foreground/60">Loading...</div>;
 
     return (
         <div className="min-h-screen bg-slate-50 py-8 px-6">
@@ -270,14 +270,14 @@ export default function BookingsPage() {
                     <div className="flex gap-1 bg-slate-200 p-1 rounded-lg">
                         <button
                             onClick={() => setActiveTab('future')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'future' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'future' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
                         >
                             <Calendar className="w-4 h-4" />
                             {t.future}
                         </button>
                         <button
                             onClick={() => setActiveTab('past')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'past' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'past' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
                         >
                             <Clock className="w-4 h-4" />
                             {t.past}
@@ -293,13 +293,13 @@ export default function BookingsPage() {
                                 placeholder={t.search}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 w-64"
+                                className="pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 w-64"
                             />
                         </div>
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                            className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500"
                         >
                             <option value="all">{t.allStatus}</option>
                             <option value="CONFIRMED">{t.confirmed}</option>
@@ -312,21 +312,21 @@ export default function BookingsPage() {
 
                 {/* Bookings List */}
                 {filteredBookings.length === 0 ? (
-                    <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
+                    <div className="text-center py-16 bg-card rounded-xl border border-border">
                         <Calendar className="w-12 h-12 mx-auto text-slate-300 mb-4" />
                         <h3 className="text-lg font-semibold text-slate-700">{t.noBookings}</h3>
-                        <p className="text-slate-500 mt-1">{t.noBookingsDesc}</p>
+                        <p className="text-foreground/60 mt-1">{t.noBookingsDesc}</p>
                     </div>
                 ) : (
-                    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    <div className="bg-card rounded-xl border border-border overflow-hidden">
                         <table className="w-full">
                             <thead className="bg-slate-50 border-b">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">{t.patient}</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">{t.service}</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">{t.dateTime}</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase">{t.status}</th>
-                                    <th className="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase">{t.actions}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.patient}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.service}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.dateTime}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.status}</th>
+                                    <th className="px-6 py-3 text-right text-xs font-semibold text-foreground/70 uppercase">{t.actions}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -345,20 +345,20 @@ export default function BookingsPage() {
                                                     <div>
                                                         <Link
                                                             href={`/patients/${booking.patient_id}`}
-                                                            className="font-medium text-slate-800 hover:text-indigo-600 hover:underline transition-colors"
+                                                            className="font-medium text-foreground hover:text-indigo-600 hover:underline transition-colors"
                                                         >
                                                             {booking.patient_name}
                                                         </Link>
-                                                        {booking.patient_email && <p className="text-xs text-slate-500">{booking.patient_email}</p>}
+                                                        {booking.patient_email && <p className="text-xs text-foreground/60">{booking.patient_email}</p>}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-slate-600">{booking.service_title}</td>
+                                            <td className="px-6 py-4 text-foreground/70">{booking.service_title}</td>
                                             <td className="px-6 py-4">
-                                                <div className="text-slate-800 font-medium">
+                                                <div className="text-foreground font-medium">
                                                     {startDate.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' })}
                                                 </div>
-                                                <div className="text-sm text-slate-500">
+                                                <div className="text-sm text-foreground/60">
                                                     {startDate.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })} - {endDate.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                                                 </div>
                                             </td>
@@ -374,10 +374,10 @@ export default function BookingsPage() {
                                                         onClick={() => setOpenMenu(openMenu === booking.id ? null : booking.id)}
                                                         className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
                                                     >
-                                                        <MoreVertical className="w-4 h-4 text-slate-500" />
+                                                        <MoreVertical className="w-4 h-4 text-foreground/60" />
                                                     </button>
                                                     {openMenu === booking.id && (
-                                                        <div className="absolute right-0 mt-1 w-40 bg-white border rounded-xl shadow-lg z-10 overflow-hidden">
+                                                        <div className="absolute right-0 mt-1 w-40 bg-card border rounded-xl shadow-lg z-10 overflow-hidden">
                                                             {booking.status === 'PENDING' && (
                                                                 <button onClick={() => updateBookingStatus(booking.id, 'CONFIRMED')} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50">
                                                                     <Check className="w-4 h-4" /> {t.confirm}
@@ -409,8 +409,8 @@ export default function BookingsPage() {
                 )}
 
                 {/* Calendar View */}
-                <div className="bg-white rounded-xl border border-slate-200 p-4">
-                    <h2 className="text-lg font-semibold text-slate-800 mb-4">{t.calendarView}</h2>
+                <div className="bg-card rounded-xl border border-border p-4">
+                    <h2 className="text-lg font-semibold text-foreground mb-4">{t.calendarView}</h2>
                     <BigCalendar
                         localizer={localizer}
                         events={calendarEvents}

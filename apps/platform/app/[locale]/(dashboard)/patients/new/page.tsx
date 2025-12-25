@@ -62,7 +62,7 @@ export default function NewPatientPage() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">{t('newPatient')}</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-6">{t('newPatient')}</h1>
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -70,7 +70,7 @@ export default function NewPatientPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg border border-slate-200">
+      <form onSubmit={handleSubmit} className="space-y-4 bg-card p-6 rounded-lg border border-border">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -80,7 +80,7 @@ export default function NewPatientPage() {
               name="first_name"
               type="text"
               required
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-slate-900"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground"
             />
           </div>
           <div>
@@ -91,7 +91,7 @@ export default function NewPatientPage() {
               name="last_name"
               type="text"
               required
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-slate-900"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground"
             />
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function NewPatientPage() {
           <input
             name="email"
             type="email"
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-slate-900"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground"
           />
         </div>
 
@@ -110,7 +110,7 @@ export default function NewPatientPage() {
           <input
             name="phone"
             type="tel"
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-slate-900"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground"
           />
         </div>
 
@@ -118,7 +118,7 @@ export default function NewPatientPage() {
           <label className="block text-sm font-medium text-gray-700 mb-1">{t('language')}</label>
           <select
             name="language"
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-slate-900 bg-white"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-slate-500 outline-none text-foreground bg-card"
           >
             {LANGUAGES.map((lang) => (
               <option key={lang.code} value={lang.code}>

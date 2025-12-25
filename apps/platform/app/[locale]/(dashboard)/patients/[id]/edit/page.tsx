@@ -58,7 +58,7 @@ function CollapsibleSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const colorClasses: Record<string, { bg: string, border: string, icon: string }> = {
-    slate: { bg: 'bg-slate-50', border: 'border-slate-200', icon: 'text-slate-500' },
+    slate: { bg: 'bg-slate-50', border: 'border-border', icon: 'text-foreground/60' },
     violet: { bg: 'bg-violet-50', border: 'border-violet-200', icon: 'text-violet-500' },
     emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'text-emerald-500' },
     fuchsia: { bg: 'bg-fuchsia-50', border: 'border-fuchsia-200', icon: 'text-fuchsia-500' },
@@ -84,7 +84,7 @@ function CollapsibleSection({
         )}
       </button>
       {isOpen && (
-        <div className="p-4 bg-white border-t border-slate-100 rounded-b-lg">
+        <div className="p-4 bg-card border-t border-border rounded-b-lg">
           {children}
         </div>
       )}
@@ -193,11 +193,11 @@ export default function EditPatientPage() {
   }
 
   if (loading) {
-    return <div className="text-center py-12 text-slate-500">{tCommon('loading')}</div>;
+    return <div className="text-center py-12 text-foreground/60">{tCommon('loading')}</div>;
   }
 
   if (!patient) {
-    return <div className="text-center py-12 text-slate-500">{t('notFound')}</div>;
+    return <div className="text-center py-12 text-foreground/60">{t('notFound')}</div>;
   }
 
   // Get profile data with defaults
@@ -205,7 +205,7 @@ export default function EditPatientPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6 font-headline">{t('editPatient')}</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-6 font-headline">{t('editPatient')}</h1>
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -215,20 +215,20 @@ export default function EditPatientPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info - Always visible */}
-        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-            <User className="w-5 h-5 text-slate-500" />
+        <div className="bg-card p-6 rounded-lg border border-border shadow-sm">
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <User className="w-5 h-5 text-foreground/60" />
             Datos Básicos
           </h2>
 
           {/* Profile Photo */}
-          <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+          <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
             <div className="relative">
               {patient.profile_image_url ? (
                 <img
                   src={patient.profile_image_url}
                   alt={`${patient.first_name} ${patient.last_name}`}
-                  className="w-20 h-20 rounded-full object-cover border-2 border-slate-200"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-border"
                 />
               ) : (
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-500 flex items-center justify-center text-white text-2xl font-bold">
@@ -243,7 +243,7 @@ export default function EditPatientPage() {
                 type="url"
                 placeholder="https://ejemplo.com/foto.jpg"
                 defaultValue={patient.profile_image_url || ''}
-                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900 text-sm"
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground text-sm"
               />
               <p className="text-xs text-slate-400 mt-1">Pega la URL de una imagen de perfil</p>
             </div>
@@ -258,7 +258,7 @@ export default function EditPatientPage() {
                   type="text"
                   required
                   defaultValue={patient.first_name}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
               <div>
@@ -268,7 +268,7 @@ export default function EditPatientPage() {
                   type="text"
                   required
                   defaultValue={patient.last_name}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
             </div>
@@ -280,7 +280,7 @@ export default function EditPatientPage() {
                   name="email"
                   type="email"
                   defaultValue={patient.email || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
               <div>
@@ -289,7 +289,7 @@ export default function EditPatientPage() {
                   name="phone"
                   type="tel"
                   defaultValue={patient.phone || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
             </div>
@@ -300,7 +300,7 @@ export default function EditPatientPage() {
                 name="language"
                 value={languageValue}
                 onChange={(e) => setLanguageValue(e.target.value)}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900 bg-white"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground bg-card"
               >
                 {LANGUAGES.map((lang) => (
                   <option key={lang.code} value={lang.code}>
@@ -321,7 +321,7 @@ export default function EditPatientPage() {
                 <select
                   name="gender"
                   defaultValue={profile.gender || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900 bg-white"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground bg-card"
                 >
                   {GENDERS.map((g) => (
                     <option key={g.value} value={g.value}>{g.label}</option>
@@ -335,7 +335,7 @@ export default function EditPatientPage() {
                   type="text"
                   placeholder="él/ella/elle"
                   defaultValue={profile.pronouns || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
             </div>
@@ -347,7 +347,7 @@ export default function EditPatientPage() {
                   name="birth_date"
                   type="date"
                   defaultValue={patient.birth_date ? new Date(patient.birth_date).toISOString().split('T')[0] : ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
               <div>
@@ -356,7 +356,7 @@ export default function EditPatientPage() {
                   name="birth_time"
                   type="time"
                   defaultValue={patient.birth_time || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
               <div>
@@ -366,7 +366,7 @@ export default function EditPatientPage() {
                   type="text"
                   placeholder="Ciudad, País"
                   defaultValue={patient.birth_place || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
             </div>
@@ -387,7 +387,7 @@ export default function EditPatientPage() {
                   type="text"
                   placeholder="Ej: Diseñadora"
                   defaultValue={profile.occupation || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-violet-500 outline-none text-foreground"
                 />
               </div>
             </div>
@@ -425,7 +425,7 @@ export default function EditPatientPage() {
               <select
                 name="preferred_contact"
                 defaultValue={profile.preferred_contact || ''}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-slate-900 bg-white"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-foreground bg-card"
               >
                 {CONTACT_METHODS.map((m) => (
                   <option key={m.value} value={m.value}>{m.label}</option>
@@ -441,7 +441,7 @@ export default function EditPatientPage() {
                   type="text"
                   placeholder="@usuario"
                   defaultValue={profile.instagram || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-foreground"
                 />
               </div>
               <div>
@@ -451,13 +451,13 @@ export default function EditPatientPage() {
                   type="text"
                   placeholder="URL o username"
                   defaultValue={profile.linkedin || ''}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-slate-900"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-foreground"
                 />
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-200">
-              <h4 className="text-sm font-medium text-slate-600 mb-3">Contacto de Emergencia</h4>
+            <div className="pt-4 border-t border-border">
+              <h4 className="text-sm font-medium text-foreground/70 mb-3">Contacto de Emergencia</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
@@ -466,7 +466,7 @@ export default function EditPatientPage() {
                     type="text"
                     placeholder="Nombre completo"
                     defaultValue={profile.emergency_contact_name || ''}
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-slate-900"
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-foreground"
                   />
                 </div>
                 <div>
@@ -476,7 +476,7 @@ export default function EditPatientPage() {
                     type="tel"
                     placeholder="+34 600 000 000"
                     defaultValue={profile.emergency_contact_phone || ''}
-                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-slate-900"
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-foreground"
                   />
                 </div>
               </div>
@@ -494,7 +494,7 @@ export default function EditPatientPage() {
                 type="text"
                 placeholder="Ej: Instagram, recomendación de amigo, Google..."
                 defaultValue={profile.referral_source || ''}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-slate-900"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-foreground"
               />
             </div>
 
@@ -503,7 +503,7 @@ export default function EditPatientPage() {
               <select
                 name="previous_therapy"
                 defaultValue={profile.previous_therapy === true ? 'true' : profile.previous_therapy === false ? 'false' : ''}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-slate-900 bg-white"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-foreground bg-card"
               >
                 <option value="">No especificado</option>
                 <option value="true">Sí</option>
@@ -518,7 +518,7 @@ export default function EditPatientPage() {
                 rows={2}
                 placeholder="Lista de medicamentos que toma actualmente..."
                 defaultValue={profile.current_medications || ''}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-slate-900 resize-none"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-foreground resize-none"
               />
             </div>
 
@@ -529,7 +529,7 @@ export default function EditPatientPage() {
                 rows={2}
                 placeholder="Alergias, condiciones crónicas, etc..."
                 defaultValue={profile.medical_conditions || ''}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-slate-900 resize-none"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-foreground resize-none"
               />
             </div>
 
@@ -540,7 +540,7 @@ export default function EditPatientPage() {
                 rows={3}
                 placeholder="Los objetivos del paciente para el proceso terapéutico..."
                 defaultValue={profile.goals || ''}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-slate-900 resize-none"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-foreground resize-none"
               />
             </div>
 
@@ -551,7 +551,7 @@ export default function EditPatientPage() {
                 rows={3}
                 placeholder="Notas privadas del terapeuta..."
                 defaultValue={profile.notes || ''}
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-slate-900 resize-none"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-fuchsia-500 outline-none text-foreground resize-none"
               />
             </div>
           </div>
@@ -604,7 +604,7 @@ export default function EditPatientPage() {
 
       {/* GeoNames Attribution - CC BY 4.0 */}
       <p className="mt-6 text-xs text-slate-400 text-center">
-        Geographic data © <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">GeoNames</a>
+        Geographic data © <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground/70">GeoNames</a>
       </p>
     </div >
   );

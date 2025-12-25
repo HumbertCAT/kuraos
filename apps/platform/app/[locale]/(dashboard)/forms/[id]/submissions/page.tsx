@@ -25,7 +25,7 @@ const STATUS_STYLES: Record<string, string> = {
     SENT: 'bg-blue-100 text-blue-700',
     OPENED: 'bg-yellow-100 text-yellow-700',
     COMPLETED: 'bg-green-100 text-green-700',
-    EXPIRED: 'bg-slate-100 text-slate-500',
+    EXPIRED: 'bg-slate-100 text-foreground/60',
 };
 
 export default function SubmissionsPage() {
@@ -86,32 +86,32 @@ export default function SubmissionsPage() {
                 <div className="mb-6">
                     <Link
                         href={`/${locale}/forms`}
-                        className="text-sm text-slate-500 hover:text-slate-700 mb-2 inline-block"
+                        className="text-sm text-foreground/60 hover:text-slate-700 mb-2 inline-block"
                     >
                         ← Back to Forms
                     </Link>
-                    <h1 className="text-2xl font-bold text-slate-800">
+                    <h1 className="text-2xl font-bold text-foreground">
                         {template?.title || 'Form'} Submissions
                     </h1>
-                    <p className="text-slate-500">{assignments.length} responses</p>
+                    <p className="text-foreground/60">{assignments.length} responses</p>
                 </div>
 
                 {/* Table */}
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="bg-card rounded-xl shadow-sm overflow-hidden">
                     {assignments.length === 0 ? (
-                        <div className="text-center py-16 text-slate-500">
+                        <div className="text-center py-16 text-foreground/60">
                             <div className="text-4xl mb-4">📭</div>
                             <p>No submissions yet</p>
                             <p className="text-sm mt-2">Share your form link to start collecting responses</p>
                         </div>
                     ) : (
                         <table className="w-full">
-                            <thead className="bg-slate-50 border-b border-slate-200">
+                            <thead className="bg-slate-50 border-b border-border">
                                 <tr>
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">Patient</th>
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">Status</th>
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">Date</th>
-                                    <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">Risk</th>
+                                    <th className="text-left py-3 px-4 text-sm font-medium text-foreground/70">Patient</th>
+                                    <th className="text-left py-3 px-4 text-sm font-medium text-foreground/70">Status</th>
+                                    <th className="text-left py-3 px-4 text-sm font-medium text-foreground/70">Date</th>
+                                    <th className="text-left py-3 px-4 text-sm font-medium text-foreground/70">Risk</th>
                                     <th className="py-3 px-4"></th>
                                 </tr>
                             </thead>
@@ -119,19 +119,19 @@ export default function SubmissionsPage() {
                                 {assignments.map((assignment) => (
                                     <tr
                                         key={assignment.id}
-                                        className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                                        className="border-b border-border hover:bg-slate-50 transition-colors"
                                     >
                                         <td className="py-3 px-4">
-                                            <span className="font-medium text-slate-800">
+                                            <span className="font-medium text-foreground">
                                                 {assignment.patient_name || 'Unknown'}
                                             </span>
                                         </td>
                                         <td className="py-3 px-4">
-                                            <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_STYLES[assignment.status] || 'bg-slate-100 text-slate-600'}`}>
+                                            <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_STYLES[assignment.status] || 'bg-slate-100 text-foreground/70'}`}>
                                                 {assignment.status}
                                             </span>
                                         </td>
-                                        <td className="py-3 px-4 text-sm text-slate-500">
+                                        <td className="py-3 px-4 text-sm text-foreground/60">
                                             {assignment.completed_at
                                                 ? new Date(assignment.completed_at).toLocaleDateString()
                                                 : new Date(assignment.created_at).toLocaleDateString()
@@ -150,7 +150,7 @@ export default function SubmissionsPage() {
                                         <td className="py-3 px-4 text-right">
                                             <Link
                                                 href={`/${locale}/patients/${assignment.patient_id}`}
-                                                className="text-slate-600 hover:text-slate-800 text-sm"
+                                                className="text-foreground/70 hover:text-foreground text-sm"
                                             >
                                                 View Patient →
                                             </Link>

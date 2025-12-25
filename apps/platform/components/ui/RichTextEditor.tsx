@@ -55,7 +55,7 @@ export default function RichTextEditor({
             Link.configure({
                 openOnClick: false,
                 HTMLAttributes: {
-                    class: 'text-slate-700 underline decoration-slate-400 underline-offset-2 hover:text-slate-900',
+                    class: 'text-slate-700 underline decoration-slate-400 underline-offset-2 hover:text-foreground',
                 },
             }),
             Placeholder.configure({
@@ -103,7 +103,7 @@ export default function RichTextEditor({
     if (!editor) {
         return (
             <div
-                className={`w-full border border-slate-200 rounded-xl bg-slate-50 p-4 animate-pulse ${className}`}
+                className={`w-full border border-border rounded-xl bg-slate-50 p-4 animate-pulse ${className}`}
                 style={{ minHeight }}
             >
                 <div className="h-4 bg-slate-200 rounded w-3/4 mb-2" />
@@ -113,7 +113,7 @@ export default function RichTextEditor({
     }
 
     return (
-        <div className={`relative w-full border border-slate-200 rounded-xl bg-white transition-all 
+        <div className={`relative w-full border border-border rounded-xl bg-card transition-all 
             ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:border-slate-300'}
             focus-within:ring-2 focus-within:ring-slate-500/20 focus-within:border-slate-400 ${className}`}
         >
@@ -131,7 +131,7 @@ export default function RichTextEditor({
                         const { from, to } = state.selection;
                         return from !== to && editor.isFocused;
                     }}
-                    className="flex items-center gap-0.5 px-1 py-1 bg-white rounded-lg shadow-lg border border-slate-200"
+                    className="flex items-center gap-0.5 px-1 py-1 bg-card rounded-lg shadow-lg border border-border"
                 >
                     <BubbleButton
                         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -184,20 +184,20 @@ export default function RichTextEditor({
                 <EditorContent
                     editor={editor}
                     className="prose prose-slate prose-sm max-w-none
-                        prose-headings:font-semibold prose-headings:text-slate-900
+                        prose-headings:font-semibold prose-headings:text-foreground
                         prose-h1:text-xl prose-h1:mb-3
                         prose-h2:text-lg prose-h2:mb-2
                         prose-h3:text-base prose-h3:mb-2
-                        prose-p:text-slate-800 prose-p:leading-relaxed prose-p:mb-3
-                        prose-ul:text-slate-800 prose-ul:mb-3 prose-ul:pl-4
-                        prose-ol:text-slate-800 prose-ol:mb-3 prose-ol:pl-4
+                        prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-3
+                        prose-ul:text-foreground prose-ul:mb-3 prose-ul:pl-4
+                        prose-ol:text-foreground prose-ol:mb-3 prose-ol:pl-4
                         prose-li:my-0.5
-                        prose-strong:text-slate-900 prose-strong:font-bold
-                        prose-blockquote:border-l-2 prose-blockquote:border-slate-300 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-600
-                        [&_.ProseMirror]:text-slate-800
-                        [&_.ProseMirror_p]:text-slate-800
+                        prose-strong:text-foreground prose-strong:font-bold
+                        prose-blockquote:border-l-2 prose-blockquote:border-slate-300 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-foreground/70
+                        [&_.ProseMirror]:text-foreground
+                        [&_.ProseMirror_p]:text-foreground
                         [&_.ProseMirror-selectednode]:bg-blue-100
-                        selection:bg-blue-200 selection:text-slate-900"
+                        selection:bg-blue-200 selection:text-foreground"
                 />
             </div>
 
@@ -228,8 +228,8 @@ function BubbleButton({
             onClick={onClick}
             title={title}
             className={`p-1.5 rounded transition-colors ${isActive
-                ? 'text-slate-900 bg-slate-100'
-                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                ? 'text-foreground bg-slate-100'
+                : 'text-foreground/60 hover:text-slate-700 hover:bg-slate-50'
                 }`}
         >
             {children}

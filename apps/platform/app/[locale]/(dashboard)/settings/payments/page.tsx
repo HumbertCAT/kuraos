@@ -121,7 +121,7 @@ export default function PaymentsPage() {
                 )}
 
                 {/* Connect Status Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
+                <div className="bg-card rounded-2xl p-8 shadow-sm border border-border">
                     <div className="flex items-start gap-6">
                         {/* Status Icon */}
                         <div className={`p-4 rounded-2xl ${status?.is_enabled ? 'bg-emerald-100' : 'bg-red-100'}`}>
@@ -135,7 +135,7 @@ export default function PaymentsPage() {
                         {/* Status Info */}
                         <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-xl font-semibold text-slate-900">
+                                <h3 className="text-xl font-semibold text-foreground">
                                     Estado de Cobros
                                 </h3>
                                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${status?.is_enabled
@@ -146,7 +146,7 @@ export default function PaymentsPage() {
                                 </span>
                             </div>
 
-                            <p className="text-slate-600 mb-6">
+                            <p className="text-foreground/70 mb-6">
                                 {status?.is_enabled
                                     ? 'Tu cuenta bancaria está conectada. Los pagos de pacientes se depositarán automáticamente.'
                                     : 'Conecta tu cuenta bancaria para empezar a recibir pagos de tus pacientes.'
@@ -169,7 +169,7 @@ export default function PaymentsPage() {
                             )}
 
                             {status?.is_enabled && status?.connect_id && (
-                                <div className="flex items-center gap-2 text-sm text-slate-500">
+                                <div className="flex items-center gap-2 text-sm text-foreground/60">
                                     <Check className="w-4 h-4 text-emerald-500" />
                                     <span>ID de Cuenta: {status.connect_id}</span>
                                 </div>
@@ -180,8 +180,8 @@ export default function PaymentsPage() {
 
                 {/* Info Card */}
                 <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-6 border border-violet-100">
-                    <h4 className="font-semibold text-slate-900 mb-3">¿Cómo funciona?</h4>
-                    <ul className="space-y-3 text-slate-600">
+                    <h4 className="font-semibold text-foreground mb-3">¿Cómo funciona?</h4>
+                    <ul className="space-y-3 text-foreground/70">
                         <li className="flex items-start gap-3">
                             <span className="w-6 h-6 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-sm font-medium flex-shrink-0">1</span>
                             <span>Conectas tu cuenta bancaria a través de Stripe (proceso seguro)</span>
@@ -198,20 +198,20 @@ export default function PaymentsPage() {
                 </div>
 
                 {/* Commission Info */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-                    <h4 className="font-semibold text-slate-900 mb-4">Comisiones por Plan</h4>
+                <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+                    <h4 className="font-semibold text-foreground mb-4">Comisiones por Plan</h4>
                     <div className="grid sm:grid-cols-3 gap-4">
                         <div className="p-4 bg-slate-50 rounded-xl text-center">
-                            <p className="text-2xl font-bold text-slate-900">5%</p>
-                            <p className="text-sm text-slate-500">Builder (Gratis)</p>
+                            <p className="text-2xl font-bold text-foreground">5%</p>
+                            <p className="text-sm text-foreground/60">Builder (Gratis)</p>
                         </div>
                         <div className="p-4 bg-emerald-50 rounded-xl text-center border border-emerald-200">
                             <p className="text-2xl font-bold text-emerald-600">3%</p>
-                            <p className="text-sm text-slate-500">Pro (49€/mes)</p>
+                            <p className="text-sm text-foreground/60">Pro (49€/mes)</p>
                         </div>
                         <div className="p-4 bg-violet-50 rounded-xl text-center border border-violet-200">
                             <p className="text-2xl font-bold text-violet-600">2%</p>
-                            <p className="text-sm text-slate-500">Center (149€/mes)</p>
+                            <p className="text-sm text-foreground/60">Center (149€/mes)</p>
                         </div>
                     </div>
                     <p className="text-xs text-slate-400 mt-4 text-center">

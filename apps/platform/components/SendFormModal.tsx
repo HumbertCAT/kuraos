@@ -113,16 +113,16 @@ export default function SendFormModal({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="bg-card rounded-xl shadow-xl max-w-md w-full p-6">
                 {/* Header */}
                 <div className="flex justify-between items-start mb-4">
                     <div>
-                        <h3 className="text-lg font-semibold text-slate-800">{t('title')}</h3>
-                        <p className="text-sm text-slate-500">{t('to')}: {patientName}</p>
+                        <h3 className="text-lg font-semibold text-foreground">{t('title')}</h3>
+                        <p className="text-sm text-foreground/60">{t('to')}: {patientName}</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-slate-400 hover:text-slate-600"
+                        className="text-slate-400 hover:text-foreground/70"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -134,12 +134,12 @@ export default function SendFormModal({
                     <>
                         {/* Form Selection */}
                         {loading ? (
-                            <div className="py-8 text-center text-slate-500">
+                            <div className="py-8 text-center text-foreground/60">
                                 {t('loadingForms')}
                             </div>
                         ) : templates.length === 0 ? (
                             <div className="py-8 text-center">
-                                <p className="text-slate-500 mb-2">{t('noForms')}</p>
+                                <p className="text-foreground/60 mb-2">{t('noForms')}</p>
                                 <p className="text-sm text-slate-400">
                                     {t('noFormsDescription')}
                                 </p>
@@ -153,7 +153,7 @@ export default function SendFormModal({
                                     <select
                                         value={selectedTemplate}
                                         onChange={(e) => setSelectedTemplate(e.target.value)}
-                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 outline-none text-slate-800"
+                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 outline-none text-foreground"
                                     >
                                         <option value="">{t('chooseForm')}</option>
                                         {templates.map((template) => (
@@ -225,7 +225,7 @@ export default function SendFormModal({
                                 )}
                             </div>
 
-                            <p className="text-xs text-slate-500 text-center">
+                            <p className="text-xs text-foreground/60 text-center">
                                 {t('linkValidFor')}
                             </p>
                         </div>

@@ -68,7 +68,7 @@ export default function PlanUsageWidget({ compact = false }: PlanUsageWidgetProp
             );
         }
         return (
-            <div className="p-3 bg-slate-50 border-t border-slate-100">
+            <div className="p-3 bg-slate-50 border-t border-border">
                 <div className="animate-pulse">
                     <div className="h-2 bg-slate-200 rounded w-24 mb-2"></div>
                     <div className="h-4 bg-slate-200 rounded w-full"></div>
@@ -121,9 +121,9 @@ export default function PlanUsageWidget({ compact = false }: PlanUsageWidgetProp
 
     // Full mode (for settings page, etc.)
     return (
-        <div className="p-3 bg-slate-50 border-t border-slate-100">
+        <div className="p-3 bg-slate-50 border-t border-border">
             <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-slate-500">
+                <span className="text-xs font-medium text-foreground/60">
                     {TIER_LABELS[usage.tier] || usage.tier}
                 </span>
                 <span className="text-xs text-slate-400">

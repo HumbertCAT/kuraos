@@ -22,7 +22,7 @@ export function Skeleton({ className = '' }: SkeletonProps) {
  */
 export function SkeletonCard({ className = '' }: SkeletonProps) {
     return (
-        <div className={`bg-white rounded-xl border border-slate-200 p-4 ${className}`}>
+        <div className={`bg-card rounded-xl border border-border p-4 ${className}`}>
             <div className="flex items-start gap-3">
                 {/* Avatar skeleton */}
                 <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
@@ -42,7 +42,7 @@ export function SkeletonCard({ className = '' }: SkeletonProps) {
  */
 export function PatientCardSkeleton() {
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+        <div className="bg-card rounded-xl border border-border shadow-sm p-4">
             <div className="flex items-start gap-3">
                 <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
                 <div className="flex-1 space-y-2">
@@ -63,7 +63,7 @@ export function PatientCardSkeleton() {
  */
 export function FormCardSkeleton() {
     return (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+        <div className="bg-card rounded-xl border border-border shadow-sm p-5">
             <div className="flex justify-between items-start mb-4">
                 <div className="space-y-2 flex-1">
                     <Skeleton className="h-5 w-48" />

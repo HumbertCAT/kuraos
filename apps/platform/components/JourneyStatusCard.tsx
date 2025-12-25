@@ -138,11 +138,11 @@ const STATUS_CONFIG: Record<string, {
 };
 
 const TYPE_COLORS = {
-    blocked: { bg: 'bg-red-50', border: 'border-red-300', text: 'text-red-800', dot: 'bg-red-500', badgeBg: 'bg-white', badgeText: 'text-red-700', badgeBorder: 'border-red-300' },
-    warning: { bg: 'bg-amber-50', border: 'border-amber-300', text: 'text-amber-800', dot: 'bg-amber-500', badgeBg: 'bg-white', badgeText: 'text-amber-700', badgeBorder: 'border-amber-300' },
-    waiting: { bg: 'bg-yellow-50', border: 'border-yellow-300', text: 'text-yellow-800', dot: 'bg-yellow-500', badgeBg: 'bg-white', badgeText: 'text-yellow-700', badgeBorder: 'border-yellow-300' },
-    active: { bg: 'bg-blue-50', border: 'border-blue-300', text: 'text-blue-800', dot: 'bg-blue-500', badgeBg: 'bg-white', badgeText: 'text-blue-700', badgeBorder: 'border-blue-300' },
-    success: { bg: 'bg-emerald-50', border: 'border-emerald-300', text: 'text-emerald-800', dot: 'bg-emerald-500', badgeBg: 'bg-white', badgeText: 'text-emerald-700', badgeBorder: 'border-emerald-300' },
+    blocked: { bg: 'bg-card', border: 'border-red-500/30', text: 'text-red-400', dot: 'bg-red-500', badgeBg: 'bg-red-500/10', badgeText: 'text-red-400', badgeBorder: 'border-red-500/30' },
+    warning: { bg: 'bg-card', border: 'border-amber-500/30', text: 'text-amber-400', dot: 'bg-amber-500', badgeBg: 'bg-amber-500/10', badgeText: 'text-amber-400', badgeBorder: 'border-amber-500/30' },
+    waiting: { bg: 'bg-card', border: 'border-yellow-500/30', text: 'text-yellow-400', dot: 'bg-yellow-500', badgeBg: 'bg-yellow-500/10', badgeText: 'text-yellow-400', badgeBorder: 'border-yellow-500/30' },
+    active: { bg: 'bg-card', border: 'border-blue-500/30', text: 'text-blue-400', dot: 'bg-blue-500', badgeBg: 'bg-blue-500/10', badgeText: 'text-blue-400', badgeBorder: 'border-blue-500/30' },
+    success: { bg: 'bg-card', border: 'border-emerald-500/30', text: 'text-emerald-400', dot: 'bg-emerald-500', badgeBg: 'bg-emerald-500/10', badgeText: 'text-emerald-400', badgeBorder: 'border-emerald-500/30' },
 };
 
 interface JourneyStatusCardProps {
@@ -155,11 +155,11 @@ export default function JourneyStatusCard({ journeyStatus }: JourneyStatusCardPr
     }
 
     return (
-        <div className="mb-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="mb-6 bg-card rounded-xl border border-border shadow-sm overflow-hidden">
             {/* Header */}
-            <div className="px-4 py-3 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 flex items-center gap-2">
-                <Plane className="w-4 h-4 text-white" />
-                <h3 className="text-sm font-semibold text-white uppercase tracking-wider font-caption">
+            <div className="px-4 py-3 border-b border-ai/30 bg-ai/5 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-ai" />
+                <h3 className="text-sm font-semibold text-ai uppercase tracking-wider">
                     PATIENT JOURNEY
                 </h3>
             </div>
@@ -200,7 +200,7 @@ export default function JourneyStatusCard({ journeyStatus }: JourneyStatusCardPr
                                     <div>
                                         <h4 className={`font-semibold font-headline ${colors.text}`}>{journeyDef.name}</h4>
                                         {journeyDef.description && (
-                                            <p className="text-xs text-slate-500">{journeyDef.description}</p>
+                                            <p className="text-xs text-foreground/60">{journeyDef.description}</p>
                                         )}
                                     </div>
                                 </div>

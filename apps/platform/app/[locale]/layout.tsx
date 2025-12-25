@@ -1,6 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { Inter, Outfit, Space_Mono } from "next/font/google";
+import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { AuthProvider } from "@/context/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
 import "../globals.css";
@@ -11,18 +11,18 @@ const inter = Inter({
   variable: "--font-body",
 });
 
-// Headlines - Character, personality
-const outfit = Outfit({
+// Headlines - Technical, bold personality (Architect Spec)
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-headline",
-  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-display",
+  weight: ["500", "700"],
 });
 
-// Captions, labels, badges - Technical, precise
-const spaceMono = Space_Mono({
+// Mono for data, captions, technical info (Architect Spec)
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-caption",
-  weight: ["400", "700"],
+  variable: "--font-mono",
+  weight: ["400", "500"],
 });
 
 export default async function LocaleLayout({
@@ -37,7 +37,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={`${inter.variable} ${outfit.variable} ${spaceMono.variable} font-body antialiased bg-background text-foreground`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-body antialiased bg-background text-foreground`}>
         <ThemeProvider>
           <NextIntlClientProvider messages={messages}>
             <AuthProvider>

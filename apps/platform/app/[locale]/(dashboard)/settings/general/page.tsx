@@ -234,10 +234,10 @@ export default function SettingsPage() {
 
       <div className="space-y-6">
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div className="bg-card rounded-2xl border border-border shadow-sm">
           <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4 rounded-t-2xl">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white text-xl font-bold">
+              <div className="w-12 h-12 rounded-full bg-card/20 backdrop-blur flex items-center justify-center text-white text-xl font-bold">
                 {user?.full_name?.charAt(0)?.toUpperCase() || '?'}
               </div>
               <div>
@@ -251,7 +251,7 @@ export default function SettingsPage() {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Full Name */}
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                   {t('fullName') || 'Nombre completo'}
                 </label>
                 <div className="relative">
@@ -260,7 +260,7 @@ export default function SettingsPage() {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-slate-800 transition-all"
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all"
                     placeholder="Tu nombre"
                   />
                 </div>
@@ -268,12 +268,12 @@ export default function SettingsPage() {
 
               {/* Email (Read only) */}
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                   {t('email') || 'Email'}
                 </label>
-                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-border">
                   <span className="text-lg">📧</span>
-                  <span className="text-slate-600">{user?.email || '—'}</span>
+                  <span className="text-foreground/70">{user?.email || '—'}</span>
                 </div>
               </div>
             </div>
@@ -281,7 +281,7 @@ export default function SettingsPage() {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                   Teléfono
                 </label>
                 <div className="relative">
@@ -292,7 +292,7 @@ export default function SettingsPage() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-slate-800 transition-all"
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all"
                     placeholder="+34 600 000 000"
                   />
                 </div>
@@ -300,7 +300,7 @@ export default function SettingsPage() {
 
               {/* Website */}
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                   Página web
                 </label>
                 <div className="relative">
@@ -311,7 +311,7 @@ export default function SettingsPage() {
                     type="url"
                     value={website}
                     onChange={(e) => setWebsite(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-slate-800 transition-all"
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all"
                     placeholder="https://tupaigina.com"
                   />
                 </div>
@@ -321,7 +321,7 @@ export default function SettingsPage() {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Country */}
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                   País
                 </label>
                 <CountrySelect
@@ -336,7 +336,7 @@ export default function SettingsPage() {
 
               {/* City */}
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                   Ciudad
                 </label>
                 <CityAutocomplete
@@ -348,12 +348,12 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 mt-2">
+            <div className="pt-2 border-t border-border mt-2">
               <p className="text-xs text-slate-400 italic mb-2">
                 Estos datos se mostrarán en tu página de reservas pública.
               </p>
               <p className="text-xs text-slate-300 text-center">
-                Geographic data © <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-500">GeoNames</a>
+                Geographic data © <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground/60">GeoNames</a>
               </p>
             </div>
 
@@ -361,12 +361,12 @@ export default function SettingsPage() {
         </div>
 
         {/* Interface Preferences */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="p-6">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Preferencias de Interfaz</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-4">Preferencias de Interfaz</h3>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                   {t('interfaceLanguage') || 'Idioma del Panel'}
                 </label>
                 <div className="relative">
@@ -374,7 +374,7 @@ export default function SettingsPage() {
                   <select
                     value={locale}
                     onChange={(e) => setLocale(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-slate-800 transition-all appearance-none bg-white cursor-pointer"
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all appearance-none bg-card cursor-pointer"
                   >
                     {LOCALE_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -387,14 +387,14 @@ export default function SettingsPage() {
 
               {/* Terminology Preference - TODO: Wire up to organization settings */}
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-2">
+                <label className="block text-sm font-medium text-foreground/70 mb-2">
                   Terminología de clientes
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">👥</span>
                   <select
                     disabled
-                    className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-slate-800 transition-all appearance-none bg-slate-50 cursor-not-allowed"
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all appearance-none bg-slate-50 cursor-not-allowed"
                   >
                     <option value="CLIENT">Cliente (Coaching)</option>
                     <option value="PATIENT">Paciente (Clínico)</option>
@@ -410,7 +410,7 @@ export default function SettingsPage() {
         </div>
 
         {/* AI Preferences Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4">
             <div className="flex items-center gap-3">
               <span className="text-2xl">🤖</span>
@@ -424,7 +424,7 @@ export default function SettingsPage() {
           <div className="p-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-3">
+                <label className="block text-sm font-medium text-foreground/70 mb-3">
                   {t('aiOutputLanguage') || 'Idioma de salida IA'}
                 </label>
                 <div className="space-y-2">
@@ -433,7 +433,7 @@ export default function SettingsPage() {
                       key={opt.value}
                       className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${aiOutputPreference === opt.value
                         ? 'border-emerald-500 bg-emerald-50'
-                        : 'border-slate-200 hover:border-slate-300'
+                        : 'border-border hover:border-slate-300'
                         }`}
                     >
                       <input
@@ -445,14 +445,14 @@ export default function SettingsPage() {
                         className="sr-only"
                       />
                       <span className="text-xl">{opt.icon}</span>
-                      <span className="font-medium text-slate-800">{opt.label}</span>
+                      <span className="font-medium text-foreground">{opt.label}</span>
                       {aiOutputPreference === opt.value && (
                         <span className="ml-auto text-emerald-600">✓</span>
                       )}
                     </label>
                   ))}
                 </div>
-                <p className="mt-3 text-sm text-slate-500">
+                <p className="mt-3 text-sm text-foreground/60">
                   {t('aiOutputLanguageHelp') || 'Elige el idioma en el que la IA generará resúmenes y análisis.'}
                 </p>
               </div>
@@ -461,7 +461,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Integrations Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4">
             <div className="flex items-center gap-3">
               <Link2 className="w-6 h-6 text-white" />
@@ -474,10 +474,10 @@ export default function SettingsPage() {
 
           <div className="p-6">
             {/* Google Calendar */}
-            <div className="p-5 bg-slate-50 rounded-xl border border-slate-100">
+            <div className="p-5 bg-slate-50 rounded-xl border border-border">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-xl bg-white shadow-sm flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-xl bg-card shadow-sm flex items-center justify-center">
                     <svg viewBox="0 0 24 24" className="w-9 h-9">
                       <path fill="#4285F4" d="M22.46 10.68h-10.5v3.32h6c-.26 1.38-1.04 2.54-2.2 3.32l3.56 2.76c2.08-1.92 3.28-4.74 3.28-8.1 0-.56-.04-1.1-.14-1.6z" />
                       <path fill="#34A853" d="M11.96 23c2.98 0 5.48-.98 7.3-2.66l-3.56-2.76c-.98.66-2.24 1.04-3.74 1.04-2.88 0-5.32-1.94-6.2-4.56H2.08v2.86C3.88 20.92 7.64 23 11.96 23z" />
@@ -486,8 +486,8 @@ export default function SettingsPage() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-slate-800 text-lg">Google Calendar</h3>
-                    <p className="text-sm text-slate-500">
+                    <h3 className="font-semibold text-foreground text-lg">Google Calendar</h3>
+                    <p className="text-sm text-foreground/60">
                       {fullStatus?.connected
                         ? '✓ Estás conectado con Google Calendar'
                         : 'Conecta tu cuenta de Google Calendar para sincronizar reservas y bloquear disponibilidad'
@@ -522,11 +522,11 @@ export default function SettingsPage() {
               </div>
 
               {fullStatus?.connected && (
-                <div className="mt-4 pt-4 border-t border-slate-200">
-                  <p className="text-sm text-slate-600">
+                <div className="mt-4 pt-4 border-t border-border">
+                  <p className="text-sm text-foreground/70">
                     Una vez conectado, puedes configurar la sincronización en:
                   </p>
-                  <ul className="mt-2 text-sm text-slate-500 space-y-1">
+                  <ul className="mt-2 text-sm text-foreground/60 space-y-1">
                     <li>📅 <strong>Calendario</strong> → Pestaña "Google Calendar" para bloquear disponibilidad</li>
                     <li>🎯 <strong>Servicios</strong> → En cada servicio, elige dónde enviar las reservas</li>
                   </ul>
@@ -538,7 +538,7 @@ export default function SettingsPage() {
 
         {/* Admin Tools (superuser only) */}
         {user?.is_superuser && (
-          <div className="bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
+          <div className="bg-card rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
             <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
               <div className="flex items-center gap-3">
                 <Shield className="w-6 h-6 text-white" />
@@ -554,12 +554,12 @@ export default function SettingsPage() {
               <div className="p-5 bg-amber-50 rounded-xl border border-amber-100">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-xl bg-card shadow-sm flex items-center justify-center">
                       <Zap className="w-6 h-6 text-amber-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-800">Forzar Análisis AletheIA</h3>
-                      <p className="text-sm text-slate-500">
+                      <h3 className="font-semibold text-foreground">Forzar Análisis AletheIA</h3>
+                      <p className="text-sm text-foreground/60">
                         Ejecuta el análisis de conversaciones WhatsApp inmediatamente para todas las fichas con mensajes nuevos.
                       </p>
                     </div>

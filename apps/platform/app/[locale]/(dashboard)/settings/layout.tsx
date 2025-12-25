@@ -34,7 +34,7 @@ export default function SettingsLayout({
                     <h1 className="text-3xl font-bold font-headline bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                         Configuración
                     </h1>
-                    <p className="mt-2 text-slate-500">Gestiona tu cuenta, plan y obtén ayuda</p>
+                    <p className="mt-2 text-foreground/60">Gestiona tu cuenta, plan y obtén ayuda</p>
                 </div>
 
                 {/* Tab Navigation */}
@@ -49,8 +49,8 @@ export default function SettingsLayout({
                                     key={tab.href}
                                     href={tab.href}
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${isActive
-                                            ? 'bg-white text-slate-900 shadow-sm'
-                                            : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                                            ? 'bg-card text-foreground shadow-sm'
+                                            : 'text-foreground/70 hover:text-foreground hover:bg-card/50'
                                         }`}
                                 >
                                     <Icon className="w-4 h-4" />

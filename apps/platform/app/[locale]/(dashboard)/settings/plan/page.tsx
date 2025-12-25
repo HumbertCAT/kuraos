@@ -42,11 +42,11 @@ export default function PlanPage() {
     const currentTier = credits?.tier ? tierConfig[credits.tier as keyof typeof tierConfig] || tierConfig.BUILDER : tierConfig.BUILDER;
     const creditsPercentUsed = credits ? (credits.used_this_month / credits.monthly_quota) * 100 : 0;
 
-    if (loading) return <div className="p-8 text-center text-slate-500">Loading...</div>;
+    if (loading) return <div className="p-8 text-center text-foreground/60">Loading...</div>;
 
     return (
         <div className="max-w-2xl mx-auto">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
                 <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -70,12 +70,12 @@ export default function PlanPage() {
                                 {credits?.available || 0}
                             </span>
                         </div>
-                        <p className="text-slate-600 font-medium">{t('creditsAvailable') || 'Créditos Disponibles'}</p>
+                        <p className="text-foreground/70 font-medium">{t('creditsAvailable') || 'Créditos Disponibles'}</p>
                     </div>
 
                     {/* Progress Bar */}
                     <div>
-                        <div className="flex justify-between text-sm text-slate-500 mb-2">
+                        <div className="flex justify-between text-sm text-foreground/60 mb-2">
                             <span>{t('creditsUsed') || 'Usados este mes'}</span>
                             <span>{credits?.used_this_month || 0} / {credits?.monthly_quota || 0}</span>
                         </div>
@@ -90,12 +90,12 @@ export default function PlanPage() {
                     {/* Stats Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="p-3 bg-slate-50 rounded-xl text-center">
-                            <p className="text-2xl font-bold text-slate-800">{credits?.monthly_quota || 0}</p>
-                            <p className="text-xs text-slate-500">{t('creditsQuota') || 'Cuota Mensual'}</p>
+                            <p className="text-2xl font-bold text-foreground">{credits?.monthly_quota || 0}</p>
+                            <p className="text-xs text-foreground/60">{t('creditsQuota') || 'Cuota Mensual'}</p>
                         </div>
                         <div className="p-3 bg-slate-50 rounded-xl text-center">
                             <p className="text-2xl font-bold text-emerald-600">{credits?.purchased || 0}</p>
-                            <p className="text-xs text-slate-500">{t('creditsPurchased') || 'Comprados'}</p>
+                            <p className="text-xs text-foreground/60">{t('creditsPurchased') || 'Comprados'}</p>
                         </div>
                     </div>
 

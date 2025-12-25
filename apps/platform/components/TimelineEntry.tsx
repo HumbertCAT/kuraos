@@ -100,7 +100,7 @@ const ENTRY_ICONS: Record<string, React.ReactNode> = {
 const ENTRY_COLORS: Record<string, string> = {
   SESSION_NOTE: 'bg-blue-50 text-blue-600 border-blue-200',
   AUDIO: 'bg-amber-50 text-amber-600 border-amber-200',
-  DOCUMENT: 'bg-slate-50 text-slate-600 border-slate-200',
+  DOCUMENT: 'bg-slate-50 text-foreground/70 border-border',
   AI_ANALYSIS: 'bg-purple-50 text-purple-600 border-purple-200',
   ASSESSMENT: 'bg-green-50 text-green-600 border-green-200',
   FORM_SUBMISSION: 'bg-emerald-50 text-emerald-600 border-emerald-200',
@@ -216,7 +216,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
 
   return (
     <>
-      <div className="bg-white rounded-xl border border-slate-200 hover:border-slate-300 transition-all hover:shadow-sm">
+      <div className="bg-card rounded-xl border border-border hover:border-slate-300 transition-all hover:shadow-sm">
         {/* Header */}
         <div className="flex items-start gap-3 p-4">
           {/* Type Icon */}
@@ -232,7 +232,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
               <span className="text-slate-300">·</span>
               <span className="text-xs text-slate-400">{happenedAt}</span>
               {entry.is_private && (
-                <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{t('private')}</span>
+                <span className="text-xs bg-slate-100 text-foreground/60 px-2 py-0.5 rounded-full">{t('private')}</span>
               )}
               {/* Processing status indicator */}
               {(entry.processing_status === 'PENDING' || entry.processing_status === 'PROCESSING') && (
@@ -265,7 +265,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={handleCancelEdit}
-                        className="px-3 py-1.5 text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+                        className="px-3 py-1.5 text-sm text-foreground/70 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
                       >
                         {t('cancel')}
                       </button>
@@ -337,7 +337,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                     ))}
                     {entry.entry_metadata.risk_level && (
                       <div className="pt-2 border-t border-emerald-200">
-                        <span className="text-xs font-medium text-slate-500">Nivel de riesgo: </span>
+                        <span className="text-xs font-medium text-foreground/60">Nivel de riesgo: </span>
                         <span className={`text-xs font-semibold ${entry.entry_metadata.risk_level === 'HIGH' ? 'text-red-600' :
                           entry.entry_metadata.risk_level === 'MEDIUM' ? 'text-orange-600' :
                             'text-green-600'
@@ -410,7 +410,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
 
         {/* AI Analysis Section */}
         {hasAnalyses && (
-          <div className="border-t border-slate-100 p-4 bg-gradient-to-r from-purple-50 to-white">
+          <div className="border-t border-border p-4 bg-gradient-to-r from-purple-50 to-white">
             <button
               onClick={() => setAnalysisExpanded(!analysisExpanded)}
               className="w-full flex items-center justify-between mb-3 cursor-pointer"
@@ -432,7 +432,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
               <div className="space-y-4">
                 {/* Saved analyses */}
                 {savedAnalyses.map((analysis) => (
-                  <div key={analysis.id} className="bg-white border border-purple-100 rounded-lg p-3">
+                  <div key={analysis.id} className="bg-card border border-purple-100 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-purple-400">
@@ -480,7 +480,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => setEditingAnalysisId(null)}
-                            className="px-3 py-1.5 text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+                            className="px-3 py-1.5 text-sm text-foreground/70 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
                           >
                             {t('cancel')}
                           </button>
@@ -511,7 +511,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
 
                 {/* Pending (new) analysis */}
                 {pendingAnalysis && (
-                  <div className="bg-white border-2 border-dashed border-purple-200 rounded-lg p-3">
+                  <div className="bg-card border-2 border-dashed border-purple-200 rounded-lg p-3">
                     <div className="text-xs text-purple-500 mb-2 font-medium">{t('newAnalysis')}</div>
                     <RichTextEditor
                       value={pendingAnalysis}
@@ -530,7 +530,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                       </button>
                       <button
                         onClick={() => setPendingAnalysis(null)}
-                        className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+                        className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-foreground/70 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
                       >
                         {Icons.trash}
                         <span>{t('cancel')}</span>
@@ -547,7 +547,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
       {/* Error Modal */}
       {showErrorModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowErrorModal(false)}>
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-card rounded-xl shadow-xl max-w-md w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
             {entry.processing_error?.toLowerCase().includes('credits') ? (
               <>
                 <div className="flex items-center gap-3 mb-4">
@@ -555,8 +555,8 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                     <span className="text-2xl">💳</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900">Créditos Insuficientes</h3>
-                    <p className="text-sm text-slate-500">No tienes suficientes créditos para este análisis</p>
+                    <h3 className="text-lg font-semibold text-foreground">Créditos Insuficientes</h3>
+                    <p className="text-sm text-foreground/60">No tienes suficientes créditos para este análisis</p>
                   </div>
                 </div>
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
@@ -571,7 +571,7 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                   </a>
                   <button
                     onClick={() => setShowErrorModal(false)}
-                    className="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors cursor-pointer"
+                    className="px-4 py-2 text-foreground/70 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors cursor-pointer"
                   >
                     Cerrar
                   </button>
@@ -584,8 +584,8 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                     <span className="text-2xl">⚠️</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900">Error en el Análisis</h3>
-                    <p className="text-sm text-slate-500">No se pudo completar el análisis de IA</p>
+                    <h3 className="text-lg font-semibold text-foreground">Error en el Análisis</h3>
+                    <p className="text-sm text-foreground/60">No se pudo completar el análisis de IA</p>
                   </div>
                 </div>
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">

@@ -273,7 +273,7 @@ export default function AdminPage() {
             {/* Header */}
             <div className="flex items-center gap-3">
                 <span className="text-3xl">⚙️</span>
-                <h1 className="text-2xl font-bold text-slate-800">Admin Panel</h1>
+                <h1 className="text-2xl font-bold text-foreground">Admin Panel</h1>
             </div>
 
             {/* Tabs */}
@@ -283,8 +283,8 @@ export default function AdminPage() {
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
                         className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === tab.key
-                            ? 'bg-white text-slate-800 shadow-sm'
-                            : 'text-slate-600 hover:text-slate-800'
+                            ? 'bg-card text-foreground shadow-sm'
+                            : 'text-foreground/70 hover:text-foreground'
                             }`}
                     >
                         <span>{tab.icon}</span>
@@ -295,17 +295,17 @@ export default function AdminPage() {
 
             {/* Settings Tab */}
             {activeTab === 'settings' && (
-                <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
+                <section className="bg-card rounded-xl border border-border overflow-hidden">
+                    <div className="px-6 py-4 border-b border-border bg-slate-50">
                         <h2 className="text-lg font-semibold text-slate-700">System Settings</h2>
-                        <p className="text-sm text-slate-500">Global configuration values stored in database</p>
+                        <p className="text-sm text-foreground/60">Global configuration values stored in database</p>
                     </div>
                     <div className="divide-y divide-slate-100">
                         {settings.map((setting) => (
                             <div key={setting.key} className="px-6 py-4 flex items-center justify-between">
                                 <div className="flex-1">
-                                    <p className="font-mono text-sm font-medium text-slate-800">{setting.key}</p>
-                                    <p className="text-xs text-slate-500">{setting.description || 'No description'}</p>
+                                    <p className="font-mono text-sm font-medium text-foreground">{setting.key}</p>
+                                    <p className="text-xs text-foreground/60">{setting.description || 'No description'}</p>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     {editingKey === setting.key ? (
@@ -314,7 +314,7 @@ export default function AdminPage() {
                                                 <select
                                                     value={editValue.replace(/"/g, '')}
                                                     onChange={(e) => setEditValue(`"${e.target.value}"`)}
-                                                    className="w-48 text-sm border border-slate-300 rounded px-2 py-1 font-mono text-slate-800 bg-white"
+                                                    className="w-48 text-sm border border-slate-300 rounded px-2 py-1 font-mono text-foreground bg-card"
                                                 >
                                                     {AI_MODELS.map((model) => (
                                                         <option key={model} value={model}>{model}</option>
@@ -324,7 +324,7 @@ export default function AdminPage() {
                                                 <textarea
                                                     value={editValue}
                                                     onChange={(e) => setEditValue(e.target.value)}
-                                                    className="w-48 h-20 text-sm border border-slate-300 rounded px-2 py-1 font-mono text-slate-800 bg-white"
+                                                    className="w-48 h-20 text-sm border border-slate-300 rounded px-2 py-1 font-mono text-foreground bg-card"
                                                 />
                                             )}
                                             <button
@@ -365,26 +365,26 @@ export default function AdminPage() {
 
             {/* Organizations Tab */}
             {activeTab === 'organizations' && (
-                <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
+                <section className="bg-card rounded-xl border border-border overflow-hidden">
+                    <div className="px-6 py-4 border-b border-border bg-slate-50">
                         <h2 className="text-lg font-semibold text-slate-700">Organizations</h2>
-                        <p className="text-sm text-slate-500">Manage organization tiers and credits</p>
+                        <p className="text-sm text-foreground/60">Manage organization tiers and credits</p>
                     </div>
                     <table className="w-full">
-                        <thead className="bg-slate-50 border-b border-slate-200">
+                        <thead className="bg-slate-50 border-b border-border">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Tier</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Term</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Patients</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Credits</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Actions</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Tier</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Term</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Patients</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Credits</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {organizations.map((org) => (
                                 <tr key={org.id}>
-                                    <td className="px-6 py-4 text-sm font-medium text-slate-800">{org.name}</td>
+                                    <td className="px-6 py-4 text-sm font-medium text-foreground">{org.name}</td>
                                     <td className="px-6 py-4">
                                         <select
                                             value={org.tier}
@@ -400,22 +400,22 @@ export default function AdminPage() {
                                         <select
                                             value={org.terminology_preference || 'CLIENT'}
                                             onChange={(e) => handleChangeTerminology(org.id, e.target.value)}
-                                            className="text-sm px-2 py-1 rounded border border-slate-300 bg-white text-slate-700"
+                                            className="text-sm px-2 py-1 rounded border border-slate-300 bg-card text-slate-700"
                                         >
                                             {TERMINOLOGY_OPTIONS.map((term) => (
                                                 <option key={term} value={term}>{term}</option>
                                             ))}
                                         </select>
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-slate-600">{org.patient_count}</td>
+                                    <td className="px-6 py-4 text-sm text-foreground/70">{org.patient_count}</td>
                                     <td className="px-6 py-4">
                                         <div className="text-sm">
-                                            <span className="font-medium text-slate-800">
+                                            <span className="font-medium text-foreground">
                                                 {org.ai_credits_monthly_quota - org.ai_credits_used_this_month + org.ai_credits_purchased}
                                             </span>
-                                            <span className="text-slate-500 ml-1">available</span>
+                                            <span className="text-foreground/60 ml-1">available</span>
                                         </div>
-                                        <div className="text-xs text-slate-500">
+                                        <div className="text-xs text-foreground/60">
                                             Monthly: {org.ai_credits_used_this_month}/{org.ai_credits_monthly_quota} | Purchased: {org.ai_credits_purchased}
                                         </div>
                                     </td>
@@ -426,7 +426,7 @@ export default function AdminPage() {
                                                     type="number"
                                                     value={creditsAmount}
                                                     onChange={(e) => setCreditsAmount(Number(e.target.value))}
-                                                    className="w-20 text-sm border border-slate-300 rounded px-2 py-1 text-slate-800"
+                                                    className="w-20 text-sm border border-slate-300 rounded px-2 py-1 text-foreground"
                                                     min="1"
                                                 />
                                                 <button
@@ -463,11 +463,11 @@ export default function AdminPage() {
 
             {/* Templates Tab */}
             {activeTab === 'templates' && (
-                <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <section className="bg-card rounded-xl border border-border overflow-hidden">
+                    <div className="px-6 py-4 border-b border-border bg-slate-50 flex justify-between items-center">
                         <div>
                             <h2 className="text-lg font-semibold text-slate-700">Form Templates</h2>
-                            <p className="text-sm text-slate-500">Manage system form templates</p>
+                            <p className="text-sm text-foreground/60">Manage system form templates</p>
                         </div>
                         <Link
                             href={`/${locale}/admin/templates/new/edit`}
@@ -478,15 +478,15 @@ export default function AdminPage() {
                     </div>
 
                     {/* Scope Filter */}
-                    <div className="px-6 py-3 border-b border-slate-200 flex gap-2">
-                        <span className="text-sm text-slate-500 mr-2">Filter:</span>
+                    <div className="px-6 py-3 border-b border-border flex gap-2">
+                        <span className="text-sm text-foreground/60 mr-2">Filter:</span>
                         {(['all', 'system', 'org'] as const).map((f) => (
                             <button
                                 key={f}
                                 onClick={() => setTemplatesFilter(f)}
                                 className={`px-3 py-1 text-xs rounded-full transition-colors ${templatesFilter === f
                                     ? 'bg-slate-800 text-white'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    : 'bg-slate-100 text-foreground/70 hover:bg-slate-200'
                                     }`}
                             >
                                 {f === 'all' ? 'All' : f === 'system' ? '🌐 System' : '🏢 Org'}
@@ -494,14 +494,14 @@ export default function AdminPage() {
                         ))}
                     </div>
                     <table className="w-full">
-                        <thead className="bg-slate-50 border-b border-slate-200">
+                        <thead className="bg-slate-50 border-b border-border">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Template</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Type</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Risk</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Scope</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">Actions</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Template</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Type</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Risk</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Scope</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Status</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-foreground/60 uppercase">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -510,14 +510,14 @@ export default function AdminPage() {
                                 .map((template) => (
                                     <tr key={template.id} className="hover:bg-slate-50">
                                         <td className="px-6 py-4">
-                                            <p className="font-medium text-slate-800">{template.title}</p>
+                                            <p className="font-medium text-foreground">{template.title}</p>
                                             {template.description && (
-                                                <p className="text-sm text-slate-500 truncate max-w-xs">{template.description}</p>
+                                                <p className="text-sm text-foreground/60 truncate max-w-xs">{template.description}</p>
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="text-lg">{THERAPY_ICONS[template.therapy_type] || '📋'}</span>
-                                            <span className="ml-2 text-sm text-slate-600">{template.form_type}</span>
+                                            <span className="ml-2 text-sm text-foreground/70">{template.form_type}</span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 rounded text-xs font-medium ${RISK_COLORS[template.risk_level]}`}>
@@ -526,7 +526,7 @@ export default function AdminPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div>
-                                                <span className={`text-sm ${template.is_system ? 'text-purple-600 font-medium' : 'text-slate-600'}`}>
+                                                <span className={`text-sm ${template.is_system ? 'text-purple-600 font-medium' : 'text-foreground/70'}`}>
                                                     {template.is_system ? '🌐 System' : '🏢 Org'}
                                                 </span>
                                                 {!template.is_system && template.organization_id && (
@@ -535,7 +535,7 @@ export default function AdminPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 rounded text-xs ${template.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                                            <span className={`px-2 py-1 rounded text-xs ${template.is_active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-foreground/60'}`}>
                                                 {template.is_active ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
@@ -543,7 +543,7 @@ export default function AdminPage() {
                                             <div className="flex justify-end gap-2">
                                                 <Link
                                                     href={`/${locale}/admin/templates/${template.id}/edit`}
-                                                    className="text-slate-600 hover:text-slate-800 p-1"
+                                                    className="text-foreground/70 hover:text-foreground p-1"
                                                     title="Edit"
                                                 >
                                                     ✏️
@@ -562,7 +562,7 @@ export default function AdminPage() {
                         </tbody>
                     </table>
                     {templates.length === 0 && (
-                        <div className="text-center py-12 text-slate-500">
+                        <div className="text-center py-12 text-foreground/60">
                             No templates yet. Create the first one.
                         </div>
                     )}
@@ -571,22 +571,22 @@ export default function AdminPage() {
 
             {/* Automations Tab */}
             {activeTab === 'automations' && (
-                <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
+                <section className="bg-card rounded-xl border border-border overflow-hidden">
+                    <div className="px-6 py-4 border-b border-border bg-slate-50">
                         <h2 className="text-lg font-semibold text-slate-700">System Automations</h2>
-                        <p className="text-sm text-slate-500">Playbook templates available in the marketplace</p>
+                        <p className="text-sm text-foreground/60">Playbook templates available in the marketplace</p>
                     </div>
 
                     {/* Scope Filter */}
-                    <div className="px-6 py-3 border-b border-slate-200 flex gap-2">
-                        <span className="text-sm text-slate-500 mr-2">Filter:</span>
+                    <div className="px-6 py-3 border-b border-border flex gap-2">
+                        <span className="text-sm text-foreground/60 mr-2">Filter:</span>
                         {(['all', 'system', 'org'] as const).map((f) => (
                             <button
                                 key={f}
                                 onClick={() => setAutomationsFilter(f)}
                                 className={`px-3 py-1 text-xs rounded-full transition-colors ${automationsFilter === f
                                     ? 'bg-slate-800 text-white'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    : 'bg-slate-100 text-foreground/70 hover:bg-slate-200'
                                     }`}
                             >
                                 {f === 'all' ? 'All' : f === 'system' ? '🌐 System' : '🏢 Org'}
@@ -594,13 +594,13 @@ export default function AdminPage() {
                         ))}
                     </div>
                     <table className="w-full">
-                        <thead className="bg-slate-50 border-b border-slate-200">
+                        <thead className="bg-slate-50 border-b border-border">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Playbook</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Trigger</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Actions</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Scope</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Playbook</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Trigger</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Actions</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Scope</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Status</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -625,8 +625,8 @@ export default function AdminPage() {
                                                 <div className="flex items-center gap-3">
                                                     <span className="text-2xl">{emoji}</span>
                                                     <div>
-                                                        <p className="font-medium text-slate-800">{rule.name}</p>
-                                                        <p className="text-sm text-slate-500 max-w-xs truncate">{rule.description}</p>
+                                                        <p className="font-medium text-foreground">{rule.name}</p>
+                                                        <p className="text-sm text-foreground/60 max-w-xs truncate">{rule.description}</p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -654,7 +654,7 @@ export default function AdminPage() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div>
-                                                    <span className={`text-sm ${rule.is_system_template ? 'text-purple-600 font-medium' : 'text-slate-600'}`}>
+                                                    <span className={`text-sm ${rule.is_system_template ? 'text-purple-600 font-medium' : 'text-foreground/70'}`}>
                                                         {rule.is_system_template ? '🌐 System' : '🏢 Org'}
                                                     </span>
                                                     {!rule.is_system_template && rule.organization_id && (
@@ -665,7 +665,7 @@ export default function AdminPage() {
                                             <td className="px-6 py-4">
                                                 <span className={`px-2 py-1 rounded text-xs font-medium ${rule.is_active
                                                     ? 'bg-green-100 text-green-700'
-                                                    : 'bg-slate-100 text-slate-500'
+                                                    : 'bg-slate-100 text-foreground/60'
                                                     }`}>
                                                     {rule.is_active ? 'Active' : 'Inactive'}
                                                 </span>
@@ -676,7 +676,7 @@ export default function AdminPage() {
                         </tbody>
                     </table>
                     {automations.length === 0 && (
-                        <div className="text-center py-12 text-slate-500">
+                        <div className="text-center py-12 text-foreground/60">
                             No automation templates found.
                         </div>
                     )}
@@ -809,11 +809,11 @@ function BackupsTab() {
 
     return (
         <>
-            <section className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+            <section className="bg-card rounded-xl border border-border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border bg-slate-50 flex justify-between items-center">
                     <div>
                         <h2 className="text-lg font-semibold text-slate-700">🛡️ Database Backups</h2>
-                        <p className="text-sm text-slate-500">Create and restore database backups (Super Admin only)</p>
+                        <p className="text-sm text-foreground/60">Create and restore database backups (Super Admin only)</p>
                     </div>
                     <button
                         onClick={handleCreateBackup}
@@ -831,24 +831,24 @@ function BackupsTab() {
                 )}
 
                 <table className="w-full">
-                    <thead className="bg-slate-50 border-b border-slate-200">
+                    <thead className="bg-slate-50 border-b border-border">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Filename</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Size</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Created</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase">Age</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">Actions</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Filename</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Size</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Created</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Age</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-foreground/60 uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {backups.map((backup) => (
                             <tr key={backup.filename} className="hover:bg-slate-50">
-                                <td className="px-6 py-4 font-mono text-sm text-slate-800">{backup.filename}</td>
-                                <td className="px-6 py-4 text-sm text-slate-600">{backup.size_human}</td>
-                                <td className="px-6 py-4 text-sm text-slate-600">
+                                <td className="px-6 py-4 font-mono text-sm text-foreground">{backup.filename}</td>
+                                <td className="px-6 py-4 text-sm text-foreground/70">{backup.size_human}</td>
+                                <td className="px-6 py-4 text-sm text-foreground/70">
                                     {new Date(backup.created_at).toLocaleString()}
                                 </td>
-                                <td className="px-6 py-4 text-sm text-slate-600">
+                                <td className="px-6 py-4 text-sm text-foreground/70">
                                     {backup.age_hours < 1 ? 'Just now' : `${Math.round(backup.age_hours)}h ago`}
                                 </td>
                                 <td className="px-6 py-4 text-right">
@@ -880,7 +880,7 @@ function BackupsTab() {
                     </tbody>
                 </table>
                 {backups.length === 0 && (
-                    <div className="text-center py-12 text-slate-500">
+                    <div className="text-center py-12 text-foreground/60">
                         No backups yet. Create your first backup.
                     </div>
                 )}
@@ -889,13 +889,13 @@ function BackupsTab() {
             {/* Nuclear Confirmation Modal */}
             {restoreModal.open && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl p-6 max-w-md mx-4 shadow-2xl">
+                    <div className="bg-card rounded-xl p-6 max-w-md mx-4 shadow-2xl">
                         <div className="text-center">
                             <div className="text-5xl mb-4">⚠️</div>
                             <h3 className="text-xl font-bold text-red-600 mb-2">
                                 PELIGRO CRÍTICO: RESTAURACIÓN DE SISTEMA
                             </h3>
-                            <p className="text-slate-600 mb-4">
+                            <p className="text-foreground/70 mb-4">
                                 Estás a punto de <span className="font-bold text-red-600">sobrescribir la base de datos actual</span> con
                                 la copia <code className="bg-slate-100 px-1 rounded">{restoreModal.filename}</code>.
                             </p>

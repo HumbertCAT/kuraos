@@ -56,7 +56,7 @@ export default async function ChapterPage({ params }: Props) {
             <div className="mb-6">
                 <Link
                     href="/settings/help"
-                    className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors"
+                    className="inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-teal-600 transition-colors"
                 >
                     <ArrowLeft className="w-4 h-4" />
                     Volver a Ayuda
@@ -67,30 +67,30 @@ export default async function ChapterPage({ params }: Props) {
             <div className="flex items-center gap-4 mb-8">
                 <span className="text-4xl">{currentChapter.icon}</span>
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">{currentChapter.title}</h1>
-                    <p className="text-slate-500 text-sm">Guía de referencia rápida</p>
+                    <h1 className="text-2xl font-bold text-foreground">{currentChapter.title}</h1>
+                    <p className="text-foreground/60 text-sm">Guía de referencia rápida</p>
                 </div>
             </div>
 
             {/* Content */}
             <div className="prose prose-slate max-w-none">
-                <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+                <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
                     {/* Render markdown content as HTML-safe text for now */}
                     {/* TODO: Use proper MDX rendering with compile() */}
                     <div className="whitespace-pre-wrap text-slate-700 leading-relaxed">
                         {content.split('\n').map((line, i) => {
                             // Basic markdown rendering
                             if (line.startsWith('# ')) {
-                                return <h1 key={i} className="text-2xl font-bold text-slate-900 mb-4">{line.slice(2)}</h1>;
+                                return <h1 key={i} className="text-2xl font-bold text-foreground mb-4">{line.slice(2)}</h1>;
                             }
                             if (line.startsWith('## ')) {
-                                return <h2 key={i} className="text-xl font-semibold text-slate-800 mt-8 mb-4">{line.slice(3)}</h2>;
+                                return <h2 key={i} className="text-xl font-semibold text-foreground mt-8 mb-4">{line.slice(3)}</h2>;
                             }
                             if (line.startsWith('> ')) {
-                                return <blockquote key={i} className="border-l-4 border-teal-500 pl-4 italic text-slate-600 my-4">{line.slice(2)}</blockquote>;
+                                return <blockquote key={i} className="border-l-4 border-teal-500 pl-4 italic text-foreground/70 my-4">{line.slice(2)}</blockquote>;
                             }
                             if (line.startsWith('---')) {
-                                return <hr key={i} className="my-8 border-slate-200" />;
+                                return <hr key={i} className="my-8 border-border" />;
                             }
                             if (line.startsWith('- ')) {
                                 return <li key={i} className="ml-4 text-slate-700">{line.slice(2)}</li>;
@@ -117,7 +117,7 @@ export default async function ChapterPage({ params }: Props) {
                 {prevChapter ? (
                     <Link
                         href={`/settings/help/${prevChapter.slug}`}
-                        className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-teal-600 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-foreground/70 hover:text-teal-600 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         {prevChapter.icon} {prevChapter.title}
@@ -127,7 +127,7 @@ export default async function ChapterPage({ params }: Props) {
                 {nextChapter && (
                     <Link
                         href={`/settings/help/${nextChapter.slug}`}
-                        className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-teal-600 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-foreground/70 hover:text-teal-600 transition-colors"
                     >
                         {nextChapter.icon} {nextChapter.title}
                         <ArrowRight className="w-4 h-4" />

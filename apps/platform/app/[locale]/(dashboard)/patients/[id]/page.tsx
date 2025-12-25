@@ -225,14 +225,14 @@ export default function PatientDetailPage() {
   }
 
   if (loading) {
-    return <div className="text-center py-12 text-slate-500">{tPatients('loading')}</div>;
+    return <div className="text-center py-12 text-foreground/60">{tPatients('loading')}</div>;
   }
 
   if (!patient) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-500 mb-4">{t('notFound')}</p>
-        <Link href="/patients" className="text-slate-800 underline">
+        <p className="text-foreground/60 mb-4">{t('notFound')}</p>
+        <Link href="/patients" className="text-foreground underline">
           {tPatients('backToPatients')}
         </Link>
       </div>
@@ -254,14 +254,14 @@ export default function PatientDetailPage() {
       <div className="mb-6">
         {/* Top row: Back + Nav */}
         <div className="flex items-center gap-4 mb-4">
-          <Link href="/patients" className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
+          <Link href="/patients" className="text-sm text-foreground/60 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
             ← {tPatients('backToPatients')}
           </Link>
           <div className="flex items-center gap-1 ml-2">
             {prevPatientId ? (
               <Link
                 href={`/patients/${prevPatientId}`}
-                className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-2 text-foreground/60 hover:text-foreground hover:bg-slate-100 rounded-lg transition-colors"
                 title="Previous patient"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -278,7 +278,7 @@ export default function PatientDetailPage() {
             {nextPatientId ? (
               <Link
                 href={`/patients/${nextPatientId}`}
-                className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-2 text-foreground/60 hover:text-foreground hover:bg-slate-100 rounded-lg transition-colors"
                 title="Next patient"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -310,7 +310,7 @@ export default function PatientDetailPage() {
                 {patient.first_name?.[0]}{patient.last_name?.[0]}
               </div>
             )}
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+            <h1 className="text-2xl font-bold text-foreground dark:text-zinc-100">
               {patient.first_name} {patient.last_name}
             </h1>
           </div>
@@ -327,7 +327,7 @@ export default function PatientDetailPage() {
           {patient.email && (
             <a
               href={`mailto:${patient.email}`}
-              className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-sm hover:bg-slate-200 transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-lg text-sm hover:bg-zinc-700 transition-colors"
             >
               📧 {tCommon('email')}
             </a>
@@ -336,7 +336,7 @@ export default function PatientDetailPage() {
             <>
               <a
                 href={`tel:${patient.phone}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 text-blue-400 rounded-lg text-sm font-medium hover:bg-blue-500/20 transition-colors"
               >
                 📞 {tCommon('call')}
               </a>
@@ -344,7 +344,7 @@ export default function PatientDetailPage() {
                 href={`https://wa.me/${patient.phone.replace(/[^0-9]/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-sm font-medium hover:bg-emerald-500/20 transition-colors"
               >
                 💬 {tCommon('whatsapp')}
               </a>
@@ -352,7 +352,7 @@ export default function PatientDetailPage() {
           )}
           <button
             onClick={() => setShowSendFormModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 text-violet-700 rounded-lg text-sm font-medium hover:bg-violet-100 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ai/10 text-ai rounded-lg text-sm font-medium hover:bg-ai/20 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
@@ -389,7 +389,7 @@ export default function PatientDetailPage() {
             onClick={() => setActiveTab('journal')}
             className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer ${activeTab === 'journal'
               ? 'border-brand text-brand'
-              : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300'
+              : 'border-transparent text-foreground/60 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300'
               }`}
           >
             📝 {tCommon('clinicalJournal')}
@@ -398,7 +398,7 @@ export default function PatientDetailPage() {
             onClick={() => setActiveTab('monitoring')}
             className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer flex items-center gap-2 ${activeTab === 'monitoring'
               ? 'border-brand text-brand'
-              : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300'
+              : 'border-transparent text-foreground/60 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300'
               }`}
           >
             📊 {tCommon('monitoring')}
@@ -415,13 +415,13 @@ export default function PatientDetailPage() {
             {/* Bookings Section */}
             {patientBookings.length > 0 && (
               <div className="mb-6">
-                <h2 className="text-lg font-semibold text-slate-800 mb-4">{tCommon('bookings')} ({patientBookings.length})</h2>
+                <h2 className="text-lg font-semibold text-foreground mb-4">{tCommon('bookings')} ({patientBookings.length})</h2>
                 <div className="grid gap-3">
                   {patientBookings.map(booking => (
-                    <div key={booking.id} className="bg-white border rounded-lg p-4 flex justify-between items-center">
+                    <div key={booking.id} className="bg-card border rounded-lg p-4 flex justify-between items-center">
                       <div>
-                        <p className="font-medium text-slate-800">{booking.service_title}</p>
-                        <p className="text-sm text-slate-500">
+                        <p className="font-medium text-foreground">{booking.service_title}</p>
+                        <p className="text-sm text-foreground/60">
                           {new Date(booking.start_time).toLocaleDateString(locale, {
                             weekday: 'short',
                             year: 'numeric',
@@ -437,11 +437,11 @@ export default function PatientDetailPage() {
                           ? 'bg-green-100 text-green-700'
                           : booking.status === 'PENDING'
                             ? 'bg-amber-100 text-amber-700'
-                            : 'bg-slate-100 text-slate-600'
+                            : 'bg-zinc-800 text-zinc-300'
                           }`}>
                           {booking.status}
                         </span>
-                        <p className="text-sm text-slate-500 mt-1">{booking.amount_paid} {booking.currency}</p>
+                        <p className="text-sm text-foreground/60 mt-1">{booking.amount_paid} {booking.currency}</p>
                       </div>
                     </div>
                   ))}
@@ -455,11 +455,11 @@ export default function PatientDetailPage() {
             </SilentErrorBoundary>
 
             {/* Timeline */}
-            <h2 className="text-lg font-semibold text-slate-800 mb-4">{tJournal('timeline')}</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">{tJournal('timeline')}</h2>
 
             {entries.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-lg border border-slate-200">
-                <p className="text-slate-500">{tJournal('noEntries')}</p>
+              <div className="text-center py-12 bg-card rounded-lg border border-border">
+                <p className="text-foreground/60">{tJournal('noEntries')}</p>
               </div>
             ) : (
               <div className="space-y-4">

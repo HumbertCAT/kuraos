@@ -13,7 +13,7 @@ interface ElevatedCardProps {
  * ElevatedCard - Premium card component with subtle shadow and hover effects.
  * Use this for all list items across the app (patients, forms, templates, etc.)
  * 
- * Specs: bg-white, rounded-xl, border-slate-200, shadow-sm, hover:shadow-md
+ * Specs: bg-card, rounded-xl, border-border, shadow-sm, hover:shadow-md
  */
 export default function ElevatedCard({
     children,
@@ -22,9 +22,9 @@ export default function ElevatedCard({
     href
 }: ElevatedCardProps) {
     const baseClasses = `
-    bg-white 
+    bg-card 
     rounded-xl 
-    border border-slate-200 
+    border border-border 
     shadow-sm 
     hover:shadow-md 
     hover:border-slate-300

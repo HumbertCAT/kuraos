@@ -174,7 +174,7 @@ export default function AutomationsPage() {
         const actions = rule.actions || [];
 
         return (
-            <div className="mt-3 pt-3 border-t border-slate-100 space-y-2">
+            <div className="mt-3 pt-3 border-t border-border space-y-2">
                 {/* Conditions */}
                 {conditions.length > 0 && (
                     <div className="flex items-start gap-2">
@@ -213,7 +213,7 @@ export default function AutomationsPage() {
             <div className="mb-8">
                 <button
                     onClick={() => router.push(`/${locale}/settings`)}
-                    className="flex items-center gap-2 text-slate-500 hover:text-slate-700 mb-4 transition-colors"
+                    className="flex items-center gap-2 text-foreground/60 hover:text-slate-700 mb-4 transition-colors"
                 >
                     <ChevronLeft className="w-4 h-4" />
                     Volver a Configuración
@@ -227,7 +227,7 @@ export default function AutomationsPage() {
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                             Equipo de Agentes Clínicos
                         </h1>
-                        <p className="text-slate-500">Protocolos inteligentes de automatización clínica</p>
+                        <p className="text-foreground/60">Protocolos inteligentes de automatización clínica</p>
                     </div>
                 </div>
             </div>
@@ -253,8 +253,8 @@ export default function AutomationsPage() {
                 <button
                     onClick={() => setActiveTab('my')}
                     className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${activeTab === 'my'
-                        ? 'bg-white text-slate-800 shadow-sm'
-                        : 'text-slate-500 hover:text-slate-700'
+                        ? 'bg-card text-foreground shadow-sm'
+                        : 'text-foreground/60 hover:text-slate-700'
                         }`}
                 >
                     <Sparkles className="w-4 h-4" />
@@ -268,8 +268,8 @@ export default function AutomationsPage() {
                 <button
                     onClick={() => setActiveTab('marketplace')}
                     className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${activeTab === 'marketplace'
-                        ? 'bg-white text-slate-800 shadow-sm'
-                        : 'text-slate-500 hover:text-slate-700'
+                        ? 'bg-card text-foreground shadow-sm'
+                        : 'text-foreground/60 hover:text-slate-700'
                         }`}
                 >
                     <Download className="w-4 h-4" />
@@ -280,18 +280,18 @@ export default function AutomationsPage() {
             {loading ? (
                 <div className="text-center py-16">
                     <div className="animate-spin text-4xl mb-4">⏳</div>
-                    <p className="text-slate-500">Cargando agentes...</p>
+                    <p className="text-foreground/60">Cargando agentes...</p>
                 </div>
             ) : activeTab === 'my' ? (
                 /* My Automations Tab */
                 <div className="space-y-4">
                     {myRules.length === 0 ? (
-                        <div className="text-center py-16 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                        <div className="text-center py-16 bg-slate-50 rounded-2xl border-2 border-dashed border-border">
                             <Bot className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-slate-600 mb-2">
+                            <h3 className="text-lg font-semibold text-foreground/70 mb-2">
                                 No tienes agentes activos
                             </h3>
-                            <p className="text-slate-500 mb-6">
+                            <p className="text-foreground/60 mb-6">
                                 Activa protocolos desde el Catálogo para automatizar tu práctica
                             </p>
                             <button
@@ -305,9 +305,9 @@ export default function AutomationsPage() {
                         myRules.map(rule => (
                             <div
                                 key={rule.id}
-                                className={`p-5 bg-white rounded-xl border-2 transition-all ${rule.is_active
+                                className={`p-5 bg-card rounded-xl border-2 transition-all ${rule.is_active
                                     ? 'border-emerald-200 shadow-sm'
-                                    : 'border-slate-200'
+                                    : 'border-border'
                                     }`}
                             >
                                 <div className="flex items-start gap-4">
@@ -321,8 +321,8 @@ export default function AutomationsPage() {
 
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-slate-800 text-lg">{rule.name}</h3>
-                                        <p className="text-slate-500 text-sm mt-1">{rule.description}</p>
+                                        <h3 className="font-semibold text-foreground text-lg">{rule.name}</h3>
+                                        <p className="text-foreground/60 text-sm mt-1">{rule.description}</p>
                                         <p className="text-xs text-slate-400 mt-2">
                                             Habilidad: {triggerLabels[rule.trigger_event] || rule.trigger_event}
                                         </p>
@@ -347,7 +347,7 @@ export default function AutomationsPage() {
                                                 }`}
                                         >
                                             <span
-                                                className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-sm transition-transform ${rule.is_active ? 'translate-x-7' : 'translate-x-1'
+                                                className={`absolute top-1 w-6 h-6 bg-card rounded-full shadow-sm transition-transform ${rule.is_active ? 'translate-x-7' : 'translate-x-1'
                                                     }`}
                                             />
                                         </button>
@@ -373,7 +373,7 @@ export default function AutomationsPage() {
                         return (
                             <div
                                 key={template.id}
-                                className="p-5 bg-white rounded-xl border-2 border-slate-200 hover:border-violet-200 hover:shadow-md transition-all"
+                                className="p-5 bg-card rounded-xl border-2 border-border hover:border-violet-200 hover:shadow-md transition-all"
                             >
                                 {/* Icon */}
                                 <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-violet-200">
@@ -381,8 +381,8 @@ export default function AutomationsPage() {
                                 </div>
 
                                 {/* Content */}
-                                <h3 className="font-semibold text-slate-800 text-lg mb-2">{template.name}</h3>
-                                <p className="text-slate-500 text-sm mb-4 line-clamp-2">{template.description}</p>
+                                <h3 className="font-semibold text-foreground text-lg mb-2">{template.name}</h3>
+                                <p className="text-foreground/60 text-sm mb-4 line-clamp-2">{template.description}</p>
 
                                 {/* Trigger badge */}
                                 <div className="text-xs text-slate-400 mb-2">
@@ -428,15 +428,15 @@ export default function AutomationsPage() {
                         <div className="w-14 h-14 rounded-xl bg-slate-200 flex items-center justify-center text-slate-400 mb-4">
                             <MessageSquarePlus className="w-7 h-7" />
                         </div>
-                        <h3 className="font-semibold text-slate-600 text-lg mb-2">
+                        <h3 className="font-semibold text-foreground/70 text-lg mb-2">
                             ¿No encuentras lo que buscas?
                         </h3>
-                        <p className="text-slate-500 text-sm mb-4">
+                        <p className="text-foreground/60 text-sm mb-4">
                             Cuéntanos qué automatización necesitas y la crearemos para ti.
                         </p>
                         <button
                             onClick={() => window.open('mailto:support@therapistos.com?subject=Solicitud de Agente', '_blank')}
-                            className="w-full py-3 bg-white border-2 border-slate-300 text-slate-600 rounded-xl font-semibold hover:border-violet-400 hover:text-violet-600 transition-all"
+                            className="w-full py-3 bg-card border-2 border-slate-300 text-foreground/70 rounded-xl font-semibold hover:border-violet-400 hover:text-violet-600 transition-all"
                         >
                         </button>
                     </div>
@@ -446,21 +446,21 @@ export default function AutomationsPage() {
             {/* Agent Configuration Modal */}
             {editingAgent && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div className="bg-card rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
                         <div className="bg-gradient-to-r from-violet-50 to-fuchsia-50 px-6 py-4 border-b sticky top-0">
                             <div className="flex items-center justify-between">
-                                <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+                                <h3 className="font-semibold text-foreground flex items-center gap-2">
                                     <Bot className="w-5 h-5 text-violet-600" />
                                     Personalidad del Agente
                                 </h3>
                                 <button
                                     onClick={() => setEditingAgent(null)}
-                                    className="p-1 hover:bg-white/50 rounded"
+                                    className="p-1 hover:bg-card/50 rounded"
                                 >
                                     ✕
                                 </button>
                             </div>
-                            <p className="text-sm text-slate-600 mt-1">{editingAgent.name}</p>
+                            <p className="text-sm text-foreground/70 mt-1">{editingAgent.name}</p>
                         </div>
 
                         <div className="p-6 space-y-6">
@@ -478,7 +478,7 @@ export default function AutomationsPage() {
                                             tone: e.target.value as 'CLINICAL' | 'EMPATHETIC' | 'DIRECT'
                                         }
                                     })}
-                                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                                 >
                                     <option value="EMPATHETIC">🤗 Empático - Cálido y comprensivo</option>
                                     <option value="CLINICAL">🩺 Clínico - Profesional y preciso</option>
@@ -493,7 +493,7 @@ export default function AutomationsPage() {
                                         <label className="block text-sm font-medium text-slate-700 mb-1">
                                             Requiere Aprobación Humana
                                         </label>
-                                        <p className="text-xs text-slate-500">
+                                        <p className="text-xs text-foreground/60">
                                             Si está activo, el agente preparará el borrador pero esperará tu confirmación antes de enviar.
                                         </p>
                                     </div>
@@ -511,7 +511,7 @@ export default function AutomationsPage() {
                                             }`}
                                     >
                                         <span
-                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${editingAgent.agent_config?.mode === 'DRAFT_ONLY'
+                                            className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${editingAgent.agent_config?.mode === 'DRAFT_ONLY'
                                                 ? 'translate-x-6'
                                                 : 'translate-x-1'
                                                 }`}
@@ -536,7 +536,7 @@ export default function AutomationsPage() {
                                         }
                                     })}
                                     placeholder="Equipo Kura"
-                                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                                 />
                             </div>
                         </div>
@@ -544,7 +544,7 @@ export default function AutomationsPage() {
                         <div className="border-t px-6 py-4 flex justify-end gap-3 bg-slate-50">
                             <button
                                 onClick={() => setEditingAgent(null)}
-                                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition-colors"
+                                className="px-4 py-2 text-foreground/70 hover:bg-slate-100 rounded-lg font-medium transition-colors"
                             >
                                 Cancelar
                             </button>

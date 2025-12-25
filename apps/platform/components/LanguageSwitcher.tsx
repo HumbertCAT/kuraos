@@ -26,7 +26,7 @@ export default function LanguageSwitcher() {
       <select
         value={locale}
         onChange={(e) => switchLocale(e.target.value)}
-        className="appearance-none bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 pr-8 text-sm text-slate-700 cursor-pointer hover:bg-slate-200 transition-colors"
+        className="appearance-none bg-slate-100 border border-border rounded-lg px-3 py-1.5 pr-8 text-sm text-slate-700 cursor-pointer hover:bg-slate-200 transition-colors"
       >
         {LANGUAGES.map(lang => (
           <option key={lang.code} value={lang.code}>
