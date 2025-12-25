@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.3.1] - 2024-12-25 🎄
 
+### Changed - Semantic Token Migration (100% Complete)
+- **Batch Refactored ~200 violations** using static code analysis:
+  - `text-slate-400/zinc-400` → `text-muted-foreground`
+  - `text-slate-700/gray-700` → `text-foreground`
+  - `bg-slate-100/200` → `bg-muted`
+  - `hover:bg-slate-*` → `hover:bg-accent`
+  - `border-slate-300` → `border-border`
+  - `bg-slate-800 text-white` → `bg-primary text-primary-foreground`
+- **Pages Migrated**: dashboard, patients, services, calendar, forms, leads, admin, automations, settings
+- **Zero Violations**: Codebase now 100% free of hardcoded zinc/slate/gray colors
+
+### Removed
+- **`/ui-demo` Page**: Obsolete color demo page deleted
+
+---
+
+## [1.0.3] - 2024-12-25 🎄
+
 ### Added - Semantic Theme Engine
 - **Theme Engine**: Installed `next-themes` for dark/light mode support
   - `ThemeProvider` wrapping the entire application
@@ -26,16 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Development Principles**: Updated Section 11 with "Abstraction over Implementation" theming protocol
 - **Forbidden Patterns**: Hardcoded `bg-zinc-*`, `text-slate-*`, `border-gray-*` explicitly banned
 
-### Changed - Semantic Token Migration (Static Analysis)
-- **Batch Refactored ~200 violations** using grep + sed:
-  - `text-slate-400/zinc-400` → `text-muted-foreground`
-  - `text-slate-700` → `text-foreground`
-  - `bg-slate-100/200` → `bg-muted`
-  - `hover:bg-slate-*` → `hover:bg-accent`
-  - `border-slate-300` → `border-border`
-  - `bg-slate-800 text-white` → `bg-primary text-primary-foreground`
-- **Pages Migrated**: dashboard, patients, services, calendar, forms, leads, admin, automations, settings
-
 ### Added - Trinity Navigation
 - **`TrinityNav` Sidebar**: New fixed-width navigation organized by pillars
   - 🔥 **ENGAGE**: CRM, Formularios
@@ -54,11 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Removed Bright Gradients**: All cards now use semantic surfaces with colored icons
 - **Typography**: `font-mono` for all metrics, timestamps, and stats
 
-### Removed
-- **`/ui-demo` Page**: Obsolete color demo page deleted
-
 ---
-
 
 ## [1.0.2] - 2024-12-24
 
