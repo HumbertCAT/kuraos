@@ -254,7 +254,7 @@ export default function PatientDetailPage() {
       <div className="mb-6">
         {/* Top row: Back + Nav */}
         <div className="flex items-center gap-4 mb-4">
-          <Link href="/patients" className="text-sm text-slate-500 hover:text-slate-700">
+          <Link href="/patients" className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
             ← {tPatients('backToPatients')}
           </Link>
           <div className="flex items-center gap-1 ml-2">
@@ -303,20 +303,20 @@ export default function PatientDetailPage() {
               <img
                 src={patient.profile_image_url}
                 alt={`${patient.first_name} ${patient.last_name}`}
-                className="w-[72px] h-[72px] rounded-full object-cover border-2 border-slate-200"
+                className="w-[72px] h-[72px] rounded-full object-cover border-2 border-border-subtle"
               />
             ) : (
-              <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-500 flex items-center justify-center text-white text-2xl font-bold">
+              <div className="w-[72px] h-[72px] rounded-full bg-brand/20 flex items-center justify-center text-brand text-2xl font-bold">
                 {patient.first_name?.[0]}{patient.last_name?.[0]}
               </div>
             )}
-            <h1 className="text-2xl font-bold text-slate-800">
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
               {patient.first_name} {patient.last_name}
             </h1>
           </div>
           <Link
             href={`/patients/${patient.id}/edit`}
-            className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-700"
+            className="px-4 py-2 border border-border-subtle rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
           >
             {t('edit')}
           </Link>
@@ -376,18 +376,20 @@ export default function PatientDetailPage() {
       />
 
       {/* Journey Status Card (v0.9.1 - Investor Demo) */}
-      {patient.journey_status && Object.keys(patient.journey_status).length > 0 && (
-        <JourneyStatusCard journeyStatus={patient.journey_status} />
-      )}
+      {
+        patient.journey_status && Object.keys(patient.journey_status).length > 0 && (
+          <JourneyStatusCard journeyStatus={patient.journey_status} />
+        )
+      }
 
       {/* Tab Navigation */}
-      <div className="mb-6 border-b border-slate-200">
+      <div className="mb-6 border-b border-border-subtle">
         <nav className="flex gap-4" aria-label="Patient tabs">
           <button
             onClick={() => setActiveTab('journal')}
             className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer ${activeTab === 'journal'
-              ? 'border-purple-500 text-purple-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+              ? 'border-brand text-brand'
+              : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300'
               }`}
           >
             📝 {tCommon('clinicalJournal')}
@@ -395,8 +397,8 @@ export default function PatientDetailPage() {
           <button
             onClick={() => setActiveTab('monitoring')}
             className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer flex items-center gap-2 ${activeTab === 'monitoring'
-              ? 'border-purple-500 text-purple-600'
-              : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+              ? 'border-brand text-brand'
+              : 'border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-300'
               }`}
           >
             📊 {tCommon('monitoring')}
@@ -405,89 +407,91 @@ export default function PatientDetailPage() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'monitoring' ? (
-        <MonitoringTab patientId={patientId} />
-      ) : (
-        <>
-          {/* Bookings Section */}
-          {patientBookings.length > 0 && (
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4">{tCommon('bookings')} ({patientBookings.length})</h2>
-              <div className="grid gap-3">
-                {patientBookings.map(booking => (
-                  <div key={booking.id} className="bg-white border rounded-lg p-4 flex justify-between items-center">
-                    <div>
-                      <p className="font-medium text-slate-800">{booking.service_title}</p>
-                      <p className="text-sm text-slate-500">
-                        {new Date(booking.start_time).toLocaleDateString(locale, {
-                          weekday: 'short',
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
+      {
+        activeTab === 'monitoring' ? (
+          <MonitoringTab patientId={patientId} />
+        ) : (
+          <>
+            {/* Bookings Section */}
+            {patientBookings.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-slate-800 mb-4">{tCommon('bookings')} ({patientBookings.length})</h2>
+                <div className="grid gap-3">
+                  {patientBookings.map(booking => (
+                    <div key={booking.id} className="bg-white border rounded-lg p-4 flex justify-between items-center">
+                      <div>
+                        <p className="font-medium text-slate-800">{booking.service_title}</p>
+                        <p className="text-sm text-slate-500">
+                          {new Date(booking.start_time).toLocaleDateString(locale, {
+                            weekday: 'short',
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <span className={`px-2 py-1 text-xs rounded-full ${booking.status === 'CONFIRMED'
+                          ? 'bg-green-100 text-green-700'
+                          : booking.status === 'PENDING'
+                            ? 'bg-amber-100 text-amber-700'
+                            : 'bg-slate-100 text-slate-600'
+                          }`}>
+                          {booking.status}
+                        </span>
+                        <p className="text-sm text-slate-500 mt-1">{booking.amount_paid} {booking.currency}</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className={`px-2 py-1 text-xs rounded-full ${booking.status === 'CONFIRMED'
-                        ? 'bg-green-100 text-green-700'
-                        : booking.status === 'PENDING'
-                          ? 'bg-amber-100 text-amber-700'
-                          : 'bg-slate-100 text-slate-600'
-                        }`}>
-                        {booking.status}
-                      </span>
-                      <p className="text-sm text-slate-500 mt-1">{booking.amount_paid} {booking.currency}</p>
-                    </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Composer */}
+            <SilentErrorBoundary>
+              <Composer patientId={patientId} onEntryCreated={handleEntryCreated} />
+            </SilentErrorBoundary>
+
+            {/* Timeline */}
+            <h2 className="text-lg font-semibold text-slate-800 mb-4">{tJournal('timeline')}</h2>
+
+            {entries.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg border border-slate-200">
+                <p className="text-slate-500">{tJournal('noEntries')}</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {entries.map((entry) => (
+                  <TimelineEntry
+                    key={entry.id}
+                    entry={entry}
+                    onDelete={handleDeleteEntry}
+                    onUpdateContent={handleUpdateContent}
+                    onAnalyze={handleAnalyzeEntry}
+                    onSaveAnalysis={handleSaveAnalysis}
+                    onUpdateAnalysis={handleUpdateAnalysis}
+                    onDeleteAnalysis={handleDeleteAnalysis}
+                  />
                 ))}
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Composer */}
-          <SilentErrorBoundary>
-            <Composer patientId={patientId} onEntryCreated={handleEntryCreated} />
-          </SilentErrorBoundary>
-
-          {/* Timeline */}
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">{tJournal('timeline')}</h2>
-
-          {entries.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-slate-200">
-              <p className="text-slate-500">{tJournal('noEntries')}</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {entries.map((entry) => (
-                <TimelineEntry
-                  key={entry.id}
-                  entry={entry}
-                  onDelete={handleDeleteEntry}
-                  onUpdateContent={handleUpdateContent}
-                  onAnalyze={handleAnalyzeEntry}
-                  onSaveAnalysis={handleSaveAnalysis}
-                  onUpdateAnalysis={handleUpdateAnalysis}
-                  onDeleteAnalysis={handleDeleteAnalysis}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Send Form Modal */}
-          <SendFormModal
-            patientId={patientId}
-            patientName={`${patient.first_name} ${patient.last_name}`}
-            patientEmail={patient.email || undefined}
-            patientPhone={patient.phone || undefined}
-            isOpen={showSendFormModal}
-            onClose={() => setShowSendFormModal(false)}
-            locale={locale}
-          />
-        </>
-      )}
-    </div>
+            {/* Send Form Modal */}
+            <SendFormModal
+              patientId={patientId}
+              patientName={`${patient.first_name} ${patient.last_name}`}
+              patientEmail={patient.email || undefined}
+              patientPhone={patient.phone || undefined}
+              isOpen={showSendFormModal}
+              onClose={() => setShowSendFormModal(false)}
+              locale={locale}
+            />
+          </>
+        )
+      }
+    </div >
   );
 }
 

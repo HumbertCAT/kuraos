@@ -13,6 +13,7 @@ import {
     Briefcase,
     Settings,
     LogOut,
+    Sparkles,
     Search,
     Flame,
     Stethoscope,
@@ -131,8 +132,19 @@ export function TrinityNav() {
                 ))}
             </nav>
 
-            {/* Footer: Settings + User */}
+            {/* Footer: Agents + Settings + User */}
             <div className="p-3 border-t border-border-subtle space-y-2">
+                {/* Agents */}
+                <Link
+                    href="/settings/automations"
+                    className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all ${isActive('/automations')
+                        ? 'bg-ai/10 text-ai dark:bg-ai/20'
+                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                        }`}
+                >
+                    <Sparkles className="w-4 h-4" />
+                    Agentes
+                </Link>
                 {/* Settings */}
                 <Link
                     href="/settings"
