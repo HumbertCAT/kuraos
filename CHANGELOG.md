@@ -5,6 +5,30 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5.3] - 2025-12-26
+
+### Added - Fine Tuning & Mechanics
+- **Typography Recalibration**: Type Scale utility classes (`type-h1`, `type-h2`, `type-body`, `type-ui`)
+  - Playfair Display restricted to H1/H2 (Editorial)
+  - Space Grotesk for H3+ (Technical)
+  - Inter with relaxed line-height (Body)
+- **TrinityNav Collapsible**: Left sidebar collapses w-64 → w-16 with icons-only mode
+- **AletheiaObservatory Collapsible**: Right sidebar collapses to vertical "AletheIA" tab (w-12)
+- **Smooth Transitions**: `transition-all duration-300 ease-in-out` on both sidebars
+
+### Changed - TrinityNav Redesign
+- **Nav Groups**: Dashboard (solo), Engage (Calendar/Services/CRM), Practice (Clientes/Bookings/Forms), Nurture (Campaigns)
+- **Collapsible Sections**: Click group header to collapse/expand, ChevronDown rotates -90°
+- **Visual Polish**: Subtle colored backgrounds per section (orange/teal/emerald), removed separators
+- **User Profile**: Links to Settings (removed separate Settings link)
+- **Controls Row**: Theme toggle + Logout inline
+
+### Fixed
+- Cleaner search input design (removed kbd border)
+- `User` icon for Clientes (vs `Users` for CRM)
+
+---
+
 ## [1.0.5.2] - 2025-12-26
 
 ### Added - Theme Engine Dual Mode
