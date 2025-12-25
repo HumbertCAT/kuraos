@@ -1,18 +1,41 @@
 'use client';
 
-import { useEffect } from 'react';
-import { BrainCircuit, AlertTriangle, RefreshCw, Bot, Radio, ChevronRight, Activity } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { BrainCircuit, AlertTriangle, RefreshCw, Bot, Radio, ChevronRight, Activity, X, Edit, Send, Clock, Sparkles } from 'lucide-react';
 import { CyberButton } from './ui/CyberButton';
 import { usePatientStore, GlobalAlert } from '@/stores/patient-store';
 import { Link } from '@/i18n/navigation';
+import { api } from '@/lib/api';
+import BriefingPlayer from './BriefingPlayer';
 
 /**
  * AletheiaObservatory - Right Sidebar HUD Component
  * 
  * Two modes:
  * - Patient Mode: Shows individual patient insights (when activePatientId exists)
- * - Global Mode: Shows clinic-wide alerts and pending actions (default on dashboard)
+ * - Global Mode: Shows clinic-wide alerts, briefing, and pending actions (default on dashboard)
  */
+
+interface PendingAction {
+    id: string;
+    rule_id: string;
+    rule_name: string;
+    action_type: string;
+    recipient_id: string;
+    recipient_type: string;
+    recipient_name: string;
+    recipient_email: string | null;
+    draft_content: {
+        subject?: string;
+        body?: string;
+    };
+    ai_generated_content: {
+        subject?: string;
+        body?: string;
+    } | null;
+    status: string;
+    created_at: string;
+}
 
 export default function AletheiaObservatory() {
     const {
@@ -29,12 +52,56 @@ export default function AletheiaObservatory() {
         fetchGlobalInsights,
     } = usePatientStore();
 
-    // Fetch global insights on mount when no patient is selected
+    // Pending Actions state (for Global Mode)
+    const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
+    const [loadingActions, setLoadingActions] = useState(true);
+    const [processing, setProcessing] = useState<string | null>(null);
+    const [selectedAction, setSelectedAction] = useState<PendingAction | null>(null);
+
+    // Fetch global insights and pending actions on mount when no patient is selected
     useEffect(() => {
         if (!activePatientId) {
             fetchGlobalInsights();
+            loadPendingActions();
         }
     }, [activePatientId, fetchGlobalInsights]);
+
+    async function loadPendingActions() {
+        try {
+            const data = await api.pendingActions.list();
+            setPendingActions(data.actions || []);
+        } catch (err) {
+            console.error('Failed to load pending actions:', err);
+        } finally {
+            setLoadingActions(false);
+        }
+    }
+
+    async function handleApprove(actionId: string) {
+        setProcessing(actionId);
+        try {
+            await api.pendingActions.approve(actionId);
+            setPendingActions(pendingActions.filter(a => a.id !== actionId));
+            setSelectedAction(null);
+        } catch (err) {
+            console.error('Failed to approve action:', err);
+        } finally {
+            setProcessing(null);
+        }
+    }
+
+    async function handleReject(actionId: string) {
+        setProcessing(actionId);
+        try {
+            await api.pendingActions.reject(actionId);
+            setPendingActions(pendingActions.filter(a => a.id !== actionId));
+            setSelectedAction(null);
+        } catch (err) {
+            console.error('Failed to reject action:', err);
+        } finally {
+            setProcessing(null);
+        }
+    }
 
     // Computed values from insights
     const riskScore = insights?.riskScore ?? 0;
@@ -46,132 +113,267 @@ export default function AletheiaObservatory() {
     // ============ GLOBAL MODE (Clinic Radar) ============
     if (!activePatientId) {
         return (
-            <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-4 font-mono">
-                {/* HEADER - Global Mode */}
-                <div className="border-b border-sidebar-border pb-4">
-                    <div className="flex items-center gap-2 text-ai mb-1">
-                        <Radio size={14} className="animate-pulse" />
-                        <span className="text-[10px] font-bold tracking-widest uppercase">Clinic Radar</span>
+            <>
+                <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-4 font-mono overflow-y-auto">
+                    {/* HEADER - Global Mode */}
+                    <div className="border-b border-sidebar-border pb-3">
+                        <div className="flex items-center gap-2 text-ai mb-1">
+                            <Radio size={14} className="animate-pulse" />
+                            <span className="text-[10px] font-bold tracking-widest uppercase">Clinic Radar</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">Global monitoring active</p>
                     </div>
-                    <p className="text-[10px] text-muted-foreground">Global monitoring active</p>
-                </div>
 
-                {/* LOADING GLOBAL */}
-                {isLoadingGlobal && (
-                    <div className="flex-1 flex flex-col gap-4">
+                    {/* BRIEFING PLAYER - First Position */}
+                    <div className="rounded border border-border overflow-hidden">
+                        <BriefingPlayer compact />
+                    </div>
+
+                    {/* LOADING GLOBAL */}
+                    {isLoadingGlobal && (
                         <div className="bg-card rounded p-4 border border-border animate-pulse">
                             <div className="h-3 w-24 bg-muted rounded mb-3" />
                             <div className="h-8 w-full bg-muted rounded" />
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {/* GLOBAL INSIGHTS */}
-                {!isLoadingGlobal && (
-                    <>
-                        {/* RISK MONITOR */}
-                        <div className="bg-card rounded p-4 border border-border">
-                            <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center gap-2 text-risk">
-                                    <AlertTriangle size={12} />
-                                    <span className="text-[10px] font-bold uppercase tracking-wider">
-                                        Risk Monitor
-                                    </span>
+                    {/* GLOBAL INSIGHTS */}
+                    {!isLoadingGlobal && (
+                        <>
+                            {/* RISK MONITOR */}
+                            <div className="bg-card rounded p-3 border border-border">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2 text-risk">
+                                        <AlertTriangle size={12} />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                                            Risk Monitor
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={fetchGlobalInsights}
+                                        className="p-1 hover:bg-muted rounded transition-colors"
+                                        title="Refresh"
+                                    >
+                                        <RefreshCw size={10} className="text-muted-foreground" />
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={fetchGlobalInsights}
-                                    className="p-1 hover:bg-muted rounded transition-colors"
-                                    title="Refresh"
-                                >
-                                    <RefreshCw size={10} className="text-muted-foreground" />
-                                </button>
-                            </div>
 
-                            {globalInsights?.activeAlerts.length === 0 && (
-                                <div className="text-center py-4">
-                                    <Activity className="mx-auto text-success mb-2" size={20} />
-                                    <p className="text-[10px] text-muted-foreground">
-                                        No active risk alerts
-                                    </p>
-                                </div>
-                            )}
-
-                            {globalInsights?.activeAlerts.map((alert: GlobalAlert) => (
-                                <Link
-                                    key={alert.id}
-                                    href={`/patients/${alert.patientId}`}
-                                    className="flex items-center gap-3 p-2 rounded hover:bg-muted transition-colors group"
-                                >
-                                    <div className={`w-2 h-2 rounded-full ${alert.riskLevel === 'HIGH' ? 'bg-risk' : 'bg-warning'
-                                        }`} />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-foreground truncate">
-                                            {alert.patientName}
-                                        </p>
-                                        <p className="text-[9px] text-muted-foreground truncate">
-                                            {alert.reason}
+                                {globalInsights?.activeAlerts.length === 0 && (
+                                    <div className="text-center py-3">
+                                        <Activity className="mx-auto text-success mb-1" size={16} />
+                                        <p className="text-[10px] text-muted-foreground">
+                                            No active risk alerts
                                         </p>
                                     </div>
-                                    <ChevronRight
-                                        size={12}
-                                        className="text-muted-foreground group-hover:text-foreground transition-colors"
-                                    />
-                                </Link>
-                            ))}
-                        </div>
+                                )}
 
-                        {/* AGENT CENTER (Pending Actions) */}
-                        <div className="bg-card rounded p-4 border border-border">
-                            <div className="flex items-center gap-2 text-brand mb-3">
-                                <Bot size={12} />
-                                <span className="text-[10px] font-bold uppercase tracking-wider">
-                                    Agent Center
-                                </span>
+                                {globalInsights?.activeAlerts.map((alert: GlobalAlert) => (
+                                    <Link
+                                        key={alert.id}
+                                        href={`/patients/${alert.patientId}`}
+                                        className="flex items-center gap-2 p-2 rounded hover:bg-muted transition-colors group"
+                                    >
+                                        <div className={`w-2 h-2 rounded-full flex-shrink-0 ${alert.riskLevel === 'HIGH' ? 'bg-risk' : 'bg-warning'
+                                            }`} />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-[11px] text-foreground truncate">
+                                                {alert.patientName}
+                                            </p>
+                                            <p className="text-[9px] text-muted-foreground truncate">
+                                                {alert.reason}
+                                            </p>
+                                        </div>
+                                        <ChevronRight
+                                            size={10}
+                                            className="text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0"
+                                        />
+                                    </Link>
+                                ))}
                             </div>
 
-                            <div className="flex items-center justify-between">
+                            {/* AGENT CENTER - Full PendingActions */}
+                            <div className="bg-card rounded p-3 border border-border">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2 text-brand">
+                                        <Bot size={12} />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                                            Tareas Pendientes
+                                        </span>
+                                    </div>
+                                    {pendingActions.length > 0 && (
+                                        <span className="text-[10px] px-2 py-0.5 bg-ai/10 text-ai rounded-full">
+                                            {pendingActions.length}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {loadingActions && (
+                                    <div className="h-8 bg-muted rounded animate-pulse" />
+                                )}
+
+                                {!loadingActions && pendingActions.length === 0 && (
+                                    <div className="text-center py-3">
+                                        <Bot className="mx-auto text-muted-foreground mb-1" size={16} />
+                                        <p className="text-[10px] text-muted-foreground">
+                                            Sin borradores pendientes
+                                        </p>
+                                    </div>
+                                )}
+
+                                {!loadingActions && pendingActions.map(action => (
+                                    <div
+                                        key={action.id}
+                                        className="p-2 rounded hover:bg-muted transition-colors border-b border-border last:border-0"
+                                    >
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-[11px] text-foreground truncate">
+                                                    🤖 {action.rule_name}
+                                                </p>
+                                                <p className="text-[10px] text-muted-foreground truncate">
+                                                    → {action.recipient_name}
+                                                </p>
+                                                {action.draft_content.subject && (
+                                                    <p className="text-[9px] text-muted-foreground/70 truncate mt-0.5">
+                                                        {action.draft_content.subject}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-1 flex-shrink-0">
+                                                <button
+                                                    onClick={() => setSelectedAction(action)}
+                                                    className="p-1 text-muted-foreground hover:text-ai hover:bg-ai/10 rounded transition-colors"
+                                                    title="Ver/Editar"
+                                                >
+                                                    <Edit size={12} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleApprove(action.id)}
+                                                    disabled={processing === action.id}
+                                                    className="p-1 text-success hover:bg-success/10 rounded transition-colors disabled:opacity-50"
+                                                    title="Enviar"
+                                                >
+                                                    <Send size={12} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleReject(action.id)}
+                                                    disabled={processing === action.id}
+                                                    className="p-1 text-risk hover:bg-risk/10 rounded transition-colors disabled:opacity-50"
+                                                    title="Descartar"
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* SYSTEM STATUS */}
+                            <div className="bg-muted/50 rounded p-2 border border-border">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                                        System Health
+                                    </span>
+                                </div>
+                                <p className="text-[9px] text-muted-foreground">
+                                    Risk Monitor: <span className="text-success">Active</span>
+                                </p>
+                            </div>
+                        </>
+                    )}
+                </aside>
+
+                {/* Detail Modal for Pending Actions */}
+                {selectedAction && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-card rounded-2xl max-w-lg w-full max-h-[80vh] overflow-hidden shadow-xl">
+                            <div className="bg-ai/5 border-b border-ai/20 px-6 py-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-semibold text-foreground">
+                                        Borrador de {selectedAction.rule_name}
+                                    </h3>
+                                    <button
+                                        onClick={() => setSelectedAction(null)}
+                                        className="p-1 hover:bg-card/50 rounded"
+                                    >
+                                        <X className="w-5 h-5 text-muted-foreground" />
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="p-6 space-y-4 overflow-y-auto">
                                 <div>
-                                    <p className="text-2xl font-medium text-foreground">
-                                        {globalInsights?.pendingActionsCount ?? 0}
+                                    <label className="text-xs font-medium text-muted-foreground uppercase">
+                                        Destinatario
+                                    </label>
+                                    <p className="text-foreground font-medium">
+                                        {selectedAction.recipient_name}
                                     </p>
-                                    <p className="text-[10px] text-muted-foreground">
-                                        Pending approvals
+                                    <p className="text-sm text-muted-foreground">
+                                        {selectedAction.recipient_email || 'Sin email'}
                                     </p>
                                 </div>
-                                {(globalInsights?.pendingActionsCount ?? 0) > 0 && (
-                                    <Link href="/settings/automations">
-                                        <CyberButton size="sm">
-                                            Review
-                                        </CyberButton>
-                                    </Link>
+
+                                {selectedAction.draft_content.subject && (
+                                    <div>
+                                        <label className="text-xs font-medium text-muted-foreground uppercase">
+                                            Asunto
+                                        </label>
+                                        <p className="text-foreground">
+                                            {selectedAction.draft_content.subject}
+                                        </p>
+                                    </div>
+                                )}
+
+                                <div>
+                                    <label className="text-xs font-medium text-muted-foreground uppercase">
+                                        Mensaje (Borrador)
+                                    </label>
+                                    <div className="mt-1 p-3 bg-muted rounded-lg text-sm text-foreground">
+                                        {selectedAction.draft_content.body || 'Sin contenido'}
+                                    </div>
+                                </div>
+
+                                {selectedAction.ai_generated_content && (
+                                    <div>
+                                        <label className="text-xs font-medium text-ai uppercase flex items-center gap-1">
+                                            <Sparkles className="w-3 h-3" />
+                                            Versión IA
+                                        </label>
+                                        <div className="mt-1 p-3 bg-ai/10 border border-ai/20 rounded-lg text-sm text-foreground">
+                                            {selectedAction.ai_generated_content.body || 'Sin contenido'}
+                                        </div>
+                                    </div>
                                 )}
                             </div>
-                        </div>
-
-                        {/* SYSTEM STATUS */}
-                        <div className="bg-muted/50 rounded p-3 border border-border">
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                                    System Health
-                                </span>
+                            <div className="border-t px-6 py-4 flex justify-end gap-3">
+                                <button
+                                    onClick={() => handleReject(selectedAction.id)}
+                                    disabled={processing === selectedAction.id}
+                                    className="px-4 py-2 text-risk hover:bg-risk/10 rounded-lg font-medium transition-colors disabled:opacity-50"
+                                >
+                                    Descartar
+                                </button>
+                                <button
+                                    onClick={() => handleApprove(selectedAction.id)}
+                                    disabled={processing === selectedAction.id}
+                                    className="px-4 py-2 bg-ai text-white rounded-lg font-medium hover:opacity-90 transition-colors disabled:opacity-50 flex items-center gap-2"
+                                >
+                                    <Send className="w-4 h-4" />
+                                    Enviar
+                                </button>
                             </div>
-                            <p className="text-[10px] text-muted-foreground">
-                                Daily Briefing: <span className="text-foreground">Ready</span>
-                            </p>
-                            <p className="text-[10px] text-muted-foreground">
-                                Risk Monitor: <span className="text-success">Active</span>
-                            </p>
                         </div>
-                    </>
+                    </div>
                 )}
-            </aside>
+            </>
         );
     }
 
     // ============ PATIENT MODE ============
     return (
-        <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-6 font-mono">
+        <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-6 font-mono overflow-y-auto">
             {/* HEADER - Patient Mode */}
             <div className="border-b border-sidebar-border pb-4">
                 <div className="flex items-center gap-2 text-ai mb-1">

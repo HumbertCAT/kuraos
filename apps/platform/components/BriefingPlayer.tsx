@@ -12,7 +12,11 @@ interface BriefingData {
     cached: boolean;
 }
 
-export default function BriefingPlayer() {
+interface BriefingPlayerProps {
+    compact?: boolean; // For sidebar display
+}
+
+export default function BriefingPlayer({ compact = false }: BriefingPlayerProps) {
     const [briefing, setBriefing] = useState<BriefingData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -116,6 +120,97 @@ export default function BriefingPlayer() {
 
     const hasAudio = briefing.audio_url && briefing.audio_url !== 'null' && briefing.audio_url.length > 0;
 
+    // ============ COMPACT MODE (Sidebar) ============
+    if (compact) {
+        return (
+            <div className="bg-card p-3">
+                <div className="flex items-center gap-3">
+                    {/* Compact Play Button */}
+                    {hasAudio ? (
+                        <button
+                            onClick={handlePlayPause}
+                            className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center hover:bg-brand/20 transition-colors flex-shrink-0"
+                        >
+                            {isPlaying ? (
+                                <Pause className="w-4 h-4 text-brand" />
+                            ) : (
+                                <Play className="w-4 h-4 text-brand ml-0.5" />
+                            )}
+                        </button>
+                    ) : (
+                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+                            <Volume2 className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                    )}
+
+                    {/* Title & Status */}
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-[11px] font-semibold text-foreground flex items-center gap-1">
+                            <Sparkles className="w-3 h-3" />
+                            Tu Resumen Diario
+                        </h3>
+                        <p className="text-[10px] text-muted-foreground truncate">
+                            {hasAudio ? (
+                                isPlaying ? '🎙️ Reproduciendo...' : '▶️ Escucha tu briefing'
+                            ) : (
+                                '📝 Solo texto'
+                            )}
+                        </p>
+                    </div>
+
+                    {/* Refresh */}
+                    <button
+                        onClick={loadBriefing}
+                        className="p-1.5 rounded hover:bg-muted transition-colors flex-shrink-0"
+                        title="Regenerar"
+                    >
+                        <RefreshCw className="w-3 h-3 text-muted-foreground" />
+                    </button>
+                </div>
+
+                {/* Compact Progress Bar */}
+                {hasAudio && (
+                    <div className="mt-2">
+                        <div className="h-1 bg-muted rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-brand rounded-full transition-all duration-200"
+                                style={{ width: `${progress}%` }}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Compact Transcript Toggle */}
+                <button
+                    onClick={() => setShowTranscript(!showTranscript)}
+                    className="w-full mt-2 flex items-center justify-between text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                    <span>{showTranscript ? 'Ocultar' : 'Ver transcripción'}</span>
+                    {showTranscript ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                </button>
+
+                {showTranscript && (
+                    <div className="mt-2 p-2 bg-muted rounded text-[10px] text-foreground leading-relaxed max-h-32 overflow-y-auto">
+                        {briefing.text_script}
+                    </div>
+                )}
+
+                {/* Hidden Audio Element */}
+                {hasAudio && (
+                    <audio
+                        ref={audioRef}
+                        src={`${API_URL.replace('/api/v1', '')}${briefing.audio_url}`}
+                        onTimeUpdate={handleTimeUpdate}
+                        onEnded={handleEnded}
+                        onPlay={() => setIsPlaying(true)}
+                        onPause={() => setIsPlaying(false)}
+                    />
+                )}
+            </div>
+        );
+    }
+
+    // ============ FULL MODE (Dashboard) ============
     return (
         <div className="bg-card border border-brand/30 rounded-2xl overflow-hidden shadow-lg">
             {/* Main Player Section */}
