@@ -41,8 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed - Page-Level Styling
 - **CRM/Leads**: Updated header, Kanban columns with dark mode support
 - **Patients**: Simplified header, search/filter forms with brand colors
+- **Patient Detail**: Updated avatar, tabs, back link with Zinc surfaces
 - **Calendar**: Updated schedule selector, calendar preview with Zinc surfaces
 - **Services**: Updated header, card surfaces with border styling
+- **Forms**: Updated header, tabs, form cards, QR modal with dark mode
+
+### Added - Navigation
+- **Agentes Menu**: New "Agentes" link in TrinityNav footer (above Settings) pointing to `/settings/automations`
 
 ---
 
