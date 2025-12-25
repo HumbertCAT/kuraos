@@ -5,6 +5,21 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2024-12-25 🎄
+
+### Added - Theme Engine (Admin Panel)
+- **Real-time Theme Editor**: New tab in Admin panel for CSS variable customization
+  - 14 editable semantic tokens across 4 categories
+  - **Base Architecture**: background, foreground, card, border
+  - **Navigation**: sidebar, sidebar-foreground, sidebar-border
+  - **Brand Identity**: brand, risk, ai, primary
+  - **Feedback Colors**: success, warning, destructive
+- **Live Preview Mode**: Changes apply instantly via `document.documentElement.style`
+- **Reset Button**: Clears inline styles and reloads page
+- **Save Placeholder**: Console logging (backend persistence coming soon)
+
+---
+
 ## [1.0.3.1] - 2024-12-25 🎄
 
 ### Changed - Semantic Token Migration (100% Complete)

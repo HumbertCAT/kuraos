@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { ThemeEditor } from '@/components/admin/ThemeEditor';
 
 interface SystemSetting {
     key: string;
@@ -87,7 +88,7 @@ const THERAPY_ICONS: Record<string, string> = {
     INTEGRATION: '🔄',
 };
 
-type TabType = 'settings' | 'organizations' | 'templates' | 'automations' | 'backups';
+type TabType = 'settings' | 'organizations' | 'templates' | 'automations' | 'backups' | 'theme';
 
 const TRIGGER_LABELS: Record<string, string> = {
     FORM_SUBMISSION_COMPLETED: '📋 Form Submitted',
@@ -266,6 +267,7 @@ export default function AdminPage() {
         { key: 'templates', label: 'Form Templates', icon: '📋' },
         { key: 'automations', label: 'Automations', icon: '🤖' },
         { key: 'backups', label: 'Backups', icon: '🛡️' },
+        { key: 'theme', label: 'Theme Engine', icon: '🎨' },
     ];
 
     return (
@@ -686,6 +688,11 @@ export default function AdminPage() {
             {/* Backups Tab */}
             {activeTab === 'backups' && (
                 <BackupsTab />
+            )}
+
+            {/* Theme Engine Tab */}
+            {activeTab === 'theme' && (
+                <ThemeEditor />
             )}
         </div>
     );
