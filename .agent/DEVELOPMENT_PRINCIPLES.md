@@ -223,10 +223,62 @@ Sticky headers must use blur for depth.
     * Biomarkers (`HRV: 22ms`)
     * Risk Scores (`-0.90`)
 
-### E. Implementation Strategy (Next-Themes)
-1.  **Tailwind Config:** Map `background` and `foreground` to CSS variables handled by `next-themes`.
-2.  **Toggle:** Use a Sun/Moon toggle that switches the `class="dark"` on the `html` element.
-3.  **Defaults:** Force system preference on first load, but allow manual override.
+### E. Implementation Strategy (Tailwind v4 CSS-First)
+
+**1. CSS Configuration (`app/globals.css`)**
+We define the theme directly in CSS using `@theme`. We do NOT use `tailwind.config.ts` for colors.
+
+```css
+@import "tailwindcss";
+
+@theme {
+  /* Semantic Color Mapping */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-surface: var(--surface);
+  --color-border-subtle: var(--border-subtle);
+
+  /* Brand Aliases */
+  --color-brand: var(--color-teal-600);
+  --color-brand-foreground: var(--color-teal-50);
+  
+  --color-risk: var(--color-rose-600);
+  --color-risk-bg: var(--color-rose-50);
+
+  --color-ai: var(--color-violet-600);
+}
+
+/* 2. The Variables (Zinc Protocol) */
+:root {
+  /* Light Mode (The Clinic) - Zinc 50 Base */
+  --background: #FAFAFA; 
+  --foreground: #18181B; /* Zinc 900 */
+  --surface: #FFFFFF;
+  --border-subtle: #E4E4E7; /* Zinc 200 */
+}
+
+/* Dark Mode (The Void) - Zinc 950 Base */
+.dark {
+  --background: #09090B; 
+  --foreground: #E4E4E7; /* Zinc 200 */
+  --surface: #18181B; /* Zinc 900 */
+  --border-subtle: #27272A; /* Zinc 800 */
+  
+  /* Re-map brand colors for dark mode contrast */
+  --color-brand: var(--color-teal-400);
+  --color-risk: var(--color-rose-400);
+}
+```
+
+**2. Usage in Components**
+- Use semantic names: `bg-background`, `text-foreground`, `border-border-subtle`
+- Use specific accents: `text-brand`, `bg-risk`
+
+**3. Theme Toggle (next-themes)**
+- `next-themes` injects `.dark` class on `<html>` element
+- CSS variables in `.dark { ... }` override `:root` automatically
+- Components just use `bg-background` - browser decides the color based on mode
 
 ---
 

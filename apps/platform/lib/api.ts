@@ -223,7 +223,7 @@ export const api = {
       return handleResponse<any[]>(res);
     },
 
-    updateOrganization: async (id: string, data: { tier?: string; ai_credits_monthly_quota?: number }) => {
+    updateOrganization: async (id: string, data: { tier?: string; ai_credits_monthly_quota?: number; terminology_preference?: string }) => {
       const res = await fetch(`${API_URL}/admin/organizations/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
