@@ -10,7 +10,6 @@ import {
     Brain, Users, Calendar, Target, Wallet, AlertTriangle,
     ChevronRight, Clock, CheckCircle, Activity
 } from 'lucide-react';
-import BriefingPlayer from '@/components/BriefingPlayer';
 
 interface PatientSummary {
     id: string;
@@ -140,14 +139,7 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            {/* ZONE A: Chief of Staff (col-span-12) - Elegant Glass */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm relative overflow-hidden dark:border-ai/30 dark:shadow-[0_0_15px_rgba(139,92,246,0.1)]">
-                {/* Subtle internal glow layer (dark mode only) */}
-                <div className="absolute inset-0 bg-gradient-to-r from-ai/5 to-brand/5 opacity-0 pointer-events-none dark:opacity-50"></div>
-                <div className="relative z-10">
-                    <BriefingPlayer />
-                </div>
-            </div>
+            {/* Briefing Player moved to AletheiaObservatory sidebar (v1.0.5.1) */}
 
             {/* Pending Actions moved to AletheiaObservatory sidebar Agent Center */}
 
