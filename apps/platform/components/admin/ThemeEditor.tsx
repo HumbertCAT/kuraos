@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { CyberCard } from "@/components/ui/CyberCard";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/auth-context";
-import { RotateCcw, Save, Palette, Loader2 } from "lucide-react";
+import { RotateCcw, Save, Palette, Loader2, Sun, Moon } from "lucide-react";
 
 // The "Periodic Table" of Editable Tokens
 const THEME_SECTIONS = [
@@ -49,43 +50,109 @@ const THEME_SECTIONS = [
     }
 ];
 
+// DEFAULT VALUES (Architect's Constitución Visual)
+const DEFAULT_LIGHT: Record<string, string> = {
+    "--background": "#FAFAFA",
+    "--foreground": "#09090B",
+    "--card": "#FFFFFF",
+    "--border": "#E4E4E7",
+    "--sidebar": "#FFFFFF",
+    "--sidebar-foreground": "#52525B",
+    "--sidebar-border": "#E4E4E7",
+    "--brand": "#0D9488",
+    "--primary": "#18181B",
+    "--risk": "#E11D48",
+    "--ai": "#7C3AED",
+    "--success": "#059669",
+    "--warning": "#D97706",
+    "--destructive": "#EF4444",
+};
+
+const DEFAULT_DARK: Record<string, string> = {
+    "--background": "#09090B",
+    "--foreground": "#FAFAFA",
+    "--card": "#121212",
+    "--border": "#27272A",
+    "--sidebar": "#09090B",
+    "--sidebar-foreground": "#A1A1AA",
+    "--sidebar-border": "#27272A",
+    "--brand": "#2DD4BF",
+    "--primary": "#FAFAFA",
+    "--risk": "#FB7185",
+    "--ai": "#A78BFA",
+    "--success": "#34D399",
+    "--warning": "#FBBF24",
+    "--destructive": "#7F1D1D",
+};
+
+type ThemeMode = 'dark' | 'light';
+
 export function ThemeEditor() {
     const router = useRouter();
     const { organization } = useAuth();
-    const [colors, setColors] = useState<Record<string, string>>({});
+    const { setTheme, resolvedTheme } = useTheme();
+
+    // Dual-mode state
+    const [activeMode, setActiveMode] = useState<ThemeMode>('dark');
+    const [darkColors, setDarkColors] = useState<Record<string, string>>(DEFAULT_DARK);
+    const [lightColors, setLightColors] = useState<Record<string, string>>(DEFAULT_LIGHT);
+
     const [mounted, setMounted] = useState(false);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-    // 1. Hydrate: Read initial values from :root
+    // Active colors based on mode
+    const colors = activeMode === 'dark' ? darkColors : lightColors;
+    const setColors = activeMode === 'dark' ? setDarkColors : setLightColors;
+
+    // 1. Hydrate: Load from saved theme or defaults
     useEffect(() => {
         setMounted(true);
-        const root = document.documentElement;
-        const computed = getComputedStyle(root);
 
-        const initial: Record<string, string> = {};
-        THEME_SECTIONS.flatMap(s => s.tokens).forEach(t => {
-            // Get the value, trim whitespace
-            const value = computed.getPropertyValue(t.name).trim();
-            // Convert to hex if it's a valid color
-            initial[t.name] = value || "#000000";
-        });
-        setColors(initial);
-    }, []);
+        // Try to load saved theme from organization
+        if (organization?.theme_config) {
+            const config = organization.theme_config as any;
 
-    // 2. Real-time Injection
+            // New dual-mode format
+            if (config.dark && config.light) {
+                setDarkColors({ ...DEFAULT_DARK, ...config.dark });
+                setLightColors({ ...DEFAULT_LIGHT, ...config.light });
+            }
+            // Legacy single-mode format (assume it's dark mode)
+            else if (config['--background']) {
+                setDarkColors({ ...DEFAULT_DARK, ...config });
+                setLightColors(DEFAULT_LIGHT);
+            }
+        }
+
+        // Detect current system preference
+        const isDark = document.documentElement.classList.contains('dark');
+        setActiveMode(isDark ? 'dark' : 'light');
+    }, [organization]);
+
+    // 2. Real-time Injection (applies to currently active mode only)
     const handleColorChange = (token: string, value: string) => {
-        setColors(prev => ({ ...prev, [token]: value }));
-        document.documentElement.style.setProperty(token, value);
+        setColors((prev: Record<string, string>) => ({ ...prev, [token]: value }));
+
+        // Only inject if we're in matching mode
+        const isDark = document.documentElement.classList.contains('dark');
+        if ((activeMode === 'dark' && isDark) || (activeMode === 'light' && !isDark)) {
+            document.documentElement.style.setProperty(token, value);
+        }
     };
 
-    // 3. Reset (Reload to clear inline styles)
+    // 3. Reset to Architect defaults
     const handleReset = () => {
+        if (activeMode === 'dark') {
+            setDarkColors(DEFAULT_DARK);
+        } else {
+            setLightColors(DEFAULT_LIGHT);
+        }
         document.documentElement.removeAttribute("style");
-        window.location.reload();
+        setMessage({ type: 'success', text: `${activeMode === 'dark' ? 'Dark' : 'Light'} mode reset to defaults` });
     };
 
-    // 4. Save to Backend (Persists to DB)
+    // 4. Save BOTH modes to Backend
     const handleSave = async () => {
         if (!organization?.id) {
             setMessage({ type: 'error', text: 'No organization found' });
@@ -96,10 +163,16 @@ export function ThemeEditor() {
         setMessage(null);
 
         try {
-            const result = await api.admin.updateTheme(String(organization.id), colors);
+            // Save dual-mode structure
+            const themeConfig = {
+                dark: darkColors,
+                light: lightColors,
+            };
+
+            const result = await api.admin.updateTheme(String(organization.id), themeConfig);
             if (result.success) {
-                setMessage({ type: 'success', text: '✅ Theme saved successfully!' });
-                router.refresh(); // Refresh server components
+                setMessage({ type: 'success', text: '✅ Both themes saved successfully!' });
+                router.refresh();
             } else {
                 setMessage({ type: 'error', text: 'Failed to save theme' });
             }
@@ -108,6 +181,20 @@ export function ThemeEditor() {
         } finally {
             setSaving(false);
         }
+    };
+
+    // Switch mode and apply that mode's colors (uses next-themes)
+    const switchMode = (mode: ThemeMode) => {
+        setActiveMode(mode);
+
+        // Use next-themes to switch theme class properly
+        setTheme(mode);
+
+        // Apply the colors for preview
+        const colorsToApply = mode === 'dark' ? darkColors : lightColors;
+        Object.entries(colorsToApply).forEach(([token, value]) => {
+            document.documentElement.style.setProperty(token, value);
+        });
     };
 
     if (!mounted) {
@@ -128,7 +215,7 @@ export function ThemeEditor() {
                         Theme Engine
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                        Customize Kura OS visual identity in real-time.
+                        Customize Dark and Light modes independently.
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -144,16 +231,40 @@ export function ThemeEditor() {
                         className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
                     >
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-                        {saving ? 'Saving...' : 'Save Changes'}
+                        {saving ? 'Saving...' : 'Save Both'}
                     </button>
                 </div>
+            </div>
+
+            {/* Mode Tabs */}
+            <div className="flex gap-2 p-1 bg-muted rounded-lg w-fit">
+                <button
+                    onClick={() => switchMode('dark')}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeMode === 'dark'
+                        ? 'bg-card text-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                >
+                    <Moon size={14} />
+                    Dark Mode
+                </button>
+                <button
+                    onClick={() => switchMode('light')}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeMode === 'light'
+                        ? 'bg-card text-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                >
+                    <Sun size={14} />
+                    Light Mode
+                </button>
             </div>
 
             {/* Feedback Message */}
             {message && (
                 <div className={`p-3 rounded-lg text-sm ${message.type === 'success'
-                        ? 'bg-success/10 border border-success/30 text-success'
-                        : 'bg-destructive/10 border border-destructive/30 text-destructive'
+                    ? 'bg-success/10 border border-success/30 text-success'
+                    : 'bg-destructive/10 border border-destructive/30 text-destructive'
                     }`}>
                     {message.text}
                 </div>
@@ -204,10 +315,10 @@ export function ThemeEditor() {
             <div className="bg-ai/10 border border-ai/30 rounded-lg p-4 flex items-start gap-3">
                 <span className="text-2xl">💡</span>
                 <div>
-                    <p className="text-sm font-medium text-foreground">Live Preview Mode</p>
+                    <p className="text-sm font-medium text-foreground">Dual Mode Theme</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                        Changes are applied instantly. Click "Save Changes" to persist to the database.
-                        The theme will load automatically on next visit.
+                        Edit each mode separately. Changes preview instantly.
+                        Click "Save Both" to persist both Dark and Light themes to database.
                     </p>
                 </div>
             </div>

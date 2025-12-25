@@ -243,7 +243,7 @@ export const api = {
       return handleResponse<any>(res);
     },
 
-    updateTheme: async (orgId: string, themeConfig: Record<string, string>) => {
+    updateTheme: async (orgId: string, themeConfig: Record<string, unknown>) => {
       const res = await fetch(`${API_URL}/admin/organizations/${orgId}/theme`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
