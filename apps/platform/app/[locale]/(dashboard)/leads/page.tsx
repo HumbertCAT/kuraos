@@ -48,16 +48,16 @@ const COLUMNS: Column[] = [
     {
         id: 'CONTACTED',
         title: 'Contactados',
-        color: 'text-amber-600 dark:text-amber-400',
-        bgColor: 'bg-amber-50 dark:bg-amber-950/30',
-        borderColor: 'border-amber-200 dark:border-amber-800',
+        color: 'text-amber-700 dark:text-amber-300',
+        bgColor: 'bg-amber-50 dark:bg-amber-900/30',
+        borderColor: 'border-amber-200 dark:border-amber-700',
     },
     {
         id: 'QUALIFIED',
         title: 'Cualificados',
-        color: 'text-teal-600 dark:text-teal-400',
-        bgColor: 'bg-teal-50 dark:bg-teal-950/30',
-        borderColor: 'border-teal-200 dark:border-teal-800',
+        color: 'text-teal-700 dark:text-teal-300',
+        bgColor: 'bg-teal-50 dark:bg-teal-900/30',
+        borderColor: 'border-teal-200 dark:border-teal-700',
     },
 ];
 
@@ -308,13 +308,13 @@ export default function LeadsPage() {
 
             {/* Search */}
             <div className="relative max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                 <input
                     type="text"
                     placeholder="Buscar por nombre, email o teléfono..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                    className="w-full pl-10 pr-4 py-2.5 border border-border-subtle bg-surface rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
                 />
             </div>
 
@@ -359,23 +359,23 @@ export default function LeadsPage() {
                                                             {...provided.draggableProps}
                                                             {...provided.dragHandleProps}
                                                             onClick={() => setSelectedLead(lead)}
-                                                            className={`bg-white rounded-xl p-4 shadow-sm border border-slate-100 cursor-pointer hover:shadow-md transition-all ${urgency.borderClass} ${urgency.opacityClass} ${snapshot.isDragging ? 'shadow-lg ring-2 ring-purple-300' : ''} ${urgency.grayscale ? 'grayscale-[30%]' : ''}`}
+                                                            className={`bg-surface rounded-xl p-4 shadow-sm border border-border-subtle cursor-pointer hover:shadow-md transition-all ${urgency.borderClass} ${urgency.opacityClass} ${snapshot.isDragging ? 'shadow-lg ring-2 ring-brand/50' : ''} ${urgency.grayscale ? 'grayscale-[30%]' : ''}`}
                                                         >
                                                             {/* Lead Card */}
                                                             <div className="flex items-start justify-between">
                                                                 <div>
                                                                     <div className="flex items-center gap-2">
-                                                                        <p className="font-medium text-slate-900">
+                                                                        <p className="font-medium text-zinc-900 dark:text-zinc-100">
                                                                             {lead.first_name} {lead.last_name}
                                                                         </p>
                                                                         {urgency.badge && (
-                                                                            <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded">
+                                                                            <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 rounded">
                                                                                 {urgency.badge}
                                                                             </span>
                                                                         )}
                                                                     </div>
                                                                     {lead.email && (
-                                                                        <p className="text-sm text-slate-500 truncate max-w-[180px]">
+                                                                        <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate max-w-[180px]">
                                                                             {lead.email}
                                                                         </p>
                                                                     )}
