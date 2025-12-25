@@ -273,9 +273,31 @@ async def update_theme_config(
         )
 
     org.theme_config = data.theme_config
+
+    # If superuser, also update GLOBAL_THEME for all users
+    if current_user.is_superuser:
+        global_setting = await db.execute(
+            select(SystemSetting).where(SystemSetting.key == "GLOBAL_THEME")
+        )
+        setting = global_setting.scalar_one_or_none()
+        if setting:
+            setting.value = data.theme_config
+        else:
+            db.add(
+                SystemSetting(
+                    key="GLOBAL_THEME",
+                    value=data.theme_config,
+                    description="Default theme for all organizations",
+                )
+            )
+
     await db.commit()
 
-    return {"success": True, "message": "Theme saved successfully"}
+    message = "Theme saved successfully"
+    if current_user.is_superuser:
+        message += " (also applied as global default)"
+
+    return {"success": True, "message": message}
 
 
 # ============ Automation Endpoints (v0.9.2) ============

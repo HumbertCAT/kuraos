@@ -8,6 +8,7 @@ import { User, Organization, LoginRequest, RegisterRequest } from '@/types/auth'
 interface AuthContextType {
   user: User | null;
   organization: Organization | null;
+  globalTheme: Record<string, string> | null;
   isLoading: boolean;
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [organization, setOrganization] = useState<Organization | null>(null);
+  const [globalTheme, setGlobalTheme] = useState<Record<string, string> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -34,9 +36,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.organization) {
         setOrganization(data.organization);
       }
+      if (data.global_theme) {
+        setGlobalTheme(data.global_theme);
+      }
     } catch (error) {
       setUser(null);
       setOrganization(null);
+      setGlobalTheme(null);
     } finally {
       setIsLoading(false);
     }
@@ -65,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await api.auth.logout();
       setUser(null);
       setOrganization(null);
+      setGlobalTheme(null);
       router.push('/login');
       router.refresh();
     } catch (error) {
@@ -78,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, organization, isLoading, login, register, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, organization, globalTheme, isLoading, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

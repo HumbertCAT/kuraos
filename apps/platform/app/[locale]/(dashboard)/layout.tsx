@@ -11,12 +11,15 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { organization } = useAuth();
+  const { organization, globalTheme } = useAuth();
+
+  // Priority: org theme > global theme > CSS defaults
+  const effectiveTheme = organization?.theme_config || globalTheme;
 
   return (
     <div className="flex h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
       {/* Theme Hydration: Inject saved CSS variables from DB */}
-      <ThemeHydration themeConfig={organization?.theme_config} />
+      <ThemeHydration themeConfig={effectiveTheme} />
 
       {/* COL 1: Trinity Navigation (Fixed Sidebar) */}
       <TrinityNav />

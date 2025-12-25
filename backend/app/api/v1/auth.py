@@ -215,30 +215,40 @@ async def logout(response: Response):
     return {"message": "Logged out successfully"}
 
 
-@router.get("/me", response_model=AuthResponse, summary="Get current user")
+@router.get("/me", summary="Get current user")
 async def get_me(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
     """
     Get the currently authenticated user's data and organization.
 
     Requires valid JWT cookie.
     """
+    from app.db.models import SystemSetting
+
     # Fetch organization with theme_config
     result = await db.execute(
         select(Organization).where(Organization.id == current_user.organization_id)
     )
     org = result.scalar_one()
 
-    return AuthResponse(
-        user=UserResponse.model_validate(current_user),
-        organization=OrganizationResponse(
+    # Fetch GLOBAL_THEME as fallback
+    global_result = await db.execute(
+        select(SystemSetting).where(SystemSetting.key == "GLOBAL_THEME")
+    )
+    global_setting = global_result.scalar_one_or_none()
+    global_theme = global_setting.value if global_setting else None
+
+    return {
+        "user": UserResponse.model_validate(current_user).model_dump(),
+        "organization": OrganizationResponse(
             id=org.id,
             name=org.name,
             type=org.type.value,
             referral_code=org.referral_code,
             theme_config=org.theme_config,
-        ),
-        message="Authenticated",
-    )
+        ).model_dump(),
+        "global_theme": global_theme,
+        "message": "Authenticated",
+    }
 
 
 @router.patch(
