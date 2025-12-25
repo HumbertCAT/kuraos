@@ -37,6 +37,8 @@ interface PendingAction {
     created_at: string;
 }
 
+const STORAGE_KEY = 'aletheia-sidebar-collapsed';
+
 export default function AletheiaObservatory() {
     const {
         // Patient Mode
@@ -52,11 +54,28 @@ export default function AletheiaObservatory() {
         fetchGlobalInsights,
     } = usePatientStore();
 
+    // Collapse state with localStorage
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
     // Pending Actions state (for Global Mode)
     const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
     const [loadingActions, setLoadingActions] = useState(true);
     const [processing, setProcessing] = useState<string | null>(null);
     const [selectedAction, setSelectedAction] = useState<PendingAction | null>(null);
+
+    // Hydrate collapse state from localStorage
+    useEffect(() => {
+        setMounted(true);
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored === 'true') setIsCollapsed(true);
+    }, []);
+
+    const toggleCollapse = () => {
+        const newState = !isCollapsed;
+        setIsCollapsed(newState);
+        localStorage.setItem(STORAGE_KEY, String(newState));
+    };
 
     // Fetch global insights and pending actions on mount when no patient is selected
     useEffect(() => {
@@ -110,13 +129,54 @@ export default function AletheiaObservatory() {
     const isMediumRisk = riskLevel === 'medium';
     const riskPercentage = Math.abs(riskScore) * 100;
 
+    // Count alerts for pulsating indicator
+    const alertCount = (globalInsights?.activeAlerts?.length ?? 0) + pendingActions.length;
+
+    // Don't render until mounted (hydration)
+    if (!mounted) return null;
+
+    // ============ COLLAPSED STATE (Vertical Tab) ============
+    if (isCollapsed) {
+        return (
+            <aside
+                onClick={toggleCollapse}
+                className="hidden xl:flex w-12 flex-col items-center justify-center border-l border-sidebar-border bg-sidebar cursor-pointer hover:bg-accent transition-all duration-300 ease-in-out"
+            >
+                {/* Pulsating indicator when alerts exist */}
+                {alertCount > 0 && (
+                    <div className="absolute top-4 right-3 w-2 h-2 rounded-full bg-risk animate-pulse" />
+                )}
+
+                {/* Vertical Text */}
+                <div
+                    className="flex items-center gap-2 text-ai"
+                    style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+                >
+                    <Sparkles size={14} className={alertCount > 0 ? 'animate-pulse' : ''} />
+                    <span className="text-[10px] font-bold tracking-widest uppercase">
+                        AletheIA
+                    </span>
+                </div>
+            </aside>
+        );
+    }
+
     // ============ GLOBAL MODE (Clinic Radar) ============
     if (!activePatientId) {
         return (
             <>
-                <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-4 font-mono overflow-y-auto">
+                <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-4 font-mono overflow-y-auto transition-all duration-300 ease-in-out relative">
+                    {/* Collapse Toggle */}
+                    <button
+                        onClick={toggleCollapse}
+                        className="absolute top-4 left-2 p-1 rounded hover:bg-accent transition-colors z-10"
+                        title="Collapse"
+                    >
+                        <ChevronRight size={14} className="text-muted-foreground" />
+                    </button>
+
                     {/* HEADER - Global Mode */}
-                    <div className="border-b border-sidebar-border pb-3">
+                    <div className="border-b border-sidebar-border pb-3 pl-6">
                         <div className="flex items-center gap-2 text-ai mb-1">
                             <Radio size={14} className="animate-pulse" />
                             <span className="text-[10px] font-bold tracking-widest uppercase">Clinic Radar</span>
@@ -373,9 +433,18 @@ export default function AletheiaObservatory() {
 
     // ============ PATIENT MODE ============
     return (
-        <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-6 font-mono overflow-y-auto">
+        <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-6 font-mono overflow-y-auto transition-all duration-300 ease-in-out relative">
+            {/* Collapse Toggle */}
+            <button
+                onClick={toggleCollapse}
+                className="absolute top-4 left-2 p-1 rounded hover:bg-accent transition-colors z-10"
+                title="Collapse"
+            >
+                <ChevronRight size={14} className="text-muted-foreground" />
+            </button>
+
             {/* HEADER - Patient Mode */}
-            <div className="border-b border-sidebar-border pb-4">
+            <div className="border-b border-sidebar-border pb-4 pl-6">
                 <div className="flex items-center gap-2 text-ai mb-1">
                     <BrainCircuit size={14} />
                     <span className="text-[10px] font-bold tracking-widest uppercase">AletheIA Observatory</span>
@@ -480,8 +549,8 @@ export default function AletheiaObservatory() {
                     {/* ALERTS */}
                     {insights.alerts.length > 0 && (
                         <div className={`p-3 rounded border ${insights.alerts.some(a => a.type === 'critical')
-                                ? 'bg-risk/10 border-risk/20'
-                                : 'bg-warning/10 border-warning/20'
+                            ? 'bg-risk/10 border-risk/20'
+                            : 'bg-warning/10 border-warning/20'
                             }`}>
                             <div className={`flex items-center gap-2 mb-2 ${insights.alerts.some(a => a.type === 'critical') ? 'text-risk' : 'text-warning'
                                 }`}>
@@ -510,7 +579,7 @@ export default function AletheiaObservatory() {
                                 Engagement
                             </span>
                             <span className={`text-sm font-medium ${insights.engagementScore >= 70 ? 'text-success' :
-                                    insights.engagementScore >= 40 ? 'text-warning' : 'text-risk'
+                                insights.engagementScore >= 40 ? 'text-warning' : 'text-risk'
                                 }`}>
                                 {insights.engagementScore}%
                             </span>
@@ -518,7 +587,7 @@ export default function AletheiaObservatory() {
                         <div className="w-full bg-muted h-1 rounded-full overflow-hidden">
                             <div
                                 className={`h-full transition-all duration-500 ${insights.engagementScore >= 70 ? 'bg-success' :
-                                        insights.engagementScore >= 40 ? 'bg-warning' : 'bg-risk'
+                                    insights.engagementScore >= 40 ? 'bg-warning' : 'bg-risk'
                                     }`}
                                 style={{ width: `${insights.engagementScore}%` }}
                             />

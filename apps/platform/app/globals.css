@@ -222,17 +222,48 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.1em;
 }
 
-/* Headlines */
+/* ================================================
+   TYPE SCALE (Architect Spec v1.0.5.3)
+   ================================================ */
+
+/* Editorial - Playfair (Page Titles ONLY) */
+.type-h1 {
+  @apply font-serif text-3xl md:text-4xl font-medium tracking-tight text-foreground;
+  line-height: 1.1;
+}
+
+/* Section Headers - Space Grotesk (Cards, Sections) */
+.type-h2 {
+  @apply font-display text-lg font-medium tracking-wide uppercase text-muted-foreground;
+  letter-spacing: 0.05em;
+}
+
+/* Body Content - Inter (Readable prose) */
+.type-body {
+  @apply font-body text-sm leading-relaxed text-muted-foreground;
+  line-height: 1.7;
+}
+
+/* UI Elements - Inter (Buttons, Labels, Small Text) */
+.type-ui {
+  @apply font-body text-xs font-medium text-foreground;
+}
+
+/* Headlines - Restrict Playfair to H1/H2 only */
 h1, .h1 {
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 h2, .h2 {
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-weight: 500;
 }
 
+/* H3+ use Space Grotesk (Technical) */
 h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
-  font-family: var(--font-headline), sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.01em;
 }
