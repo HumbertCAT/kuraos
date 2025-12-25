@@ -107,10 +107,43 @@ class AiUsageLog:
 
 ## 4. Frontend Architecture
 
-### 4.1 AletheiaObservatory Component
+### 4.1 Daily Briefing ("Tu Resumen Diario")
+**Location:** Dashboard widget + `api/v1/insights.py`
+
+Audio-first summary generated for practitioners each morning.
+
+**Pipeline:**
+```
+Aggregation → Scripting (Gemini) → Synthesis (OpenAI TTS) → Caching
+```
+
+**Data Sources:**
+| Source | Content |
+|--------|---------|
+| Calendar | Today's appointments count |
+| Clinical Risk | Patients with `risk_level > MEDIUM` scheduled today |
+| Financials | Pending payments (last 24h) |
+| CRM | Number of PendingActions awaiting approval |
+
+**Output:**
+- **Audio:** MP3 file via OpenAI TTS (`tts-1`, voice: `alloy`/`nova`)
+- **Transcript:** Text summary displayed below audio player
+- **Caching:** Stored in `static/briefings/` for cost optimization
+
+**API Endpoint:**
+```
+GET /api/v1/insights/daily-briefing
+Response: { audio_url, text_script, generated_at, cached }
+```
+
+**UI Component:** Shows play button, "Solo texto disponible" fallback, expandable transcript.
+
+---
+
+### 4.2 AletheiaObservatory Component
 **Location:** `components/AletheiaObservatory.tsx`
 
-**Current State:** Hardcoded mock data (v1.0.4)
+**Current State:** Dynamic via Zustand store (v1.0.5)
 
 **Visual Elements:**
 | Widget | Purpose |
