@@ -315,21 +315,22 @@ export default function ServicesPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8 px-6">
+        <div className="space-y-6">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-                <div className="flex justify-between items-start mb-6">
-                    <SectionHeader
-                        icon={Package}
-                        title={t.title}
-                        subtitle={t.subtitle}
-                        gradientFrom="from-teal-500"
-                        gradientTo="to-cyan-500"
-                        shadowColor="shadow-teal-200"
-                    />
+                <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-brand/10 dark:bg-brand/20 flex items-center justify-center">
+                            <Package className="w-6 h-6 text-brand" />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{t.title}</h1>
+                            <p className="text-sm text-zinc-500 dark:text-zinc-400">{t.subtitle}</p>
+                        </div>
+                    </div>
                     <button
                         onClick={openCreateModal}
-                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-xl hover:opacity-90 transition-opacity"
                     >
                         <Plus size={20} />
                         {t.addService}
@@ -348,8 +349,7 @@ export default function ServicesPage() {
                         {services.map(service => (
                             <div
                                 key={service.id}
-                                className={`bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow ${!service.is_active ? 'opacity-60' : ''
-                                    }`}
+                                className={`bg-surface rounded-xl border border-border-subtle p-5 hover:shadow-sm transition-shadow ${!service.is_active ? 'opacity-60' : ''}`}
                             >
                                 <div className="flex justify-between items-start mb-3">
                                     <div>
@@ -414,7 +414,7 @@ export default function ServicesPage() {
                                 </div>
 
                                 {service.intake_form_title && (
-                                    <div className="mt-3 flex items-center gap-1 text-xs text-indigo-600">
+                                    <div className="mt-3 flex items-center gap-1 text-xs text-brand">
                                         <FileText size={12} />
                                         {service.intake_form_title}
                                     </div>
