@@ -7,11 +7,9 @@ import { api, API_URL } from '@/lib/api';
 import { useTerminology } from '@/hooks/use-terminology';
 import { CyberCard } from '@/components/ui/CyberCard';
 import {
-    Brain, Users, Calendar, Target, Wallet,
-    AlertTriangle, ChevronRight, Clock, CheckCircle,
-    Zap, Activity
+    Brain, Users, Calendar, Target, Wallet, AlertTriangle,
+    ChevronRight, Clock, CheckCircle, Activity
 } from 'lucide-react';
-import PendingActionsWidget from '@/components/PendingActionsWidget';
 import BriefingPlayer from '@/components/BriefingPlayer';
 
 interface PatientSummary {
@@ -45,59 +43,14 @@ interface DashboardData {
     newLeadsThisWeek: number;
 }
 
-interface AISuggestion {
-    id: string;
-    type: 'chat_risk' | 'critical' | 'warning' | 'action' | 'insight';
-    title: string;
-    description: string;
-    patientId?: string;
-    patientName?: string;
-    actionLabel?: string;
-    actionLink?: string;
-}
-
-function generateAISuggestions(patients: PatientSummary[]): AISuggestion[] {
-    const suggestions: AISuggestion[] = [];
-    patients.forEach(patient => {
-        if (!patient.journey_status) return;
-        Object.entries(patient.journey_status).forEach(([, status]) => {
-            const fullName = `${patient.first_name} ${patient.last_name}`;
-            if (status === 'BLOCKED_MEDICAL' || status === 'BLOCKED_HIGH_RISK') {
-                suggestions.push({
-                    id: `${patient.id}-blocked`,
-                    type: 'critical',
-                    title: `${fullName} - Bloqueado`,
-                    description: 'Requiere revisión manual antes de continuar.',
-                    patientId: patient.id,
-                    patientName: fullName,
-                    actionLabel: 'Ver',
-                    actionLink: `/patients/${patient.id}`,
-                });
-            } else if (status === 'STAGNATION_ALERT') {
-                suggestions.push({
-                    id: `${patient.id}-stagnant`,
-                    type: 'warning',
-                    title: `${fullName} - Sin Actividad`,
-                    description: 'Sin interacción reciente.',
-                    patientId: patient.id,
-                    patientName: fullName,
-                    actionLabel: 'Contactar',
-                    actionLink: `/patients/${patient.id}`,
-                });
-            }
-        });
-    });
-    const priority: Record<string, number> = { critical: 0, chat_risk: 0, warning: 1, action: 2, insight: 3 };
-    suggestions.sort((a, b) => priority[a.type] - priority[b.type]);
-    return suggestions.slice(0, 4);
-}
+// AI Suggestions moved to AletheiaObservatory sidebar (v1.0.5.1)
 
 export default function DashboardPage() {
     const t = useTranslations('Dashboard');
     const terminology = useTerminology();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<DashboardData | null>(null);
-    const [suggestions, setSuggestions] = useState<AISuggestion[]>([]);
+    // suggestions state removed - now in sidebar Global Observatory
 
     useEffect(() => {
         async function loadDashboard() {
@@ -145,8 +98,7 @@ export default function DashboardPage() {
                     .filter((b: BookingSummary) => b.status === 'PENDING')
                     .reduce((sum: number, b: BookingSummary) => sum + (b.service_price || 450), 0);
 
-                const aiSuggestions = generateAISuggestions(patients);
-                setSuggestions(aiSuggestions);
+                // AI suggestions now handled by AletheiaObservatory sidebar
 
                 setData({
                     patients: patients.slice(0, 5),
@@ -197,8 +149,7 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Pending Actions */}
-            <PendingActionsWidget />
+            {/* Pending Actions moved to AletheiaObservatory sidebar Agent Center */}
 
             {/* ZONE B: Focus Card + Pillar Stack (12-column grid) */}
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
@@ -245,34 +196,7 @@ export default function DashboardPage() {
                         )}
                     </CyberCard>
 
-                    {/* AletheIA Suggestions */}
-                    {suggestions.length > 0 && (
-                        <CyberCard variant="ai" className="p-6">
-                            <div className="flex items-center gap-3 mb-4">
-                                <Brain className="w-5 h-5 text-ai" />
-                                <h3 className="font-display text-foreground ">AletheIA Sugiere</h3>
-                                <span className="text-xs px-2 py-0.5 rounded bg-ai/10 text-ai font-stats">{suggestions.length}</span>
-                            </div>
-                            <div className="space-y-2">
-                                {suggestions.map(s => (
-                                    <div key={s.id} className="flex items-center justify-between p-3 rounded-lg bg-muted border border-border">
-                                        <div className="flex items-center gap-3">
-                                            <Zap className={`w-4 h-4 ${s.type === 'critical' ? 'text-risk' : s.type === 'warning' ? 'text-amber-500' : 'text-ai'}`} />
-                                            <div>
-                                                <p className="text-sm font-medium text-foreground ">{s.title}</p>
-                                                <p className="text-xs text-foreground/60">{s.description}</p>
-                                            </div>
-                                        </div>
-                                        {s.actionLink && (
-                                            <Link href={s.actionLink} className="text-xs text-brand hover:underline flex items-center gap-1">
-                                                {s.actionLabel} <ChevronRight className="w-3 h-3" />
-                                            </Link>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </CyberCard>
-                    )}
+                    {/* AletheIA Suggestions moved to sidebar Global Observatory (v1.0.5.1) */}
                 </div>
 
                 {/* Right: Pillar Stack (col-span-4) */}
