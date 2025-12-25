@@ -5,7 +5,38 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.5] - 2024-12-25 🎄
+## [1.0.5.2] - 2025-12-26
+
+### Added - Theme Engine Dual Mode
+- **Dark/Light Tabs**: Theme Editor now has separate tabs for each mode
+- **next-themes Integration**: Preview switches actual theme via `setTheme()`
+- **Dual CSS Injection**: ThemeHydration injects both `:root` and `.dark` blocks
+- **Migration Support**: Legacy flat format auto-migrates to dark mode
+
+### Added - Documentation
+- **Typography Section** in THEME_SYSTEM.md (Space Grotesk, Inter, Playfair Display, JetBrains Mono)
+
+---
+
+## [1.0.5.1] - 2025-12-25 🎄
+
+### Added - Global Observatory (Clinic Radar Mode)
+- **BriefingPlayer in Sidebar**: Compact audio player with transcript toggle
+- **Full PendingActions Widget**: Rule name, recipient, Edit/Approve/Reject buttons, detail modal
+- **Risk Monitor**: HIGH/MEDIUM patient list with navigation links
+- **System Health**: Status indicator
+
+### Changed - Dashboard Cleanup
+- Removed BriefingPlayer from central dashboard (now in sidebar)
+- Removed PendingActionsWidget from dashboard (now in sidebar Agent Center)
+- Removed AletheIA Sugiere block (now in sidebar Risk Monitor)
+
+### Fixed
+- **Daily Briefing Audio**: Configured OPENAI_API_KEY in Google Secret Manager and local .env
+
+---
+
+## [1.0.5] - 2025-12-25 🎄
 
 ### Added - AletheIA Observatory Dynamic Context
 - **Zustand Patient Store**: Global state management for active patient context
@@ -24,6 +55,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Daily Briefing pipeline and output documentation
   - Frontend component specifications
 - **`docs/STATE_MANAGEMENT.md`**: Zustand guide and usePatientStore documentation
+
+---
+
+## [1.0.4.1] - 2025-12-25 🎄
+
+### Fixed - Semantic Token Migration Completion
+- **Final cleanup**: Removed remaining hardcoded colors missed in v1.0.3.1 batch
+- **Ghost Kill Protocol**: 100% semantic compliance verified
 
 ---
 
