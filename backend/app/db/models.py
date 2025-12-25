@@ -243,6 +243,10 @@ class Organization(Base):
     # Org-specific settings (custom prompts, etc.)
     settings: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
+    # Theme Engine: Custom CSS variables for org branding
+    # Example: {"--brand": "#2dd4bf", "--sidebar": "#09090b"}
+    theme_config: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+
     # Stripe SaaS Billing
     stripe_customer_id: Mapped[Optional[str]] = mapped_column(
         String(255), nullable=True

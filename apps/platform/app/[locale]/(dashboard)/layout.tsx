@@ -3,14 +3,21 @@
 import { TrinityNav } from '@/components/layout/TrinityNav';
 import HelpChatBot from '@/components/help/HelpChatBot';
 import AletheiaObservatory from '@/components/AletheiaObservatory';
+import { ThemeHydration } from '@/components/theme/ThemeHydration';
+import { useAuth } from '@/context/auth-context';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { organization } = useAuth();
+
   return (
     <div className="flex h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
+      {/* Theme Hydration: Inject saved CSS variables from DB */}
+      <ThemeHydration themeConfig={organization?.theme_config} />
+
       {/* COL 1: Trinity Navigation (Fixed Sidebar) */}
       <TrinityNav />
 
@@ -29,4 +36,3 @@ export default function DashboardLayout({
     </div>
   );
 }
-

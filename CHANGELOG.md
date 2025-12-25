@@ -16,9 +16,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Feedback Colors**: success, warning, destructive
 - **Live Preview Mode**: Changes apply instantly via `document.documentElement.style`
 - **Reset Button**: Clears inline styles and reloads page
-- **Save Placeholder**: Console logging (backend persistence coming soon)
+
+### Added - Theme Persistence (Full Stack)
+- **`Organization.theme_config`**: New JSONB field for CSS variable storage
+- **API Endpoint**: `PATCH /admin/organizations/{id}/theme` for saving themes
+- **ThemeHydration Component**: Injects saved CSS variables on page load
+- **`/auth/me` Enhanced**: Now returns organization with theme_config
+- **Per-Tenant Theming**: Each organization can have its own custom branding
 
 ---
+
 
 ## [1.0.3.1] - 2024-12-25 🎄
 

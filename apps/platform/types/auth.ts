@@ -22,6 +22,7 @@ export interface Organization {
   type: 'SOLO' | 'CLINIC';
   referral_code: string;
   terminology_preference: 'PATIENT' | 'CLIENT' | 'CONSULTANT';
+  theme_config?: Record<string, string>;  // CSS theme variables
 }
 
 export interface AuthResponse {

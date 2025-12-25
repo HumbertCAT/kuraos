@@ -59,6 +59,7 @@ class OrganizationResponse(BaseModel):
     type: str
     referral_code: str
     terminology_preference: str = "CLIENT"
+    theme_config: Optional[dict] = None  # CSS variables for theme
 
     class Config:
         from_attributes = True

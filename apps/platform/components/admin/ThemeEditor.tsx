@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { CyberCard } from "@/components/ui/CyberCard";
-import { RotateCcw, Save, Palette } from "lucide-react";
+import { api } from "@/lib/api";
+import { useAuth } from "@/context/auth-context";
+import { RotateCcw, Save, Palette, Loader2 } from "lucide-react";
 
 // The "Periodic Table" of Editable Tokens
 const THEME_SECTIONS = [
@@ -47,8 +50,12 @@ const THEME_SECTIONS = [
 ];
 
 export function ThemeEditor() {
+    const router = useRouter();
+    const { organization } = useAuth();
     const [colors, setColors] = useState<Record<string, string>>({});
     const [mounted, setMounted] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
     // 1. Hydrate: Read initial values from :root
     useEffect(() => {
@@ -78,10 +85,29 @@ export function ThemeEditor() {
         window.location.reload();
     };
 
-    // 4. Save Stub (Where the Backend API call would go)
-    const handleSave = () => {
-        console.log("Saving Theme Config:", colors);
-        alert("Theme config logged to console (Backend integration pending)");
+    // 4. Save to Backend (Persists to DB)
+    const handleSave = async () => {
+        if (!organization?.id) {
+            setMessage({ type: 'error', text: 'No organization found' });
+            return;
+        }
+
+        setSaving(true);
+        setMessage(null);
+
+        try {
+            const result = await api.admin.updateTheme(String(organization.id), colors);
+            if (result.success) {
+                setMessage({ type: 'success', text: '✅ Theme saved successfully!' });
+                router.refresh(); // Refresh server components
+            } else {
+                setMessage({ type: 'error', text: 'Failed to save theme' });
+            }
+        } catch (error: any) {
+            setMessage({ type: 'error', text: error.message || 'Error saving theme' });
+        } finally {
+            setSaving(false);
+        }
     };
 
     if (!mounted) {
@@ -114,12 +140,24 @@ export function ThemeEditor() {
                     </button>
                     <button
                         onClick={handleSave}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                        disabled={saving}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
                     >
-                        <Save size={14} /> Save Changes
+                        {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                        {saving ? 'Saving...' : 'Save Changes'}
                     </button>
                 </div>
             </div>
+
+            {/* Feedback Message */}
+            {message && (
+                <div className={`p-3 rounded-lg text-sm ${message.type === 'success'
+                        ? 'bg-success/10 border border-success/30 text-success'
+                        : 'bg-destructive/10 border border-destructive/30 text-destructive'
+                    }`}>
+                    {message.text}
+                </div>
+            )}
 
             {/* Color Sections Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -168,8 +206,8 @@ export function ThemeEditor() {
                 <div>
                     <p className="text-sm font-medium text-foreground">Live Preview Mode</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                        Changes are applied instantly but will be lost on page refresh.
-                        Click "Save Changes" to persist to the database (coming soon).
+                        Changes are applied instantly. Click "Save Changes" to persist to the database.
+                        The theme will load automatically on next visit.
                     </p>
                 </div>
             </div>

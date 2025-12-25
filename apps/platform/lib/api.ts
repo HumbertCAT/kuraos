@@ -242,6 +242,16 @@ export const api = {
       });
       return handleResponse<any>(res);
     },
+
+    updateTheme: async (orgId: string, themeConfig: Record<string, string>) => {
+      const res = await fetch(`${API_URL}/admin/organizations/${orgId}/theme`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ theme_config: themeConfig }),
+        credentials: 'include',
+      });
+      return handleResponse<{ success: boolean; message: string }>(res);
+    },
   },
 
   user: {

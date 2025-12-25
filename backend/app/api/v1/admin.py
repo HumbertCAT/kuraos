@@ -242,6 +242,42 @@ async def add_credits(
     }
 
 
+class ThemeConfigUpdate(BaseModel):
+    """CSS theme variables to persist. Keys are CSS variable names."""
+
+    theme_config: dict[str, str]
+
+
+@router.patch("/organizations/{org_id}/theme")
+async def update_theme_config(
+    org_id: uuid.UUID,
+    data: ThemeConfigUpdate,
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+):
+    """Update organization theme config. Requires org membership."""
+    # Allow org members (not just superusers) to update their own theme
+    if current_user.organization_id != org_id and not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only update your own organization's theme",
+        )
+
+    result = await db.execute(select(Organization).where(Organization.id == org_id))
+    org = result.scalar_one_or_none()
+
+    if not org:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Organization not found",
+        )
+
+    org.theme_config = data.theme_config
+    await db.commit()
+
+    return {"success": True, "message": "Theme saved successfully"}
+
+
 # ============ Automation Endpoints (v0.9.2) ============
 
 
