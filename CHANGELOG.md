@@ -5,6 +5,28 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2024-12-25 🎄
+
+### Added - AletheIA Observatory Dynamic Context
+- **Zustand Patient Store**: Global state management for active patient context
+- **Dynamic Observatory Sidebar**: Shows patient-specific insights when viewing a patient
+  - Risk Score gauge with color coding (HIGH/MEDIUM/LOW)
+  - AletheIA Summary from backend analysis
+  - Key Themes (thematic pills)
+  - Active Flags and Alerts
+  - Engagement Score progress bar
+- **Standby Mode**: "No patient selected" state when on dashboard
+- **API Bridge**: `lib/api/aletheia.ts` connects to `POST /insights/patient/{id}`
+
+### Added - Documentation
+- **`docs/ALETHEIA_ARCHITECTURE.md`**: Complete architecture document for architects
+  - 5 Core Functions detailed (Risk Assessment, Engagement Score, Thematic Pills, Daily Briefing, Lead Stale Monitor)
+  - Daily Briefing pipeline and output documentation
+  - Frontend component specifications
+- **`docs/STATE_MANAGEMENT.md`**: Zustand guide and usePatientStore documentation
+
+---
+
 ## [1.0.4] - 2024-12-25 🎄
 
 ### Added - Theme Engine (Admin Panel)
