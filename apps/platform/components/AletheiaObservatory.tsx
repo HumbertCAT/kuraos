@@ -1,78 +1,197 @@
 'use client';
 
-import { BrainCircuit, Mic, Activity, AlertTriangle, RefreshCw } from 'lucide-react';
+import { useEffect } from 'react';
+import { BrainCircuit, AlertTriangle, RefreshCw, Bot, Radio, ChevronRight, Activity } from 'lucide-react';
 import { CyberButton } from './ui/CyberButton';
-import { usePatientStore } from '@/stores/patient-store';
+import { usePatientStore, GlobalAlert } from '@/stores/patient-store';
+import { Link } from '@/i18n/navigation';
 
 /**
  * AletheiaObservatory - Right Sidebar HUD Component
  * 
- * Displays real-time clinical intelligence for the active patient.
- * States:
- * - Standby: No patient selected
- * - Loading: Fetching insights
- * - Active: Showing patient data
+ * Two modes:
+ * - Patient Mode: Shows individual patient insights (when activePatientId exists)
+ * - Global Mode: Shows clinic-wide alerts and pending actions (default on dashboard)
  */
 
 export default function AletheiaObservatory() {
     const {
+        // Patient Mode
         patientName,
+        activePatientId,
         insights,
         isLoading,
         error,
-        refreshInsights
+        refreshInsights,
+        // Global Mode
+        globalInsights,
+        isLoadingGlobal,
+        fetchGlobalInsights,
     } = usePatientStore();
+
+    // Fetch global insights on mount when no patient is selected
+    useEffect(() => {
+        if (!activePatientId) {
+            fetchGlobalInsights();
+        }
+    }, [activePatientId, fetchGlobalInsights]);
 
     // Computed values from insights
     const riskScore = insights?.riskScore ?? 0;
-    const riskTrend = insights?.riskTrend ?? 'stable';
     const riskLevel = insights?.riskLevel ?? 'low';
     const isHighRisk = riskLevel === 'high';
     const isMediumRisk = riskLevel === 'medium';
     const riskPercentage = Math.abs(riskScore) * 100;
 
+    // ============ GLOBAL MODE (Clinic Radar) ============
+    if (!activePatientId) {
+        return (
+            <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-4 font-mono">
+                {/* HEADER - Global Mode */}
+                <div className="border-b border-sidebar-border pb-4">
+                    <div className="flex items-center gap-2 text-ai mb-1">
+                        <Radio size={14} className="animate-pulse" />
+                        <span className="text-[10px] font-bold tracking-widest uppercase">Clinic Radar</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">Global monitoring active</p>
+                </div>
+
+                {/* LOADING GLOBAL */}
+                {isLoadingGlobal && (
+                    <div className="flex-1 flex flex-col gap-4">
+                        <div className="bg-card rounded p-4 border border-border animate-pulse">
+                            <div className="h-3 w-24 bg-muted rounded mb-3" />
+                            <div className="h-8 w-full bg-muted rounded" />
+                        </div>
+                    </div>
+                )}
+
+                {/* GLOBAL INSIGHTS */}
+                {!isLoadingGlobal && (
+                    <>
+                        {/* RISK MONITOR */}
+                        <div className="bg-card rounded p-4 border border-border">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2 text-risk">
+                                    <AlertTriangle size={12} />
+                                    <span className="text-[10px] font-bold uppercase tracking-wider">
+                                        Risk Monitor
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={fetchGlobalInsights}
+                                    className="p-1 hover:bg-muted rounded transition-colors"
+                                    title="Refresh"
+                                >
+                                    <RefreshCw size={10} className="text-muted-foreground" />
+                                </button>
+                            </div>
+
+                            {globalInsights?.activeAlerts.length === 0 && (
+                                <div className="text-center py-4">
+                                    <Activity className="mx-auto text-success mb-2" size={20} />
+                                    <p className="text-[10px] text-muted-foreground">
+                                        No active risk alerts
+                                    </p>
+                                </div>
+                            )}
+
+                            {globalInsights?.activeAlerts.map((alert: GlobalAlert) => (
+                                <Link
+                                    key={alert.id}
+                                    href={`/patients/${alert.patientId}`}
+                                    className="flex items-center gap-3 p-2 rounded hover:bg-muted transition-colors group"
+                                >
+                                    <div className={`w-2 h-2 rounded-full ${alert.riskLevel === 'HIGH' ? 'bg-risk' : 'bg-warning'
+                                        }`} />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs text-foreground truncate">
+                                            {alert.patientName}
+                                        </p>
+                                        <p className="text-[9px] text-muted-foreground truncate">
+                                            {alert.reason}
+                                        </p>
+                                    </div>
+                                    <ChevronRight
+                                        size={12}
+                                        className="text-muted-foreground group-hover:text-foreground transition-colors"
+                                    />
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* AGENT CENTER (Pending Actions) */}
+                        <div className="bg-card rounded p-4 border border-border">
+                            <div className="flex items-center gap-2 text-brand mb-3">
+                                <Bot size={12} />
+                                <span className="text-[10px] font-bold uppercase tracking-wider">
+                                    Agent Center
+                                </span>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-2xl font-medium text-foreground">
+                                        {globalInsights?.pendingActionsCount ?? 0}
+                                    </p>
+                                    <p className="text-[10px] text-muted-foreground">
+                                        Pending approvals
+                                    </p>
+                                </div>
+                                {(globalInsights?.pendingActionsCount ?? 0) > 0 && (
+                                    <Link href="/settings/automations">
+                                        <CyberButton size="sm">
+                                            Review
+                                        </CyberButton>
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* SYSTEM STATUS */}
+                        <div className="bg-muted/50 rounded p-3 border border-border">
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                                    System Health
+                                </span>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground">
+                                Daily Briefing: <span className="text-foreground">Ready</span>
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">
+                                Risk Monitor: <span className="text-success">Active</span>
+                            </p>
+                        </div>
+                    </>
+                )}
+            </aside>
+        );
+    }
+
+    // ============ PATIENT MODE ============
     return (
         <aside className="hidden xl:flex w-80 flex-col border-l border-sidebar-border bg-sidebar p-4 gap-6 font-mono">
-            {/* HEADER */}
+            {/* HEADER - Patient Mode */}
             <div className="border-b border-sidebar-border pb-4">
                 <div className="flex items-center gap-2 text-ai mb-1">
                     <BrainCircuit size={14} />
                     <span className="text-[10px] font-bold tracking-widest uppercase">AletheIA Observatory</span>
                 </div>
                 <p className="text-[10px] text-muted-foreground">
-                    {patientName
-                        ? `Active: ${patientName}`
-                        : 'System Standby'
-                    }
+                    Active: {patientName}
                 </p>
             </div>
-
-            {/* STANDBY STATE */}
-            {!patientName && !isLoading && (
-                <div className="flex-1 flex flex-col items-center justify-center text-center gap-4 py-8">
-                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-                        <BrainCircuit className="text-muted-foreground" size={24} />
-                    </div>
-                    <div>
-                        <p className="text-sm text-muted-foreground">No patient selected</p>
-                        <p className="text-[10px] text-muted-foreground/60 mt-1">
-                            Select a patient to view clinical insights
-                        </p>
-                    </div>
-                </div>
-            )}
 
             {/* LOADING STATE */}
             {isLoading && (
                 <div className="flex-1 flex flex-col gap-4">
-                    {/* Skeleton Risk Widget */}
                     <div className="bg-card rounded p-4 border border-border animate-pulse">
                         <div className="h-3 w-24 bg-muted rounded mb-3" />
                         <div className="h-10 w-20 bg-muted rounded mb-2" />
                         <div className="h-1 w-full bg-muted rounded mb-2" />
                         <div className="h-3 w-32 bg-muted rounded" />
                     </div>
-                    {/* Skeleton Inference */}
                     <div className="bg-ai/5 border border-ai/20 p-3 rounded animate-pulse">
                         <div className="h-3 w-20 bg-muted rounded mb-3" />
                         <div className="h-4 w-full bg-muted rounded mb-2" />
@@ -95,7 +214,7 @@ export default function AletheiaObservatory() {
                 </div>
             )}
 
-            {/* ACTIVE STATE - Patient Insights */}
+            {/* PATIENT INSIGHTS */}
             {insights && !isLoading && (
                 <>
                     {/* RISK WIDGET */}
@@ -123,19 +242,14 @@ export default function AletheiaObservatory() {
                                 style={{ width: `${riskPercentage}%` }}
                             />
                         </div>
-                        <div className={`flex items-center gap-2 text-[10px] ${riskTrend === 'negative' ? 'text-risk' :
-                                riskTrend === 'positive' ? 'text-success' : 'text-muted-foreground'
-                            }`}>
-                            <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${riskTrend === 'negative' ? 'bg-risk' :
-                                    riskTrend === 'positive' ? 'bg-success' : 'bg-muted-foreground'
-                                }`} />
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                             <span className="uppercase tracking-wider">
                                 {riskLevel.toUpperCase()} • {insights.cached ? 'Cached' : 'Fresh'}
                             </span>
                         </div>
                     </div>
 
-                    {/* SUMMARY WIDGET */}
+                    {/* SUMMARY */}
                     <div>
                         <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">
                             AletheIA Summary
@@ -187,20 +301,6 @@ export default function AletheiaObservatory() {
                         </div>
                     )}
 
-                    {/* SUGGESTIONS */}
-                    {insights.suggestions.length > 0 && (
-                        <div className="bg-brand/5 border border-brand/20 p-3 rounded">
-                            <h4 className="text-[10px] font-bold text-brand uppercase tracking-wider mb-2">
-                                Suggestions
-                            </h4>
-                            <ul className="text-[10px] text-muted-foreground space-y-1">
-                                {insights.suggestions.map((suggestion, i) => (
-                                    <li key={i}>• {suggestion}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
                     {/* ENGAGEMENT SCORE */}
                     <div className="bg-card border border-border p-3 rounded">
                         <div className="flex items-center justify-between mb-2">
@@ -225,7 +325,7 @@ export default function AletheiaObservatory() {
                 </>
             )}
 
-            {/* FOOTER */}
+            {/* FOOTER - Refresh Button */}
             {patientName && (
                 <div className="mt-auto pt-4 border-t border-sidebar-border">
                     <CyberButton
