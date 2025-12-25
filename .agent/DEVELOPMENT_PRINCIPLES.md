@@ -167,6 +167,69 @@ const { singular, plural } = useTerminology();
 
 ---
 
+## 11. CYBER-CLINICAL DESIGN SYSTEM v2.0 (The Zinc Protocol)
+
+**Philosophy:** "Precision & Void". A sterile, sophisticated interface inspired by medical HUDs.
+**Core Rule:** Design for **Light Mode ("The Clinic")** cleanliness, but verify **Dark Mode ("The Void")** immersion.
+
+### A. The Color Architecture (Zinc-Based)
+We strictly use the **Zinc** scale for neutrals to ensure a clean, medical tone (avoiding warm grays or blue slates).
+
+| Token | Purpose | Light Mode (Default) | Dark Mode (`dark:`) |
+| :--- | :--- | :--- | :--- |
+| **Canvas** | App Background | `bg-zinc-50` (#FAFAFA) | `bg-zinc-950` (#09090B) |
+| **Surface** | Cards/Panels | `bg-white` | `bg-zinc-900` |
+| **Border** | Structural Lines | `border-zinc-200` | `border-zinc-800` |
+| **Ink Primary** | Main Text | `text-zinc-900` | `text-zinc-200` |
+| **Ink Muted** | Metadata/Labels | `text-zinc-500` | `text-zinc-500` |
+| **Brand** | Primary Accent | `text-teal-600` | `text-teal-400` |
+| **Risk** | Alerts/Danger | `text-rose-600` | `text-rose-400` |
+| **AI** | Intelligence | `text-violet-600` | `text-violet-400` |
+
+### B. Component Patterns (The Atoms)
+
+#### 1. The "CyberCard" (Universal Container)
+Replace generic divs with this standard.
+* **Classes:** `bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-sm dark:shadow-none transition-all`
+* **Padding:** `p-6` (Desktop) / `p-4` (Mobile)
+
+#### 2. The "Action Button" (High Contrast)
+Used for primary calls to action (e.g., "Start Session").
+* **Classes:** `bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200`
+* **Shape:** `h-9 px-4 rounded-md text-sm font-medium shadow-sm`
+
+#### 3. Status Badges (The "Pill")
+* **High Risk:** `bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-900`
+* **AI/Beta:** `bg-violet-50 text-violet-700 border border-violet-200 dark:bg-violet-950/30 dark:text-violet-400`
+* **Standard:** `bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300`
+* **Shape:** `px-2 py-0.5 rounded text-xs font-mono font-medium`
+
+### C. Layout Architecture (The Trinity Shell)
+
+#### 1. The Structure (3-Column)
+* **Left:** Navigation Sidebar (`w-64`, Fixed, `border-r`).
+* **Center:** Main Stage (Fluid, Scrollable).
+* **Right:** Intelligence Rail (`w-80`, Collapsible, `border-l`, reserved for AletheIA).
+
+#### 2. The "Glass Header"
+Sticky headers must use blur for depth.
+* **Classes:** `sticky top-0 z-10 backdrop-blur-md bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-200 dark:border-zinc-800`
+
+### D. Typography System
+* **Primary Font:** `Inter` (Sans). Use for all UI text.
+* **Data Font:** `JetBrains Mono` or `Geist Mono`. **Mandatory** for:
+    * IDs (`#PT-4921`)
+    * Timestamps (`09:41 AM`)
+    * Biomarkers (`HRV: 22ms`)
+    * Risk Scores (`-0.90`)
+
+### E. Implementation Strategy (Next-Themes)
+1.  **Tailwind Config:** Map `background` and `foreground` to CSS variables handled by `next-themes`.
+2.  **Toggle:** Use a Sun/Moon toggle that switches the `class="dark"` on the `html` element.
+3.  **Defaults:** Force system preference on first load, but allow manual override.
+
+---
+
 ## Quick Reference
 
 ```python
