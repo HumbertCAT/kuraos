@@ -38,6 +38,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Semantic Variables**: `--background`, `--foreground`, `--surface`, `--border-subtle`, `--brand`, `--risk`, `--ai`
 - **Updated `DEVELOPMENT_PRINCIPLES.md`**: Section 11.E now reflects Tailwind v4 approach
 
+### Changed - Page-Level Styling
+- **CRM/Leads**: Updated header, Kanban columns with dark mode support
+- **Patients**: Simplified header, search/filter forms with brand colors
+- **Calendar**: Updated schedule selector, calendar preview with Zinc surfaces
+- **Services**: Updated header, card surfaces with border styling
+
 ---
 
 ## [1.0.2] - 2024-12-24
