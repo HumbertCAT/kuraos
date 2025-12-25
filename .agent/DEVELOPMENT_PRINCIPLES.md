@@ -167,66 +167,66 @@ const { singular, plural } = useTerminology();
 
 ---
 
-## 11. CYBER-CLINICAL DESIGN SYSTEM v2.0 (The Zinc Protocol)
+## 11. CYBER-CLINICAL DESIGN SYSTEM v2.1 (The Zinc Protocol - Architect Refinement)
 
 **Philosophy:** "Precision & Void". A sterile, sophisticated interface inspired by medical HUDs.
 **Core Rule:** Design for **Light Mode ("The Clinic")** cleanliness, but verify **Dark Mode ("The Void")** immersion.
+**Tech Stack:** Tailwind CSS v4 (CSS-first, no tailwind.config.ts).
 
-### A. The Color Architecture (Zinc-Based)
-We strictly use the **Zinc** scale for neutrals to ensure a clean, medical tone (avoiding warm grays or blue slates).
+### A. The Color Architecture (Zinc-Based + Neon Accents)
+We strictly use the **Zinc** scale for neutrals, with **neon accents** in dark mode.
 
-| Token | Purpose | Light Mode (Default) | Dark Mode (`dark:`) |
+| Token | Purpose | Light Mode | Dark Mode |
 | :--- | :--- | :--- | :--- |
-| **Canvas** | App Background | `bg-zinc-50` (#FAFAFA) | `bg-zinc-950` (#09090B) |
-| **Surface** | Cards/Panels | `bg-white` | `bg-zinc-900` |
-| **Border** | Structural Lines | `border-zinc-200` | `border-zinc-800` |
-| **Ink Primary** | Main Text | `text-zinc-900` | `text-zinc-200` |
-| **Ink Muted** | Metadata/Labels | `text-zinc-500` | `text-zinc-500` |
-| **Brand** | Primary Accent | `text-teal-600` | `text-teal-400` |
-| **Risk** | Alerts/Danger | `text-rose-600` | `text-rose-400` |
-| **AI** | Intelligence | `text-violet-600` | `text-violet-400` |
+| **Canvas** | App Background | `#FAFAFA` | `#0a0a0a` (True Black) |
+| **Surface** | Cards/Panels | `#FFFFFF` | `#121212` (Elevated) |
+| **Border** | Structural Lines | `#E4E4E7` | `#1f1f1f` (Ultra subtle) |
+| **Brand** | Primary Accent | `#0D9488` (Teal 600) | `#2DD4BF` (Teal 400) |
+| **Risk** | Alerts/Danger | `#E11D48` (Rose 600) | `#ff3366` (Neon Red) |
+| **AI** | Intelligence | `#7C3AED` (Violet 600) | `#A78BFA` (Violet 400) |
+| **AI Accent** | Cyan Highlights | `#0891B2` (Cyan 600) | `#00ffcc` (Neon Cyan) |
 
-### B. Component Patterns (The Atoms)
+### B. Typography System (Architect Stack)
+
+**⚠️ CRITICAL: We use Tailwind v4 - configure fonts in `globals.css` via `@theme`, NOT tailwind.config.ts.**
+
+| Role | Font | Use Case |
+| :--- | :--- | :--- |
+| **Display** | `Space Grotesk` | Headers, titles - cyber/technical |
+| **Body** | `Inter` | Content, paragraphs - clean/functional |
+| **Mono** | `JetBrains Mono` | Stats, IDs, timestamps, biomarkers |
+
+**Utility Classes:**
+- `.font-display` - Space Grotesk, weight 600, tracking tight
+- `.font-body` - Inter (default)
+- `.font-mono` / `.font-stats` - JetBrains Mono with tabular nums
+- `.font-label` - ALL CAPS, 0.1em tracking, 0.65rem
+
+**⚠️ Architect Note:** Never use Serif fonts in dashboards - they create "Magazine" feel instead of "Herramienta/Software".
+
+### C. Component Patterns (The Atoms)
 
 #### 1. The "CyberCard" (Universal Container)
-Replace generic divs with this standard.
-* **Classes:** `bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-sm dark:shadow-none transition-all`
-* **Padding:** `p-6` (Desktop) / `p-4` (Mobile)
+* **Classes:** `bg-surface border border-border-subtle rounded-xl`
+* **Shadow:** Light mode only with `shadow-sm`
 
 #### 2. The "Action Button" (High Contrast)
-Used for primary calls to action (e.g., "Start Session").
-* **Classes:** `bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-950 dark:hover:bg-zinc-200`
-* **Shape:** `h-9 px-4 rounded-md text-sm font-medium shadow-sm`
+* **Classes:** `bg-brand text-white rounded-xl hover:opacity-90`
 
 #### 3. Status Badges (The "Pill")
-* **High Risk:** `bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-900`
-* **AI/Beta:** `bg-violet-50 text-violet-700 border border-violet-200 dark:bg-violet-950/30 dark:text-violet-400`
-* **Standard:** `bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300`
-* **Shape:** `px-2 py-0.5 rounded text-xs font-mono font-medium`
+* **High Risk:** `bg-risk/10 text-risk`
+* **AI/Beta:** `bg-ai/10 text-ai`
 
-### C. Layout Architecture (The Trinity Shell)
+### D. Layout Architecture (The Trinity Shell)
 
-#### 1. The Structure (3-Column)
-* **Left:** Navigation Sidebar (`w-64`, Fixed, `border-r`).
+* **Left:** Navigation Sidebar (`w-64`, Fixed).
 * **Center:** Main Stage (Fluid, Scrollable).
-* **Right:** Intelligence Rail (`w-80`, Collapsible, `border-l`, reserved for AletheIA).
-
-#### 2. The "Glass Header"
-Sticky headers must use blur for depth.
-* **Classes:** `sticky top-0 z-10 backdrop-blur-md bg-white/80 dark:bg-zinc-950/80 border-b border-zinc-200 dark:border-zinc-800`
-
-### D. Typography System
-* **Primary Font:** `Inter` (Sans). Use for all UI text.
-* **Data Font:** `JetBrains Mono` or `Geist Mono`. **Mandatory** for:
-    * IDs (`#PT-4921`)
-    * Timestamps (`09:41 AM`)
-    * Biomarkers (`HRV: 22ms`)
-    * Risk Scores (`-0.90`)
+* **Right:** Intelligence Rail (`w-80`, Collapsible, reserved for AletheIA).
 
 ### E. Implementation Strategy (Tailwind v4 CSS-First)
 
 **1. CSS Configuration (`app/globals.css`)**
-We define the theme directly in CSS using `@theme`. We do NOT use `tailwind.config.ts` for colors.
+We define the theme directly in CSS using `@theme inline`. We do NOT use `tailwind.config.ts`.
 
 ```css
 @import "tailwindcss";

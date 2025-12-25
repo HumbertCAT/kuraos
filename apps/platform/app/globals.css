@@ -1,11 +1,21 @@
 @import "tailwindcss";
 
 /* ================================================
-   Cyber-Clinical Design System v2.0 (Zinc Protocol)
+   Google Fonts - Architect Typography Stack
+   ================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ================================================
+   Cyber-Clinical Design System v2.1 (Architect Refinement)
    Tailwind v4 CSS-First Configuration
    ================================================ */
 
 @theme inline {
+  /* Font Family Definitions */
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
   /* Semantic Color Mapping */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -18,17 +28,14 @@
   --color-risk: var(--risk);
   --color-risk-bg: var(--color-rose-50);
   --color-ai: var(--ai);
+  --color-ai-accent: var(--ai-accent);
   
-  /* Typography */
+  /* Typography Scale */
   --font-sans: var(--font-body);
-  --font-mono: var(--font-geist-mono);
-  --font-body: var(--font-body);
-  --font-headline: var(--font-headline);
-  --font-caption: var(--font-caption);
 }
 
 /* ================================================
-   Light Mode (The Clinic) - Zinc 50 Base
+   Light Mode (The Clinic) - Clean White
    ================================================ */
 :root {
   --background: #FAFAFA;     /* Zinc 50 */
@@ -40,63 +47,74 @@
   --brand: #0D9488;          /* Teal 600 */
   --risk: #E11D48;           /* Rose 600 */
   --ai: #7C3AED;             /* Violet 600 */
+  --ai-accent: #0891B2;      /* Cyan 600 */
 }
 
 /* ================================================
-   Dark Mode (The Void) - Zinc 950 Base
+   Dark Mode (The Void) - True Black + Neon
+   Per Architect Spec: #0a0a0a base, #121212 surfaces
    ================================================ */
 .dark {
-  --background: #09090B;     /* Zinc 950 */
+  --background: #0a0a0a;     /* True Black (Architect) */
   --foreground: #E4E4E7;     /* Zinc 200 */
-  --surface: #18181B;        /* Zinc 900 */
-  --border-subtle: #27272A;  /* Zinc 800 */
+  --surface: #121212;        /* Elevated surface (OLED-safe) */
+  --border-subtle: #1f1f1f;  /* Ultra subtle borders */
   
-  /* Brand colors - Dark mode (higher contrast) */
+  /* Neon accent colors - Dark mode (Architect palette) */
   --brand: #2DD4BF;          /* Teal 400 */
-  --risk: #FB7185;           /* Rose 400 */
+  --risk: #ff3366;           /* Neon Red (Architect) */
   --ai: #A78BFA;             /* Violet 400 */
+  --ai-accent: #00ffcc;      /* Neon Cyan (Architect) */
 }
 
 /* ================================================
-   Typography System
+   Typography System - Architect Stack
    ================================================ */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Font utility classes */
-.font-body {
-  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.font-headline {
-  font-family: var(--font-headline), -apple-system, BlinkMacSystemFont, sans-serif;
+/* Display - Space Grotesk (Headers, Titles) */
+.font-display {
+  font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-.font-caption {
-  font-family: var(--font-caption), monospace;
-  font-size: 0.75rem;
+/* Body - Inter (Content, Paragraphs) */
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Mono - JetBrains Mono (Stats, Numbers, Code) */
+.font-mono, .font-stats {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" on, "lnum" on;
+}
+
+/* Label - ALL CAPS with tracking */
+.font-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
+  letter-spacing: 0.1em;
 }
 
 /* Headlines with personality */
 h1, .h1 {
-  font-family: var(--font-headline), sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
 h2, .h2 {
-  font-family: var(--font-headline), sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
