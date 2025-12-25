@@ -38,12 +38,17 @@ export default function DashboardLayout({
       {/* Glass Header - Sticky with blur */}
       <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-zinc-950/80 border-b border-border-subtle px-4 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo - Light/Dark variants */}
           <Link href="/dashboard" className="flex items-center gap-2 group">
             <img
-              src="/kura-logo-full.png"
+              src="/kura-logo-light.png"
               alt="KURA OS"
-              className="h-24 w-auto dark:brightness-110"
+              className="h-20 w-auto dark:hidden"
+            />
+            <img
+              src="/kura-logo-dark.png"
+              alt="KURA OS"
+              className="h-20 w-auto hidden dark:block"
             />
           </Link>
 
