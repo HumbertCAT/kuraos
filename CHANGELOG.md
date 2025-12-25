@@ -5,6 +5,41 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2024-12-25 🎄
+
+### Added - Cyber-Clinical Design System v2.0
+- **Theme Engine**: Installed `next-themes` for dark/light mode support
+  - `ThemeProvider` wrapping the entire application
+  - `ThemeToggle` component (Sun/Moon icons)
+  - Light (`#FAFAFA`) and Dark (`#09090B`) Zinc Protocol colors
+- **Light/Dark Logo Variants**: New transparent PNGs for each theme
+- **`CyberCard` Component**: Universal container with `default`, `alert`, and `ai` variants
+
+### Added - Trinity Navigation
+- **`TrinityNav` Sidebar**: New fixed-width navigation organized by pillars
+  - 🔥 **ENGAGE**: CRM, Formularios
+  - 🩺 **PRACTICE**: Calendario, Clientes, Servicios
+  - 🌱 **NURTURE**: (Coming Soon - commented out)
+- **3-Column Layout**: Sidebar | Main Content | AletheIA Intelligence Rail
+- **⌘K Search Placeholder**: Ready for Command Palette integration
+- **AletheIA Observatory**: Right sidebar visible on XL screens
+
+### Changed - Dashboard Bento Grid
+- **Refactored Dashboard Layout**: From vertical stack to 12-column CSS grid
+  - **Zone A**: Chief of Staff with dark violet gradient header
+  - **Zone B**: Focus Card (8 cols) + Pillar Stack metrics (4 cols)
+  - **Zone C**: Recent Bookings + Patients lists with `CyberCard`
+- **Removed Bright Gradients**: All cards now use Zinc surfaces with colored icons
+- **Typography**: `font-mono` for all metrics, timestamps, and stats
+- **Code Reduction**: Dashboard reduced from 648 to ~350 lines
+
+### Changed - Tailwind v4 Migration
+- **CSS-First Configuration**: Moved color definitions from `tailwind.config.ts` to `globals.css`
+- **Semantic Variables**: `--background`, `--foreground`, `--surface`, `--border-subtle`, `--brand`, `--risk`, `--ai`
+- **Updated `DEVELOPMENT_PRINCIPLES.md`**: Section 11.E now reflects Tailwind v4 approach
+
+---
+
 ## [1.0.2] - 2024-12-24
 
 ### Added

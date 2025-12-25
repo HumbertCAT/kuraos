@@ -41,23 +41,23 @@ const COLUMNS: Column[] = [
     {
         id: 'NEW',
         title: 'Nuevos',
-        color: 'text-blue-700',
-        bgColor: 'bg-blue-50',
-        borderColor: 'border-blue-200',
+        color: 'text-blue-600 dark:text-blue-400',
+        bgColor: 'bg-blue-50 dark:bg-blue-950/30',
+        borderColor: 'border-blue-200 dark:border-blue-800',
     },
     {
         id: 'CONTACTED',
         title: 'Contactados',
-        color: 'text-amber-700',
-        bgColor: 'bg-amber-50',
-        borderColor: 'border-amber-200',
+        color: 'text-amber-600 dark:text-amber-400',
+        bgColor: 'bg-amber-50 dark:bg-amber-950/30',
+        borderColor: 'border-amber-200 dark:border-amber-800',
     },
     {
         id: 'QUALIFIED',
         title: 'Cualificados',
-        color: 'text-emerald-700',
-        bgColor: 'bg-emerald-50',
-        borderColor: 'border-emerald-200',
+        color: 'text-teal-600 dark:text-teal-400',
+        bgColor: 'bg-teal-50 dark:bg-teal-950/30',
+        borderColor: 'border-teal-200 dark:border-teal-800',
     },
 ];
 
@@ -287,19 +287,19 @@ export default function LeadsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-purple-200">
-                        <UserPlus className="w-7 h-7 text-white" />
+                    <div className="w-12 h-12 rounded-xl bg-brand/10 dark:bg-brand/20 flex items-center justify-center">
+                        <UserPlus className="w-6 h-6 text-brand" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-fuchsia-500 bg-clip-text text-transparent">
+                        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                             CRM - Interesados
                         </h1>
-                        <p className="text-slate-500">Gestiona tu pipeline de ventas antes de convertir a {terminology.plural.toLowerCase()}</p>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">Gestiona tu pipeline antes de convertir a {terminology.plural.toLowerCase()}</p>
                     </div>
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors font-medium"
+                    className="flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-xl hover:opacity-90 transition-opacity font-medium"
                 >
                     <Plus className="w-4 h-4" />
                     Nuevo Lead
