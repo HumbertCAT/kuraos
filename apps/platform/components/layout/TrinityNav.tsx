@@ -64,14 +64,16 @@ export function TrinityNav() {
         localStorage.setItem(STORAGE_KEY, String(newState));
     };
 
+    // Dashboard standalone item
+    const dashboardItem: NavItem = { href: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> };
+
     const sections: NavSection[] = [
         {
-            id: 'ops',
-            title: 'OPS',
-            icon: <LayoutDashboard className="w-3.5 h-3.5 text-blue-500" />,
+            id: 'engage',
+            title: 'ENGAGE',
+            icon: <Flame className="w-3.5 h-3.5 text-orange-500" />,
             items: [
-                { href: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-                { href: '/calendar', label: t('calendar'), icon: <Calendar className="w-4 h-4" /> },
+                { href: '/services', label: t('services'), icon: <Briefcase className="w-4 h-4" /> },
                 { href: '/leads', label: 'CRM', icon: <Users className="w-4 h-4" /> },
             ],
         },
@@ -82,23 +84,21 @@ export function TrinityNav() {
             items: [
                 { href: '/patients', label: terminology.plural, icon: <Users className="w-4 h-4" /> },
                 { href: '/forms', label: t('forms'), icon: <FileText className="w-4 h-4" /> },
-                { href: '/services', label: t('services'), icon: <Briefcase className="w-4 h-4" /> },
             ],
         },
         {
-            id: 'growth',
-            title: 'GROWTH',
+            id: 'nurture',
+            title: 'NURTURE',
             icon: <Sprout className="w-3.5 h-3.5 text-emerald-500" />,
             items: [
-                { href: '/nurture', label: 'Nurture', icon: <Sprout className="w-4 h-4" />, comingSoon: true },
                 { href: '/campaigns', label: 'Campaigns', icon: <Megaphone className="w-4 h-4" />, comingSoon: true },
             ],
         },
     ];
 
+    // Only Agents in system items (Settings link via user profile)
     const systemItems: NavItem[] = [
         { href: '/settings/automations', label: 'Agentes', icon: <Sparkles className="w-4 h-4" /> },
-        { href: '/settings', label: t('settings'), icon: <Settings className="w-4 h-4" /> },
     ];
 
     const isActive = (href: string) => pathname.includes(href);
@@ -140,6 +140,23 @@ export function TrinityNav() {
 
             {/* Navigation Sections */}
             <nav className={`flex-1 overflow-y-auto py-2 space-y-4 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+                {/* Dashboard - Standalone */}
+                <Link
+                    href="/dashboard"
+                    className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
+                        } ${pathname.includes('/dashboard')
+                            ? 'bg-brand/10 text-brand'
+                            : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
+                        }`}
+                    title={isCollapsed ? 'Dashboard' : undefined}
+                >
+                    <LayoutDashboard className="w-4 h-4" />
+                    {!isCollapsed && 'Dashboard'}
+                </Link>
+
+                {/* Divider after Dashboard */}
+                {!isCollapsed && <div className="border-b border-sidebar-border" />}
+
                 {sections.map((section) => (
                     <div key={section.id}>
                         {/* Section Header */}
@@ -214,36 +231,40 @@ export function TrinityNav() {
                     </Link>
                 ))}
 
-                {/* User Profile */}
+                {/* User Profile - Links to Settings */}
                 {user && (
-                    <div className={`flex items-center gap-2 p-2 rounded-lg border border-transparent hover:border-border hover:bg-accent/50 transition-colors ${isCollapsed ? 'justify-center' : ''
-                        }`}>
-                        <div
-                            className="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-brand/70 flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0"
-                            title={isCollapsed ? user.full_name : undefined}
-                        >
+                    <Link
+                        href="/settings"
+                        className={`flex items-center gap-2 p-2 rounded-lg border border-transparent hover:border-border hover:bg-accent/50 transition-colors ${isCollapsed ? 'justify-center' : ''}`}
+                        title={isCollapsed ? user.full_name : undefined}
+                    >
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand to-brand/70 flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">
                             {user.full_name?.charAt(0).toUpperCase() || 'U'}
                         </div>
                         {!isCollapsed && (
-                            <>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-foreground truncate">
-                                        {user.full_name?.split(' ')[0]}
-                                    </p>
-                                    <p className="text-[10px] text-muted-foreground truncate">
-                                        {user.email?.split('@')[0] || 'User'}
-                                    </p>
-                                </div>
-                                <ThemeToggle />
-                                <button
-                                    onClick={logout}
-                                    className="p-1.5 text-muted-foreground hover:text-risk transition-colors"
-                                    title={tAuth('logout')}
-                                >
-                                    <LogOut className="w-4 h-4" />
-                                </button>
-                            </>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                    {user.full_name?.split(' ')[0]}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground truncate">
+                                    {user.email?.split('@')[0] || 'User'}
+                                </p>
+                            </div>
                         )}
+                    </Link>
+                )}
+
+                {/* Theme + Logout Row */}
+                {user && !isCollapsed && (
+                    <div className="flex items-center justify-end gap-1 px-2">
+                        <ThemeToggle />
+                        <button
+                            onClick={logout}
+                            className="p-1.5 text-muted-foreground hover:text-risk transition-colors"
+                            title={tAuth('logout')}
+                        >
+                            <LogOut className="w-4 h-4" />
+                        </button>
                     </div>
                 )}
 
