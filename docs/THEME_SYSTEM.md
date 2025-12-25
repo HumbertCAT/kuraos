@@ -48,6 +48,21 @@ KURA OS uses a **semantic CSS variable system** for theming. All colors are defi
 | **Feedback** | `--warning` | Warning (Amber) | `#fbbf24` |
 | **Feedback** | `--destructive` | Destructive (Red) | `#7f1d1d` |
 
+## Typography
+
+| Token | Font Family | Usage |
+|-------|-------------|-------|
+| `--font-display` | Space Grotesk | Headers, Titles, Navigation |
+| `--font-serif` | Playfair Display | Elegant accents, Patient names |
+| `--font-body` | Inter | Body text, UI labels, Forms |
+| `--font-mono` | JetBrains Mono | Code, Data, Technical values |
+
+**Tailwind Classes:**
+- `font-display` → Space Grotesk (Bold headers)
+- `font-serif` → Playfair Display (Elegant touch)
+- `font-body` → Inter (Default readable)
+- `font-mono` → JetBrains Mono (Stats, codes)
+
 ## API Endpoints
 
 ### Save Theme
