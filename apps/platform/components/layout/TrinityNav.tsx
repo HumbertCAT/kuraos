@@ -88,7 +88,7 @@ export function TrinityNav() {
                     <img
                         src="/kura-logo-dark.png"
                         alt="KURA OS"
-                        className="h-12 w-auto hidden dark:block"
+                        className="h-12 w-auto hidden dark:block dark:brightness-0 dark:invert"
                     />
                 </Link>
             </div>
