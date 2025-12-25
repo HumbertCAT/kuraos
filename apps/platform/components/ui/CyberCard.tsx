@@ -1,40 +1,49 @@
-import { cn } from '@/lib/utils';
-import { ReactNode } from 'react';
+import React from "react";
+import { cn } from "@/lib/utils";
 
-interface CyberCardProps {
-    children: ReactNode;
+// Definimos los estilos para cada variante usando las nuevas variables semánticas.
+const cardVariants = {
+    // La tarjeta estándar (sólida)
+    default: "bg-card text-card-foreground border-border shadow-sm dark:shadow-none",
+
+    // Variante 'ghost' (transparente, solo borde sutil) - Útil para contenedores secundarios
+    ghost: "bg-transparent border-border/40 text-foreground shadow-none",
+
+    // Variante 'glass' (translúcida con desenfoque) - Útil para elementos flotantes o headers sticky
+    // Usa bg-card pero con opacidad para el efecto cristal.
+    glass: "bg-card/80 backdrop-blur-md border-border/80 text-card-foreground shadow-sm dark:shadow-none supports-[backdrop-filter]:bg-card/60",
+
+    // Variante 'ai' (acentuada con tono violeta sutil)
+    ai: "bg-card text-card-foreground border-ai/30 shadow-sm dark:shadow-none",
+
+    // Variante 'alert' (acentuada con tono riesgo sutil)
+    alert: "bg-card text-card-foreground border-risk/30 shadow-sm dark:shadow-none",
+};
+
+// Extendemos las props estándar de un DIV HTML
+export interface CyberCardProps extends React.HTMLAttributes<HTMLDivElement> {
+    children: React.ReactNode;
     className?: string;
-    variant?: 'default' | 'glass' | 'alert' | 'ai';
+    variant?: keyof typeof cardVariants;
 }
 
-/**
- * CyberCard - Universal container component for the Cyber-Clinical Design System.
- * 
- * Usage:
- * ```tsx
- * <CyberCard>Content here</CyberCard>
- * <CyberCard variant="glass">Glass header</CyberCard>
- * <CyberCard variant="alert">Risk alert</CyberCard>
- * <CyberCard variant="ai">AI-powered section</CyberCard>
- * ```
- */
-export function CyberCard({ children, className, variant = 'default' }: CyberCardProps) {
+export function CyberCard({
+    children,
+    className,
+    variant = "default",
+    ...props
+}: CyberCardProps) {
     return (
         <div
             className={cn(
-                "relative rounded-xl border transition-all duration-200",
-                // Light Mode Styles
-                "bg-white border-slate-200 shadow-sm",
-                // Dark Mode Styles (The Key Fix)
-                "dark:bg-[#0A0A0A] dark:border-white/10 dark:shadow-none",
-                // Glass Variant (for headers)
-                variant === 'glass' && "backdrop-blur-xl bg-white/80 dark:bg-[#0A0A0A]/80",
-                // Alert Variant
-                variant === 'alert' && "border-red-500/20 bg-red-50 dark:bg-red-500/5 dark:border-red-500/20",
-                // AI Variant
-                variant === 'ai' && "border-violet-500/20 bg-violet-50 dark:bg-violet-500/5 dark:border-violet-500/20",
+                // ESTILOS BASE (Comunes a todas)
+                "rounded-xl border transition-all duration-200",
+                // ESTILOS DE LA VARIANTE SELECCIONADA
+                cardVariants[variant],
+                // CLASES PERSONALIZADAS (para overrides puntuales)
                 className
             )}
+            {...props}
         >
             {children}
         </div>
@@ -42,7 +51,7 @@ export function CyberCard({ children, className, variant = 'default' }: CyberCar
 }
 
 /**
- * CyberCardHeader - Optional header section with title and optional subtitle
+ * CyberCardHeader - Optional header section
  */
 export function CyberCardHeader({
     title,
@@ -52,17 +61,17 @@ export function CyberCardHeader({
 }: {
     title: string;
     subtitle?: string;
-    action?: ReactNode;
+    action?: React.ReactNode;
     className?: string;
 }) {
     return (
         <div className={cn('flex items-start justify-between mb-4', className)}>
             <div>
-                <h3 className="text-lg font-display text-foreground">
+                <h3 className="text-lg font-display text-card-foreground">
                     {title}
                 </h3>
                 {subtitle && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-sm text-foreground/60 mt-0.5">
                         {subtitle}
                     </p>
                 )}

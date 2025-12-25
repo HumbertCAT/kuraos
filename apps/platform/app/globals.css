@@ -7,66 +7,69 @@
 @import "tailwindcss";
 
 /* ================================================
-   Cyber-Clinical Design System v2.2 (Deep Void)
+   Cyber-Clinical Design System v3.0 (Semantic Tokens)
+   Clean Design: One source of truth per color.
    ================================================ */
 
 @theme inline {
-  /* Semantic Colors */
+  /* Semantic Color Map */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-border-subtle: var(--border-subtle);
   
-  /* Brand & Accents (NEON CYBER) */
-  --color-brand: var(--color-teal-500);
-  --color-risk: #ff3366;
-  --color-ai: #8b5cf6;
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  
+  --color-brand: var(--brand);
+  --color-risk: var(--risk);
+  --color-ai: var(--ai);
   --color-success: #10b981;
 
-  /* Typography Mapping */
+  /* Typography */
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 }
 
 /* ================================================
-   2. THEME VARIABLES (The "Deep Void" Look)
+   THEME VALUES - Single Source of Truth
    ================================================ */
 :root {
-  /* Light Mode (Clean Clinic) */
+  /* LIGHT MODE (The Clinic) */
   --background: #F8FAFC;
   --foreground: #0F172A;
-  --surface: #FFFFFF;
-  --border-subtle: #E2E8F0;
   
-  /* Brand - Light */
-  --brand: #14b8a6;
-  --risk: #e11d48;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  
+  --border: #E2E8F0;
+  
+  --brand: #0D9488;
+  --risk: #E11D48;
   --ai: #8b5cf6;
 }
 
 .dark {
-  /* Dark Mode (True Void) */
+  /* DARK MODE (The Void) */
   --background: #050505;
-  --foreground: #E2E8F0;
-  --surface: #0A0A0A;
-  --border-subtle: #1F1F1F;
+  --foreground: #E4E4E7;
   
-  /* Neon Accents - Dark */
+  --card: #0A0A0A;
+  --card-foreground: #E4E4E7;
+  
+  --border: #27272A;
+  
   --brand: #2DD4BF;
-  --risk: #ff3366;
+  --risk: #FB7185;
   --ai: #a78bfa;
 }
 
 /* ================================================
-   3. GLOBAL BASE STYLES
+   GLOBAL BASE STYLES
    ================================================ */
 body {
+  @apply bg-background text-foreground antialiased;
   font-family: var(--font-body);
-  background: var(--background);
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
