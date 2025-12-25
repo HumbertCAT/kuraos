@@ -13,6 +13,7 @@ import JourneyStatusCard from '@/components/JourneyStatusCard';
 import AletheiaHUD from '@/components/AletheiaHUD';
 import MonitoringTab from '@/components/MonitoringTab';
 import SilentErrorBoundary from '@/components/SilentErrorBoundary';
+import { usePatientStore } from '@/stores/patient-store';
 
 export default function PatientDetailPage() {
   const t = useTranslations('PatientForm');
@@ -22,6 +23,9 @@ export default function PatientDetailPage() {
   const params = useParams();
   const router = useRouter();
   const patientId = params.id as string;
+
+  // AletheIA Context - activate sidebar for this patient
+  const { setActivePatient, clearPatient } = usePatientStore();
 
   const [patient, setPatient] = useState<Patient | null>(null);
   const [entries, setEntries] = useState<ClinicalEntry[]>([]);
@@ -38,6 +42,18 @@ export default function PatientDetailPage() {
   useEffect(() => {
     loadData();
   }, [patientId]);
+
+  // Trigger AletheIA Observatory when patient data is loaded
+  useEffect(() => {
+    if (patient) {
+      const fullName = `${patient.first_name} ${patient.last_name}`;
+      setActivePatient(patientId, fullName);
+    }
+    // Clear context when leaving page
+    return () => {
+      clearPatient();
+    };
+  }, [patient, patientId, setActivePatient, clearPatient]);
 
   // Polling effect: check for entries with PENDING/PROCESSING status
   useEffect(() => {
