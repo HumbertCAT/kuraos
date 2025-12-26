@@ -15,20 +15,15 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log('Login form submitted');
     setError('');
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const email = (formData.get('email') as string).trim();
     const password = formData.get('password') as string;
-    console.log('Attempting login for:', email);
-    console.log('Password length:', password.length);
-    console.log('Payload:', JSON.stringify({ email, password }));
 
     try {
       await login({ email, password });
-      console.log('Login successful, redirecting...');
       // Get current locale from path (e.g., /es/login -> es)
       const locale = window.location.pathname.split('/')[1] || 'es';
       // Use window.location for hard navigation to ensure cookie is read by middleware
