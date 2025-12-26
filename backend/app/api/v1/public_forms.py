@@ -372,7 +372,8 @@ async def submit_public_lead_form(
             phone=submission.answers.get("phone", ""),
             source=f"Form: {template.title}",
             status=LeadStatus.NEW,
-            notes=f"Submitted via public form. Answers: {submission.answers}",
+            notes="Submitted via public form",
+            form_data=submission.answers,  # Clinical data in structured JSONB
         )
         db.add(new_lead)
         await db.commit()

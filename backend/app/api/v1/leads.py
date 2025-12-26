@@ -263,11 +263,12 @@ async def convert_lead_to_patient(
         )
 
     # Create patient from lead data
-    # Memory Handover: preserve notes and source info
+    # Memory Handover: preserve notes, form data, and source info
     profile_data = {
         "referral_source": lead.source,
         "source_details": lead.source_details,
         "initial_notes": lead.notes,  # Critical: preserve sales context
+        "form_data": lead.form_data,  # Structured form answers (if any)
         "converted_from_lead": str(lead.id),
         "converted_at": datetime.utcnow().isoformat(),
     }

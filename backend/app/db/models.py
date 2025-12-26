@@ -412,6 +412,10 @@ class Lead(Base):
     # Notes (preserved during conversion → becomes initial clinical context)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+    # Structured form data (JSONB) - clinical answers from intake forms
+    # Separates PII (name, email in columns) from clinical data (here)
+    form_data: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+
     # Conversion tracking
     converted_patient_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("patients.id"), nullable=True
