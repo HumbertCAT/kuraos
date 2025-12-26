@@ -5,6 +5,41 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2025-12-27
+
+### Security - Data Protection & GDPR Compliance
+
+This release focuses on hardening data protection across the platform to meet HIPAA and GDPR requirements.
+
+#### PASO 1: PII Removal from Logs
+- **`twilio_webhook.py`**: Removed phone numbers, patient names, and message content from all log statements
+  - Now logs: `"✅ Stored message for patient_id=UUID"` instead of exposing names
+  - Message content replaced with length: `"📱 WhatsApp message received (length: 42 chars)"`
+- **`transcription.py`**: Removed transcription snippets from logs
+
+#### PASO 2: Structured Lead Form Data
+- **New**: `Lead.form_data` JSONB column for structured clinical data storage
+- **Changed**: `public_forms.py` now stores form answers in `form_data`, not concatenated in `notes`
+- **Migration**: `849384d89ca0_add_lead_form_data.py`
+- **Backward Compatible**: Existing leads with data in `notes` remain functional
+
+#### PASO 3: Strict ProfileData Schema
+- **Removed Clinical Fields** from `ProfileData`: `previous_therapy`, `current_medications`, `medical_conditions`, `goals`, `notes`
+  - These MUST now go to `ClinicalEntry`
+- **Changed**: `extra = "ignore"` silently drops unknown fields to prevent data leakage
+- **Typed**: `PatientCreate` and `PatientUpdate` now use typed `ProfileData` instead of `Dict[str, Any]`
+
+### Added
+- **`GOOGLE_API_KEY`** in Secret Manager and deploy.sh for AletheIA AI functionality
+- **`GEMINI_API_KEY`** defined in `backend/app/core/config.py`
+- **Journey Architecture Documentation**: `docs/arch/journeys-architecture.md`
+
+### Fixed
+- Corrected all 2024 dates to 2025 across ADRs and documentation
+- **`ThemeConfigUpdate`** schema now accepts `dict[str, Any]` for nested light/dark themes
+
+---
+
 ## [1.0.5.4.2] - 2025-12-26
 
 ### Changed - Final Dashboard Polish & Readability
