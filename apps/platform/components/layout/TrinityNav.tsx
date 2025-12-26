@@ -7,6 +7,7 @@ import { useAuth } from '@/context/auth-context';
 import { useTerminology } from '@/hooks/use-terminology';
 import { useTranslations } from 'next-intl';
 import { ThemeToggle } from '@/components/theme-toggle';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import {
     Users,
     User,
@@ -279,6 +280,7 @@ export function TrinityNav() {
                     {!isCollapsed && (
                         <div className="flex items-center gap-1">
                             <ThemeToggle />
+                            <LanguageSwitcher />
                             <button
                                 onClick={logout}
                                 className="p-1.5 text-muted-foreground hover:text-risk transition-colors rounded-md hover:bg-muted"
