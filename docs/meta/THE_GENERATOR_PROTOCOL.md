@@ -1,84 +1,65 @@
 # ♾️ The Generator Protocol: Agentic Development Cycle
 
-> **Concepto:** Formalización del flujo de trabajo iterativo Humano-IA para el desarrollo de software de alta calidad.
-> **Objetivo:** Estandarizar, optimizar y eventualmente automatizar el ciclo de creación con Google Antigravity (GAG).
+> **Concepto:** Metodología de Desarrollo Aumentado por IA (AI-Augmented Development Cycle).
+> **Objetivo:** Estandarizar la colaboración entre el Humano (Director), el Arquitecto (Estrategia) y el Constructor (Ejecución).
 
 ---
 
-## 🔄 El Ciclo Actual (The Loop)
+## 🔄 El Ciclo Infinito (The Infinity Loop)
 
-Has identificado un patrón natural de trabajo que separa la "Inteligencia" (Diseño/Estrategia) de la "Ejecución" (Código/Implementación).
+La clave es separar la **Inteligencia** de la **Ejecución**.
 
-1.  **💡 Spark (La Idea):** El Director de Producto (Tú) tiene una visión o necesidad.
-2.  **🗣️ Dialectic (El Debate):** Discusión socrática con el Arquitecto (Yo) para refinar la idea.
-3.  **📜 The Prompt (La Instrucción):** Cristalización de la idea en un prompt estructurado para GAG.
-    *   *Optimización Clave:* Uso de Contexto Bloqueado y restricciones claras.
-4.  **🗺️ The Plan (La Propuesta):** GAG analiza y propone un `implementation_plan.md`.
-5.  **🔍 The Review (El Refinado):** Revisión humana del plan. Iteración sin código ("No toques, solo planea").
-6.  **⚡ Execution (La Construcción):** GAG escribe el código siguiendo el plan aprobado.
-7.  **💎 Polish (El Resultado):** Verificación y ajustes finales (UI Harmonization).
+### FASE 1: Inteligencia (Human + Architect AI)
+1.  **💡 Spark (La Idea):** El Director de Producto (Tú) define una necesidad.
+2.  **🗣️ Dialectic (El Debate):** Refinamiento socrático con el Arquitecto (Gemini). Definición de objetivos de negocio y UX.
+3.  **📜 The Prompt (La Instrucción):** El Arquitecto genera el `GAG PROMPT` maestro, inyectando el contexto técnico.
 
----
+### FASE 2: Planificación (Builder AI)
+4.  **🗺️ The Plan:** GAG (Builder) analiza el código y propone un `implementation_plan.md`.
+5.  **⚖️ The Audit (Human Review):** Validación humana. ¿Cumple el plan con la Regla de Oro? ¿Toca lo que debe?
+    *   *Regla:* Iterar el plan hasta que sea perfecto. "Measure twice, cut once".
 
-## 🚀 Optimizaciones: Calidad y Tiempo
-
-Para reducir la fricción y aumentar la precisión, podemos introducir **"Protocolos de Estado"**:
-
-### 1. Estandarización de Entradas (Prompt Templates)
-En lugar de texto libre, usar estructuras predefinidas para reducir la ambigüedad.
-
-*   **Feature Request Template:** Contexto -> Objetivo -> Restricciones -> UI Deseada.
-*   **Refactor Template:** Archivo Objetivo -> Problema -> Patrón a aplicar -> Resultado esperado.
-
-### 2. "Pre-Flight Checks" Automáticos
-Antes de escribir código, GAG debe validar su propio entendimiento.
-*   *Regla:* "Antes de editar, resume en 3 puntos qué vas a cambiar y qué archivos dependen de ello".
-
-### 3. Context Bundles (KIs forzados)
-Si vamos a tocar "Facturación", cargar automáticamente: `Stripe Integration KI` + `Database Schema`. Evita alucinaciones por falta de contexto.
+### FASE 3: Ejecución & Pulido
+6.  **⚡ Execution:** GAG escribe el código.
+7.  **💎 Polish:** Verificación visual y corrección de detalles finos (UI Harmonization).
 
 ---
 
-## 🔮 La Semilla: "The Kura Factory" (Meta-App)
+## �️ Herramientas de Optimización (Phase 2)
 
-¿Podemos construir una herramienta que gestione este proceso? **SÍ.**
+Para eliminar la fricción, estandarizamos las entradas.
 
-Imagina una CLI o WebApp local (`kura-factory`) que orquesta a GAG.
+### 1. Librería de Prompts (`.prompts/`)
+Archivos de contexto que "doman" a la IA para que no olvide las reglas.
+
+*   `system_context.md`: La "Constitución" (Stack, Estilos, Prohibiciones). Se inyecta al inicio de cada sesión.
+*   `architect_role.md`: Define la personalidad estratégica.
+*   `component_template.md`: Estructura base para nuevos componentes React.
+
+### 2. Validadores Automáticos (Pre-Flight Checks)
+Scripts simples para asegurar calidad antes de la revisión humana.
+*   `grep "text-["`: Detectar pixel values prohibidos.
+*   `grep "bg-[#"`: Detectar hex codes arbitrarios.
+
+---
+
+## 🔮 La Meta-App: "Kura Factory" (Phase 3)
+
+El futuro es automatizar la orquestación. Una herramienta local (`kura-factory`) que gestiona el ciclo.
 
 ### Arquitectura Conceptual
 
-**1. The Architect (Input Node):**
-*   Interfaz donde describes la idea en lenguaje natural ("Quiero añadir un sistema de referidos").
-*   El sistema consulta `docs/` y tu base de código.
-*   **Output:** Genera un `SPEC.md` detallado automáticamente.
+**1. The Constitution (Base de Conocimiento):**
+Kura Factory indexa `.prompts/system_context.md` y sabe "cómo debe ser" el código de Kura OS.
 
-**2. The Planner (Simulation Node):**
-*   Toma el `SPEC.md` y simula los cambios en un "Shadow Branch" o en memoria.
-*   Te presenta un "Impact Report": "Esto tocará User Model, Stripe Service y Database".
-*   **Tú apruebas** o refinas el spec.
+**2. The Prompt Engine (Generador):**
+Tú dices: *"Arregla la tabla de clientes"*.
+Kura Factory lee tus archivos + Constitución → Genera el Prompt Perfecto para GAG.
 
-**3. The Builder (Execution Node):**
-*   Una instancia de GAG (o múltiples en paralelo) ejecuta los cambios archivo por archivo.
-*   Corre tests automáticamente tras cada cambio.
-*   Si falla, **se auto-corrige** sin molestarte (Re-try Loop).
+**3. The Gatekeeper (Validador):**
+Lee el `implementation_plan.md` de GAG.
+Si detecta una violación (ej: `bg-blue-500`), **rechaza el plan automáticamente** y pide a GAG que corrija. Tú solo ves planes válidos.
 
-**4. The Critic (QA Node):**
-*   Una instancia separada (con System Prompt de "Senior QA") revisa el código generado.
-*   Busca: Hardcoded values (tu némesis), violaciones de estilo, falta de tipos.
-*   Si pasa, te notifica: "Ready to Merge".
-
-### ¿Por qué esto cambia el juego?
-Pasas de ser un **Programador Asistido** a un **Director de Orquesta**.
-Tu trabajo ya no es revisar código línea por línea, sino revisar **Especificaciones** y **Resultados**.
-
----
-
-## 🛠️ Primer Paso: Documentar "Workflow Pipelines"
-
-Podemos empezar creando estos pipelines como archivos `.md` en `.agent/workflows/`.
-
-*   `/dev-feature`: Workflow estricto para nuevas features.
-*   `/dev-refactor`: Workflow para limpieza técnica.
-*   `/qa-audit`: Workflow que solo lee y critica, no escribe.
-
-Esto convierte tu intuición en un **Sistema Operativo de Desarrollo**.
+### Por qué esto cambia el juego
+Pasas de **Codificar** a **Dirigir**. Tu input es Estrategia, tu output es Producto Terminado de Alta Calidad.
+El "trabajo sucio" (linting, compliance, boilerplate) lo gestiona la máquina.
