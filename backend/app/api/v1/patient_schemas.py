@@ -1,15 +1,20 @@
 """Pydantic schemas for Patient CRUD operations."""
 
-from typing import Optional, Dict, Any
+from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 import uuid
 
 
 class ProfileData(BaseModel):
-    """Extended patient profile data (flexible fields)."""
+    """Extended patient profile data - DEMOGRAPHIC ONLY.
 
-    # Personal data
+    SECURITY: This schema enforces a strict whitelist of demographic fields.
+    Clinical data (medical history, therapy notes) MUST go to ClinicalEntry.
+    Unknown fields are silently ignored to prevent data leakage.
+    """
+
+    # Personal demographics
     gender: Optional[str] = None  # male, female, non_binary, prefer_not_to_say
     pronouns: Optional[str] = None  # él/ella/elle, he/him, she/her, they/them
     nationality: Optional[str] = None
@@ -21,22 +26,25 @@ class ProfileData(BaseModel):
     preferred_contact: Optional[str] = None  # email, phone, whatsapp
     instagram: Optional[str] = None
     linkedin: Optional[str] = None
-    other_social: Optional[str] = None
 
-    # Emergency contact
+    # Emergency contact (third-party PII)
     emergency_contact_name: Optional[str] = None
     emergency_contact_phone: Optional[str] = None
 
-    # Clinical/Intake info
+    # Marketing/CRM
     referral_source: Optional[str] = None  # How did you find me?
-    previous_therapy: Optional[bool] = None
-    current_medications: Optional[str] = None
-    medical_conditions: Optional[str] = None
-    goals: Optional[str] = None
-    notes: Optional[str] = None  # Therapist's private notes
+
+    # Lead conversion metadata (auto-populated, not clinical)
+    converted_from_lead: Optional[str] = None  # UUID string
+    converted_at: Optional[str] = None  # ISO timestamp
+    source_details: Optional[dict] = None  # UTM params, form attribution
+    form_data: Optional[dict] = None  # Preserved from Lead for reference
+    initial_notes: Optional[str] = None  # Sales notes from Lead
 
     class Config:
-        extra = "allow"  # Allow additional dynamic fields
+        extra = (
+            "ignore"  # CRITICAL: Silently drop unknown fields to prevent data leakage
+        )
 
 
 class PatientCreate(BaseModel):
@@ -50,7 +58,7 @@ class PatientCreate(BaseModel):
     birth_date: Optional[datetime] = None
     birth_time: Optional[str] = None  # "HH:MM"
     birth_place: Optional[str] = None
-    profile_data: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    profile_data: Optional[ProfileData] = Field(default_factory=ProfileData)
     profile_image_url: Optional[str] = None
 
 
@@ -65,7 +73,7 @@ class PatientUpdate(BaseModel):
     birth_date: Optional[datetime] = None
     birth_time: Optional[str] = None
     birth_place: Optional[str] = None
-    profile_data: Optional[Dict[str, Any]] = None
+    profile_data: Optional[ProfileData] = None
     profile_image_url: Optional[str] = None
 
 
@@ -84,7 +92,7 @@ class PatientResponse(BaseModel):
     organization_id: uuid.UUID
     created_at: datetime
     journey_status: Optional[dict] = None  # v0.9.x automation status
-    profile_data: Dict[str, Any] = Field(default_factory=dict)
+    profile_data: dict = Field(default_factory=dict)
     profile_image_url: Optional[str] = None
 
     class Config:
