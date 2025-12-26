@@ -1,7 +1,7 @@
 # ADR-006: Smart Prescriptions (Clinical Content Assignment)
 
 **Status:** 🟡 PLANNED (Fidelization Phase 2/3)  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Clinical Content Delivery with AI Matching  
 

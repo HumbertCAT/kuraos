@@ -1,7 +1,7 @@
 # ADR-007: The Mirror (Progress Visualization & Retention)
 
 **Status:** 🟡 PLANNED (Fidelization Phase 3/3)  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Churn Prevention & Visual Progress Proof  
 

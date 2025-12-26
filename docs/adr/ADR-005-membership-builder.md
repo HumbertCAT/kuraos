@@ -1,7 +1,7 @@
 # ADR-005: The Membership Builder (Subscriptions & Content Library)
 
 **Status:** 🟡 PLANNED (Fidelization Phase 1/3)  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Retention & Recurring Revenue Module  
 

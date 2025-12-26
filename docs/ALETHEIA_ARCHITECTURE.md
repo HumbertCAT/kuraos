@@ -182,7 +182,7 @@ Detects leads "going cold" and triggers re-engagement automation.
     "themes": ["suicidal_ideation", "sleep_disruption"],
     "engagement": 45,
     "analysis_summary": "...",
-    "analyzed_at": "2024-12-25T10:00:00Z"
+    "analyzed_at": "2025-12-25T10:00:00Z"
 }
 
 # Patient.last_insight_at (DateTime)
@@ -329,4 +329,4 @@ class EventType(str, Enum):
 
 ---
 
-*Last updated: 2024-12-25*
+*Last updated: 2025-12-25*

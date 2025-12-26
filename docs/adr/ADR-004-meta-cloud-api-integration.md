@@ -1,7 +1,7 @@
 # ADR-004: Meta Cloud API Integration (Instagram + WhatsApp Business)
 
 **Status:** 🟡 PLANNED (Phase 2 Priority)  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Growth Module & WhatsApp Migration  
 

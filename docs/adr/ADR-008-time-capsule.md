@@ -1,7 +1,7 @@
 # ADR-008: The Time Capsule (Delayed Messaging)
 
 **Status:** 🟡 PLANNED (Fidelization Cherry on Top)  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Emotional Retention & Therapeutic Tool  
 

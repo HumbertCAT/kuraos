@@ -1,7 +1,7 @@
 # ADR-009: Trinity Navigation & Bento Dashboard
 
 **Status:** 🟡 PLANNED (UI Architecture Refactor)  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Navigation restructure from flat menu to lifecycle pillars  
 

@@ -1,6 +1,6 @@
 # 🗺️ KURA OS ROADMAP PROPOSAL v1.1+
 ## Documento para Revisión del Arquitecto
-### Fecha: 24 Diciembre 2024
+### Fecha: 24 Diciembre 2025
 ### Autor: GAG (Engineering) | Para: Arquitecto de Producto
 
 ---
@@ -284,7 +284,7 @@ Este documento consolida **9 ADRs** y múltiples features discutidas, organizada
 8. [ADR-008: Time Capsule](./docs/adr/ADR-008-time-capsule.md) — Q4 2026
 9. [ADR-009: Trinity Navigation](./docs/adr/ADR-009-trinity-navigation.md) — Q3 2026
 
-### Guiding Principles (Updated Dec 24, 2024)
+### Guiding Principles (Updated Dec 24, 2025)
 1. **Prosperity is Clinical** — Financial health fuels clinical impact
 2. **Agents, Not Tools** — AI is a teammate, not a feature
 3. **Institutional Trust** — Hospital-grade security

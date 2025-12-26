@@ -1,7 +1,7 @@
 # ADR-001: Database v2.0 Architecture Proposal
 
 **Status:** 🟡 DEFERRED  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Series-A Readiness Planning  
 
@@ -216,7 +216,7 @@ class BiomarkerLog(Base):
 
 ## References
 
-- Original proposal: System Architect (December 2024)
+- Original proposal: System Architect (December 2025)
 - Analysis: GAG Engineering Review
 - Related: [TECH_DEBT.md](../TECH_DEBT.md), [ROADMAP.md](../../ROADMAP.md)
 

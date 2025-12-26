@@ -1,7 +1,7 @@
 # ADR-003: Marketing Growth Engine
 
 **Status:** 🟡 DEFERRED (Requires Legal Review)  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Growth Strategy for 2026  
 
@@ -257,7 +257,7 @@ Q3 2026: Sanctuary Page (Micro-Web)
 
 ## References
 
-- Original proposal: System Architect (December 2024)
+- Original proposal: System Architect (December 2025)
 - Analysis: GAG Engineering Review
 - Competitors: Linktree, Stan.store, Practice Better
 - Related: [ADR-002: Design System](./ADR-002-design-system-proposal.md) (Sanctuary Page aesthetics)

@@ -1,7 +1,7 @@
 # ADR-002: Cyber-Clinical Design System
 
 **Status:** 🟡 DEFERRED (Partial Implementation Recommended)  
-**Date:** 2024-12-24  
+**Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** UX Evolution for Series-A Readiness  
 
@@ -498,7 +498,7 @@ export default CyberPatientProfile;
 
 ## References
 
-- Original proposal: System Architect (December 2024)
+- Original proposal: System Architect (December 2025)
 - Analysis: GAG Engineering Review
 - Design inspiration: Bloomberg Terminal, Linear, Vercel Dashboard
 - Related: [ADR-001: Database v2.0](./ADR-001-database-v2-proposal.md)
