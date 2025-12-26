@@ -97,7 +97,7 @@ export function TrinityNav() {
             icon: <Stethoscope className="w-3.5 h-3.5" />,
             items: [
                 { href: '/patients', label: terminology.plural, icon: <User className="w-4 h-4" /> },
-                { href: '/bookings', label: 'Bookings', icon: <Calendar className="w-4 h-4" />, comingSoon: true },
+                { href: '/bookings', label: 'Bookings', icon: <Calendar className="w-4 h-4" /> },
                 { href: '/forms', label: t('forms'), icon: <FileText className="w-4 h-4" /> },
             ],
         },
