@@ -5,6 +5,33 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2025-12-27
+
+### Added - The Clean Room (Data Retention & Anonymization)
+
+Strategic infrastructure for GDPR-compliant clinical IP preservation.
+
+#### The Incinerator (Phase 1)
+- **GCS Bucket**: `kura-production-media` created in europe-west1
+- **Lifecycle Policy**: Auto-delete audio files after 30 days
+- **Config**: `GCS_BUCKET_NAME` added to settings
+
+#### The Vault (Phase 2)
+- **`anonymous_datasets` Table**: Orphan table with NO foreign keys
+- **Survives GDPR Erasure**: Patient deletion doesn't destroy clinical patterns
+- **Migration**: `b1234def5678_add_anonymous_datasets_vault.py`
+
+#### The Scrubber (Phase 3)
+- **`data_sanitizer.py`**: Regex-based PII removal service
+- **Redacts**: Emails, phones, common Spanish names
+- **TODO**: Google DLP integration for Series A
+
+#### The Trigger (Phase 4)
+- **BackgroundTasks Hook**: Clinical notes auto-sanitized on creation
+- **Fire-and-forget**: Doesn't block HTTP response
+
+---
+
 ## [1.0.6] - 2025-12-27
 
 ### Security - Data Protection & GDPR Compliance
