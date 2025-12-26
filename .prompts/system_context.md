@@ -44,7 +44,18 @@ Tu prioridad nº1 es la **Integridad Semántica**: No inventas estilos, usas el 
 
 ---
 
-## ⚙️ 6. ENTORNO DE DESARROLLO (DEV OPS)
+## 🔺 6. TRINITY NAV STRATEGY (CONNECT · PRACTICE · GROW)
+**La arquitectura de navegación principal refleja la propuesta de valor:**
+
+| Section | EN | ES | Propósito |
+|---------|----|----|-----------|
+| **CONNECT** | Connect | Atraer | Captación: Calendar, Services, CRM |
+| **PRACTICE** | Practice | Servir | Operaciones Clínicas: Patients, Bookings, Forms |
+| **GROW** | Grow | Crecer | Escalabilidad: Campaigns, Analytics |
+
+---
+
+## ⚙️ 7. ENTORNO DE DESARROLLO (DEV OPS)
 *   **Puertos Locales:** SIEMPRE usamos `3001` (Frontend) y `8001` (Backend).
     *   Frontend: `http://localhost:3001`
     *   Backend: `http://localhost:8001`

@@ -162,12 +162,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed - Semantic Token Migration (100% Complete)
 - **Batch Refactored ~200 violations** using static code analysis:
-  - `text-slate-400/zinc-400` → `text-muted-foreground`
-  - `text-slate-700/gray-700` → `text-foreground`
-  - `bg-slate-100/200` → `bg-muted`
-  - `hover:bg-slate-*` → `hover:bg-accent`
-  - `border-slate-300` → `border-border`
-  - `bg-slate-800 text-white` → `bg-primary text-primary-foreground`
 - **Pages Migrated**: dashboard, patients, services, calendar, forms, leads, admin, automations, settings
 - **Zero Violations**: Codebase now 100% free of hardcoded zinc/slate/gray colors
 

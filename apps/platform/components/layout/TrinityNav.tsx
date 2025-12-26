@@ -82,8 +82,8 @@ export function TrinityNav() {
 
     const sections: NavSection[] = [
         {
-            id: 'engage',
-            title: 'ENGAGE',
+            id: 'connect',
+            title: 'CONNECT',
             icon: <Flame className="w-3.5 h-3.5" />,
             items: [
                 { href: '/calendar', label: t('calendar'), icon: <Calendar className="w-4 h-4" /> },
@@ -102,8 +102,8 @@ export function TrinityNav() {
             ],
         },
         {
-            id: 'nurture',
-            title: 'NURTURE',
+            id: 'grow',
+            title: 'GROW',
             icon: <Sprout className="w-3.5 h-3.5" />,
             items: [
                 { href: '/campaigns', label: 'Campaigns', icon: <Megaphone className="w-4 h-4" />, comingSoon: true },
