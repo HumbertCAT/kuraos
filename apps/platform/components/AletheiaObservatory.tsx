@@ -153,7 +153,7 @@ export default function AletheiaObservatory() {
                     style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
                 >
                     <Sparkles size={14} className={alertCount > 0 ? 'animate-pulse' : ''} />
-                    <span className="text-[10px] font-bold tracking-widest uppercase">
+                    <span className="type-body font-bold tracking-widest uppercase">
                         AletheIA
                     </span>
                 </div>
@@ -202,7 +202,7 @@ export default function AletheiaObservatory() {
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2 text-risk">
                                         <AlertTriangle size={12} />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                                        <span className="type-body font-bold uppercase tracking-wider">
                                             Risk Monitor
                                         </span>
                                     </div>
@@ -218,7 +218,7 @@ export default function AletheiaObservatory() {
                                 {globalInsights?.activeAlerts.length === 0 && (
                                     <div className="text-center py-3">
                                         <Activity className="mx-auto text-success mb-1" size={16} />
-                                        <p className="text-[10px] text-muted-foreground">
+                                        <p className="type-body text-muted-foreground">
                                             No active risk alerts
                                         </p>
                                     </div>
@@ -233,10 +233,10 @@ export default function AletheiaObservatory() {
                                         <div className={`w-2 h-2 rounded-full flex-shrink-0 ${alert.riskLevel === 'HIGH' ? 'bg-risk' : 'bg-warning'
                                             }`} />
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-[11px] text-foreground truncate">
+                                            <p className="type-body text-foreground truncate">
                                                 {alert.patientName}
                                             </p>
-                                            <p className="text-[9px] text-muted-foreground truncate">
+                                            <p className="type-ui text-muted-foreground truncate">
                                                 {alert.reason}
                                             </p>
                                         </div>
@@ -253,12 +253,12 @@ export default function AletheiaObservatory() {
                                 <div className="flex items-center justify-between mb-2">
                                     <div className="flex items-center gap-2 text-brand">
                                         <Bot size={12} />
-                                        <span className="text-[10px] font-bold uppercase tracking-wider">
+                                        <span className="type-body font-bold uppercase tracking-wider">
                                             Tareas Pendientes
                                         </span>
                                     </div>
                                     {pendingActions.length > 0 && (
-                                        <span className="text-[10px] px-2 py-0.5 bg-ai/10 text-ai rounded-full">
+                                        <span className="type-body px-2 py-0.5 bg-ai/10 text-ai rounded-full">
                                             {pendingActions.length}
                                         </span>
                                     )}
@@ -271,7 +271,7 @@ export default function AletheiaObservatory() {
                                 {!loadingActions && pendingActions.length === 0 && (
                                     <div className="text-center py-3">
                                         <Bot className="mx-auto text-muted-foreground mb-1" size={16} />
-                                        <p className="text-[10px] text-muted-foreground">
+                                        <p className="type-body text-muted-foreground">
                                             Sin borradores pendientes
                                         </p>
                                     </div>
@@ -284,14 +284,14 @@ export default function AletheiaObservatory() {
                                     >
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-[11px] text-foreground truncate">
+                                                <p className="type-body text-foreground truncate">
                                                     🤖 {action.rule_name}
                                                 </p>
-                                                <p className="text-[10px] text-muted-foreground truncate">
+                                                <p className="type-body text-muted-foreground truncate">
                                                     → {action.recipient_name}
                                                 </p>
                                                 {action.draft_content.subject && (
-                                                    <p className="text-[9px] text-muted-foreground/70 truncate mt-0.5">
+                                                    <p className="type-ui text-muted-foreground/70 truncate mt-0.5">
                                                         {action.draft_content.subject}
                                                     </p>
                                                 )}
@@ -330,11 +330,11 @@ export default function AletheiaObservatory() {
                             <div className="bg-muted/50 rounded p-2 border border-border">
                                 <div className="flex items-center gap-2 mb-1">
                                     <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                                    <span className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                                    <span className="type-ui text-muted-foreground uppercase tracking-wider">
                                         System Health
                                     </span>
                                 </div>
-                                <p className="text-[9px] text-muted-foreground">
+                                <p className="type-ui text-muted-foreground">
                                     Risk Monitor: <span className="text-success">Active</span>
                                 </p>
                             </div>
@@ -444,9 +444,9 @@ export default function AletheiaObservatory() {
             <div className="border-b border-sidebar-border pb-4 pl-6">
                 <div className="flex items-center gap-2 text-ai mb-1">
                     <BrainCircuit size={14} />
-                    <span className="text-[10px] font-bold tracking-widest uppercase">AletheIA Observatory</span>
+                    <span className="type-body font-bold tracking-widest uppercase">AletheIA Observatory</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground">
+                <p className="type-body text-muted-foreground">
                     Active: {patientName}
                 </p>
             </div>
@@ -475,7 +475,7 @@ export default function AletheiaObservatory() {
                     <p className="text-xs text-risk">{error}</p>
                     <button
                         onClick={refreshInsights}
-                        className="mt-2 text-[10px] text-muted-foreground hover:text-foreground"
+                        className="mt-2 type-body text-muted-foreground hover:text-foreground"
                     >
                         Try again
                     </button>
@@ -488,7 +488,7 @@ export default function AletheiaObservatory() {
                     {/* RISK WIDGET */}
                     <div className="bg-card rounded p-4 border border-border relative">
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                            <span className="type-body text-muted-foreground uppercase tracking-wider">
                                 Risk Assessment
                             </span>
                             <button
@@ -510,7 +510,7 @@ export default function AletheiaObservatory() {
                                 style={{ width: `${riskPercentage}%` }}
                             />
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                        <div className="flex items-center gap-2 type-body text-muted-foreground">
                             <span className="uppercase tracking-wider">
                                 {riskLevel.toUpperCase()} • {insights.cached ? 'Cached' : 'Fresh'}
                             </span>
@@ -519,7 +519,7 @@ export default function AletheiaObservatory() {
 
                     {/* SUMMARY */}
                     <div>
-                        <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">
+                        <h3 className="type-body font-bold text-muted-foreground uppercase tracking-widest mb-3">
                             AletheIA Summary
                         </h3>
                         <div className="bg-ai/5 border border-ai/20 p-3 rounded">
@@ -535,7 +535,7 @@ export default function AletheiaObservatory() {
                             {insights.keyThemes.map((theme, i) => (
                                 <span
                                     key={i}
-                                    className="text-[9px] px-2 py-0.5 rounded-full bg-ai/10 text-ai border border-ai/20"
+                                    className="type-ui px-2 py-0.5 rounded-full bg-ai/10 text-ai border border-ai/20"
                                 >
                                     {theme}
                                 </span>
@@ -552,11 +552,11 @@ export default function AletheiaObservatory() {
                             <div className={`flex items-center gap-2 mb-2 ${insights.alerts.some(a => a.type === 'critical') ? 'text-risk' : 'text-warning'
                                 }`}>
                                 <AlertTriangle size={12} />
-                                <span className="text-[10px] font-bold uppercase tracking-wider">
+                                <span className="type-body font-bold uppercase tracking-wider">
                                     Active Flags ({insights.alerts.length})
                                 </span>
                             </div>
-                            <ul className="text-[10px] space-y-1">
+                            <ul className="type-body space-y-1">
                                 {insights.alerts.map((alert, i) => (
                                     <li key={i} className={
                                         alert.type === 'critical' ? 'text-risk/80' :
@@ -572,7 +572,7 @@ export default function AletheiaObservatory() {
                     {/* ENGAGEMENT SCORE */}
                     <div className="bg-card border border-border p-3 rounded">
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                            <span className="type-body text-muted-foreground uppercase tracking-wider">
                                 Engagement
                             </span>
                             <span className={`text-sm font-medium ${insights.engagementScore >= 70 ? 'text-success' :
