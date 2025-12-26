@@ -293,16 +293,13 @@ export function TrinityNav() {
 
                     <button
                         onClick={toggleCollapse}
-                        className="flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-all"
+                        className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-all"
                         title={isCollapsed ? 'Expand' : 'Collapse'}
                     >
                         {isCollapsed ? (
                             <ChevronRight className="w-4 h-4" />
                         ) : (
-                            <>
-                                <ChevronLeft className="w-3 h-3" />
-                                <span>Collapse</span>
-                            </>
+                            <ChevronLeft className="w-4 h-4" />
                         )}
                     </button>
                 </div>
