@@ -82,8 +82,8 @@ export function TrinityNav() {
 
     const sections: NavSection[] = [
         {
-            id: 'connect',
-            title: t('Navigation.sections.connect'),
+            id: 'engage',
+            title: 'ENGAGE',
             icon: <Flame className="w-3.5 h-3.5" />,
             items: [
                 { href: '/calendar', label: t('calendar'), icon: <Calendar className="w-4 h-4" /> },
@@ -92,8 +92,8 @@ export function TrinityNav() {
             ],
         },
         {
-            id: 'serve',
-            title: t('Navigation.sections.serve'),
+            id: 'practice',
+            title: 'PRACTICE',
             icon: <Stethoscope className="w-3.5 h-3.5" />,
             items: [
                 { href: '/patients', label: terminology.plural, icon: <User className="w-4 h-4" /> },
@@ -102,8 +102,8 @@ export function TrinityNav() {
             ],
         },
         {
-            id: 'grow',
-            title: t('Navigation.sections.grow'),
+            id: 'nurture',
+            title: 'NURTURE',
             icon: <Sprout className="w-3.5 h-3.5" />,
             items: [
                 { href: '/campaigns', label: 'Campaigns', icon: <Megaphone className="w-4 h-4" />, comingSoon: true },

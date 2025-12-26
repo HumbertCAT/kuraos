@@ -51,12 +51,7 @@
     "calendar": "Calendar",
     "automations": "AI Agents",
     "observatory": "Observatory",
-    "settings": "Settings",
-    "sections": {
-      "connect": "CONNECT",
-      "serve": "PRACTICE",
-      "grow": "GROW"
-    }
+    "settings": "Settings"
   },
   "Auth": {
     "login": "Login",
