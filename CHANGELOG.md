@@ -5,6 +5,26 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5.4] - 2025-12-26
+
+### Added - Dashboard Redesign (The Operational Cockpit)
+- **VitalSignCard**: Reusable metric card component
+- **DayAgenda**: Vertical timeline with real-time "NOW" line indicator
+- **QuickNote**: Fast note with localStorage autosave (debounced)
+- **RecentPatients**: localStorage tracking with API fallback
+
+### Changed - Dashboard Layout
+- **12-column Grid**: Hero (12) + Vital Signs (12/3) + Workspace (8+4)
+- **Hero Section**: Greeting + BriefingPlayer
+- **Vital Signs**: Ingresos Mes, Nuevos Leads, Pacientes Activos
+
+### Removed
+- AletheIA Sugiere block (moved to Right Sidebar)
+- Tareas Pendientes widget (moved to Right Sidebar)
+- Cluttered card layouts and excessive decorations
+
+---
+
 ## [1.0.5.3] - 2025-12-26
 
 ### Added - Fine Tuning & Mechanics

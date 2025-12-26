@@ -179,15 +179,12 @@ export default function AletheiaObservatory() {
                     <div className="border-b border-sidebar-border pb-3 pl-6">
                         <div className="flex items-center gap-2 text-ai mb-1">
                             <Radio size={14} className="animate-pulse" />
-                            <span className="text-[10px] font-bold tracking-widest uppercase">Clinic Radar</span>
+                            <span className="type-ui tracking-widest uppercase">Clinic Radar</span>
                         </div>
-                        <p className="text-[10px] text-muted-foreground">Global monitoring active</p>
+                        <p className="type-body text-muted-foreground">Global monitoring active</p>
                     </div>
 
-                    {/* BRIEFING PLAYER - First Position */}
-                    <div className="rounded border border-border overflow-hidden">
-                        <BriefingPlayer compact />
-                    </div>
+                    {/* Briefing Player removed - stays only in Dashboard Hero (v1.0.5.4.1) */}
 
                     {/* LOADING GLOBAL */}
                     {isLoadingGlobal && (

@@ -37,7 +37,6 @@ interface NavSection {
     id: string;
     title: string;
     icon: React.ReactNode;
-    color: string; // Background color for section
     items: NavItem[];
 }
 
@@ -86,7 +85,6 @@ export function TrinityNav() {
             id: 'engage',
             title: 'ENGAGE',
             icon: <Flame className="w-3.5 h-3.5" />,
-            color: 'bg-orange-500/5 dark:bg-orange-500/10',
             items: [
                 { href: '/calendar', label: t('calendar'), icon: <Calendar className="w-4 h-4" /> },
                 { href: '/services', label: t('services'), icon: <Briefcase className="w-4 h-4" /> },
@@ -97,7 +95,6 @@ export function TrinityNav() {
             id: 'practice',
             title: 'PRACTICE',
             icon: <Stethoscope className="w-3.5 h-3.5" />,
-            color: 'bg-teal-500/5 dark:bg-teal-500/10',
             items: [
                 { href: '/patients', label: terminology.plural, icon: <User className="w-4 h-4" /> },
                 { href: '/bookings', label: 'Bookings', icon: <Calendar className="w-4 h-4" />, comingSoon: true },
@@ -108,7 +105,6 @@ export function TrinityNav() {
             id: 'nurture',
             title: 'NURTURE',
             icon: <Sprout className="w-3.5 h-3.5" />,
-            color: 'bg-emerald-500/5 dark:bg-emerald-500/10',
             items: [
                 { href: '/campaigns', label: 'Campaigns', icon: <Megaphone className="w-4 h-4" />, comingSoon: true },
             ],
@@ -167,28 +163,26 @@ export function TrinityNav() {
                     {!isCollapsed && 'Dashboard'}
                 </Link>
 
-                {/* Section Blocks with Background */}
+                {/* Section Groups */}
                 {sections.map((section) => {
                     const isSectionCollapsed = collapsedSections[section.id];
 
                     return (
                         <div
                             key={section.id}
-                            className={`rounded-lg ${section.color} ${isCollapsed ? 'p-1' : 'p-2'} transition-all duration-200`}
+                            className={`${isCollapsed ? '' : 'mt-4'} transition-all duration-200`}
                         >
                             {/* Section Header - Clickable */}
                             {!isCollapsed && (
                                 <button
                                     onClick={() => toggleSection(section.id)}
-                                    className="w-full flex items-center justify-between px-2 py-1.5 mb-1 rounded hover:bg-background/50 transition-colors"
+                                    className="w-full flex items-center justify-between px-2 py-1.5 mb-1 rounded hover:bg-muted/50 transition-colors"
                                 >
                                     <div className="flex items-center gap-2">
-                                        <span className={`${section.id === 'engage' ? 'text-orange-500' :
-                                            section.id === 'practice' ? 'text-teal-500' : 'text-emerald-500'
-                                            }`}>
+                                        <span className="text-muted-foreground">
                                             {section.icon}
                                         </span>
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                        <span className="type-ui text-muted-foreground tracking-widest">
                                             {section.title}
                                         </span>
                                     </div>

@@ -37,14 +37,14 @@ export function QuickNote() {
     };
 
     return (
-        <div className="bg-card border border-border rounded-xl p-4">
+        <div className="bg-secondary/30 rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                    <StickyNote className="w-4 h-4 text-amber-500" />
-                    <span className="type-h2 text-xs">Nota Rápida</span>
+                    <StickyNote className="w-4 h-4 text-muted-foreground" />
+                    <span className="type-ui text-muted-foreground">Nota Rápida</span>
                 </div>
                 {saved && (
-                    <span className="text-[10px] text-emerald-500 animate-pulse">Guardado</span>
+                    <span className="type-ui text-success animate-pulse">Guardado</span>
                 )}
             </div>
             <textarea
