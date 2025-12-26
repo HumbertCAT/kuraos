@@ -67,7 +67,7 @@ async def twilio_whatsapp_webhook(
 
     # Handle audio messages
     if NumMedia > 0 and MediaUrl0 and is_audio_message(MediaContentType0):
-        logger.info(f"🎤 Audio message from {phone_clean}, transcribing...")
+        logger.info("🎤 Audio message received, transcribing...")
 
         # Build Twilio auth for media download
         twilio_auth = None
@@ -83,14 +83,14 @@ async def twilio_whatsapp_webhook(
         else:
             content = transcribed
 
-        logger.info(f"📝 Transcription: {content[:80]}...")
+        logger.info(f"📝 Transcription completed (length: {len(content)} chars)")
 
     # Skip if no content at all
     if not content:
-        logger.warning(f"⚠️ Empty message from {phone_clean}, skipping")
+        logger.warning("⚠️ Empty message received, skipping")
         return Response(content=TWIML_EMPTY, media_type="application/xml")
 
-    logger.info(f"📱 WhatsApp from {phone_clean}: {content[:50]}...")
+    logger.info(f"📱 WhatsApp message received (length: {len(content)} chars)")
 
     # Look up patient by phone number
     result = await db.execute(select(Patient).where(Patient.phone == phone_clean))
@@ -98,7 +98,7 @@ async def twilio_whatsapp_webhook(
 
     if not patient:
         # Unknown sender - log warning but return 200 to not block Twilio
-        logger.warning(f"⚠️ Unknown WhatsApp sender: {phone_clean}")
+        logger.warning("⚠️ Unknown WhatsApp sender")
         return Response(content=TWIML_EMPTY, media_type="application/xml")
 
     # Check for duplicate message (Twilio can retry)
@@ -122,9 +122,7 @@ async def twilio_whatsapp_webhook(
     db.add(message)
     await db.commit()
 
-    logger.info(
-        f"✅ Stored message from patient {patient.first_name} {patient.last_name}"
-    )
+    logger.info(f"✅ Stored message for patient_id={patient.id}")
 
     # Return empty TwiML (no auto-reply for now)
     return Response(content=TWIML_EMPTY, media_type="application/xml")

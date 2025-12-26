@@ -103,7 +103,7 @@ async def transcribe_audio(media_url: str, twilio_auth: tuple = None) -> str:
                 )
 
             transcribed_text = transcript.text.strip()
-            logger.info(f"✅ Transcribed audio: {transcribed_text[:50]}...")
+            logger.info("✅ Audio transcribed successfully")
 
             return f"[🎤 AUDIO]: {transcribed_text}"
 
