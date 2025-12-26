@@ -5,7 +5,7 @@
  * Endpoint: POST /api/v1/insights/patient/{patientId}
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
 // Alert from backend insights
 export type AlertItem = {
