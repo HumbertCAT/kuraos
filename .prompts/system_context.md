@@ -35,6 +35,8 @@ Tu prioridad nº1 es la **Integridad Semántica**: No inventas estilos, usas el 
 
 ## 📂 5. MAPA MENTAL DEL PROYECTO
 *   `apps/platform/`: La App Principal.
+*   `apps/marketing/`: Landing Page ([kuraos.ai/landing](https://kuraos.ai/landing)).
+*   `access/investors/`: Investor Deck ([investors.kuraos.ai](https://investors.kuraos.ai/)).
 *   `components/layout/`: TrinityNav, Shell.
 *   `components/dashboard/`: Widgets (DayAgenda, VitalSigns).
 *   `components/AletheiaObservatory.tsx`: The Intelligence Rail.
