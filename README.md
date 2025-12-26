@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.0.3-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.5-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 [![License](https://img.shields.io/badge/license-Proprietary-blue.svg)]()
 
@@ -201,6 +201,9 @@ kuraos/
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 
 ### Completed
+- [x] **v1.0.5** - Dashboard Redesign + AletheIA Observatory (December 2024)
+- [x] **v1.0.4** - Theme Engine + Design System (December 2024)
+- [x] **v1.0.3** - Trinity Shell HUD (December 2024)
 - [x] **v1.0.2** - The Black Box Backup System (December 2024)
 - [x] **v1.0.0** - Public Launch 🎉 (December 2024)
 - [x] **v0.9.x** - Lead CRM, AI Agents, Daily Briefing, Help Center

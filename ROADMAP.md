@@ -67,6 +67,43 @@
 
 ---
 
+## ✅ Completed: v1.0.4 Theme Engine (December 2024)
+
+### Design System - Bimodal Identity
+- [x] Real-time Theme Editor with live preview
+- [x] Dark/Light dual tabs with `next-themes` integration
+- [x] HSL color picker with semantic token mapping
+- [x] Persistence to PostgreSQL via `user_preferences` JSONB
+- [x] ThemeHydration with CSS injection for `:root` and `.dark`
+
+### Typography System
+- [x] Type Scale classes: `type-h1`, `type-h2`, `type-body`, `type-ui`
+- [x] Font family separation: Playfair (editorial), Space Grotesk (UI), Inter (body)
+
+---
+
+## ✅ Completed: v1.0.5 AletheIA Observatory (December 2024)
+
+### AletheIA Intelligence Rail
+- [x] Patient Mode: Risk score, themes, flags, engagement when viewing a patient
+- [x] Global Mode (Clinic Radar): Risk monitor, pending actions, system health
+- [x] Zustand patient store for global clinical context
+- [x] Collapsible sidebar (64px → 12px vertical tab)
+
+### Dashboard Redesign - The Operational Cockpit
+- [x] 12-column grid layout
+- [x] Hero: Daily Briefing audio player
+- [x] Vital Signs: Revenue, Leads, Active Patients cards
+- [x] DayAgenda: Smart list (booked + 1 available, beautiful empty state)
+- [x] QuickNote: Post-it style with localStorage persistence
+- [x] RecentPatients: localStorage tracking
+
+### UI Harmonization
+- [x] TrinityNav: collapsible sections, semantic `type-ui` headers
+- [x] Strict compliance: no hardcoded `text-[Xpx]` or `bg-[#...]`
+
+---
+
 ## 📅 Q1 2026: Growth & Polish
 
 **Goal:** First 50 paying organizations
