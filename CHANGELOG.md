@@ -5,6 +5,32 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5.4.2] - 2025-12-26
+
+### Changed - Final Dashboard Polish & Readability
+- **DayAgenda**: Smart list showing only booked + 1 available slot
+  - Beautiful empty state: "Agenda despejada. Tiempo para Nurture."
+  - Removed grid noise, uses `type-body` for readability
+- **QuickNote**: Post-it style with `bg-amber-50` tint, `font-mono`, no borders
+- **AletheiaObservatory**: All `text-[10px]`/`text-[11px]`/`text-[9px]` → `type-body`/`type-ui`
+  - 23 typography violations fixed for better readability
+
+---
+
+## [1.0.5.4.1] - 2025-12-26
+
+### Changed - UI Harmonization (Strict Semantic Compliance)
+- **TrinityNav**: Removed arbitrary `bg-orange/teal/emerald` backgrounds
+  - Section headers use `type-ui tracking-widest`
+  - Icon colors now `text-muted-foreground`
+- **AletheiaObservatory**: Removed BriefingPlayer (stays only in Dashboard Hero)
+- **QuickNote**: Initial post-it style with `bg-secondary/30`
+
+### Removed
+- BriefingPlayer duplication in Right Sidebar
+
+---
+
 ## [1.0.5.4] - 2025-12-26
 
 ### Added - Dashboard Redesign (The Operational Cockpit)
