@@ -243,9 +243,9 @@ async def add_credits(
 
 
 class ThemeConfigUpdate(BaseModel):
-    """CSS theme variables to persist. Keys are CSS variable names."""
+    """CSS theme variables to persist. Supports flat or nested {light, dark} structure."""
 
-    theme_config: dict[str, str]
+    theme_config: dict[str, Any]
 
 
 @router.patch("/organizations/{org_id}/theme")

@@ -47,8 +47,11 @@ class Settings(BaseSettings):
     # Dev: http://localhost:3001, Prod: https://therapistos.app
     FRONTEND_URL: str = "http://localhost:3001"
 
-    # OpenAI (Whisper audio transcription)
+    # OpenAI (Whisper audio transcription, TTS for Daily Briefing)
     OPENAI_API_KEY: Optional[str] = None
+
+    # Google Gemini (AI script generation for Daily Briefing, Automation agents)
+    GEMINI_API_KEY: Optional[str] = None
 
     # Twilio WhatsApp
     TWILIO_ACCOUNT_SID: Optional[str] = None
