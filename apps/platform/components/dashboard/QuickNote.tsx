@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { StickyNote } from 'lucide-react';
+import { Lightbulb } from 'lucide-react';
 
 const STORAGE_KEY = 'kura-quick-note';
 
@@ -37,30 +37,31 @@ export function QuickNote() {
     };
 
     return (
-        <div className="bg-secondary/30 rounded-xl p-4">
+        <div className="bg-amber-50 dark:bg-amber-900/10 rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                    <StickyNote className="w-4 h-4 text-muted-foreground" />
-                    <span className="type-ui text-muted-foreground">Nota Rápida</span>
+                    <Lightbulb className="w-4 h-4 text-amber-500" />
+                    <span className="type-ui text-amber-700 dark:text-amber-400">Nota Rápida</span>
                 </div>
                 {saved && (
-                    <span className="type-ui text-success animate-pulse">Guardado</span>
+                    <span className="type-ui text-success animate-pulse">✓</span>
                 )}
             </div>
             <textarea
                 value={note}
                 onChange={handleChange}
-                placeholder="Escribe una nota rápida..."
-                className="w-full h-24 bg-muted/50 border border-border rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-brand placeholder:text-muted-foreground"
+                placeholder="💡 Idea rápida / Recordatorio..."
+                className="w-full h-24 bg-transparent text-sm font-mono leading-relaxed resize-none focus:outline-none placeholder:text-amber-400/50 dark:placeholder:text-amber-500/30 text-foreground"
             />
             {note.length > 0 && (
                 <button
                     onClick={clearNote}
-                    className="mt-2 text-xs text-muted-foreground hover:text-risk transition-colors"
+                    className="type-body text-muted-foreground hover:text-risk transition-colors"
                 >
-                    Limpiar nota
+                    Limpiar
                 </button>
             )}
         </div>
     );
 }
+
