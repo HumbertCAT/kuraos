@@ -34,7 +34,7 @@ Tu prioridad nº1 es la **Integridad Semántica**: No inventas estilos, usas el 
 ---
 
 ## 📂 5. MAPA MENTAL DEL PROYECTO
-*   `apps/platform/`: La App Principal.
+*   `apps/platform/`: La App Principal ([app.kuraos.ai](https://app.kuraos.ai)).
 *   `apps/marketing/`: Landing Page ([kuraos.ai/landing](https://kuraos.ai/landing)).
 *   `access/investors/`: Investor Deck ([investors.kuraos.ai](https://investors.kuraos.ai/)).
 *   `components/layout/`: TrinityNav, Shell.
@@ -43,3 +43,11 @@ Tu prioridad nº1 es la **Integridad Semántica**: No inventas estilos, usas el 
 *   `styles/globals.css`: La Biblia de los estilos.
 
 ---
+
+## ⚙️ 6. ENTORNO DE DESARROLLO (DEV OPS)
+*   **Puertos Locales:** SIEMPRE usamos `3001` (Frontend) y `8001` (Backend).
+    *   Frontend: `http://localhost:3001`
+    *   Backend: `http://localhost:8001`
+*   **Scripts de Control:**
+    *   🚀 Start: `./scripts/start-dev.sh` (Levanta todo: Docker + Puertos correctos)
+    *   🛑 Stop: `./scripts/stop-dev.sh` (Limpia contenedores y puertos)
