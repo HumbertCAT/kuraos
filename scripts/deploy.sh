@@ -50,7 +50,7 @@ gcloud run jobs update ${JOB_NAME} \
   --set-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
   --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
   --command="alembic" \
-  --args="upgrade,head" \
+  --args="upgrade,heads" \
   2>/dev/null || {
     echo "⚠️ Job doesn't exist, creating..."
     gcloud run jobs create ${JOB_NAME} \
@@ -60,7 +60,7 @@ gcloud run jobs update ${JOB_NAME} \
       --set-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
       --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest \
       --command="alembic" \
-      --args="upgrade,head"
+      --args="upgrade,heads"
   }
 echo "✅ Migration job updated"
 echo ""
