@@ -33,7 +33,7 @@ log_error() {
 log_info "Starting Kura OS Backend..."
 log_info "Running database migrations..."
 
-if alembic upgrade head; then
+if alembic upgrade heads; then
     log_info "✅ Database migrations completed successfully"
 else
     log_error "❌ Database migrations FAILED"
