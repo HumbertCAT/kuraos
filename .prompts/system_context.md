@@ -62,3 +62,4 @@ Tu prioridad nº1 es la **Integridad Semántica**: No inventas estilos, usas el 
 *   **Scripts de Control:**
     *   🚀 Start: `./scripts/start-dev.sh` (Levanta todo: Docker + Puertos correctos)
     *   🛑 Stop: `./scripts/stop-dev.sh` (Limpia contenedores y puertos)
+    *   🚢 Deploy: `./scripts/deploy.sh` (Build → Migrate → Deploy a Cloud Run)
