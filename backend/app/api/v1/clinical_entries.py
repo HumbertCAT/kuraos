@@ -23,6 +23,7 @@ router = APIRouter()
 )
 async def create_clinical_entry(
     entry_data: ClinicalEntryCreate,
+    background_tasks: BackgroundTasks,
     current_user: CurrentClinicalUser,  # RBAC: Only OWNER/THERAPIST can create
     db: AsyncSession = Depends(get_db),
 ):
@@ -98,6 +99,17 @@ async def create_clinical_entry(
             import logging
 
             logging.error(f"Risk detection automation failed: {e}")
+
+    # v1.0.7: Queue anonymization for The Vault (GDPR-compliant IP preservation)
+    if entry.content:
+        from app.services.data_sanitizer import sanitize_and_store_background
+
+        background_tasks.add_task(
+            sanitize_and_store_background,
+            content=entry.content,
+            metadata=entry.entry_metadata or {},
+            source_type="CLINICAL_NOTE",
+        )
 
     return ClinicalEntryResponse.model_validate(entry)
 

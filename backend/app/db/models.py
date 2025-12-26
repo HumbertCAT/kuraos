@@ -191,6 +191,18 @@ class LeadStatus(str, enum.Enum):
     LOST = "LOST"
 
 
+class DatasetType(str, enum.Enum):
+    """Type of anonymized clinical dataset.
+
+    Used in The Vault (anonymous_datasets) to categorize sanitized content
+    without any patient/organization references.
+    """
+
+    CLINICAL_NOTE = "CLINICAL_NOTE"
+    TRANSCRIPT = "TRANSCRIPT"
+    CHAT_ANALYSIS = "CHAT_ANALYSIS"
+
+
 # ============ ASSOCIATION TABLES ============
 
 # Many-to-many: Which therapists can offer which services
@@ -1473,6 +1485,47 @@ class HelpQueryLog(Base):
     query_text: Mapped[str] = mapped_column(String(500))
     detected_topic: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     current_route: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+# ============ THE VAULT - Anonymous Clinical Data ============
+
+
+class AnonymousDataset(Base):
+    """The Vault - Anonymized clinical content decoupled from patient identity.
+
+    CRITICAL: This table has NO foreign keys and NO patient/organization references.
+    It is designed to survive patient deletion (GDPR Right to Erasure) while
+    preserving valuable clinical patterns and AI training data.
+
+    The content is sanitized via data_sanitizer.py before storage:
+    - Names replaced with [NAME_REDACTED]
+    - Phones replaced with [PHONE_REDACTED]
+    - Emails replaced with [EMAIL_REDACTED]
+
+    This is the "Clean IP" that can be used for research, ML training,
+    and clinical intelligence without personal data liability.
+    """
+
+    __tablename__ = "anonymous_datasets"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+
+    # Type of sanitized content
+    source_type: Mapped[DatasetType] = mapped_column(Enum(DatasetType))
+
+    # Sanitized clinical content (PII removed)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+
+    # Extracted metadata (sentiment, themes, keywords, risk_level) - NO PII
+    meta_analysis: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+
+    # Content language for NLP purposes
+    language: Mapped[str] = mapped_column(String(10), default="es")
+
+    # Timestamp (deliberately NOT linked to any patient event)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

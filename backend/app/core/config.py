@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     # Google Gemini (AI script generation for Daily Briefing, Automation agents)
     GEMINI_API_KEY: Optional[str] = None
 
+    # Google Cloud Storage (media files - audio, transcriptions)
+    GCS_BUCKET_NAME: str = "kura-production-media"
+
     # Twilio WhatsApp
     TWILIO_ACCOUNT_SID: Optional[str] = None
     TWILIO_AUTH_TOKEN: Optional[str] = None
