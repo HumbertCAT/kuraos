@@ -51,7 +51,12 @@
     "calendar": "Calendario",
     "automations": "Agentes IA",
     "observatory": "Observatorio",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "sections": {
+      "connect": "ATRAER",
+      "serve": "SERVIR",
+      "grow": "CRECER"
+    }
   },
   "Auth": {
     "login": "Iniciar Sesión",
