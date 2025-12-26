@@ -201,11 +201,11 @@ kuraos/
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 
 ### Completed
-- [x] **v1.0.5** - Dashboard Redesign + AletheIA Observatory (December 2024)
-- [x] **v1.0.4** - Theme Engine + Design System (December 2024)
-- [x] **v1.0.3** - Trinity Shell HUD (December 2024)
-- [x] **v1.0.2** - The Black Box Backup System (December 2024)
-- [x] **v1.0.0** - Public Launch 🎉 (December 2024)
+- [x] **v1.0.5** - Dashboard Redesign + AletheIA Observatory (December 2025)
+- [x] **v1.0.4** - Theme Engine + Design System (December 2025)
+- [x] **v1.0.3** - Trinity Shell HUD (December 2025)
+- [x] **v1.0.2** - The Black Box Backup System (December 2025)
+- [x] **v1.0.0** - Public Launch 🎉 (December 2025)
 - [x] **v0.9.x** - Lead CRM, AI Agents, Daily Briefing, Help Center
 
 ### Coming Soon

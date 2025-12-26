@@ -4,7 +4,7 @@
 
 ---
 
-## ✅ Completed: v1.0.0 Public Launch (December 2024)
+## ✅ Completed: v1.0.0 Public Launch (December 2025)
 
 **Status:** 🎉 LIVE at https://app.kuraos.ai
 
@@ -33,7 +33,7 @@
 
 ---
 
-## ✅ Completed: v1.0.2 The Black Box (December 2024)
+## ✅ Completed: v1.0.2 The Black Box (December 2025)
 
 ### Infrastructure
 - [x] Automated PostgreSQL backups (every 6h, 7-day retention)
@@ -47,7 +47,7 @@
 
 ---
 
-## ✅ Completed: v1.0.3 Cyber-Clinical UI (December 2024)
+## ✅ Completed: v1.0.3 Cyber-Clinical UI (December 2025)
 
 ### Design System - The Zinc Protocol
 - [x] `next-themes` for dark/light mode switching
@@ -67,7 +67,7 @@
 
 ---
 
-## ✅ Completed: v1.0.4 Theme Engine (December 2024)
+## ✅ Completed: v1.0.4 Theme Engine (December 2025)
 
 ### Design System - Bimodal Identity
 - [x] Real-time Theme Editor with live preview
@@ -82,7 +82,7 @@
 
 ---
 
-## ✅ Completed: v1.0.5 AletheIA Observatory (December 2024)
+## ✅ Completed: v1.0.5 AletheIA Observatory (December 2025)
 
 ### AletheIA Intelligence Rail
 - [x] Patient Mode: Risk score, themes, flags, engagement when viewing a patient
