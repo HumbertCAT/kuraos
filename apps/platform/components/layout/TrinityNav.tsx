@@ -236,7 +236,7 @@ export function TrinityNav() {
 
                 {/* Agentes - Below Nurture */}
                 <Link
-                    href="/settings/automations"
+                    href="/automations"
                     className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
                         } ${isActive('/automations')
                             ? 'bg-ai/10 text-ai'
