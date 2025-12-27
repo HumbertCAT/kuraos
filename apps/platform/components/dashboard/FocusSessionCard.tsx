@@ -38,7 +38,7 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
 
         function updateTime() {
             const now = new Date();
-            const diff = nextSession.startTime.getTime() - now.getTime();
+            const diff = nextSession!.startTime.getTime() - now.getTime();
             const minutes = Math.floor(diff / 60000);
             const hours = Math.floor(minutes / 60);
 
@@ -137,8 +137,8 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                 <div className="flex flex-col items-end gap-3">
                     {/* Time Badge */}
                     <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${isUrgent
-                            ? 'bg-brand/10 text-brand'
-                            : 'bg-muted text-muted-foreground'
+                        ? 'bg-brand/10 text-brand'
+                        : 'bg-muted text-muted-foreground'
                         }`}>
                         <Clock className={`w-4 h-4 ${isUrgent ? 'animate-pulse' : ''}`} />
                         <span className="type-ui font-medium">{timeUntil}</span>
@@ -147,10 +147,10 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                     {/* Aletheia Insight (if any) */}
                     {nextSession.aletheiaInsight && (
                         <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm ${nextSession.aletheiaInsight.type === 'warning'
-                                ? 'bg-warning/10 text-warning'
-                                : nextSession.aletheiaInsight.type === 'info'
-                                    ? 'bg-ai/10 text-ai'
-                                    : 'bg-success/10 text-success'
+                            ? 'bg-warning/10 text-warning'
+                            : nextSession.aletheiaInsight.type === 'info'
+                                ? 'bg-ai/10 text-ai'
+                                : 'bg-success/10 text-success'
                             }`}>
                             {nextSession.aletheiaInsight.type === 'warning' && <AlertTriangle className="w-4 h-4" />}
                             <span>{nextSession.aletheiaInsight.message}</span>
