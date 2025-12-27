@@ -208,6 +208,7 @@ async def wipe_data(db, org_id):
 
     # Tables to clean - order matters for FK constraints
     tables_to_clean = [
+        f"DELETE FROM pending_actions WHERE organization_id = '{org_id}'",  # Ghost tasks like Juan Palomo
         f"DELETE FROM form_assignments WHERE patient_id IN (SELECT id FROM patients WHERE organization_id = '{org_id}')",
         f"DELETE FROM message_logs WHERE organization_id = '{org_id}'",
         f"DELETE FROM bookings WHERE organization_id = '{org_id}'",

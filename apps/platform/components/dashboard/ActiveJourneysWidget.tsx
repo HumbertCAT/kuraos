@@ -27,31 +27,40 @@ const journeyTypeColors: Record<string, string> = {
     microdosing: 'border-l-amber-500',
 };
 
-// Mock data for demonstration
+// Premium Demo Data - matches Golden Seed Protocol archetypes
 const MOCK_JOURNEYS: ActiveJourney[] = [
     {
         id: '1',
-        patientId: 'p1',
-        patientName: 'Javier Roca',
-        journeyName: 'Retiro Ibiza',
+        patientId: 'marcus-thorne',
+        patientName: 'Marcus Thorne',
+        journeyName: 'The Sovereign Mind',
+        journeyType: 'psychedelic',
+        status: 'ACTIVE',
+        priority: 'high',
+    },
+    {
+        id: '2',
+        patientId: 'elena-velazquez',
+        patientName: 'Elena Velázquez',
+        journeyName: 'Blocked: Medical',
         journeyType: 'psychedelic',
         status: 'BLOCKED',
         priority: 'high',
     },
     {
-        id: '2',
-        patientId: 'p2',
-        patientName: 'Sofía Blanco',
-        journeyName: 'Programa Microdosis',
-        journeyType: 'microdosing',
+        id: '3',
+        patientId: 'julian-soler',
+        patientName: 'Julian Soler',
+        journeyName: 'Neuro-Repatterning',
+        journeyType: 'coaching',
         status: 'PAYMENT_PENDING',
         priority: 'medium',
     },
     {
-        id: '3',
-        patientId: 'p3',
-        patientName: 'Lucrezia B.',
-        journeyName: 'Integración 8 sem',
+        id: '4',
+        patientId: 'sarah-jenkins',
+        patientName: 'Sarah Jenkins',
+        journeyName: "Architects' Circle",
         journeyType: 'integration',
         status: 'ACTIVE',
         priority: 'normal',
