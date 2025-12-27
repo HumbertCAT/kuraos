@@ -96,6 +96,16 @@
 
 ---
 
+## ✅ Completed: v1.1.1 INTELLIGENCE ENGINE (December 2025)
+
+### Multi-Model AI Infrastructure
+- [x] ProviderFactory: Smart routing for Gemini (Phase 1), Claude/Llama (Phase 3)
+- [x] CostLedger: Real token-based cost calculation with configurable margin
+- [x] AI Governance Admin Panel: Financial HUD, Model Registry, Activity Ledger
+- [x] Clean Ledger Refactor: No legacy `google.generativeai` in clinical flow
+
+---
+
 ## ✅ Completed: v1.0.12 Neural Flow UI (December 2025)
 
 ### Agent Detail - Circuit Board Visualization
@@ -282,4 +292,4 @@
 
 ---
 
-*Last updated: December 27, 2025 (v1.1.0 THE COMMAND CENTER)*
+*Last updated: December 27, 2025 (v1.1.1 INTELLIGENCE ENGINE)*

@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.1.0-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.1-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 [![License](https://img.shields.io/badge/license-Proprietary-blue.svg)]()
 
@@ -120,7 +120,7 @@ Separate your **Sales Pipeline** from **Clinical Operations**.
 | **Frontend** | Next.js 16 (App Router), TypeScript, TailwindCSS |
 | **Backend** | FastAPI (Python 3.11+), Async SQLAlchemy 2.0 |
 | **Database** | PostgreSQL 15 + Alembic Migrations |
-| **AI Engine** | Google Gemini 2.5 Flash |
+| **AI Engine** | Google Gemini 2.5 (via ProviderFactory + CostLedger) |
 | **Payments** | Stripe (Checkout + Webhooks + Connect) |
 | **Email** | Brevo (Transactional) |
 | **Calendar** | Google Calendar API (OAuth + FreeBusy) |
@@ -201,6 +201,7 @@ kuraos/
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 
 ### Completed
+- [x] **v1.1.1** - INTELLIGENCE ENGINE: AI Governance + FinOps (December 2025)
 - [x] **v1.1.0** - THE COMMAND CENTER: Dashboard 3.0 (December 2025)
 - [x] **v1.0.12** - Neural Flow UI: Agent Circuit Board (December 2025)
 - [x] **v1.0.10** - Journey Cards 2.0: Boarding Pass Style (December 2025)

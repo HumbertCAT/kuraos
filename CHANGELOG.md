@@ -5,6 +5,51 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-12-27 🧠 INTELLIGENCE ENGINE
+
+### 🎉 Multi-Model AI Infrastructure
+
+Complete overhaul of the AI subsystem with real-time cost tracking and governance.
+
+#### 🏭 Provider Factory + Model Garden
+- **ProviderFactory**: Smart routing for multi-model support (`gemini:2.5-flash`, future: Claude, Llama)
+- **GeminiProvider**: Production-ready with real token extraction from `usage_metadata`
+- **Centralized Prompts**: 8 clinical prompts in `/services/ai/prompts.py`
+
+#### 💰 Cost Ledger (FinOps)
+- **Real Token Tracking**: Actual input/output tokens per request
+- **USD Cost Calculation**: Provider pricing table (Gemini Flash = $0.075/$0.30 per 1M)
+- **Margin Configuration**: Configurable multiplier (default 1.5x = 50% markup)
+
+#### 🧠 AI Governance Panel (Admin)
+- **Financial HUD**: Provider Cost, Revenue, Net Margin in real-time
+- **Neural Registry**: Active models with pricing and capabilities
+- **Activity Ledger**: Per-request logs with user, model, tokens, cost
+- **Margin Controller**: Live adjustment of billing multiplier
+
+#### 🔧 Clean Ledger Refactor
+- Removed all legacy `google.generativeai` calls from clinical flow
+- `run_analysis_task` now uses `ProviderFactory` → `CostLedger` pipeline
+- Audio/Document analysis with proper file path resolution
+
+#### 🗄️ Database Schema
+- Extended `ai_usage_logs` table with 9 new columns:
+  - `provider`, `model_id`, `task_type`
+  - `tokens_input`, `tokens_output`
+  - `cost_provider_usd`, `cost_user_credits`
+  - `patient_id`, `clinical_entry_id`
+
+#### 🔌 API Endpoints
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/admin/ai/ledger` | GET | Financial stats (30d) |
+| `/admin/ai/config` | GET/PATCH | Margin configuration |
+| `/admin/ai/models` | GET | Available models |
+| `/admin/ai/logs` | GET | Recent usage logs |
+
+---
+
+
 ## [1.1.0] - 2025-12-27 🚀 THE COMMAND CENTER
 
 ### 🎉 Major Release - Dashboard Revolution

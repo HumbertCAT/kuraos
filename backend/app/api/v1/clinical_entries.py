@@ -304,10 +304,19 @@ async def analyze_clinical_entry(
 
 
 async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
-    """Background task to run AI analysis with credit deduction."""
+    """
+    Background task to run AI analysis with REAL token-based cost accounting.
+
+    v1.1.1 CLEAN LEDGER: Uses ProviderFactory + CostLedger for accurate billing.
+    """
     from app.db.base import AsyncSessionLocal
-    from app.services.aletheia import get_aletheia
-    from app.services.settings import get_setting_int
+    from app.services.ai import ProviderFactory, CostLedger
+    from app.services.ai.base import AIResponse
+    from app.services.ai.prompts import (
+        CLINICAL_SYSTEM_PROMPT,
+        AUDIO_SYNTHESIS_PROMPT,
+        DOCUMENT_ANALYSIS_PROMPT,
+    )
     from app.db.models import (
         ProcessingStatus,
         ClinicalEntry,
@@ -316,21 +325,22 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
         Patient,
         EntryType,
     )
+    from app.core.config import settings
+    from decimal import Decimal
 
     async with AsyncSessionLocal() as db:
         entry = None
         org = None
         try:
-            # Get entry with patient -> organization
+            # Get entry
             result = await db.execute(
-                select(ClinicalEntry).options().where(ClinicalEntry.id == entry_id)
+                select(ClinicalEntry).where(ClinicalEntry.id == entry_id)
             )
             entry = result.scalar_one_or_none()
-
             if not entry:
                 return
 
-            # Get patient to find organization
+            # Get patient → organization
             patient_result = await db.execute(
                 select(Patient).where(Patient.id == entry.patient_id)
             )
@@ -338,7 +348,6 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
             if not patient:
                 return
 
-            # Get organization
             org_result = await db.execute(
                 select(Organization).where(Organization.id == patient.organization_id)
             )
@@ -346,84 +355,178 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
             if not org:
                 return
 
-            # Determine cost based on entry type
-            if entry.entry_type == EntryType.SESSION_NOTE:
-                cost = await get_setting_int(db, "AI_COST_TEXT", 5)
-                activity_type = "analysis_text"
-            elif entry.entry_type == EntryType.AUDIO:
-                # Check if it's a live recording or uploaded file
-                metadata = entry.entry_metadata or {}
-                filename = metadata.get("filename", "")
-                # Live recordings typically start with "audio_" (from AudioRecorder)
-                if filename.startswith("audio_"):
-                    cost = await get_setting_int(db, "AI_COST_AUDIO_LIVE", 10)
-                    activity_type = "analysis_audio_live"
-                else:
-                    cost = await get_setting_int(db, "AI_COST_AUDIO_FILE", 20)
-                    activity_type = "analysis_audio_file"
-            elif entry.entry_type == EntryType.DOCUMENT:
-                # Images (from PhotoCapture) have filenames starting with "photo_"
-                metadata = entry.entry_metadata or {}
-                content_type = metadata.get("content_type", "")
-                if content_type.startswith("image/"):
-                    cost = await get_setting_int(db, "AI_COST_IMAGE", 5)
-                    activity_type = "analysis_image"
-                else:
-                    cost = await get_setting_int(db, "AI_COST_TEXT", 5)
-                    activity_type = "analysis_document"
-            else:
-                cost = await get_setting_int(db, "AI_COST_TEXT", 5)
-                activity_type = f"analysis_{entry.entry_type.value.lower()}"
-
-            # Calculate available credits
-            remaining_monthly = (
-                org.ai_credits_monthly_quota - org.ai_credits_used_this_month
-            )
-            total_available = remaining_monthly + org.ai_credits_purchased
-
-            # Check if enough credits
-            if total_available < cost:
-                entry.processing_status = ProcessingStatus.FAILED
-                entry.processing_error = (
-                    f"Insufficient credits. Need {cost}, have {total_available}."
-                )
-                await db.commit()
-                return
-
             # Update status to PROCESSING
             entry.processing_status = ProcessingStatus.PROCESSING
             await db.commit()
 
-            # Run analysis
-            aletheia = get_aletheia()
-
-            # Get model from system_settings (admin panel override)
+            # ============================================================
+            # MODEL GARDEN: Get provider from Factory
+            # ============================================================
             from app.services.settings import get_setting_str
 
-            ai_model = await get_setting_str(db, "AI_MODEL", "gemini-2.5-flash")
+            model_spec = await get_setting_str(db, "AI_MODEL", "gemini-2.5-flash")
+            # model_spec is already full model name like "gemini-2.5-flash"
+            provider = ProviderFactory.get_provider(model_spec)
 
-            analysis_result = await aletheia.analyze(entry, model_name=ai_model)
+            # Determine task type and prompt
+            if entry.entry_type == EntryType.SESSION_NOTE:
+                task_type = "clinical_analysis"
+                prompt = CLINICAL_SYSTEM_PROMPT
+                content = entry.content or ""
 
-            # Deduct credits: use monthly quota first, then purchased
-            if remaining_monthly >= cost:
-                org.ai_credits_used_this_month += cost
+                # Text analysis
+                response = await provider.analyze_text(content, prompt)
+
+            elif entry.entry_type == EntryType.AUDIO:
+                task_type = "audio_synthesis"
+                prompt = AUDIO_SYNTHESIS_PROMPT
+
+                # Get audio file path - same logic as AletheIA._analyze_audio
+                metadata = entry.entry_metadata or {}
+                file_url = metadata.get("file_url", "")
+
+                if file_url:
+                    import os
+
+                    # Extract filename from URL and build path
+                    filename = os.path.basename(file_url)
+                    audio_path = os.path.join("/app/static/uploads", filename)
+
+                    if os.path.exists(audio_path):
+                        with open(audio_path, "rb") as f:
+                            audio_bytes = f.read()
+
+                        # Detect MIME type from extension
+                        extension = os.path.splitext(audio_path)[1].lower()
+                        mime_map = {
+                            ".webm": "audio/webm",
+                            ".mp3": "audio/mpeg",
+                            ".wav": "audio/wav",
+                            ".m4a": "audio/mp4",
+                            ".ogg": "audio/ogg",
+                            ".flac": "audio/flac",
+                        }
+                        mime_type = mime_map.get(extension, "audio/webm")
+
+                        response = await provider.analyze_multimodal(
+                            audio_bytes, mime_type, prompt
+                        )
+                    else:
+                        response = AIResponse(
+                            text=f"Audio file not found: {filename}",
+                            tokens_input=0,
+                            tokens_output=0,
+                            model_id=model_spec,
+                            provider_id="vertex-google",
+                        )
+                else:
+                    response = AIResponse(
+                        text="No audio file_url in metadata",
+                        tokens_input=0,
+                        tokens_output=0,
+                        model_id=model_spec,
+                        provider_id="vertex-google",
+                    )
+
+            elif entry.entry_type == EntryType.DOCUMENT:
+                task_type = "document_analysis"
+                prompt = DOCUMENT_ANALYSIS_PROMPT
+
+                # Get document file - same logic as audio
+                metadata = entry.entry_metadata or {}
+                file_url = metadata.get("file_url", "")
+
+                if file_url:
+                    import os
+
+                    filename = os.path.basename(file_url)
+                    doc_path = os.path.join("/app/static/uploads", filename)
+
+                    if os.path.exists(doc_path):
+                        with open(doc_path, "rb") as f:
+                            doc_bytes = f.read()
+                        mime_type = metadata.get("content_type", "application/pdf")
+                        response = await provider.analyze_multimodal(
+                            doc_bytes, mime_type, prompt
+                        )
+                    else:
+                        response = AIResponse(
+                            text=f"Document file not found: {filename}",
+                            tokens_input=0,
+                            tokens_output=0,
+                            model_id=model_spec,
+                            provider_id="vertex-google",
+                        )
+                else:
+                    response = AIResponse(
+                        text="No document file_url in metadata",
+                        tokens_input=0,
+                        tokens_output=0,
+                        model_id=model_spec,
+                        provider_id="vertex-google",
+                    )
             else:
-                # Use remaining monthly + dip into purchased
-                shortfall = cost - remaining_monthly
-                org.ai_credits_used_this_month = org.ai_credits_monthly_quota
-                org.ai_credits_purchased -= shortfall
+                # Fallback for other types
+                task_type = f"analysis_{entry.entry_type.value.lower()}"
+                content = entry.content or str(entry.entry_metadata or {})
+                response = await provider.analyze_text(content, CLINICAL_SYSTEM_PROMPT)
 
-            # Log usage
+            # ============================================================
+            # COST LEDGER: Log REAL tokens and calculate costs
+            # ============================================================
+            costs = CostLedger.calculate_cost(response)
+
+            # Create detailed usage log
             usage_log = AiUsageLog(
+                id=uuid.uuid4(),
                 organization_id=org.id,
                 user_id=user_id,
-                entry_id=entry.id,
-                credits_cost=cost,
-                activity_type=activity_type,
+                patient_id=patient.id,
+                clinical_entry_id=entry.id,
+                provider=response.provider_id,
+                model_id=response.model_id,
+                task_type=task_type,
+                tokens_input=costs["tokens_input"],
+                tokens_output=costs["tokens_output"],
+                cost_provider_usd=float(costs["cost_provider_usd"]),
+                cost_user_credits=float(costs["cost_user_credits"]),
+                # Legacy field for backwards compatibility
+                credits_cost=int(costs["cost_user_credits"] * 100),  # cents
+                activity_type=task_type,
             )
             db.add(usage_log)
 
-            # Append result to ai_analyses
+            # ============================================================
+            # QUOTA MANAGEMENT: Deduct based on real credits
+            # ============================================================
+            credit_cost = int(costs["cost_user_credits"] * 100)  # Convert to credits
+            remaining_monthly = (
+                org.ai_credits_monthly_quota - org.ai_credits_used_this_month
+            )
+
+            if remaining_monthly >= credit_cost:
+                org.ai_credits_used_this_month += credit_cost
+            else:
+                # Use remaining monthly + dip into purchased
+                shortfall = credit_cost - remaining_monthly
+                org.ai_credits_used_this_month = org.ai_credits_monthly_quota
+                org.ai_credits_purchased = max(0, org.ai_credits_purchased - shortfall)
+
+            # ============================================================
+            # SAVE RESULT
+            # ============================================================
+            analysis_result = {
+                "id": str(uuid.uuid4()),
+                "date": entry.created_at.isoformat() if entry.created_at else None,
+                "text": response.text,
+                "model": response.model_id,
+                "tokens": {
+                    "input": response.tokens_input,
+                    "output": response.tokens_output,
+                },
+                "cost_usd": float(costs["cost_provider_usd"]),
+            }
+
             current_metadata = entry.entry_metadata or {}
             current_analyses = current_metadata.get("ai_analyses", [])
             current_analyses.append(analysis_result)
@@ -438,7 +541,9 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
             await db.commit()
 
         except Exception as e:
-            # Update status to FAILED
+            import traceback
+
+            traceback.print_exc()
             if entry:
                 entry.processing_status = ProcessingStatus.FAILED
                 entry.processing_error = str(e)

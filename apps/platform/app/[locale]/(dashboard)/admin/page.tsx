@@ -8,6 +8,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { ThemeEditor } from '@/components/admin/ThemeEditor';
+import AiGovernance from './components/AiGovernance';
 
 interface SystemSetting {
     key: string;
@@ -88,7 +89,7 @@ const THERAPY_ICONS: Record<string, string> = {
     INTEGRATION: '🔄',
 };
 
-type TabType = 'settings' | 'organizations' | 'templates' | 'automations' | 'backups' | 'theme';
+type TabType = 'settings' | 'organizations' | 'templates' | 'automations' | 'backups' | 'theme' | 'ai';
 
 const TRIGGER_LABELS: Record<string, string> = {
     FORM_SUBMISSION_COMPLETED: '📋 Form Submitted',
@@ -268,6 +269,7 @@ export default function AdminPage() {
         { key: 'automations', label: 'Automations', icon: '🤖' },
         { key: 'backups', label: 'Backups', icon: '🛡️' },
         { key: 'theme', label: 'Theme Engine', icon: '🎨' },
+        { key: 'ai', label: 'AI Governance', icon: '🧠' },
     ];
 
     return (
@@ -693,6 +695,13 @@ export default function AdminPage() {
             {/* Theme Engine Tab */}
             {activeTab === 'theme' && (
                 <ThemeEditor />
+            )}
+
+            {/* AI Governance Tab */}
+            {activeTab === 'ai' && (
+                <section className="bg-card rounded-xl border border-border p-6">
+                    <AiGovernance />
+                </section>
             )}
         </div>
     );

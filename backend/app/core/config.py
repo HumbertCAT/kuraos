@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     GOOGLE_PROJECT_ID: Optional[str] = None
     GOOGLE_LOCATION: str = "us-central1"
 
+    # v1.1.1 Intelligence Engine settings
+    VERTEX_AI_ENABLED: bool = True  # Enable Vertex AI Model Garden
+    AI_COST_MARGIN: float = 1.5  # Margin multiplier for user billing (1.5 = 50% margin)
+
     # Google OAuth (Calendar Integration)
     GOOGLE_CLIENT_ID: Optional[str] = None
     GOOGLE_CLIENT_SECRET: Optional[str] = None

@@ -18,138 +18,16 @@ from app.core.config import settings
 from app.db.models import ClinicalEntry, EntryType
 
 
-# Clinical analysis system prompt
-CLINICAL_SYSTEM_PROMPT = """You are AletheIA, an AI clinical assistant for therapists.
-
-Analyze the provided clinical content and generate a structured assessment.
-
-## Your Analysis Should Include:
-
-1. **Summary**: Brief overview of the content (2-3 sentences)
-
-2. **Clinical Observations**: Key themes, patterns, or concerns noted
-
-3. **Risk Assessment**: Flag any indicators of:
-   - ⚠️ Suicidal ideation or self-harm
-   - ⚠️ Substance abuse
-   - ⚠️ Crisis indicators
-   - ⚠️ Safety concerns
-   
-   If no risk indicators are present, state "No risk indicators identified."
-
-4. **Therapeutic Notes**: Suggestions for the therapist to consider
-
-## Guidelines:
-- Be concise but thorough
-- Use clinical language appropriate for mental health professionals
-- Do NOT provide diagnoses - only observations
-- Maintain a supportive, non-judgmental tone
-- If content is unclear or insufficient, note what additional information would be helpful
-
-Respond in the same language as the input content.
-"""
-
-AUDIO_TRANSCRIPTION_PROMPT = """You are AletheIA, an AI clinical assistant for therapists.
-
-Listen to this ENTIRE therapy session audio from START to FINISH. Your task is to SYNTHESIZE and ANALYZE, NOT transcribe verbatim.
-
-## IMPORTANT: You have unlimited input context. Process the FULL audio duration.
-
-Provide your analysis in these sections:
-
-## 1. RESUMEN CLÍNICO COMPLETO
-A comprehensive clinical summary covering the ENTIRE session (beginning to end):
-- Opening: How did the session start? Patient's initial state.
-- Main themes: Key topics discussed throughout
-- Patient's emotional journey: How their state evolved during the session
-- Therapeutic interventions: What techniques were used
-- Closing: How did the session end? Any homework assigned? Next steps discussed?
-
-## 2. MOMENTOS CLAVE (Cronológico)
-A bulleted timeline of significant moments:
-- [Early session] ...
-- [Mid session] ...
-- [Late session] ...
-
-## 3. EVALUACIÓN DE RIESGO
-Explicitly flag if present, or state "Sin indicadores de riesgo identificados":
-- ⚠️ Ideación suicida o autolesión
-- ⚠️ Abuso de sustancias
-- ⚠️ Crisis o situaciones de seguridad
-
-## 4. CITAS TEXTUALES RELEVANTES
-Include ONLY 2-4 direct quotes that represent:
-- Breakthrough moments
-- Risk indicators (if any)
-- Core therapeutic insights
-
-## 5. NOTAS PARA SEGUIMIENTO
-Recommendations for the therapist for future sessions.
-
-Respond in the same language as the audio content."""
-
-DOCUMENT_ANALYSIS_PROMPT = """Analyze this clinical document or image.
-
-Provide:
-1. **Document Type**: What kind of document this appears to be
-2. **Key Information**: Important details extracted
-3. **Clinical Relevance**: How this relates to patient care
-4. **Action Items**: Any follow-up actions suggested
-
-Respond in the same language as the document content.
-"""
-
-FORM_ANALYSIS_PROMPT = """Analyze this intake form submission.
-
-Provide:
-1. **Key Information**: Important details from the answers
-2. **Initial Observations**: Preliminary clinical impressions
-3. **Preparation Notes**: How to prepare for the first session
-
-Respond in the same language as the form content.
-"""
-
-ASTROLOGY_FORM_PROMPT = """You are AletheIA, an AI assistant for holistic therapists specializing in astrology and human design.
-
-The patient provided birth data in their intake form. Your role:
-1. **Acknowledge Data Reception**: Warmly confirm receipt of their birth information
-2. **Brief Significance**: Mention the Sun sign if birth date is provided (do NOT calculate full chart)
-3. **Context for Session**: Explain how this data will help personalize their experience
-4. **Next Steps**: What the therapist can do with this information
-
-IMPORTANT:
-- Do NOT provide full astrological charts or detailed readings
-- Keep the tone warm, supportive, and professional
-- Focus on validating the patient's choice to share this personal information
-
-Respond in the same language as the form content.
-"""
-
-TRIAGE_FORM_PROMPT = """You are AletheIA acting as a Medical Triage Officer for holistic therapy intake.
-
-CONTEXT: This form submission has been flagged for safety review.
-Flagged items: {flags}
-
-Your role is to conduct a conservative safety review:
-
-1. **Flagged Items Review**: Assess each flagged medical item and its potential implications
-2. **Free-Text Scan**: Review all text answers for mentions of:
-   - SSRIs, MAOIs, or other psychiatric medications
-   - Psychotic episodes or history of psychosis
-   - Unstable medication history
-   - Recent hospitalizations
-   - Cardiovascular conditions
-3. **Risk Assessment**: Provide a clear risk summary
-4. **Recommendations**: Suggest precautions or contraindications
-
-CRITICAL INSTRUCTIONS:
-- Be CONSERVATIVE - when in doubt, flag for human review
-- Do NOT clear anyone for psychedelic work without explicit therapist approval
-- Highlight ANY ambiguity in the responses
-- This is a safety tool, not a diagnostic tool
-
-Respond in the same language as the form content.
-"""
+# Import centralized prompts
+from app.services.ai.prompts import (
+    CLINICAL_SYSTEM_PROMPT,
+    AUDIO_SYNTHESIS_PROMPT as AUDIO_TRANSCRIPTION_PROMPT,
+    DOCUMENT_ANALYSIS_PROMPT,
+    FORM_ANALYSIS_PROMPT,
+    ASTROLOGY_FORM_PROMPT,
+    TRIAGE_FORM_PROMPT,
+    CHAT_ANALYSIS_PROMPT,
+)
 
 
 class AletheIA:
@@ -183,6 +61,73 @@ class AletheIA:
             "static",
             "uploads",
         )
+
+        # Context for logging (set externally when db session available)
+        self._db = None
+        self._organization_id = None
+        self._user_id = None
+        self._patient_id = None
+
+    def set_context(self, db=None, organization_id=None, user_id=None, patient_id=None):
+        """Set context for AI usage logging."""
+        self._db = db
+        self._organization_id = organization_id
+        self._user_id = user_id
+        self._patient_id = patient_id
+
+    async def _log_ai_usage(
+        self,
+        response,
+        task_type: str,
+        model_name: str = None,
+        clinical_entry_id: str = None,
+    ):
+        """Log AI usage to database if context is set."""
+        if not self._db or not self._organization_id:
+            return  # Skip logging if no db context
+
+        try:
+            from app.db.models import AiUsageLog
+
+            # Extract token counts from genai response
+            usage = getattr(response, "usage_metadata", None)
+            tokens_in = getattr(usage, "prompt_token_count", 0) if usage else 0
+            tokens_out = getattr(usage, "candidates_token_count", 0) if usage else 0
+
+            # Calculate costs
+            from app.services.ai.ledger import CostLedger
+            from decimal import Decimal
+
+            model_id = model_name or settings.AI_MODEL
+            pricing = CostLedger.PRICING.get(model_id, CostLedger.DEFAULT_PRICING)
+            margin = CostLedger.get_default_margin()
+
+            cost_provider = (Decimal(tokens_in) / Decimal("1000000")) * pricing[
+                "input"
+            ] + (Decimal(tokens_out) / Decimal("1000000")) * pricing["output"]
+            cost_user = cost_provider * margin
+
+            # Create log entry
+            log = AiUsageLog(
+                id=uuid.uuid4(),
+                organization_id=self._organization_id,
+                user_id=self._user_id,
+                patient_id=self._patient_id,
+                clinical_entry_id=clinical_entry_id,
+                provider="vertex-google",
+                model_id=model_id,
+                task_type=task_type,
+                tokens_input=tokens_in,
+                tokens_output=tokens_out,
+                cost_provider_usd=float(cost_provider),
+                cost_user_credits=float(cost_user),
+            )
+
+            self._db.add(log)
+            await self._db.flush()
+        except Exception as e:
+            # Don't fail the main operation if logging fails
+            print(f"[AletheIA] Usage logging error: {e}")
 
     async def analyze(self, entry: ClinicalEntry, model_name: str = None) -> dict:
         """
@@ -239,6 +184,9 @@ class AletheIA:
             CLINICAL_SYSTEM_PROMPT,
             f"## Clinical Entry Content:\n\n{content}",
         ])
+
+        # Log AI usage
+        await self._log_ai_usage(response, "clinical_analysis")
 
         return response.text
 

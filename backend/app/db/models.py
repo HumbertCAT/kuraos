@@ -564,32 +564,73 @@ class SystemSetting(Base):
 
 
 class AiUsageLog(Base):
-    """Ledger of AI credit consumption for billing and analytics."""
+    """AI Usage Ledger - FinOps tracking with real token accounting.
+
+    Tracks every AI call with:
+    - Provider and model identification
+    - Input/output token counts
+    - Provider cost (what Google charges us)
+    - User credits (with configurable margin)
+
+    v1.1.1: Upgraded from simple credits to real token accounting.
+    """
 
     __tablename__ = "ai_usage_logs"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-
-    organization_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("organizations.id"), index=True
-    )
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True)
-    entry_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        ForeignKey("clinical_entries.id", ondelete="SET NULL"), nullable=True
-    )
-
-    credits_cost: Mapped[int] = mapped_column(Integer)
-    activity_type: Mapped[str] = mapped_column(
-        String(50)
-    )  # "analysis_text", "analysis_audio", etc.
-
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
 
+    # Context
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("organizations.id"), index=True
+    )
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("users.id"), nullable=True, index=True
+    )
+    patient_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("patients.id"), nullable=True
+    )
+    clinical_entry_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("clinical_entries.id", ondelete="SET NULL"), nullable=True
+    )
+
+    # Provider details (v1.1.1 fields)
+    provider: Mapped[str] = mapped_column(
+        String(50), default="vertex-google"
+    )  # 'vertex-google', 'vertex-anthropic', 'vertex-meta'
+    model_id: Mapped[str] = mapped_column(
+        String(100), default="gemini-2.5-flash"
+    )  # Full model name
+    task_type: Mapped[str] = mapped_column(
+        String(50), default="clinical_analysis"
+    )  # 'transcription', 'clinical_analysis', 'chat', 'insights'
+
+    # Token metrics (v1.1.1 - real accounting)
+    tokens_input: Mapped[int] = mapped_column(Integer, default=0)
+    tokens_output: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Cost tracking (v1.1.1 - FinOps)
+    cost_provider_usd: Mapped[float] = mapped_column(
+        Float, default=0.0
+    )  # Raw cost from Google
+    cost_user_credits: Mapped[float] = mapped_column(
+        Float, default=0.0
+    )  # User-facing cost (with margin)
+
+    # Legacy field (kept for backwards compatibility, will be deprecated)
+    credits_cost: Mapped[int] = mapped_column(Integer, default=0)
+    activity_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+
     # Relationships
     organization: Mapped["Organization"] = relationship(back_populates="ai_usage_logs")
-    user: Mapped["User"] = relationship(back_populates="ai_usage_logs")
+    user: Mapped[Optional["User"]] = relationship(back_populates="ai_usage_logs")
+
+    __table_args__ = (
+        Index("ix_ai_usage_org_date", "organization_id", "created_at"),
+        Index("ix_ai_usage_model", "model_id"),
+    )
 
 
 class FormTemplate(Base):
