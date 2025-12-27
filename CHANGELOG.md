@@ -5,6 +5,33 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.12] - 2025-12-27
+
+### Added - Agent Detail "Neural Flow UI"
+
+#### UI: Neural Circuit Visualization
+- **Connected flow diagram** with vertical dashed connector line
+- Nodes positioned **on the line** (Trigger → Condition → Action → Complete)
+- **Semantic color coding**: AI/Purple triggers, Warning/Orange conditions, Success/Green actions
+- **Diamond-style** condition nodes with rotate-45 effect
+
+#### UX: Glass KPI Cards
+- **Backdrop blur** glass effect (`bg-card/50 backdrop-blur-sm`)
+- **Technical typography** with `font-mono` for metrics
+- **Dark mode optimized** borders (`border-white/5`)
+
+#### Interaction: "Radar Scan" Empty State
+- **Pulsing Radio icon** for "Sistema en espera" state
+- Elegant waiting visualization instead of plain text
+
+#### Visual Upgrades
+- **Hero icon** with type-based shadow glow
+- **Email preview window** for send_email actions
+- **Semantic badges** (badge-ai, badge-success, badge-warning)
+- **Tactile buttons** (.btn classes with active:scale-95)
+
+---
+
 ## [1.0.11] - 2025-12-27
 
 ### Fixed - Agents Navigation & Branding Cleanup
