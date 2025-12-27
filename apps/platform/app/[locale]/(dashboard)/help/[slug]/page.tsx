@@ -2,10 +2,33 @@ import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { getHelpContent, getChapter, parseMarkdown, getAllSlugs, HELP_NAV } from '@/lib/mdx';
+import { FocusImage } from '@/components/mdx/FocusImage';
 
 interface Props {
     params: Promise<{ slug: string; locale: string }>;
 }
+
+/**
+ * Image mappings for contextual screenshots per article.
+ * Uses FocusImage presets to show relevant parts of master screenshots.
+ */
+const ARTICLE_IMAGES: Record<string, { src: string; preset: string; caption: string }[]> = {
+    'patients': [
+        { src: '/screenshots/patient_profile.png', preset: 'full', caption: 'Vista completa del Clinical Canvas del paciente' },
+    ],
+    'aletheia': [
+        { src: '/screenshots/aletheia_sidebar.png', preset: 'full', caption: 'AletheIA Observatory mostrando Risk Assessment y Summary' },
+    ],
+    'sentinel-pulse': [
+        { src: '/screenshots/patient_profile.png', preset: 'full', caption: 'Ficha del paciente con Sentinel Pulse visible' },
+    ],
+    'first-5-minutes': [
+        { src: '/screenshots/dashboard.png', preset: 'full', caption: 'Dashboard principal de KURA OS' },
+    ],
+    'understanding-journeys': [
+        { src: '/screenshots/patient_profile.png', preset: 'full', caption: 'Ficha del paciente con Journey Boarding Pass' },
+    ],
+};
 
 export default async function HelpArticlePage({ params }: Props) {
     const { slug } = await params;
@@ -18,6 +41,9 @@ export default async function HelpArticlePage({ params }: Props) {
 
     // Get content
     const content = getHelpContent(slug);
+
+    // Get contextual images for this article
+    const articleImages = ARTICLE_IMAGES[slug] || [];
 
     // Get navigation (prev/next)
     const allSlugs = getAllSlugs();
@@ -45,11 +71,34 @@ export default async function HelpArticlePage({ params }: Props) {
             {/* Header */}
             <ChapterHeader chapter={chapter} icon={chapter.icon} />
 
+            {/* Hero Image (if available) */}
+            {articleImages.length > 0 && (
+                <div className="mb-8">
+                    <FocusImage
+                        src={articleImages[0].src}
+                        preset={articleImages[0].preset}
+                        alt={articleImages[0].caption}
+                        caption={articleImages[0].caption}
+                    />
+                </div>
+            )}
+
             {/* Content */}
             <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
                 <article className="prose prose-slate dark:prose-invert max-w-none">
                     {parseMarkdown(content)}
                 </article>
+
+                {/* Additional images inline */}
+                {articleImages.slice(1).map((img, idx) => (
+                    <FocusImage
+                        key={idx}
+                        src={img.src}
+                        preset={img.preset}
+                        alt={img.caption}
+                        caption={img.caption}
+                    />
+                ))}
             </div>
 
             {/* Navigation */}
