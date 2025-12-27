@@ -8,7 +8,7 @@ import { useTerminology } from '@/hooks/use-terminology';
 import { useAuth } from '@/context/auth-context';
 import BriefingPlayer from '@/components/BriefingPlayer';
 import { VitalSignCard } from '@/components/dashboard/VitalSignCard';
-import { DayAgenda } from '@/components/dashboard/DayAgenda';
+import { FocusSessionCard } from '@/components/dashboard/FocusSessionCard';
 import { QuickNote } from '@/components/dashboard/QuickNote';
 import { RecentPatients } from '@/components/dashboard/RecentPatients';
 import { Brain, Wallet, Target, Users } from 'lucide-react';
@@ -28,7 +28,17 @@ interface DashboardData {
     monthlyRevenue: number;
     pendingPayments: number;
     newLeadsThisWeek: number;
-    todaySlots: { time: string; type: 'available' | 'booked'; title?: string; patient?: string }[];
+    nextSession?: {
+        id: string;
+        patientName: string;
+        patientInitials: string;
+        serviceName: string;
+        startTime: Date;
+        aletheiaInsight?: {
+            type: 'warning' | 'info' | 'success';
+            message: string;
+        };
+    } | null;
 }
 
 export default function DashboardPage() {
@@ -75,36 +85,42 @@ export default function DashboardPage() {
                 const leads = leadsRes.leads || [];
                 const newLeadsThisWeek = leads.filter((l: any) => new Date(l.created_at) > oneWeekAgo).length;
 
-                // Build today's agenda slots
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const tomorrow = new Date(today);
+                // Find next upcoming session (within next 24 hours)
+                const now = new Date();
+                const tomorrow = new Date(now);
                 tomorrow.setDate(tomorrow.getDate() + 1);
 
-                const todayBookings = bookings.filter(b => {
-                    const bookingDate = new Date(b.start_time);
-                    return bookingDate >= today && bookingDate < tomorrow;
-                });
+                const upcomingBookings = bookings
+                    .filter(b => {
+                        const bookingDate = new Date(b.start_time);
+                        return bookingDate > now && bookingDate < tomorrow &&
+                            (b.status === 'CONFIRMED' || b.status === 'PENDING');
+                    })
+                    .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
 
-                // Generate time slots (9:00 - 18:00)
-                const slots: DashboardData['todaySlots'] = [];
-                for (let hour = 9; hour <= 18; hour++) {
-                    const timeStr = `${hour.toString().padStart(2, '0')}:00`;
-                    const booking = todayBookings.find(b => {
-                        const bHour = new Date(b.start_time).getHours();
-                        return bHour === hour;
-                    });
+                let nextSession: DashboardData['nextSession'] = null;
 
-                    if (booking) {
-                        slots.push({
-                            time: timeStr,
-                            type: 'booked',
-                            title: booking.service_title,
-                            patient: booking.patient_name,
-                        });
-                    } else {
-                        slots.push({ time: timeStr, type: 'available' });
-                    }
+                if (upcomingBookings.length > 0) {
+                    const next = upcomingBookings[0];
+                    const initials = next.patient_name
+                        .split(' ')
+                        .map((n: string) => n.charAt(0))
+                        .join('')
+                        .toUpperCase()
+                        .slice(0, 2);
+
+                    nextSession = {
+                        id: next.id,
+                        patientName: next.patient_name,
+                        patientInitials: initials,
+                        serviceName: next.service_title,
+                        startTime: new Date(next.start_time),
+                        // Mock Aletheia insight for demonstration
+                        aletheiaInsight: {
+                            type: 'warning',
+                            message: 'Último reporte: Sueño irregular',
+                        },
+                    };
                 }
 
                 setData({
@@ -112,7 +128,7 @@ export default function DashboardPage() {
                     monthlyRevenue,
                     pendingPayments,
                     newLeadsThisWeek,
-                    todaySlots: slots,
+                    nextSession,
                 });
             } catch (error) {
                 console.error('[Dashboard] Failed to load:', error);
@@ -142,16 +158,16 @@ export default function DashboardPage() {
 
     return (
         <div className="grid grid-cols-12 gap-6 p-6">
-            {/* ========== HERO: THE BRIEFING (span-12) ========== */}
+            {/* ========== ROW 1: HERO - THE BRIEFING (span-12) ========== */}
             <div className="col-span-12">
-                <div className="bg-card border border-border rounded-xl p-5">
+                <div className="card bg-card/80 backdrop-blur-sm border-border/50 p-5">
                     <h1 className="type-h2 mb-1">{getGreeting()}, {firstName}</h1>
-                    <p className="text-xs text-muted-foreground mb-4">Tu resumen diario está listo</p>
+                    <p className="type-ui text-muted-foreground mb-4">Tu resumen diario está listo</p>
                     <BriefingPlayer compact />
                 </div>
             </div>
 
-            {/* ========== VITAL SIGNS (span-12, 3 cards) ========== */}
+            {/* ========== ROW 2: VITAL SIGNS (span-12, 3 cards) ========== */}
             <div className="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <VitalSignCard
                     label="Ingresos Mes"
@@ -177,16 +193,17 @@ export default function DashboardPage() {
                 />
             </div>
 
-            {/* ========== THE WORKSPACE (8 + 4 split) ========== */}
-            {/* LEFT: Today's Agenda (span-8) */}
+            {/* ========== ROW 3: THE CORE (8 + 4 split) ========== */}
+
+            {/* LEFT: Focus Area - "The Present" (span-8) */}
             <div className="col-span-12 lg:col-span-8">
-                <DayAgenda
-                    slots={data.todaySlots}
-                    onNewBooking={() => window.location.href = '/calendar'}
+                <FocusSessionCard
+                    nextSession={data.nextSession}
+                    onViewFullAgenda={() => window.location.href = '/calendar'}
                 />
             </div>
 
-            {/* RIGHT: Quick Tools (span-4) */}
+            {/* RIGHT: Quick Tools Sidebar (span-4) */}
             <div className="col-span-12 lg:col-span-4 space-y-4">
                 <QuickNote />
                 <RecentPatients />
