@@ -5,6 +5,24 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.14] - 2025-12-27
+
+### Refactored - Dashboard 3.0 "The WOOOOOW Layout"
+
+Clinical First hierarchy - urgency visible without scrolling.
+
+#### Ghost Header
+- Removed card container from briefing
+- Title directly on background (`type-h1`)
+- Minimal, transparent audio player
+
+#### New Layout Order
+1. **CLINICAL COCKPIT** (Row 1): FocusCard (8) + ActiveJourneys (4)
+2. **BUSINESS PULSE** (Row 2): Metrics row (full width)
+3. **GROWTH & TOOLS** (Row 3): Pipeline (8) + QuickNote (4)
+
+---
+
 ## [1.0.13] - 2025-12-27
 
 ### Added - Dashboard 2.0 "Past, Present, Future"
