@@ -104,40 +104,47 @@ function ButtonsSection() {
     return (
         <section className="space-y-6">
             <h2 className="type-h2 text-foreground border-b border-border pb-2">
-                🔘 Buttons
+                🔘 Buttons (Tactile UI)
             </h2>
 
-            <div className="bg-card rounded-lg p-6 space-y-4">
-                <div className="flex flex-wrap gap-4 items-center">
-                    <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors">
-                        Primary
-                    </button>
-                    <button className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors">
-                        Secondary
-                    </button>
-                    <button className="px-4 py-2 bg-transparent text-foreground rounded-lg font-medium hover:bg-accent transition-colors">
-                        Ghost
-                    </button>
-                    <button className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg font-medium hover:bg-destructive/90 transition-colors">
-                        Destructive
-                    </button>
-                    <button className="px-4 py-2 bg-transparent border border-border text-foreground rounded-lg font-medium hover:bg-accent transition-colors">
-                        Outline
-                    </button>
+            <div className="bg-card rounded-lg p-6 space-y-6">
+                {/* Row 1: Core Buttons with NEW .btn classes */}
+                <div>
+                    <h3 className="type-ui text-muted-foreground tracking-widest mb-3">USING .btn CLASSES (CLICKY!)</h3>
+                    <div className="flex flex-wrap gap-4 items-center">
+                        <button className="btn btn-md btn-primary">Primary</button>
+                        <button className="btn btn-md btn-secondary">Secondary</button>
+                        <button className="btn btn-md btn-ghost">Ghost</button>
+                        <button className="btn btn-md btn-destructive">Destructive</button>
+                        <button className="btn btn-md btn-outline">Outline</button>
+                    </div>
                 </div>
 
-                {/* Brand Buttons */}
-                <div className="flex flex-wrap gap-4 items-center pt-4 border-t border-border">
-                    <button className="px-4 py-2 bg-brand text-primary-foreground rounded-lg font-medium hover:bg-brand/90 transition-colors">
-                        Brand CTA
-                    </button>
-                    <button className="px-4 py-2 bg-brand/10 text-brand rounded-lg font-medium hover:bg-brand/20 transition-colors">
-                        Brand Soft
-                    </button>
-                    <button className="px-4 py-2 bg-success text-primary-foreground rounded-lg font-medium hover:bg-success/90 transition-colors">
-                        Success
-                    </button>
+                {/* Row 2: Brand & Success */}
+                <div className="pt-4 border-t border-border">
+                    <h3 className="type-ui text-muted-foreground tracking-widest mb-3">BRAND BUTTONS (WITH GLOW)</h3>
+                    <div className="flex flex-wrap gap-4 items-center">
+                        <button className="btn btn-md btn-brand">✨ Brand CTA</button>
+                        <button className="btn btn-md btn-brand-soft">Brand Soft</button>
+                        <button className="btn btn-md btn-success">Success</button>
+                    </div>
                 </div>
+
+                {/* Row 3: Size Variants */}
+                <div className="pt-4 border-t border-border">
+                    <h3 className="type-ui text-muted-foreground tracking-widest mb-3">SIZE VARIANTS</h3>
+                    <div className="flex flex-wrap gap-4 items-center">
+                        <button className="btn btn-sm btn-primary">Small</button>
+                        <button className="btn btn-md btn-primary">Medium</button>
+                        <button className="btn btn-lg btn-primary">Large</button>
+                    </div>
+                </div>
+
+                {/* Instruction */}
+                <p className="type-body text-muted-foreground pt-2">
+                    ☝️ Click the buttons! You should feel the <code className="text-brand">active:scale-95</code> effect.
+                    Brand button has <code className="text-brand">shadow-brand/25</code> glow.
+                </p>
             </div>
         </section>
     );
