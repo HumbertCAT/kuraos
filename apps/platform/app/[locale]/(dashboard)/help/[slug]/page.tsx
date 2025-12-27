@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { getHelpContent, parseMarkdown, HELP_CHAPTERS } from '@/lib/mdx';
+import { getHelpContent, getChapter, parseMarkdown, getAllSlugs, HELP_NAV } from '@/lib/mdx';
 
 interface Props {
     params: Promise<{ slug: string; locale: string }>;
@@ -10,69 +10,78 @@ interface Props {
 export default async function HelpArticlePage({ params }: Props) {
     const { slug } = await params;
 
-    // Find chapter metadata
-    const chapterIndex = HELP_CHAPTERS.findIndex(c => c.slug === slug);
-    if (chapterIndex === -1) {
+    // Get chapter metadata
+    const chapter = getChapter(slug);
+    if (!chapter) {
         notFound();
     }
 
-    const currentChapter = HELP_CHAPTERS[chapterIndex];
-    const prevChapter = chapterIndex > 0 ? HELP_CHAPTERS[chapterIndex - 1] : null;
-    const nextChapter = chapterIndex < HELP_CHAPTERS.length - 1 ? HELP_CHAPTERS[chapterIndex + 1] : null;
-
-    // Get inline content
+    // Get content
     const content = getHelpContent(slug);
+
+    // Get navigation (prev/next)
+    const allSlugs = getAllSlugs();
+    const currentIndex = allSlugs.indexOf(slug);
+    const prevSlug = currentIndex > 0 ? allSlugs[currentIndex - 1] : null;
+    const nextSlug = currentIndex < allSlugs.length - 1 ? allSlugs[currentIndex + 1] : null;
+    const prevChapter = prevSlug ? getChapter(prevSlug) : null;
+    const nextChapter = nextSlug ? getChapter(nextSlug) : null;
 
     if (!content) {
         return (
-            <div className="max-w-3xl mx-auto">
-                <Breadcrumb />
-                <ChapterHeader chapter={currentChapter} />
+            <div className="max-w-3xl">
+                <ChapterHeader chapter={chapter} icon={chapter.icon} />
                 <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
                     <p className="text-muted-foreground italic">
                         Esta guía estará disponible pronto.
                     </p>
                 </div>
-                <Navigation prev={prevChapter} next={nextChapter} />
             </div>
         );
     }
 
     return (
-        <div className="max-w-3xl mx-auto pb-20">
-            <Breadcrumb />
-            <ChapterHeader chapter={currentChapter} />
+        <div className="max-w-3xl pb-20">
+            {/* Header */}
+            <ChapterHeader chapter={chapter} icon={chapter.icon} />
 
-            {/* Rendered Content */}
+            {/* Content */}
             <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
-                <div className="prose prose-slate dark:prose-invert max-w-none">
+                <article className="prose prose-slate dark:prose-invert max-w-none">
                     {parseMarkdown(content)}
-                </div>
+                </article>
             </div>
 
-            <Navigation prev={prevChapter} next={nextChapter} />
+            {/* Navigation */}
+            <div className="flex justify-between mt-8">
+                {prevSlug && prevChapter ? (
+                    <Link
+                        href={`/help/${prevSlug}`}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-brand transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>{prevChapter.icon} {prevChapter.title}</span>
+                    </Link>
+                ) : <div />}
+
+                {nextSlug && nextChapter && (
+                    <Link
+                        href={`/help/${nextSlug}`}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-brand transition-colors"
+                    >
+                        <span>{nextChapter.icon} {nextChapter.title}</span>
+                        <ArrowRight className="w-4 h-4" />
+                    </Link>
+                )}
+            </div>
         </div>
     );
 }
 
-function Breadcrumb() {
-    return (
-        <div className="mb-6">
-            <Link
-                href="/help"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-brand transition-colors"
-            >
-                <ArrowLeft className="w-4 h-4" />
-                Volver a Ayuda
-            </Link>
-        </div>
-    );
-}
-
-function ChapterHeader({ chapter }: { chapter: typeof HELP_CHAPTERS[0] }) {
+function ChapterHeader({ chapter, icon }: { chapter: { title: string; description: string }; icon: string }) {
     return (
         <div className="flex items-center gap-4 mb-8">
-            <span className="text-4xl">{chapter.icon}</span>
+            <span className="text-4xl">{icon}</span>
             <div>
                 <h1 className="type-h1">{chapter.title}</h1>
                 <p className="type-body text-muted-foreground">{chapter.description}</p>
@@ -81,41 +90,7 @@ function ChapterHeader({ chapter }: { chapter: typeof HELP_CHAPTERS[0] }) {
     );
 }
 
-function Navigation({
-    prev,
-    next
-}: {
-    prev: typeof HELP_CHAPTERS[0] | null;
-    next: typeof HELP_CHAPTERS[0] | null;
-}) {
-    return (
-        <div className="flex justify-between mt-8">
-            {prev ? (
-                <Link
-                    href={`/help/${prev.slug}`}
-                    className="flex items-center gap-2 px-4 py-2 text-muted-foreground hover:text-brand transition-colors"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                    {prev.icon} {prev.title}
-                </Link>
-            ) : <div />}
-
-            {next && (
-                <Link
-                    href={`/help/${next.slug}`}
-                    className="flex items-center gap-2 px-4 py-2 text-muted-foreground hover:text-brand transition-colors"
-                >
-                    {next.icon} {next.title}
-                    <ArrowRight className="w-4 h-4" />
-                </Link>
-            )}
-        </div>
-    );
-}
-
-// Generate static params for all chapters (Vercel SSG)
+// Generate static params for all articles
 export function generateStaticParams() {
-    return HELP_CHAPTERS.map((chapter) => ({
-        slug: chapter.slug,
-    }));
+    return getAllSlugs().map((slug) => ({ slug }));
 }
