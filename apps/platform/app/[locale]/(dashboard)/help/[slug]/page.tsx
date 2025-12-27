@@ -71,8 +71,8 @@ export default async function HelpArticlePage({ params }: Props) {
             {/* Header */}
             <ChapterHeader chapter={chapter} icon={chapter.icon} />
 
-            {/* Hero Image (if available) */}
-            {articleImages.length > 0 && (
+            {/* Hero Image - temporarily disabled for debugging */}
+            {/* {articleImages.length > 0 && (
                 <div className="mb-8">
                     <FocusImage
                         src={articleImages[0].src}
@@ -81,7 +81,7 @@ export default async function HelpArticlePage({ params }: Props) {
                         caption={articleImages[0].caption}
                     />
                 </div>
-            )}
+            )} */}
 
             {/* Content */}
             <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
@@ -89,8 +89,8 @@ export default async function HelpArticlePage({ params }: Props) {
                     {parseMarkdown(content)}
                 </article>
 
-                {/* Additional images inline */}
-                {articleImages.slice(1).map((img, idx) => (
+                {/* Additional images - temporarily disabled for debugging */}
+                {/* {articleImages.slice(1).map((img, idx) => (
                     <FocusImage
                         key={idx}
                         src={img.src}
@@ -98,7 +98,7 @@ export default async function HelpArticlePage({ params }: Props) {
                         alt={img.caption}
                         caption={img.caption}
                     />
-                ))}
+                ))} */}
             </div>
 
             {/* Navigation */}
