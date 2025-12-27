@@ -82,6 +82,76 @@
 
 ---
 
+## ✅ Completed: v1.1.0 THE COMMAND CENTER (December 2025)
+
+**Status:** 🎉 LIVE - Dashboard Revolution
+
+### Dashboard 3.0 "The WOOOOOW Layout"
+- [x] Ghost Briefing Header: Minimalist "Zero-Box" design
+- [x] Clinical-First Grid: Sessions + Journeys at top priority
+- [x] FocusSessionCard: Active/Free states for prioritized clinical action
+- [x] PipelineVelocity: CRM funnel visualization in tactical sidebar
+- [x] ActiveJourneysWidget: Mini-Boarding Pass priority queue
+- [x] VitalSignCard: Metrics with live trend indicators
+
+---
+
+## ✅ Completed: v1.0.12 Neural Flow UI (December 2025)
+
+### Agent Detail - Circuit Board Visualization
+- [x] Neural Flow Pattern: Visual "Circuit Board" with connected nodes
+- [x] Glass KPI Cards: Backdrop-blur with `font-mono` metrics
+- [x] Semantic Nodes: Trigger (purple) → Condition (orange) → Action (green)
+- [x] Logic & Flows: Added to Design System Playground (v1.0.12.1)
+
+---
+
+## ✅ Completed: v1.0.10 Journey Cards 2.0 (December 2025)
+
+### Clinical Views - Action-Oriented
+- [x] Journey Overhaul: Static progress bars → Boarding Pass style
+- [x] Dynamic Actions: Context-aware buttons for interventions
+- [x] Smart Timelines: Semantic icon-nodes for journey scannability
+
+---
+
+## ✅ Completed: v1.0.9 Clinical Roster (December 2025)
+
+### High-Density Patient Table
+- [x] Refactored Patient List from grid cards to high-density table
+- [x] Health Dots: AletheIA risk indicators in list views
+- [x] Semantic Badges: Standardized status pills
+
+---
+
+## ✅ Completed: v1.0.8 Design System (December 2025)
+
+### Visual Bible & Tactile Architecture
+- [x] Design System Playground: `/design-system` Kitchen Sink
+- [x] Tactile UI Layer: `active:scale-95` micro-interactions
+- [x] Glass Cards: `backdrop-blur-sm`, `bg-card/80`
+- [x] Premium Buttons: Shadow glow and lift effects
+
+---
+
+## ✅ Completed: v1.0.7 The Clean Room (December 2025)
+
+### Privacy & Intellectual Property
+- [x] The Incinerator: GCS Lifecycle for 30-day audio deletion
+- [x] The Vault: `anonymous_datasets` orphan table for legal IP storage
+- [x] The Scrubber: BackgroundTask sanitization service
+
+---
+
+## ✅ Completed: v1.0.6 Security & Governance (December 2025)
+
+### HIPAA/GDPR Hardening
+- [x] Log Sanitization: PII removed from Twilio/Transcription logs
+- [x] Data Segregation: Clinical form answers to structured JSONB
+- [x] Strict Schema: Pydantic models with `extra="ignore"`
+
+---
+
 ## ✅ Completed: v1.0.5 AletheIA Observatory (December 2025)
 
 ### AletheIA Intelligence Rail
@@ -203,4 +273,4 @@
 
 ---
 
-*Last updated: December 23, 2024*
+*Last updated: December 27, 2025 (v1.1.0 THE COMMAND CENTER)*
