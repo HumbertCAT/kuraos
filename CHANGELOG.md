@@ -5,6 +5,20 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.12.1] - 2025-12-27
+
+### Added - Logic & Flows to Design System
+
+#### 🧩 New Section: "Logic & Flows (Neural Circuit Components)"
+- **Individual Nodes**: Trigger (AI/Purple), Condition (Warning/Diamond), Action (Success/Green)
+- **Connector Lines**: Dashed standard, Solid completed, Gradient transition
+- **Connected Flow Example**: Full circuit with CUANDO → SI → ENTONCES → Completado
+- **Usage Documentation**: Agent flows, Campaign funnels, Patient timelines
+
+This transforms the Agent Detail UI into a **reusable architectural component**.
+
+---
+
 ## [1.0.12] - 2025-12-27
 
 ### Added - Agent Detail "Neural Flow UI"

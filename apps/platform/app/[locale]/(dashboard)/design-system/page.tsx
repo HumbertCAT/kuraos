@@ -359,6 +359,162 @@ function AletheiaSection() {
     );
 }
 
+// ============ LOGIC & FLOWS SECTION ============
+function LogicFlowsSection() {
+    return (
+        <section className="space-y-6">
+            <h2 className="type-h2 text-foreground border-b border-border pb-2">
+                🧩 Logic & Flows (Neural Circuit Components)
+            </h2>
+
+            <p className="type-body text-muted-foreground">
+                Reusable visual language for <strong>automation flows, patient timelines, campaign funnels</strong>, and any sequential logic.
+            </p>
+
+            {/* Individual Nodes */}
+            <div className="bg-card rounded-lg p-6 space-y-6">
+                <h3 className="type-ui text-muted-foreground tracking-widest">INDIVIDUAL NODES</h3>
+
+                <div className="grid grid-cols-3 gap-6">
+                    {/* Trigger Node */}
+                    <div className="space-y-3">
+                        <code className="text-xs font-mono text-ai">FlowNode.trigger</code>
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-ai to-ai/70 rounded-xl flex items-center justify-center text-white shadow-lg shadow-ai/20">
+                                <span className="text-lg">⚡</span>
+                            </div>
+                            <div className="flex-1 card border-l-4 border-l-ai p-3">
+                                <p className="type-ui text-ai tracking-wider">CUANDO</p>
+                                <p className="type-body text-foreground text-sm mt-1">"Evento disparador"</p>
+                            </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground">AI/Purple. Icono Zap. border-l-ai</p>
+                    </div>
+
+                    {/* Condition Node */}
+                    <div className="space-y-3">
+                        <code className="text-xs font-mono text-warning">FlowNode.condition</code>
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-warning to-warning/70 rounded-xl flex items-center justify-center text-white shadow-lg shadow-warning/20 rotate-45">
+                                <span className="text-lg -rotate-45">🛡️</span>
+                            </div>
+                            <div className="flex-1 card border-l-4 border-l-warning p-3">
+                                <p className="type-ui text-warning tracking-wider">SI</p>
+                                <p className="type-body text-foreground text-sm mt-1">"Condición lógica"</p>
+                            </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Warning/Orange. Diamond rotate-45</p>
+                    </div>
+
+                    {/* Action Node */}
+                    <div className="space-y-3">
+                        <code className="text-xs font-mono text-success">FlowNode.action</code>
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-success to-success/70 rounded-xl flex items-center justify-center text-white shadow-lg shadow-success/20">
+                                <span className="text-lg">✉️</span>
+                            </div>
+                            <div className="flex-1 card border-l-4 border-l-success p-3">
+                                <p className="type-ui text-success tracking-wider">ENTONCES</p>
+                                <p className="type-body text-foreground text-sm mt-1">"Acción ejecutada"</p>
+                            </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Success/Green. border-l-success</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Connector Line */}
+            <div className="bg-card rounded-lg p-6 space-y-4">
+                <h3 className="type-ui text-muted-foreground tracking-widest">CONNECTOR LINE</h3>
+
+                <div className="flex gap-8">
+                    {/* Dashed */}
+                    <div className="space-y-2">
+                        <code className="text-xs font-mono text-muted-foreground">border-l-2 border-dashed border-border</code>
+                        <div className="h-24 w-0.5 border-l-2 border-dashed border-border ml-5"></div>
+                        <p className="text-xs text-muted-foreground">Standard connector</p>
+                    </div>
+
+                    {/* Solid */}
+                    <div className="space-y-2">
+                        <code className="text-xs font-mono text-muted-foreground">border-l-2 border-solid border-success</code>
+                        <div className="h-24 w-0.5 border-l-2 border-solid border-success ml-5"></div>
+                        <p className="text-xs text-muted-foreground">Completed path</p>
+                    </div>
+
+                    {/* Gradient */}
+                    <div className="space-y-2">
+                        <code className="text-xs font-mono text-muted-foreground">bg-gradient-to-b from-ai to-success</code>
+                        <div className="h-24 w-0.5 bg-gradient-to-b from-ai to-success ml-5"></div>
+                        <p className="text-xs text-muted-foreground">Transition path</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Connected Flow Example */}
+            <div className="bg-card rounded-lg p-6 space-y-4">
+                <h3 className="type-ui text-muted-foreground tracking-widest">CONNECTED FLOW EXAMPLE</h3>
+
+                {/* The Circuit Board */}
+                <div className="relative pl-6">
+                    {/* Vertical connector line */}
+                    <div className="absolute left-[23px] top-6 bottom-6 w-0.5 border-l-2 border-dashed border-border"></div>
+
+                    {/* Trigger */}
+                    <div className="relative flex items-start gap-4 mb-6">
+                        <div className="absolute -left-6 w-12 h-12 bg-gradient-to-br from-ai to-ai/70 rounded-xl flex items-center justify-center text-white shadow-lg shadow-ai/20 z-10">
+                            <span>⚡</span>
+                        </div>
+                        <div className="ml-10 flex-1 card border-l-4 border-l-ai p-4">
+                            <p className="type-ui text-ai tracking-wider">CUANDO</p>
+                            <p className="type-body text-foreground mt-1">"Nuevo lead recibido"</p>
+                            <span className="badge badge-ai mt-2">LEAD_CREATED</span>
+                        </div>
+                    </div>
+
+                    {/* Condition */}
+                    <div className="relative flex items-start gap-4 mb-6">
+                        <div className="absolute -left-6 w-12 h-12 bg-gradient-to-br from-warning to-warning/70 rounded-xl flex items-center justify-center text-white shadow-lg shadow-warning/20 z-10 rotate-45">
+                            <span className="-rotate-45">🛡️</span>
+                        </div>
+                        <div className="ml-10 flex-1 card border-l-4 border-l-warning p-4">
+                            <p className="type-ui text-warning tracking-wider">SI</p>
+                            <p className="type-body text-foreground mt-1">"El formulario es de tipo intake"</p>
+                            <span className="badge badge-warning mt-2">form_type = intake</span>
+                        </div>
+                    </div>
+
+                    {/* Action */}
+                    <div className="relative flex items-start gap-4 mb-6">
+                        <div className="absolute -left-6 w-12 h-12 bg-gradient-to-br from-success to-success/70 rounded-xl flex items-center justify-center text-white shadow-lg shadow-success/20 z-10">
+                            <span>✉️</span>
+                        </div>
+                        <div className="ml-10 flex-1 card border-l-4 border-l-success p-4">
+                            <p className="type-ui text-success tracking-wider">ENTONCES</p>
+                            <p className="type-body text-foreground mt-1">"Enviar email de bienvenida"</p>
+                        </div>
+                    </div>
+
+                    {/* End */}
+                    <div className="relative flex items-start gap-4">
+                        <div className="absolute -left-6 w-12 h-12 bg-muted rounded-xl flex items-center justify-center z-10">
+                            <span className="text-muted-foreground">✓</span>
+                        </div>
+                        <div className="ml-10 flex-1 card bg-muted/50 p-4">
+                            <p className="type-body text-muted-foreground font-medium">Completado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-xs text-muted-foreground mt-4 pt-4 border-t border-border">
+                    <strong>Usage:</strong> Agent flows, Campaign funnels, Patient timelines, Booking sequences.
+                    Nodes positioned on the line with <code className="text-brand">z-10</code>.
+                </p>
+            </div>
+        </section>
+    );
+}
+
 // ============ MAIN PAGE ============
 export default function DesignSystemPage() {
     return (
@@ -367,7 +523,7 @@ export default function DesignSystemPage() {
             <header className="space-y-2">
                 <h1 className="type-h1">🎨 Design System Playground</h1>
                 <p className="type-body text-muted-foreground">
-                    Internal Kitchen Sink for KURA OS v1.0.8. All components use semantic tokens from globals.css.
+                    Internal Kitchen Sink for KURA OS v1.0.12.1. All components use semantic tokens from globals.css.
                 </p>
             </header>
 
@@ -378,6 +534,7 @@ export default function DesignSystemPage() {
             <CardsSection />
             <InputsSection />
             <AletheiaSection />
+            <LogicFlowsSection />
 
             {/* Footer */}
             <footer className="text-center py-8 border-t border-border">
