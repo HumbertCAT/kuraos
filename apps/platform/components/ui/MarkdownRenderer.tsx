@@ -18,8 +18,17 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
     const html = useMemo(() => {
         if (!content) return '';
 
+        // Detect if content is already HTML (from RichTextEditor)
+        const isHtml = /<[^>]+>/.test(content);
+
+        if (isHtml) {
+            // Content is already HTML - render as-is with prose styling
+            return content;
+        }
+
+        // Plain text or Markdown - parse it
         let result = content
-            // Escape HTML
+            // Escape HTML for plain text
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')

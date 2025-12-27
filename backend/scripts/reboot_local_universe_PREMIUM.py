@@ -35,6 +35,22 @@ from app.db.models import (
 
 # --- DATA DEFINITIONS (FROM ANALYST) ---
 
+# Deterministic IDs for the Demo (So Frontend Mocks work)
+DEMO_IDS = {
+    "marcus": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "elena": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
+    "julian": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
+    "sarah": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14",
+}
+
+# Premium Avatars (Unsplash high-quality)
+DEMO_AVATARS = {
+    "marcus": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
+    "elena": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop",
+    "julian": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+    "sarah": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop",
+}
+
 SEED_SERVICES = [
     {
         "title": "The Sovereign Mind: Leadership Immersion",
@@ -301,15 +317,20 @@ async def seed_patients(db, org_id, service_map, therapist_id):
     print("\n🧬 SEEDING ARCHETYPES...")
 
     for p_data in SEED_PATIENTS:
+        # Get deterministic ID and avatar
+        name_key = p_data["first_name"].lower()
+        patient_id = uuid.UUID(DEMO_IDS.get(name_key, str(uuid.uuid4())))
+        avatar_url = DEMO_AVATARS.get(name_key, f"/demo-avatars/{name_key}.png")
+
         # Create Patient
         patient = Patient(
-            id=uuid.uuid4(),
+            id=patient_id,
             organization_id=org_id,
             first_name=p_data["first_name"],
             last_name=p_data["last_name"],
             email=p_data["email"],
             journey_status={p_data["journey_key"]: p_data["journey_status"]},
-            profile_image_url=f"/demo-avatars/{p_data['first_name'].lower()}.png",
+            profile_image_url=avatar_url,
         )
         db.add(patient)
         await db.flush()
