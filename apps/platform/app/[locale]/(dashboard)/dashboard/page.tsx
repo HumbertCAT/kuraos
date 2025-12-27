@@ -158,18 +158,34 @@ export default function DashboardPage() {
     const firstName = user?.full_name?.split(' ')[0] || 'Usuario';
 
     return (
-        <div className="grid grid-cols-12 gap-6 p-6">
-            {/* ========== ROW 1: HERO - THE BRIEFING (span-12) ========== */}
-            <div className="col-span-12">
-                <div className="card bg-card/80 backdrop-blur-sm border-border/50 p-5">
-                    <h1 className="type-h2 mb-1">{getGreeting()}, {firstName}</h1>
-                    <p className="type-ui text-muted-foreground mb-4">Tu resumen diario está listo</p>
+        <div className="p-6 space-y-6">
+            {/* ========== GHOST HEADER: THE BRIEFING ========== */}
+            <header className="pb-2">
+                <h1 className="type-h1 text-foreground">{getGreeting()}, {firstName}</h1>
+                <p className="type-body text-muted-foreground mt-1">Tu resumen diario está listo</p>
+                <div className="mt-3">
                     <BriefingPlayer compact />
+                </div>
+            </header>
+
+            {/* ========== ROW 1: CLINICAL COCKPIT (Top Priority) ========== */}
+            <div className="grid grid-cols-12 gap-6">
+                {/* LEFT: Focus Area - "The Present" (span-8) */}
+                <div className="col-span-12 lg:col-span-8">
+                    <FocusSessionCard
+                        nextSession={data.nextSession}
+                        onViewFullAgenda={() => window.location.href = '/calendar'}
+                    />
+                </div>
+
+                {/* RIGHT: Urgent Journeys (span-4) */}
+                <div className="col-span-12 lg:col-span-4">
+                    <ActiveJourneysWidget />
                 </div>
             </div>
 
-            {/* ========== ROW 2: VITAL SIGNS (span-12, 3 cards) ========== */}
-            <div className="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* ========== ROW 2: BUSINESS PULSE (Secondary) ========== */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <VitalSignCard
                     label="Ingresos Mes"
                     value={`€${data.monthlyRevenue.toFixed(0)}`}
@@ -204,21 +220,17 @@ export default function DashboardPage() {
                 />
             </div>
 
-            {/* ========== ROW 3: THE CORE (8 + 4 split) ========== */}
+            {/* ========== ROW 3: GROWTH & TOOLS (Tertiary) ========== */}
+            <div className="grid grid-cols-12 gap-6">
+                {/* LEFT: Pipeline (span-8) */}
+                <div className="col-span-12 lg:col-span-8">
+                    <PipelineVelocity />
+                </div>
 
-            {/* LEFT: Focus Area - "The Present" (span-8) */}
-            <div className="col-span-12 lg:col-span-8">
-                <FocusSessionCard
-                    nextSession={data.nextSession}
-                    onViewFullAgenda={() => window.location.href = '/calendar'}
-                />
-            </div>
-
-            {/* RIGHT: Quick Tools Sidebar (span-4) */}
-            <div className="col-span-12 lg:col-span-4 space-y-4">
-                <PipelineVelocity />
-                <QuickNote />
-                <ActiveJourneysWidget />
+                {/* RIGHT: Quick Note (span-4) */}
+                <div className="col-span-12 lg:col-span-4">
+                    <QuickNote />
+                </div>
             </div>
         </div>
     );
