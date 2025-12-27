@@ -54,7 +54,11 @@ Tu obsesión es la **Calidad Táctil**: No basta con que se vea bien, se tiene q
 
 ---
 
-## ⚙️ 7. ENTORNO DE DESARROLLO
-* **Frontend:** `http://localhost:3001`
-* **Backend:** `http://localhost:8001`
-* **Deploy:** Script `./scripts/deploy.sh`
+## ⚙️ 7. ENTORNO DE DESARROLLO (DEV OPS)
+* **Puertos Locales:** SIEMPRE usamos `3001` (Frontend) y `8001` (Backend).
+    * Frontend: `http://localhost:3001`
+    * Backend: `http://localhost:8001`
+* **Scripts de Control:**
+    * 🚀 Start: `./scripts/start-dev.sh` (Levanta todo: Docker + Puertos correctos)
+    * 🛑 Stop: `./scripts/stop-dev.sh` (Limpia contenedores y puertos)
+    * 🚢 Deploy: `./scripts/deploy.sh` (Build → Migrate → Deploy a Cloud Run)
