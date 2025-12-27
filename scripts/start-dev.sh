@@ -101,7 +101,7 @@ else
 fi
 
 echo ""
-echo "✅ TherapistOS is running!"
+echo "✅ KURA OS is running!"
 echo ""
 echo "📍 Services:"
 echo "   - Platform:  http://localhost:3001  (main app)"

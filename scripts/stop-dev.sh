@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# TherapistOS Development Stop Script
+# KURA OS Development Stop Script
 
-echo "🛑 Stopping TherapistOS Development Environment..."
+echo "🛑 Stopping KURA OS Development Environment..."
 
 # Stop Stripe webhook if running
 if [ -f .stripe-webhook.pid ]; then

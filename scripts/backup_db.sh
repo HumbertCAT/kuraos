@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# TherapistOS Database Backup Script
+# KURA OS Database Backup Script
 # Creates a timestamped backup before any destructive operation
 
-BACKUP_DIR="/Users/humbert/Documents/TherapistOS/TherapistOS-Claude/backups"
+BACKUP_DIR="/Users/humbert/Documents/KuraOS/backups"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_FILE="$BACKUP_DIR/therapistos_$TIMESTAMP.sql"
+BACKUP_FILE="$BACKUP_DIR/kuraos_$TIMESTAMP.sql"
 
-echo "💾 TherapistOS Database Backup"
+echo "💾 KURA OS Database Backup"
 echo "================================"
 
 # Create backup directory if it doesn't exist
@@ -15,7 +15,7 @@ mkdir -p "$BACKUP_DIR"
 
 # Run pg_dump inside Docker container
 echo "📦 Creating backup: $BACKUP_FILE"
-docker-compose exec -T db pg_dump -U postgres therapistos > "$BACKUP_FILE"
+docker-compose exec -T db pg_dump -U postgres kuraos > "$BACKUP_FILE"
 
 if [ $? -eq 0 ]; then
     SIZE=$(ls -lh "$BACKUP_FILE" | awk '{print $5}')

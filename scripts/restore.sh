@@ -73,7 +73,7 @@ echo ""
 echo "🔄 Restoring database from: ${BACKUP_FILE}"
 
 # Database config
-DB_NAME="therapistos"
+DB_NAME="kuraos"
 DB_USER="postgres"
 
 echo "   Terminating existing connections..."

@@ -22,7 +22,7 @@ echo "   Target: ${BACKUP_DIR}/${BACKUP_FILE}"
 mkdir -p "${BACKUP_DIR}"
 
 # Run pg_dump via Docker container
-docker-compose exec -T db pg_dump -U postgres --no-owner --no-acl therapistos | gzip > "${BACKUP_DIR}/${BACKUP_FILE}"
+docker-compose exec -T db pg_dump -U postgres --no-owner --no-acl kuraos | gzip > "${BACKUP_DIR}/${BACKUP_FILE}"
 
 # Check if backup was successful
 if [ -f "${BACKUP_DIR}/${BACKUP_FILE}" ] && [ $(stat -f%z "${BACKUP_DIR}/${BACKUP_FILE}" 2>/dev/null || stat -c%s "${BACKUP_DIR}/${BACKUP_FILE}") -gt 100 ]; then
