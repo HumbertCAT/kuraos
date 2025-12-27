@@ -1,6 +1,29 @@
-# Technical Debt Report (v1.0.0)
+# Technical Debt Report (v1.1.0)
 
-This document tracks known technical debt and incomplete implementations identified during the v1.0.0 release audit.
+This document tracks known technical debt and incomplete implementations.
+
+---
+
+## 🎭 v1.1.0 Dashboard - Mock/Fake Data
+
+> [!IMPORTANT]
+> The Dashboard 2.0/3.0 components use hardcoded mock data for demonstration. These need to be wired to real APIs.
+
+| Component | Fake Data | Required API |
+|-----------|-----------|--------------|
+| **VitalSignCard** (Ingresos) | `+15% vs mes pasado` hardcoded | Calculate actual month-over-month from bookings |
+| **VitalSignCard** (Ocupación) | `85%` hardcoded | Calculate from availability vs bookings ratio |
+| **PipelineVelocity** | `[2, 5, 1]` hardcoded stages | Real lead counts by `nurture_status` |
+| **ActiveJourneysWidget** | 3 mock patients | Fetch from `/journeys/active` with real status |
+| **FocusSessionCard** | Mock `aletheiaInsight` | Fetch real Aletheia data for next patient |
+
+### Fix Priority
+1. **High**: PipelineVelocity - CRM data exists, just needs wiring
+2. **High**: ActiveJourneysWidget - Journeys API exists
+3. **Medium**: VitalSignCard trends - Requires aggregation query
+4. **Medium**: FocusSessionCard insight - Requires Aletheia patient lookup
+
+---
 
 ## 🚨 Critical (Safety/Data Integrity)
 

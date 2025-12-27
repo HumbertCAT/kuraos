@@ -179,6 +179,15 @@
 **Goal:** First 50 paying organizations
 
 ### Product Improvements
+- [ ] **Dashboard Data Wiring**: Connect v1.1.0 components to real APIs (see TECH_DEBT.md)
+  - PipelineVelocity → Lead counts by nurture_status
+  - ActiveJourneysWidget → /journeys/active endpoint
+  - VitalSignCard trends → Booking aggregations
+  - FocusSessionCard → Aletheia patient insights
+- [ ] **Impact Index**: Clinical correlation dashboard (Investor-Ready)
+  - Dual-axis chart: Sessions (activity) vs Wellness Score (outcomes)
+  - Narrative: "Your interventions correlate with X% improvement"
+  - Requires: Historical Aletheia scores per patient
 - [ ] **Lifecycle Megamenu**: Reorganize navigation into 3 pillars (Captación → Clínica → Inteligencia) with Shadcn NavigationMenu
 - [ ] **Google OAuth**: One-click login with Google
 - [ ] **WhatsApp Business API**: Native Meta Cloud API (replace Twilio)
