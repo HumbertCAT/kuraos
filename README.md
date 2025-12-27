@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.1.1-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.3b-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 [![License](https://img.shields.io/badge/license-Proprietary-blue.svg)]()
 
@@ -201,6 +201,7 @@ kuraos/
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 
 ### Completed
+- [x] **v1.1.3b** - SENTINEL PULSE: Real-time emotional monitoring + Data Coherence (December 2025)
 - [x] **v1.1.1** - INTELLIGENCE ENGINE: AI Governance + FinOps (December 2025)
 - [x] **v1.1.0** - THE COMMAND CENTER: Dashboard 3.0 (December 2025)
 - [x] **v1.0.12** - Neural Flow UI: Agent Circuit Board (December 2025)

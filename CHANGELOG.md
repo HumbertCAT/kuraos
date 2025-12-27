@@ -5,6 +5,45 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3b] - 2025-12-27 🦅 SENTINEL PULSE & DATA COHERENCE
+
+### 🎉 The System Speaks with One Voice
+
+This release fixes the critical "data schizophrenia" bug where the Sentinel Pulse widget and AletheIA Observatory displayed conflicting risk scores.
+
+#### 📡 Sentinel Pulse Widget
+- **3 Visual States**: Active (SVG chart), Dormant (ghost), Locked (PRO upsell)
+- **7-Day Emotional Timeline**: Dynamic green/red gradient based on sentiment
+- **Pulsing "Now" Dot**: Real-time indicator with hover tooltips
+- **Risk Flags Integration**: Critical alerts displayed inline
+
+#### 🎨 Clinical Canvas Layout
+- **2-Column Patient Profile**: Journey Boarding Pass + Sentinel Pulse side-by-side
+- **Responsive Grid**: Proper spacing and mobile adaptation
+- **The "WOW" Moment**: Structure meets Flow in visual harmony
+
+#### 🔗 Operation Direct Line (Data Coherence)
+- **Float Precision**: Exact `risk_score` (-0.60) instead of bucket approximations
+- **Pydantic AliasChoices**: Accepts both snake_case (DB) and camelCase (AI cache)
+- **serialization_alias**: Consistent camelCase API output for frontend
+- **Fallback Intelligence**: Reads `last_insight_json.risk_score` before recalculating
+
+#### 🌱 Golden Seed Enhancements
+- **Marcus Thorne**: Growth archetype (+0.80, 7-day positive trajectory)
+- **Julian Soler**: Crisis archetype (-0.60, 7-day negative trajectory)
+- **Elena Velázquez**: Medical block archetype (-0.90, Lithium contraindication)
+- **Schema Alignment**: `last_insight_json` now matches `PatientInsightsResponse` exactly
+
+#### 🛠 Technical Fixes
+- Added optional chaining (`?.`) safeguards in Observatory component
+- `response_model_by_alias=True` for FastAPI serialization
+- Journey definitions aligned with backend Golden Seed
+- Technical documentation: `docs/Monitorizacion_Technical_Doc.md`
+
+**Result**: Marcus +0.80 in both widgets. Julian -0.60 in both widgets. Elena -0.90 cached. ✅
+
+---
+
 ## [1.1.1] - 2025-12-27 🧠 INTELLIGENCE ENGINE
 
 ### 🎉 Multi-Model AI Infrastructure
