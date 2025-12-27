@@ -25,6 +25,7 @@ import {
     ChevronRight,
     ChevronDown,
     Megaphone,
+    HelpCircle,
 } from 'lucide-react';
 
 interface NavItem {
@@ -251,6 +252,20 @@ export function TrinityNav() {
 
             {/* Footer: User + Controls */}
             <div className={`border-t border-sidebar-border ${isCollapsed ? 'p-2' : 'p-3'}`}>
+                {/* Help Link */}
+                <Link
+                    href="/help"
+                    className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg transition-all mb-2 ${isCollapsed ? 'justify-center' : ''
+                        } ${isActive('/help')
+                            ? 'bg-brand/10 text-brand'
+                            : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
+                        }`}
+                    title={isCollapsed ? 'Ayuda' : undefined}
+                >
+                    <HelpCircle className="w-4 h-4" />
+                    {!isCollapsed && 'Ayuda'}
+                </Link>
+
                 {/* User Profile - Links to Settings */}
                 {user && (
                     <Link
