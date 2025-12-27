@@ -5,6 +5,41 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-12-27 🚀 THE COMMAND CENTER
+
+### 🎉 Major Release - Dashboard Revolution
+
+This release consolidates a full night of intensive development (23:30 → 03:06) into a cohesive **Command Center** experience.
+
+#### 🧠 Core Philosophy: "Past, Present, Future"
+- **The Present**: FocusSessionCard shows what's happening NOW
+- **The Urgent**: ActiveJourneysWidget shows who needs attention
+- **The Growth**: PipelineVelocity shows what's coming
+
+#### 🎨 Design System Upgrades
+- **Glass UI**: `backdrop-blur-sm`, `bg-card/80`, `border-white/5`
+- **Tactile Buttons**: `active:scale-95` clicky feedback
+- **Neural Flow**: Circuit board visualization for logic flows
+- **Clinical Roster**: High-density patient table with Health Dots
+
+#### 📊 Dashboard 3.0 "The WOOOOOW Layout"
+- **Ghost Header**: Clean briefing without card container
+- **Clinical First**: Urgency visible without scrolling
+- **3-Row Grid**: Cockpit → Metrics → Growth
+
+#### 🤖 Agent Detail "Neural Circuit"
+- Connected flow diagram with dashed connector lines
+- Semantic nodes: Trigger (purple) → Condition (orange) → Action (green)
+- Glass KPI cards with `font-mono` technical typography
+
+#### 📋 New Components
+- `FocusSessionCard` - Next session hero card
+- `PipelineVelocity` - Lead funnel visualization
+- `ActiveJourneysWidget` - Mini-boarding pass cards
+- `VitalSignCard` - Metrics with trend indicators
+
+---
+
 ## [1.0.14] - 2025-12-27
 
 ### Refactored - Dashboard 3.0 "The WOOOOOW Layout"
