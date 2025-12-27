@@ -5,6 +5,37 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2025-12-27
+
+### Added - The Clinical Roster (High-Density Patient Table)
+
+End of the "List Views Renaissance" - Grid cards → Professional data tables.
+
+#### High-Density Table
+- **15+ patients per screen** vs 6 with old card grid
+- **Clickable rows** with `hover:bg-muted/40` transition
+- **Responsive columns**: hide on mobile (`md:table-cell`)
+- **Table skeleton** loading state for smooth UX
+
+#### Semantic Badges
+- `.badge-risk`: Blocked, High Risk
+- `.badge-warning`: Payment Pending, Stagnation
+- `.badge-success`: Active, Confirmed, Graduated
+- `.badge-ai`: Analysis, Preparation phases
+- `.badge-brand`: New patients
+
+#### AletheIA Integration
+- **Health Dot column**: Visual risk indicator
+- **Tooltip on hover**: "Riesgo: Alto/Medio/Bajo"
+- **Pulse animation** for high-risk patients
+
+#### Tactile Actions
+- **`.btn-brand` CTA**: Teal glow, irresistible
+- **`.btn-ghost` actions**: Ver ficha, Mensaje
+- **Row click** navigates to patient detail
+
+---
+
 ## [1.0.8] - 2025-12-27
 
 ### Added - Design System & Tactile UI
