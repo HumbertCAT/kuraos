@@ -59,7 +59,7 @@ export default function MarkdownRenderer({ content, className = '' }: MarkdownRe
 
     return (
         <div
-            className={`prose prose-slate prose-sm max-w-none ${className}`}
+            className={`prose prose-sm max-w-none dark:prose-invert prose-p:my-2 prose-strong:text-brand prose-headings:text-foreground ${className}`}
             dangerouslySetInnerHTML={{ __html: html }}
         />
     );
