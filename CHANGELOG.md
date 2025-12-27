@@ -44,6 +44,53 @@ This release fixes the critical "data schizophrenia" bug where the Sentinel Puls
 
 ---
 
+## [1.1.3] - 2025-12-27 🏥 PATIENT PROFILE 2.0 "THE CLINICAL CANVAS"
+
+### 🎨 Complete Patient Detail Refactor
+
+Transformed the patient profile from a simple data page to a **Clinical Command Center**.
+
+#### 📋 2-Column Layout
+- **Left Column (8)**: Journey Boarding Pass with stage progression
+- **Right Column (4)**: Sentinel Pulse real-time emotional monitoring
+- **Responsive**: Stacks vertically on mobile
+
+#### 🎫 Journey Boarding Pass Enhancements
+- **Dynamic Stage Icons**: Past (✓), Current (pulsing), Future (ghost)
+- **Status-Based Actions**: "Revisar Bloqueo", "Reenviar Link Pago", etc.
+- **Collapsible Cards**: Expand/collapse per journey
+
+#### 📊 Clinical Journal Tab
+- **TipTap Rich Text Editor**: Notion-like clinical note experience
+- **AI Analysis Indicators**: Shows when notes have been analyzed
+- **Timeline View**: Chronological entry display
+
+---
+
+## [1.1.2] - 2025-12-27 💎 PREMIUM DEMO "GOLDEN SEED PROTOCOL"
+
+### ✨ High-Fidelity Demo Environment
+
+Created premium archetypes for investor demos and user testing.
+
+#### 🧬 Character Archetypes
+- **Marcus Thorne (CEO, 45)**: Executive burnout → Spiritual awakening journey
+- **Elena Velázquez (Artist, 38)**: Depression treatment with Lithium contraindication
+- **Julian Soler (Founder, 52)**: Financial crisis → Treatment stagnation
+- **Sarah Jenkins (Coach, 41)**: Active integration member
+
+#### 🎨 Visual Polish
+- **Unsplash Avatars**: High-quality professional headshots
+- **Static UUIDs**: Consistent IDs for screenshot reproducibility
+- **Journey Histories**: Pre-populated stage progressions
+
+#### 📝 Clinical Notes
+- **Rich Text Content**: Realistic multi-session documentation
+- **AI Analysis Results**: Pre-generated insights per archetype
+- **Risk Flags**: Authentic clinical red flags where appropriate
+
+---
+
 ## [1.1.1] - 2025-12-27 🧠 INTELLIGENCE ENGINE
 
 ### 🎉 Multi-Model AI Infrastructure
