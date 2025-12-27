@@ -84,7 +84,7 @@ export function TrinityNav() {
     const sections: NavSection[] = [
         {
             id: 'connect',
-            title: 'CONNECT',
+            title: 'ATRAER',
             icon: <Flame className="w-3.5 h-3.5" />,
             items: [
                 { href: '/calendar', label: t('calendar'), icon: <Calendar className="w-4 h-4" /> },
@@ -94,20 +94,20 @@ export function TrinityNav() {
         },
         {
             id: 'practice',
-            title: 'PRACTICE',
+            title: 'SERVIR',
             icon: <Stethoscope className="w-3.5 h-3.5" />,
             items: [
                 { href: '/patients', label: terminology.plural, icon: <User className="w-4 h-4" /> },
-                { href: '/bookings', label: 'Bookings', icon: <Calendar className="w-4 h-4" /> },
+                { href: '/bookings', label: 'Reservas', icon: <Calendar className="w-4 h-4" /> },
                 { href: '/forms', label: t('forms'), icon: <FileText className="w-4 h-4" /> },
             ],
         },
         {
             id: 'grow',
-            title: 'GROW',
+            title: 'CRECER',
             icon: <Sprout className="w-3.5 h-3.5" />,
             items: [
-                { href: '/campaigns', label: 'Campaigns', icon: <Megaphone className="w-4 h-4" />, comingSoon: true },
+                { href: '/campaigns', label: 'Campañas', icon: <Megaphone className="w-4 h-4" />, comingSoon: true },
             ],
         },
     ];
@@ -209,7 +209,7 @@ export function TrinityNav() {
                                                 {!isCollapsed && (
                                                     <>
                                                         <span className="flex-1">{item.label}</span>
-                                                        <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded">Soon</span>
+                                                        <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded">Pronto</span>
                                                     </>
                                                 )}
                                             </div>
