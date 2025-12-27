@@ -857,54 +857,61 @@ export function getAllSlugs(): string[] {
 }
 
 /**
- * Parse markdown-like content to React elements.
+ * Parse markdown-like content to HTML string.
+ * Returns HTML that can be used with dangerouslySetInnerHTML.
  */
-export function parseMarkdown(content: string): React.ReactNode[] {
+export function parseMarkdownToHtml(content: string): string {
   const lines = content.trim().split('\n');
-  const elements: React.ReactNode[] = [];
+  const htmlParts: string[] = [];
 
-  lines.forEach((line, i) => {
+  lines.forEach((line) => {
     if (line.startsWith('# ')) {
-      elements.push(<h1 key={i} className="text-2xl font-bold text-foreground mb-4">{line.slice(2)}</h1>);
+      htmlParts.push(`<h1 class="text-2xl font-bold text-foreground mb-4">${escapeHtml(line.slice(2))}</h1>`);
     } else if (line.startsWith('## ')) {
-      elements.push(<h2 key={i} className="text-xl font-semibold text-foreground mt-8 mb-4">{line.slice(3)}</h2>);
+      htmlParts.push(`<h2 class="text-xl font-semibold text-foreground mt-8 mb-4">${escapeHtml(line.slice(3))}</h2>`);
     } else if (line.startsWith('### ')) {
-      elements.push(<h3 key={i} className="text-lg font-medium text-foreground mt-6 mb-3">{line.slice(4)}</h3>);
+      htmlParts.push(`<h3 class="text-lg font-medium text-foreground mt-6 mb-3">${escapeHtml(line.slice(4))}</h3>`);
     } else if (line.startsWith('> ')) {
-      elements.push(<blockquote key={i} className="border-l-4 border-brand pl-4 italic text-muted-foreground my-4">{line.slice(2)}</blockquote>);
+      htmlParts.push(`<blockquote class="border-l-4 border-brand pl-4 italic text-muted-foreground my-4">${escapeHtml(line.slice(2))}</blockquote>`);
     } else if (line.startsWith('---')) {
-      elements.push(<hr key={i} className="my-8 border-border" />);
+      htmlParts.push(`<hr class="my-8 border-border" />`);
     } else if (line.startsWith('- ')) {
-      elements.push(<li key={i} className="ml-4 text-foreground list-disc">{line.slice(2)}</li>);
+      htmlParts.push(`<li class="ml-4 text-foreground list-disc">${processInline(line.slice(2))}</li>`);
     } else if (line.match(/^\d+\. /)) {
-      elements.push(<li key={i} className="ml-4 list-decimal text-foreground">{line.replace(/^\d+\. /, '')}</li>);
+      htmlParts.push(`<li class="ml-4 list-decimal text-foreground">${processInline(line.replace(/^\d+\. /, ''))}</li>`);
     } else if (line.startsWith('💡') || line.startsWith('⚠️') || line.startsWith('🎉')) {
-      elements.push(<div key={i} className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl my-4">{line}</div>);
-    } else if (line.startsWith('|')) {
-      // Simple table row
+      htmlParts.push(`<div class="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl my-4">${escapeHtml(line)}</div>`);
+    } else if (line.startsWith('|') && !line.includes('---')) {
       const cells = line.split('|').filter(c => c.trim()).map(c => c.trim());
-      if (cells.length > 0 && !line.includes('---')) {
-        elements.push(
-          <div key={i} className="grid grid-cols-2 gap-2 py-1 border-b border-border text-sm">
-            {cells.map((cell, j) => (
-              <span key={j} className={j === 0 ? 'font-medium' : 'text-muted-foreground'}>{cell}</span>
-            ))}
-          </div>
-        );
+      if (cells.length > 0) {
+        const cellsHtml = cells.map((cell, j) =>
+          `<span class="${j === 0 ? 'font-medium' : 'text-muted-foreground'}">${escapeHtml(cell)}</span>`
+        ).join('');
+        htmlParts.push(`<div class="grid grid-cols-2 gap-2 py-1 border-b border-border text-sm">${cellsHtml}</div>`);
       }
     } else if (line.startsWith('```')) {
-      // Code block marker - skip
+      // Skip code block markers
     } else if (line.trim() === '') {
-      elements.push(<br key={i} />);
+      htmlParts.push('<br />');
     } else {
-      // Process inline formatting
-      let processed = line
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-brand hover:underline">$1</a>')
-        .replace(/`([^`]+)`/g, '<code class="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">$1</code>');
-      elements.push(<p key={i} className="my-2" dangerouslySetInnerHTML={{ __html: processed }} />);
+      htmlParts.push(`<p class="my-2">${processInline(line)}</p>`);
     }
   });
 
-  return elements;
+  return htmlParts.join('\n');
 }
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function processInline(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-brand hover:underline">$1</a>')
+    .replace(/`([^`]+)`/g, '<code class="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">$1</code>');
+}
+

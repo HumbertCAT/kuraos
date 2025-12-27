@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { getHelpContent, getChapter, parseMarkdown, getAllSlugs, HELP_NAV } from '@/lib/mdx';
+import { getHelpContent, getChapter, parseMarkdownToHtml, getAllSlugs, HELP_NAV } from '@/lib/mdx';
 import { FocusImage } from '@/components/mdx/FocusImage';
 
 interface Props {
@@ -85,9 +85,10 @@ export default async function HelpArticlePage({ params }: Props) {
 
             {/* Content */}
             <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
-                <article className="prose prose-slate dark:prose-invert max-w-none">
-                    {parseMarkdown(content)}
-                </article>
+                <article
+                    className="prose prose-slate dark:prose-invert max-w-none"
+                    dangerouslySetInnerHTML={{ __html: parseMarkdownToHtml(content) }}
+                />
 
                 {/* Additional images - temporarily disabled for debugging */}
                 {/* {articleImages.slice(1).map((img, idx) => (
