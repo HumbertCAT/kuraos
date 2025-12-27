@@ -8,10 +8,8 @@ import {
     Zap,
     Users,
     TrendingUp,
-    AlertTriangle,
     Activity,
     Wallet,
-    Workflow,
     Shield,
     FileCheck,
     Target,
@@ -24,13 +22,23 @@ import {
     ArrowRight,
     Scale,
     HeartCrack,
-    PuzzleIcon
+    PuzzleIcon,
+    Brain,
+    Lock,
+    CalendarCheck,
+    Wand2,
+    BarChart3,
+    MessageSquare,
+    Mic,
+    RefreshCw,
+    LineChart
 } from 'lucide-react';
 
 /**
- * INVESTOR DECK v8.0 - HIGH FIDELITY VISUAL
+ * INVESTOR DECK v9.0 - CONTENT DENSITY UPGRADE
  * 
  * Design: Premium Fintech / Cyber-Clinical
+ * Layout: 3+2 centered grids, 5 items per section
  * Features: Deep Space BG, Obsidian Glass Cards, Titan Typography
  */
 
@@ -69,20 +77,23 @@ export default function InvestorsPage() {
     }, [nextSlide, prevSlide]);
 
     return (
-        <div className="min-h-screen bg-[#05050A] text-white overflow-hidden relative">
+        <div className="min-h-screen bg-[#030305] text-white overflow-hidden relative">
             {/* LAYER 2: Grid Pattern */}
             <div
                 className="fixed inset-0 pointer-events-none"
                 style={{
-                    backgroundImage: `linear-gradient(to right, rgba(128,128,128,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(128,128,128,0.07) 1px, transparent 1px)`,
-                    backgroundSize: '24px 24px'
+                    backgroundImage: `linear-gradient(to right, rgba(128,128,128,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(128,128,128,0.05) 1px, transparent 1px)`,
+                    backgroundSize: '32px 32px'
                 }}
             />
 
-            {/* LAYER 3: Atmospheric Glows */}
-            <div className="fixed top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-teal-500/[0.08] blur-[150px] pointer-events-none" />
-            <div className="fixed bottom-[-20%] right-[-10%] w-[700px] h-[700px] rounded-full bg-violet-500/[0.08] blur-[150px] pointer-events-none" />
-            <div className="fixed top-[40%] right-[30%] w-[400px] h-[400px] rounded-full bg-blue-500/[0.05] blur-[120px] pointer-events-none" />
+            {/* LAYER 3: Atmospheric Glows - More Intense */}
+            <div className="fixed top-[-30%] left-[-15%] w-[800px] h-[800px] rounded-full bg-teal-500/[0.12] blur-[200px] pointer-events-none" />
+            <div className="fixed bottom-[-30%] right-[-15%] w-[900px] h-[900px] rounded-full bg-violet-500/[0.12] blur-[200px] pointer-events-none" />
+            <div className="fixed top-[30%] right-[20%] w-[500px] h-[500px] rounded-full bg-blue-500/[0.08] blur-[150px] pointer-events-none" />
+
+            {/* Event Horizon Glow at Bottom */}
+            <div className="fixed bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-teal-500/[0.05] to-transparent pointer-events-none" />
 
             {/* Slide Container */}
             <div className="h-screen w-screen relative z-10">
@@ -138,13 +149,13 @@ export default function InvestorsPage() {
             {/* Footer Brand */}
             <div className="fixed bottom-8 left-8 flex items-center gap-2 text-white/20 text-sm font-mono z-50">
                 <span className="w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.8)]" />
-                KURA OS // v8.0
+                KURA OS // v9.0
             </div>
         </div>
     );
 }
 
-// Obsidian Glass Card Component
+// Obsidian Glass Card Component - More Intense
 function GlassCard({
     children,
     className = '',
@@ -152,26 +163,27 @@ function GlassCard({
 }: {
     children: React.ReactNode;
     className?: string;
-    glow?: 'teal' | 'violet' | 'blue' | 'red' | '';
+    glow?: 'teal' | 'violet' | 'blue' | 'red' | 'orange' | '';
 }) {
     const glowStyles = {
-        teal: 'hover:border-teal-500/50 hover:shadow-[0_0_40px_-10px_rgba(45,212,191,0.4)]',
-        violet: 'hover:border-violet-500/50 hover:shadow-[0_0_40px_-10px_rgba(139,92,246,0.4)]',
-        blue: 'hover:border-blue-500/50 hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.4)]',
-        red: 'hover:border-red-500/50 hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.4)]',
+        teal: 'hover:border-teal-500/50 hover:shadow-[0_0_50px_-10px_rgba(45,212,191,0.5)]',
+        violet: 'hover:border-violet-500/50 hover:shadow-[0_0_50px_-10px_rgba(139,92,246,0.5)]',
+        blue: 'hover:border-blue-500/50 hover:shadow-[0_0_50px_-10px_rgba(59,130,246,0.5)]',
+        red: 'hover:border-red-500/50 hover:shadow-[0_0_50px_-10px_rgba(239,68,68,0.5)]',
+        orange: 'hover:border-orange-500/50 hover:shadow-[0_0_50px_-10px_rgba(249,115,22,0.5)]',
     };
 
     return (
         <div
             className={`
-        relative bg-white/[0.02] backdrop-blur-sm
-        border border-white/[0.08] border-t-white/[0.15]
-        rounded-2xl overflow-hidden
-        shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]
-        hover:bg-white/[0.04] transition-all duration-500
-        ${glow ? glowStyles[glow] : ''}
-        ${className}
-      `}
+                relative bg-white/[0.02] backdrop-blur-sm
+                border border-white/[0.08] border-t-white/[0.15]
+                rounded-2xl overflow-hidden
+                shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]
+                hover:bg-white/[0.05] transition-all duration-500
+                ${glow ? glowStyles[glow] : ''}
+                ${className}
+            `}
         >
             {children}
         </div>
@@ -181,8 +193,8 @@ function GlassCard({
 // Slide wrapper
 function SlideWrapper({ children }: { children: React.ReactNode }) {
     return (
-        <div className="h-full w-full flex items-center justify-center p-8 md:p-16 lg:p-20">
-            <div className="max-w-6xl w-full">
+        <div className="h-full w-full flex items-center justify-center p-6 md:p-12 lg:p-16">
+            <div className="max-w-7xl w-full">
                 {children}
             </div>
         </div>
@@ -205,7 +217,7 @@ function SlideCover() {
                 </div>
 
                 {/* Main Title - TITAN */}
-                <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-black tracking-tighter mb-8 leading-[0.9]">
+                <h1 className="text-5xl md:text-7xl lg:text-[6.5rem] font-black tracking-tighter mb-8 leading-[0.9]">
                     <span className="block bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                         INTELLIGENT
                     </span>
@@ -234,7 +246,7 @@ function SlideCover() {
                 {/* CTA with Pulse */}
                 <a
                     href="mailto:humbert@kuraos.ai?subject=KURA%20OS%20Investment%20Inquiry"
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-teal-500 text-black font-bold text-lg rounded-xl hover:bg-teal-400 transition-all duration-300 shadow-[0_0_30px_rgba(45,212,191,0.4)] hover:shadow-[0_0_50px_rgba(45,212,191,0.6)]"
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-teal-500 text-black font-bold text-lg rounded-xl hover:bg-teal-400 transition-all duration-300 shadow-[0_0_40px_rgba(45,212,191,0.5)] hover:shadow-[0_0_60px_rgba(45,212,191,0.7)]"
                 >
                     <Mail className="w-5 h-5" />
                     Request Access
@@ -245,57 +257,39 @@ function SlideCover() {
 }
 
 // ============================================
-// SLIDE 2: THE PROBLEM (6 Friction Cards)
+// SLIDE 2: THE PROBLEM (5 Friction Cards - 3+2 Grid)
 // ============================================
 function SlideProblem() {
     const frictions = [
         {
-            icon: TrendingUp,
             emoji: '📉',
-            title: 'Lead Leakage',
-            category: 'Revenue',
-            description: '40% of leads vanish. Responding 5 minutes late to a WhatsApp inquiry means losing the client.',
+            title: 'Revenue Bleed',
+            description: '40% of leads vanish due to slow response times and lack of follow-up.',
             color: 'text-red-400',
         },
         {
-            icon: PuzzleIcon,
             emoji: '🧩',
             title: 'Context Blindness',
-            category: 'Clinical',
-            description: 'Dangerous silos. Your booking system doesn\'t know your client is on anti-depressants. Your notes don\'t know they haven\'t paid.',
+            description: 'Clinical notes, booking data, and financials live in disconnected silos.',
             color: 'text-orange-400',
         },
         {
-            icon: Activity,
             emoji: '🐹',
             title: 'The Hamster Wheel',
-            category: 'Ops',
-            description: 'Zero leverage. Without automation, your income is strictly tied to your manual labor hours. No scale.',
+            description: 'Zero leverage. Income is strictly tied to manual admin hours.',
             color: 'text-amber-400',
         },
         {
-            icon: Scale,
             emoji: '⚖️',
             title: 'Legal Roulette',
-            category: 'Risk',
-            description: 'Compliance nightmares. Collecting sensitive health data on Google Forms or WhatsApp is a liability time-bomb.',
+            description: 'High liability. Storing sensitive trauma data on WhatsApp/Forms is a ticking bomb.',
             color: 'text-red-500',
         },
         {
-            icon: Wallet,
-            emoji: '💸',
-            title: 'The Payment Chase',
-            category: 'Fintech',
-            description: 'Admin hell. Manually tracking deposits, installments, and bank transfers for €3,000 retreats.',
-            color: 'text-orange-500',
-        },
-        {
-            icon: HeartCrack,
             emoji: '🕳️',
             title: 'The Integration Void',
-            category: 'Ethics',
-            description: 'The post-session drop. Clients experience profound breakthroughs, then return home to zero support. Retention fails.',
-            color: 'text-amber-500',
+            description: 'Great sessions, terrible post-care. Patients drop off when they need support most.',
+            color: 'text-orange-500',
         },
     ];
 
@@ -309,23 +303,36 @@ function SlideProblem() {
                     <br />
                     <span className="text-red-400">Divide.</span>
                 </h2>
-                <p className="text-lg text-white/40 mb-12">
-                    Great Healers. Terrible Operators. <span className="text-white/60">The 6 silent killers of a modern practice.</span>
+                <p className="text-lg text-white/40 mb-10">
+                    Great Healers. Terrible Operators.
                 </p>
 
-                <div className="grid md:grid-cols-3 gap-4">
-                    {frictions.map((item, i) => (
-                        <GlassCard key={i} glow="red" className="p-5">
-                            <div className="flex items-start gap-3 mb-3">
-                                <span className="text-2xl">{item.emoji}</span>
-                                <div>
-                                    <h3 className="text-base font-bold text-white">{item.title}</h3>
-                                    <p className={`text-xs font-mono uppercase tracking-wider ${item.color}`}>{item.category}</p>
+                {/* 3+2 Grid Layout */}
+                <div className="space-y-4">
+                    {/* Row 1: 3 cards */}
+                    <div className="grid md:grid-cols-3 gap-4">
+                        {frictions.slice(0, 3).map((item, i) => (
+                            <GlassCard key={i} glow="red" className="p-5">
+                                <div className="flex items-start gap-3 mb-3">
+                                    <span className="text-2xl">{item.emoji}</span>
+                                    <h3 className="text-lg font-bold text-white">{item.title}</h3>
                                 </div>
-                            </div>
-                            <p className="text-white/40 text-sm leading-relaxed">{item.description}</p>
-                        </GlassCard>
-                    ))}
+                                <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
+                            </GlassCard>
+                        ))}
+                    </div>
+                    {/* Row 2: 2 cards centered */}
+                    <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                        {frictions.slice(3, 5).map((item, i) => (
+                            <GlassCard key={i + 3} glow="orange" className="p-5">
+                                <div className="flex items-start gap-3 mb-3">
+                                    <span className="text-2xl">{item.emoji}</span>
+                                    <h3 className="text-lg font-bold text-white">{item.title}</h3>
+                                </div>
+                                <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
+                            </GlassCard>
+                        ))}
+                    </div>
                 </div>
             </div>
         </SlideWrapper>
@@ -333,30 +340,48 @@ function SlideProblem() {
 }
 
 // ============================================
-// SLIDE 3: THE SOLUTION (Trinity with Glows)
+// SLIDE 3: THE TRINITY (3 Pillars x 5 Features)
 // ============================================
 function SlideSolution() {
     const pillars = [
         {
             label: 'CONNECT',
             subtitle: 'Marketing & Sales',
-            features: ['WhatsApp CRM', 'Speed-to-Lead', 'Auto-Qualification'],
             color: 'teal',
             icon: Zap,
+            features: [
+                { icon: MessageSquare, text: 'WhatsApp CRM: Unified inbox for leads' },
+                { icon: Activity, text: 'Speed-to-Lead: Visual urgency system' },
+                { icon: Target, text: 'Auto-Qualification: AI filtering of bad fits' },
+                { icon: CalendarCheck, text: 'Smart Calendar: Multi-schedule sync' },
+                { icon: Wand2, text: 'Public Wizard: 4-step frictionless booking' },
+            ],
         },
         {
             label: 'PRACTICE',
             subtitle: 'Clinical Ops',
-            features: ['Soul Record', 'Multimedia Journal', 'Risk Shield'],
             color: 'violet',
             icon: Users,
+            features: [
+                { icon: User, text: 'Soul Record: 360° Patient Profile' },
+                { icon: Shield, text: 'Risk Shield: Auto-detection of risks' },
+                { icon: Activity, text: 'Sentinel Pulse: Emotional monitoring' },
+                { icon: Mic, text: 'Multimedia Journal: Audio/Text entries' },
+                { icon: FileCheck, text: 'Clinical Scribe: AI session synthesis' },
+            ],
         },
         {
             label: 'GROW',
             subtitle: 'Business Scale',
-            features: ['Automated Nurture', 'Fintech Payments', 'Post-Retreat Loops'],
             color: 'blue',
             icon: TrendingUp,
+            features: [
+                { icon: RefreshCw, text: 'Nurture Agents: Auto re-engagement' },
+                { icon: CreditCard, text: 'Fintech Engine: Stripe Connect & Split' },
+                { icon: Users, text: 'Membership Builder: Recurring revenue' },
+                { icon: Activity, text: 'Lead Resurrection: Detect stale leads' },
+                { icon: LineChart, text: 'Business Analytics: Real-time HUD' },
+            ],
         },
     ];
 
@@ -365,59 +390,59 @@ function SlideSolution() {
             text: 'text-teal-400',
             bg: 'bg-teal-500/[0.08]',
             border: 'border-teal-500/30',
-            glow: 'shadow-[0_0_60px_-15px_rgba(45,212,191,0.5)]',
-            check: 'text-teal-500',
+            glow: 'shadow-[0_0_60px_-15px_rgba(45,212,191,0.6)]',
+            check: 'text-teal-400',
         },
         violet: {
             text: 'text-violet-400',
             bg: 'bg-violet-500/[0.08]',
             border: 'border-violet-500/30',
-            glow: 'shadow-[0_0_60px_-15px_rgba(139,92,246,0.5)]',
-            check: 'text-violet-500',
+            glow: 'shadow-[0_0_60px_-15px_rgba(139,92,246,0.6)]',
+            check: 'text-violet-400',
         },
         blue: {
             text: 'text-blue-400',
             bg: 'bg-blue-500/[0.08]',
             border: 'border-blue-500/30',
-            glow: 'shadow-[0_0_60px_-15px_rgba(59,130,246,0.5)]',
-            check: 'text-blue-500',
+            glow: 'shadow-[0_0_60px_-15px_rgba(59,130,246,0.6)]',
+            check: 'text-blue-400',
         },
     };
 
     return (
         <SlideWrapper>
             <div>
-                <p className="text-teal-400 font-mono text-sm mb-4 tracking-widest">THE SOLUTION</p>
-                <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-16">
+                <p className="text-teal-400 font-mono text-sm mb-3 tracking-widest">THE SOLUTION</p>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-10">
                     <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                         One Unified{' '}
                     </span>
                     <span className="text-teal-400">Command Center</span>
                 </h2>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-3 gap-5">
                     {pillars.map((pillar, i) => {
                         const colors = colorMap[pillar.color as keyof typeof colorMap];
                         return (
                             <div
                                 key={i}
                                 className={`
-                  relative p-8 rounded-2xl
-                  ${colors.bg} border ${colors.border}
-                  ${colors.glow}
-                `}
+                                    relative p-6 rounded-2xl
+                                    ${colors.bg} border ${colors.border}
+                                    ${colors.glow}
+                                `}
                             >
-                                <pillar.icon className={`w-10 h-10 ${colors.text} mb-4`} />
-                                <h3 className={`text-2xl font-black ${colors.text} mb-1 tracking-tight`}>
+                                <pillar.icon className={`w-8 h-8 ${colors.text} mb-3`} />
+                                <h3 className={`text-xl font-black ${colors.text} mb-1 tracking-tight`}>
                                     {pillar.label}
                                 </h3>
-                                <p className="text-white/40 text-sm mb-6">{pillar.subtitle}</p>
+                                <p className="text-white/40 text-xs mb-5">{pillar.subtitle}</p>
 
-                                <ul className="space-y-3">
+                                <ul className="space-y-2.5">
                                     {pillar.features.map((feature, j) => (
-                                        <li key={j} className="flex items-center gap-3 text-white/70 text-sm">
-                                            <CheckCircle2 className={`w-4 h-4 ${colors.check}`} />
-                                            {feature}
+                                        <li key={j} className="flex items-start gap-2 text-white/70 text-sm">
+                                            <CheckCircle2 className={`w-4 h-4 ${colors.check} mt-0.5 flex-shrink-0`} />
+                                            <span>{feature.text}</span>
                                         </li>
                                     ))}
                                 </ul>
@@ -431,60 +456,79 @@ function SlideSolution() {
 }
 
 // ============================================
-// SLIDE 4: THE ARSENAL (Bento Grid)
+// SLIDE 4: THE ARSENAL (5 Techs - 3+2 Grid)
 // ============================================
 function SlideArsenal() {
     const features = [
         {
-            icon: AlertTriangle,
-            title: 'Smart Lead Recovery',
-            description: 'Visual system that flags cold leads (<48h) and triggers reactivation agents.',
-        },
-        {
-            icon: Activity,
+            emoji: '📡',
             title: 'Sentinel Pulse',
-            description: 'Real-time 7-day emotional trajectory visualization. Detects crisis early.',
+            description: '7-Day Emotional Trajectory. Visualizing risk before crisis hits.',
+            gradient: 'from-teal-500 to-cyan-500',
         },
         {
-            icon: Wallet,
+            emoji: '💰',
             title: 'AI Margin Control',
             description: 'Real-Time FinOps. We track every token and bake in a 50% margin.',
+            gradient: 'from-emerald-500 to-teal-500',
         },
         {
-            icon: Workflow,
-            title: 'Visual Automation',
-            description: 'No-code logic builder (Trigger → Condition → Action) for clinical workflows.',
+            emoji: '🧠',
+            title: 'Neural Circuits',
+            description: 'Visual Logic Builder. No-code automation flows (Trigger → Action).',
+            gradient: 'from-violet-500 to-purple-500',
         },
         {
-            icon: Shield,
+            emoji: '🔐',
             title: 'Privacy Vault',
-            description: 'GDPR/HIPAA compliant architecture. Anonymous datasets & media auto-deletion.',
+            description: 'GDPR/HIPAA compliant. Anonymous datasets & auto-incineration.',
+            gradient: 'from-blue-500 to-indigo-500',
         },
         {
-            icon: FileCheck,
+            emoji: '🛡️',
             title: 'Draft Mode',
-            description: 'Clinical Sovereignty. AI drafts the content, the Therapist approves. Zero risk.',
+            description: 'Clinical Sovereignty. AI drafts the content, you approve. Zero risk.',
+            gradient: 'from-fuchsia-500 to-pink-500',
         },
     ];
 
     return (
         <SlideWrapper>
             <div>
-                <p className="text-violet-400 font-mono text-sm mb-4 tracking-widest">THE ARSENAL</p>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-12">
+                <p className="text-violet-400 font-mono text-sm mb-3 tracking-widest">THE ARSENAL</p>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-10">
                     <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
-                        Proprietary Technology
+                        Proprietary{' '}
                     </span>
+                    <span className="text-violet-400">Technology</span>
                 </h2>
 
-                <div className="grid md:grid-cols-3 gap-4">
-                    {features.map((item, i) => (
-                        <GlassCard key={i} glow="teal" className="p-6">
-                            <item.icon className="w-8 h-8 text-teal-400 mb-4" />
-                            <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
-                            <p className="text-white/40 text-sm leading-relaxed">{item.description}</p>
-                        </GlassCard>
-                    ))}
+                {/* 3+2 Grid Layout */}
+                <div className="space-y-4">
+                    {/* Row 1: 3 cards */}
+                    <div className="grid md:grid-cols-3 gap-4">
+                        {features.slice(0, 3).map((item, i) => (
+                            <GlassCard key={i} glow="teal" className="p-6 group">
+                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${item.gradient} mb-4 shadow-lg group-hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition-shadow`}>
+                                    <span className="text-xl">{item.emoji}</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                                <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
+                            </GlassCard>
+                        ))}
+                    </div>
+                    {/* Row 2: 2 cards centered */}
+                    <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                        {features.slice(3, 5).map((item, i) => (
+                            <GlassCard key={i + 3} glow="violet" className="p-6 group">
+                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r ${item.gradient} mb-4 shadow-lg group-hover:shadow-[0_0_30px_rgba(139,92,246,0.3)] transition-shadow`}>
+                                    <span className="text-xl">{item.emoji}</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                                <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
+                            </GlassCard>
+                        ))}
+                    </div>
                 </div>
             </div>
         </SlideWrapper>
@@ -505,15 +549,15 @@ function SlideMarket() {
         <SlideWrapper>
             <div className="grid md:grid-cols-2 gap-16 items-center">
                 <div>
-                    <p className="text-teal-400 font-mono text-sm mb-4 tracking-widest">THE MARKET</p>
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-6">
+                    <p className="text-teal-400 font-mono text-sm mb-3 tracking-widest">THE MARKET</p>
+                    <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-6">
                         <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                             The Rise of the
                         </span>
                         <br />
                         <span className="text-teal-400">Conscious Practitioner</span>
                     </h2>
-                    <p className="text-xl text-white/40 mb-10">
+                    <p className="text-lg text-white/40 mb-8">
                         Moving from $50/h sessions to $3,000 Retreats.
                     </p>
 
@@ -528,7 +572,7 @@ function SlideMarket() {
                 </div>
 
                 <div className="text-center">
-                    <GlassCard className="p-12">
+                    <GlassCard className="p-12" glow="teal">
                         <p className="text-white/30 text-sm mb-3 tracking-widest">TAM</p>
                         <div className="text-6xl md:text-7xl font-black font-mono bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">
                             $120B
@@ -554,20 +598,20 @@ function SlideBusinessModel() {
     return (
         <SlideWrapper>
             <div>
-                <p className="text-teal-400 font-mono text-sm mb-4 tracking-widest">BUSINESS MODEL</p>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-12">
+                <p className="text-teal-400 font-mono text-sm mb-3 tracking-widest">BUSINESS MODEL</p>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-10">
                     <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                         SaaS + Fintech +{' '}
                     </span>
                     <span className="text-teal-400">AI</span>
                 </h2>
 
-                <div className="grid md:grid-cols-3 gap-6 mb-12">
+                <div className="grid md:grid-cols-3 gap-5 mb-10">
                     {layers.map((item, i) => (
                         <GlassCard key={i} glow="teal" className="p-6">
                             <item.icon className="w-8 h-8 text-white/30 mb-4" />
                             <p className="text-white/30 font-mono text-xs mb-2 tracking-widest">{item.layer}</p>
-                            <h3 className="text-xl font-bold text-white mb-1">{item.title}</h3>
+                            <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
                             <p className="text-white/40 text-sm mb-4">{item.subtitle}</p>
                             <div className="text-2xl font-bold font-mono text-teal-400">
                                 {item.value}<span className="text-white/40 text-base">{item.unit}</span>
@@ -576,7 +620,7 @@ function SlideBusinessModel() {
                     ))}
                 </div>
 
-                <GlassCard className="p-8 text-center">
+                <GlassCard className="p-8 text-center" glow="teal">
                     <p className="text-white/30 text-sm mb-2 tracking-widest">TARGET ARPU</p>
                     <div className="text-5xl md:text-6xl font-black font-mono text-teal-400">
                         €450<span className="text-xl text-white/30">/month</span>
@@ -592,7 +636,7 @@ function SlideBusinessModel() {
 // ============================================
 function SlideTraction() {
     const items = [
-        { icon: Rocket, label: 'Production Live', value: 'v1.1.3' },
+        { icon: Rocket, label: 'Production Live', value: 'v1.1.4' },
         { icon: CreditCard, label: 'Stripe Connect', value: 'Infrastructure Ready' },
         { icon: FileCheck, label: 'LOIs Signed', value: '4 (Day 1 Revenue)' },
     ];
@@ -600,15 +644,15 @@ function SlideTraction() {
     return (
         <SlideWrapper>
             <div>
-                <p className="text-teal-400 font-mono text-sm mb-4 tracking-widest">TRACTION</p>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-12">
+                <p className="text-teal-400 font-mono text-sm mb-3 tracking-widest">TRACTION</p>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-10">
                     <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                         Real Tech.{' '}
                     </span>
                     <span className="text-teal-400">Real Demand.</span>
                 </h2>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-3 gap-5">
                     {items.map((item, i) => (
                         <GlassCard key={i} glow="teal" className="p-8 text-center">
                             <item.icon className="w-10 h-10 text-teal-400 mx-auto mb-4" />
@@ -635,20 +679,20 @@ function SlideRoadmap() {
     return (
         <SlideWrapper>
             <div>
-                <p className="text-blue-400 font-mono text-sm mb-4 tracking-widest">ROADMAP</p>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-12">
+                <p className="text-blue-400 font-mono text-sm mb-3 tracking-widest">ROADMAP</p>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-10">
                     <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                         From Tool to{' '}
                     </span>
                     <span className="text-blue-400">Network</span>
                 </h2>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-3 gap-5">
                     {phases.map((phase, i) => (
                         <GlassCard
                             key={i}
                             glow={phase.active ? 'teal' : ''}
-                            className={`p-8 ${phase.active ? 'border-teal-500/30 shadow-[0_0_40px_-10px_rgba(45,212,191,0.4)]' : ''}`}
+                            className={`p-8 ${phase.active ? 'border-teal-500/40 shadow-[0_0_50px_-10px_rgba(45,212,191,0.5)]' : ''}`}
                         >
                             <div className={`text-sm font-mono mb-4 ${phase.active ? 'text-teal-400' : 'text-white/30'}`}>
                                 {phase.year}
@@ -670,8 +714,8 @@ function SlideTeam() {
     return (
         <SlideWrapper>
             <div className="text-center">
-                <p className="text-violet-400 font-mono text-sm mb-4 tracking-widest">THE TEAM</p>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-12">
+                <p className="text-violet-400 font-mono text-sm mb-3 tracking-widest">THE TEAM</p>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-10">
                     <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                         Founder-Market{' '}
                     </span>
@@ -704,15 +748,15 @@ function SlideAsk() {
     return (
         <SlideWrapper>
             <div className="text-center">
-                <p className="text-violet-400 font-mono text-sm mb-4 tracking-widest">THE ASK</p>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-6">
+                <p className="text-violet-400 font-mono text-sm mb-3 tracking-widest">THE ASK</p>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-6">
                     <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                         Fueling the Revolution
                     </span>
                 </h2>
 
                 {/* THE NUMBER - MAXIMUM DRAMA */}
-                <div className="text-6xl md:text-8xl lg:text-[7rem] font-black font-mono bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent mb-6 tracking-tight">
+                <div className="text-6xl md:text-8xl lg:text-[8rem] font-black font-mono bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent mb-6 tracking-tight">
                     €260,000
                 </div>
 
@@ -742,7 +786,7 @@ function SlideAsk() {
 
                 <a
                     href="mailto:humbert@kuraos.ai?subject=KURA%20OS%20Pre-Seed%20Inquiry"
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-500 to-pink-500 text-white font-bold text-lg rounded-xl hover:opacity-90 transition-all duration-300 shadow-[0_0_40px_rgba(139,92,246,0.4)]"
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-500 to-pink-500 text-white font-bold text-lg rounded-xl hover:opacity-90 transition-all duration-300 shadow-[0_0_50px_rgba(139,92,246,0.5)]"
                 >
                     <Mail className="w-5 h-5" />
                     Let's Talk
