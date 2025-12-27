@@ -44,6 +44,9 @@ Rewrote all help content from scratch with current KURA OS v1.1.3b features:
 
 **Future Improvement (Q1 2026)**: Replace static screenshots with Live React Components in MDX for truly dynamic documentation.
 
+#### ⚠️ Known Issue
+- **500 on `/help/[slug]`**: Article pages may return 500 in production. Root cause under investigation (RSC serialization suspected). Index page `/help` works correctly.
+
 ---
 
 ## [1.1.3b] - 2025-12-27 🦅 SENTINEL PULSE & DATA COHERENCE
