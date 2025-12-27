@@ -4,183 +4,141 @@
 
 ---
 
-## ✅ Completed: v1.0.0 Public Launch (December 2025)
+## 📊 Current Status: v1.1.3b (December 2025)
 
-**Status:** 🎉 LIVE at https://app.kuraos.ai
+**🎉 LIVE at https://app.kuraos.ai**
 
-### Core Platform
-- [x] JWT authentication with shared domain cookies
-- [x] Multi-tenant organizations (SOLO/TEAM)
-- [x] Patient CRM with clinical journey tracking
-- [x] Clinical entries with AI analysis (AletheIA)
-
-### Booking & Payments
-- [x] Service management (1:1 + Group)
-- [x] Availability schedules with overrides
-- [x] Public booking page
-- [x] Stripe checkout + webhooks
-
-### Automation & AI
-- [x] Clinical AI Agents (Playbook system)
-- [x] Human-in-the-loop draft mode
-- [x] Daily audio briefing (Gemini + TTS)
-- [x] Help Center ChatBot (Gemini 2.5 Flash)
-
-### Lead CRM
-- [x] Kanban board with drag-drop
-- [x] Speed-to-lead (WhatsApp, Ghost Detector)
-- [x] Auto-conversion to patients
+The system now speaks with One Voice. Data coherence achieved between Sentinel Pulse and AletheIA Observatory.
 
 ---
 
-## ✅ Completed: v1.0.2 The Black Box (December 2025)
+## ✅ Completed Releases (Reverse Chronological)
 
-### Infrastructure
-- [x] Automated PostgreSQL backups (every 6h, 7-day retention)
-- [x] Admin panel Backups tab (create/restore/download/delete)
-- [x] Nuclear confirmation modal for restore operations
-- [x] Cascade delete for pending_actions when leads deleted
+### v1.1.3b — SENTINEL PULSE & DATA COHERENCE 🦅
+*December 27, 2025*
+- [x] Sentinel Pulse Widget: 7-day emotional chart with 3 states (Active/Dormant/Locked)
+- [x] Operation Direct Line: Float precision fix, AliasChoices pattern
+- [x] Golden Seed: Marcus (+0.80), Julian (-0.60), Elena (-0.90) archetypes
+- [x] Schema alignment: `last_insight_json` matches `PatientInsightsResponse`
 
-### Documentation
-- [x] ADR-005 to ADR-009: Fidelization Stack roadmap
-- [x] ROADMAP_PROPOSAL_v1.1.md consolidated
+### v1.1.3 — THE CLINICAL CANVAS 🏥
+*December 27, 2025*
+- [x] 2-column patient layout: Journey Boarding Pass + Sentinel Pulse
+- [x] PatientHero component refactor
+- [x] Dynamic stage icons with status-based actions
 
----
+### v1.1.2 — PREMIUM DEMO "GOLDEN SEED PROTOCOL" 💎
+*December 27, 2025*
+- [x] 4 character archetypes with rich histories
+- [x] Unsplash avatars with static UUIDs
+- [x] Pre-populated journey stages and clinical notes
 
-## ✅ Completed: v1.0.3 Cyber-Clinical UI (December 2025)
+### v1.1.1 — INTELLIGENCE ENGINE 🧠
+*December 27, 2025*
+- [x] ProviderFactory: Multi-model AI routing
+- [x] CostLedger: Real-time token-based FinOps
+- [x] AI Governance Admin Panel: Financial HUD, Model Registry
+- [x] Clean Ledger Refactor: No legacy calls in clinical flow
 
-### Design System - The Zinc Protocol
-- [x] `next-themes` for dark/light mode switching
-- [x] `ThemeProvider` and `ThemeToggle` components
-- [x] `CyberCard` universal container component
-- [x] Semantic CSS variables in Tailwind v4
+### v1.1.0 — THE COMMAND CENTER 🚀
+*December 27, 2025*
+- [x] Dashboard 3.0: Ghost Header, Clinical-First Grid
+- [x] FocusSessionCard, PipelineVelocity, ActiveJourneysWidget
+- [x] VitalSignCard with live trend indicators
 
-### Layout Architecture - Trinity Navigation
-- [x] 3-column HUD shell (TrinityNav + Main + AI Rail)
-- [x] Dashboard Bento Grid (12-column layout)
-- [x] Agentes menu item in navigation footer
+### v1.0.12 — NEURAL FLOW UI ⚡
+*December 26, 2025*
+- [x] Agent Circuit Board visualization
+- [x] Glass KPI Cards with backdrop-blur
+- [x] Semantic nodes: Trigger → Condition → Action
 
-### Page-Level Refactors
-- [x] Dashboard, CRM/Leads, Patients, Patient Detail
-- [x] Calendar, Services, Forms
-- [x] Dark mode support across all pages
+### v1.0.10 — JOURNEY CARDS 2.0 🎫
+*December 26, 2025*
+- [x] Boarding Pass style journey cards
+- [x] Dynamic context-aware actions
+- [x] Smart timelines with icon-nodes
 
----
+### v1.0.9 — CLINICAL ROSTER 📋
+*December 26, 2025*
+- [x] High-density patient table
+- [x] Health Dots risk indicators
+- [x] Semantic status badges
 
-## ✅ Completed: v1.0.4 Theme Engine (December 2025)
+### v1.0.8 — DESIGN SYSTEM & TACTILE UI 🎨
+*December 26, 2025*
+- [x] Design System Playground (`/design-system`)
+- [x] Tactile buttons with `active:scale-95`
+- [x] Glass cards, premium shadow effects
 
-### Design System - Bimodal Identity
+### v1.0.7 — THE CLEAN ROOM 🔐
+*December 26, 2025*
+- [x] The Incinerator: 30-day audio lifecycle
+- [x] The Vault: Anonymous datasets for IP preservation
+- [x] The Scrubber: PII sanitization service
+
+### v1.0.6 — SECURITY & GOVERNANCE 🛡️
+*December 25, 2025*
+- [x] Log sanitization (no PII in Twilio logs)
+- [x] Strict Pydantic schemas with `extra="ignore"`
+- [x] Structured JSONB for clinical form data
+
+### v1.0.5 — ALETHEIA OBSERVATORY 🔭
+*December 25, 2025*
+- [x] Intelligence Rail sidebar
+- [x] Patient Mode: Risk score, themes, flags
+- [x] Global Mode: Clinic Radar, pending actions
+- [x] Zustand patient store for context
+
+### v1.0.4 — THEME ENGINE 🌓
+*December 25, 2025*
 - [x] Real-time Theme Editor with live preview
-- [x] Dark/Light dual tabs with `next-themes` integration
-- [x] HSL color picker with semantic token mapping
-- [x] Persistence to PostgreSQL via `user_preferences` JSONB
-- [x] ThemeHydration with CSS injection for `:root` and `.dark`
+- [x] Dual Dark/Light mode support
+- [x] HSL color picker with persistence
 
-### Typography System
-- [x] Type Scale classes: `type-h1`, `type-h2`, `type-body`, `type-ui`
-- [x] Font family separation: Playfair (editorial), Space Grotesk (UI), Inter (body)
+### v1.0.3 — CYBER-CLINICAL UI 🖥️
+*December 24, 2025*
+- [x] Trinity Navigation (3-column layout)
+- [x] `next-themes` integration
+- [x] Semantic CSS variables (Tailwind v4)
 
----
+### v1.0.2 — THE BLACK BOX 📦
+*December 24, 2025*
+- [x] PostgreSQL automated backups (6h cycle)
+- [x] Admin Backups panel with restore
+- [x] ADR-005 to ADR-009 documented
 
-## ✅ Completed: v1.1.0 THE COMMAND CENTER (December 2025)
+### v1.0.1 — PRODUCTION POLISH 🔧
+*December 24, 2025*
+- [x] Login loop fix
+- [x] Secret Manager integration
+- [x] Stripe/Twilio CLI automation
 
-**Status:** 🎉 LIVE - Dashboard Revolution
-
-### Dashboard 3.0 "The WOOOOOW Layout"
-- [x] Ghost Briefing Header: Minimalist "Zero-Box" design
-- [x] Clinical-First Grid: Sessions + Journeys at top priority
-- [x] FocusSessionCard: Active/Free states for prioritized clinical action
-- [x] PipelineVelocity: CRM funnel visualization in tactical sidebar
-- [x] ActiveJourneysWidget: Mini-Boarding Pass priority queue
-- [x] VitalSignCard: Metrics with live trend indicators
-
----
-
-## ✅ Completed: v1.1.1 INTELLIGENCE ENGINE (December 2025)
-
-### Multi-Model AI Infrastructure
-- [x] ProviderFactory: Smart routing for Gemini (Phase 1), Claude/Llama (Phase 3)
-- [x] CostLedger: Real token-based cost calculation with configurable margin
-- [x] AI Governance Admin Panel: Financial HUD, Model Registry, Activity Ledger
-- [x] Clean Ledger Refactor: No legacy `google.generativeai` in clinical flow
+### v1.0.0 — PUBLIC LAUNCH 🎉
+*December 23, 2025*
+- [x] Core platform: Auth, Patients, Clinical Entries
+- [x] Booking engine with Stripe
+- [x] Clinical AI Agents (Playbooks)
+- [x] Lead CRM with Kanban
 
 ---
 
-## ✅ Completed: v1.0.12 Neural Flow UI (December 2025)
+## � Architecture Decision Records (ADRs)
 
-### Agent Detail - Circuit Board Visualization
-- [x] Neural Flow Pattern: Visual "Circuit Board" with connected nodes
-- [x] Glass KPI Cards: Backdrop-blur with `font-mono` metrics
-- [x] Semantic Nodes: Trigger (purple) → Condition (orange) → Action (green)
-- [x] Logic & Flows: Added to Design System Playground (v1.0.12.1)
+> Formal design decisions that govern the evolution of KURA OS.
 
----
-
-## ✅ Completed: v1.0.10 Journey Cards 2.0 (December 2025)
-
-### Clinical Views - Action-Oriented
-- [x] Journey Overhaul: Static progress bars → Boarding Pass style
-- [x] Dynamic Actions: Context-aware buttons for interventions
-- [x] Smart Timelines: Semantic icon-nodes for journey scannability
-
----
-
-## ✅ Completed: v1.0.9 Clinical Roster (December 2025)
-
-### High-Density Patient Table
-- [x] Refactored Patient List from grid cards to high-density table
-- [x] Health Dots: AletheIA risk indicators in list views
-- [x] Semantic Badges: Standardized status pills
-
----
-
-## ✅ Completed: v1.0.8 Design System (December 2025)
-
-### Visual Bible & Tactile Architecture
-- [x] Design System Playground: `/design-system` Kitchen Sink
-- [x] Tactile UI Layer: `active:scale-95` micro-interactions
-- [x] Glass Cards: `backdrop-blur-sm`, `bg-card/80`
-- [x] Premium Buttons: Shadow glow and lift effects
-
----
-
-## ✅ Completed: v1.0.7 The Clean Room (December 2025)
-
-### Privacy & Intellectual Property
-- [x] The Incinerator: GCS Lifecycle for 30-day audio deletion
-- [x] The Vault: `anonymous_datasets` orphan table for legal IP storage
-- [x] The Scrubber: BackgroundTask sanitization service
-
----
-
-## ✅ Completed: v1.0.6 Security & Governance (December 2025)
-
-### HIPAA/GDPR Hardening
-- [x] Log Sanitization: PII removed from Twilio/Transcription logs
-- [x] Data Segregation: Clinical form answers to structured JSONB
-- [x] Strict Schema: Pydantic models with `extra="ignore"`
-
----
-
-## ✅ Completed: v1.0.5 AletheIA Observatory (December 2025)
-
-### AletheIA Intelligence Rail
-- [x] Patient Mode: Risk score, themes, flags, engagement when viewing a patient
-- [x] Global Mode (Clinic Radar): Risk monitor, pending actions, system health
-- [x] Zustand patient store for global clinical context
-- [x] Collapsible sidebar (64px → 12px vertical tab)
-
-### Dashboard Redesign - The Operational Cockpit
-- [x] 12-column grid layout
-- [x] Hero: Daily Briefing audio player
-- [x] Vital Signs: Revenue, Leads, Active Patients cards
-- [x] DayAgenda: Smart list (booked + 1 available, beautiful empty state)
-- [x] QuickNote: Post-it style with localStorage persistence
-- [x] RecentPatients: localStorage tracking
-
-### UI Harmonization
-- [x] TrinityNav: collapsible sections, semantic `type-ui` headers
-- [x] Strict compliance: no hardcoded `text-[Xpx]` or `bg-[#...]`
+| ADR | Title | Domain | Status |
+|-----|-------|--------|--------|
+| [ADR-001](./docs/adr/ADR-001-database-v2-proposal.md) | Database v2.0 | Infrastructure | 🟡 Deferred |
+| [ADR-002](./docs/adr/ADR-002-design-system-proposal.md) | Design System "Zinc Protocol" | Frontend | ✅ **Implemented (v1.0.3-v1.0.8)** |
+| [ADR-003](./docs/adr/ADR-003-marketing-growth-engine.md) | Marketing Growth Engine | Growth | 🟢 Q1 2026 |
+| [ADR-004](./docs/adr/ADR-004-meta-cloud-api-integration.md) | Meta Cloud API (WhatsApp/IG) | Infrastructure | 🟢 Q1 2026 |
+| [ADR-005](./docs/adr/ADR-005-membership-builder.md) | Membership Builder (Netflix Model) | Retention | 🟢 Q2 2026 |
+| [ADR-006](./docs/adr/ADR-006-smart-prescriptions.md) | Smart Prescriptions | Clinical | 🟢 Q2 2026 |
+| [ADR-007](./docs/adr/ADR-007-the-mirror.md) | The Mirror (Progress Visualization) | Retention | 🟢 Q3 2026 |
+| [ADR-008](./docs/adr/ADR-008-time-capsule.md) | Time Capsule (Delayed Messaging) | Clinical | 🟢 Q3 2026 |
+| [ADR-009](./docs/adr/ADR-009-trinity-navigation.md) | Trinity Navigation | UX | ✅ **Implemented (v1.0.3)** |
+| ADR-010 | The Clean Room (Data Retention) | Compliance | ✅ **Implemented (v1.0.7)** |
+| ADR-011 | Multi-Model Intelligence Engine | AI | ✅ **Implemented (v1.1.1)** |
 
 ---
 
@@ -188,70 +146,99 @@
 
 **Goal:** First 50 paying organizations
 
-### Product Improvements
-- [ ] **Dashboard Data Wiring**: Connect v1.1.0 components to real APIs (see TECH_DEBT.md)
-  - PipelineVelocity → Lead counts by nurture_status
-  - ActiveJourneysWidget → /journeys/active endpoint
-  - VitalSignCard trends → Booking aggregations
-  - FocusSessionCard → Aletheia patient insights
-- [ ] **Impact Index**: Clinical correlation dashboard (Investor-Ready)
-  - Dual-axis chart: Sessions (activity) vs Wellness Score (outcomes)
-  - Narrative: "Your interventions correlate with X% improvement"
-  - Requires: Historical Aletheia scores per patient
-- [ ] **Lifecycle Megamenu**: Reorganize navigation into 3 pillars (Captación → Clínica → Inteligencia) with Shadcn NavigationMenu
-- [ ] **Google OAuth**: One-click login with Google
-- [ ] **WhatsApp Business API**: Native Meta Cloud API (replace Twilio)
-- [ ] **Form Analytics**: Completion rates, drop-off points
-- [ ] **Patient Portal**: Self-service for clients
+### 🍄 The Mycelium Protocol (Viral Growth)
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Referral Engine** | `referral_code` + `referred_by` in Organization | 🔴 HIGH |
+| **Karma Credits** | Reward referrers with AletheIA credits | 🔴 HIGH |
+| **"Powered By" Attribution** | Footer links on public pages (90-day cookie) | 🟡 MEDIUM |
+| **Referral Dashboard** | Share stats, WhatsApp/LinkedIn buttons | 🟡 MEDIUM |
 
-### Growth Engine: "The Mycelium Protocol" 🍄
-- [ ] **Referral Engine MVP**: `referral_code` + `referred_by` in Organization, signup with `?ref=` param
-- [ ] **Karma Credits**: Reward referrers with AletheIA credits (not cash) for activations
-- [ ] **"Powered By" Attribution**: Footer links on Sanctuary Pages, Booking, Emails with 90-day cookie
-- [ ] **Referral Dashboard**: "Tu enlace de invitación" + stats + WhatsApp/LinkedIn share buttons
-- [ ] **Self-Service Onboarding**: Guided setup wizard
-- [ ] **Demo Mode UI**: Dashboard button to seed demo data for new orgs/investors
+### 🔗 Meta Cloud API Migration (ADR-004)
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **WhatsApp Business API** | Replace Twilio sandbox | 🔴 HIGH |
+| **Message Templates** | Transactional templates for booking/reminders | 🔴 HIGH |
+| **Instagram DM Lead Capture** | Unified inbox for IG leads | 🟡 MEDIUM |
 
----
+### 🔌 Dashboard Data Wiring
+| Component | API Integration | Priority |
+|-----------|-----------------|----------|
+| **PipelineVelocity** | `/leads?group_by=nurture_status` | 🟡 MEDIUM |
+| **ActiveJourneysWidget** | `/journeys/active` endpoint | 🟡 MEDIUM |
+| **VitalSignCard Trends** | Booking aggregations by week | 🟢 LOW |
 
-## 🚀 Q2-Q3 2026: Scale (The "500" Goal)
-
-**Goal:** 500 active therapist users by EOY 2025
-
-
-### Enterprise Features (B2B)
-- [ ] **KURA Business (Admin Dashboard)**: Separate app (`admin.kuraos.ai`) for superadmin control.
-- [ ] **Team Management**: Invite therapists to organization
-- [ ] **Advanced RBAC**: Granular permissions
-
-- [ ] **Audit Logs**: HIPAA/GDPR compliant activity tracking
-- [ ] **API for Developers**: Public REST API
-
-### Mobile Experience
-- [ ] **React Native App**: iOS + Android
-- [ ] **Push Notifications**: Booking reminders, risk alerts
-- [ ] **Offline Mode**: View patient data without internet
+### 🧪 Product Polish
+- [ ] Google OAuth (SSO)
+- [ ] Self-service onboarding wizard
+- [ ] Demo Mode button for investors
+- [ ] Form analytics (completion rates)
 
 ---
 
-## 🔮 2026: Horizontal Expansion
+## 🚀 Q2 2026: The Fidelization Stack
 
-**Goal:** Enter broader Mental Health & Medical markets
+**Goal:** Reduce churn to <5% monthly
+
+### 📺 Membership Builder (ADR-005)
+| Feature | Description |
+|---------|-------------|
+| **Netflix-Style Content Library** | Meditations, exercises, guides |
+| **Subscription Tiers** | BASIC, PRO, CENTER with feature gates |
+| **Content Delivery** | Drip-fed materials post-session |
+
+### 💊 Smart Prescriptions (ADR-006)
+| Feature | Description |
+|---------|-------------|
+| **AI-Suggested Content** | Based on session themes |
+| **Adherence Tracking** | Did they watch/complete? |
+| **Therapeutic Homework** | Auto-assigned between sessions |
+
+---
+
+## 🔮 Q3-Q4 2026: Loyalty & Scale
+
+**Goal:** 500 active organizations
+
+### 🪞 The Mirror (ADR-007)
+| Feature | Description |
+|---------|-------------|
+| **Progress Visualization** | "Spotify Wrapped" for therapy |
+| **Before/After Comparisons** | Visual journey evolution |
+| **Patient Portal Access** | Self-service progress view |
+
+### ⏳ Time Capsule (ADR-008)
+| Feature | Description |
+|---------|-------------|
+| **Delayed Messaging** | Letters to future self |
+| **Milestone Triggers** | Send on 90-day anniversary |
+| **Therapeutic Hope** | Emotional anchoring technique |
+
+### 📱 Mobile App
+| Feature | Description |
+|---------|-------------|
+| **React Native** | iOS + Android |
+| **Push Notifications** | Risk alerts, booking reminders |
+| **Offline Mode** | View patient data without internet |
+
+---
+
+## 🌐 2027: Horizontal Expansion
 
 ### New Verticals
-- [ ] **Psychology**: CBT, DBT, Psychoanalysis adaptations
-- [ ] **Psychiatry**: EHR integration, e-prescription support
-- [ ] **Coaching**: Business coaching, life coaching
+- [ ] Psychology (CBT, DBT, Psychoanalysis)
+- [ ] Psychiatry (EHR integration, e-prescription)
+- [ ] Coaching (Business, Life, Executive)
 
 ### AI Co-Pilot
-- [ ] **Real-time Suggestions**: During-session therapeutic prompts
-- [ ] **Transcription**: Live session transcription
-- [ ] **Auto-Documentation**: AI-generated session notes
+- [ ] Real-time session suggestions
+- [ ] Live transcription
+- [ ] Auto-documentation
 
-### Global Expansion
-- [ ] **LATAM**: Spanish-speaking markets
-- [ ] **US**: HIPAA compliance, insurance billing
-- [ ] **EU**: Full GDPR compliance, multilingual
+### Global Markets
+- [ ] LATAM: Full Spanish support ✅
+- [ ] US: HIPAA + insurance billing
+- [ ] EU: GDPR + multilingual
 
 ---
 
@@ -263,33 +250,20 @@
 | Monthly Active Users | 100 | 1,000 | 5,000 |
 | MRR | $2,500 | $25,000 | $100,000 |
 | Patient Records | 1,000 | 25,000 | 100,000 |
-
----
-
-## 📐 Architecture Decision Records
-
-> Future-looking technical proposals that are **documented but deferred** until market validation.
-
-- [ADR-001: Database v2.0](./docs/adr/ADR-001-database-v2-proposal.md) — Hybrid Ledger, Row Level Security (RLS), Biomarkers Schema
-- [ADR-002: Design System](./docs/adr/ADR-002-design-system-proposal.md) — Cyber-Clinical Interface, Dark Mode, Intelligence Rail
-- [ADR-003: Marketing Growth Engine](./docs/adr/ADR-003-marketing-growth-engine.md) — Sanctuary Page, Content Alchemist, Karma Loop
-- [ADR-004: Meta Cloud API](./docs/adr/ADR-004-meta-cloud-api-integration.md) — WhatsApp Business Migration, Instagram Growth Module
-- [ADR-005: Membership Builder](./docs/adr/ADR-005-membership-builder.md) — Subscriptions, Content Library, Smart Prescription (1/3 Fidelization)
-- [ADR-006: Smart Prescriptions](./docs/adr/ADR-006-smart-prescriptions.md) — AI-Suggested Content, Adherence Tracking (2/3 Fidelization)
-- [ADR-007: The Mirror](./docs/adr/ADR-007-the-mirror.md) — Progress Visualization, Spotify Wrapped Reports (3/3 Fidelization)
-- [ADR-008: Time Capsule](./docs/adr/ADR-008-time-capsule.md) — Delayed Messaging, Hope to the Future (4/4 Loyalty)
-- [ADR-009: Trinity Navigation](./docs/adr/ADR-009-trinity-navigation.md) — Micelio/Clínica/Comunidad + Bento Dashboard
+| Churn Rate | 10% | <5% | <3% |
 
 ---
 
 ## 💜 Guiding Principles
 
-1. **Prosperity is Clinical**: An underpaid, burnt-out therapist cannot heal effectively. Our duty is not just to save clicks, but to maximize the practitioner's revenue and vital energy. We believe that financial health fuels clinical impact.
-2. **Agents, Not Tools**: Active Intelligence, not passive software. We don't build tools that wait for input; we build Agents that act. If a task is repetitive—scheduling, billing, transcribing—Kura handles it autonomously 24/7. AI is not a feature; it’s a teammate.
-3. **Institutional Trust**: Hospital-grade security for the independent practitioner. Clinical data is sacred, and privacy is our moat. We enforce military-grade encryption and HIPAA/GDPR compliance by default, future-proofing our users for the B2B/Insurance era.
-4. **Radical Simplicity**: Complexity kills adoption. We prioritize "Fast & Easy" workflows to enable viral growth. Every feature must be intuitive enough to require zero training. If it needs a manual, it’s broken.
+1. **Prosperity is Clinical**: An underpaid, burnt-out therapist cannot heal effectively. Financial health fuels clinical impact.
 
+2. **Agents, Not Tools**: Active Intelligence, not passive software. AI is a teammate, not a feature.
+
+3. **Institutional Trust**: Hospital-grade security for the independent practitioner. HIPAA/GDPR by default.
+
+4. **Radical Simplicity**: If it needs a manual, it's broken. Zero-training required.
 
 ---
 
-*Last updated: December 27, 2025 (v1.1.1 INTELLIGENCE ENGINE)*
+*Last updated: December 27, 2025 (v1.1.3b SENTINEL PULSE)*
