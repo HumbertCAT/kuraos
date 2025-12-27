@@ -5,6 +5,38 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.10] - 2025-12-27
+
+### Added - Journey Cards 2.0 "The Boarding Pass"
+
+Transformed patient journey tracking from boring progress bars to living command centers.
+
+#### Visual Design
+- **"Boarding Pass" UI**: Rich cards with type-based left border gradients
+- **Context Colors**: Psychedelic=Teal, Coaching=Blue, Medical=Risk, Wellness=AI
+- **Collapsible cards** with hover feedback
+
+#### Smart Timeline
+- **✅ Past stages**: Green check icons with solid connector line
+- **🔵 Current stage**: Pulsing brand-colored node with status icon
+- **⚪ Future stages**: Ghost circles with dashed connectors
+- **Tooltips**: Stage labels on hover
+
+#### Action-Oriented
+- **Dynamic "Next Action" area** per journey
+- **Context-aware buttons**: 
+  - "Revisar Bloqueo" (btn-destructive) for BLOCKED
+  - "Reenviar Link Pago" (btn-brand) for AWAITING_PAYMENT
+  - "Ver Diario Clínico" (btn-secondary) for ACTIVE
+- **Quick message button** per journey card
+
+#### Technical
+- Semantic `.badge` classes for status pills
+- `.btn` utilities with tactile feedback
+- Popover-styled tooltips
+
+---
+
 ## [1.0.9] - 2025-12-27
 
 ### Added - The Clinical Roster (High-Density Patient Table)
