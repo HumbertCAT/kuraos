@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { api, API_URL } from '@/lib/api';
 import { useTerminology } from '@/hooks/use-terminology';
 import { useAuth } from '@/context/auth-context';
@@ -47,6 +47,7 @@ export default function DashboardPage() {
     const tGreeting = useTranslations('Greeting');
     const terminology = useTerminology();
     const { user } = useAuth();
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<DashboardData | null>(null);
 
@@ -175,7 +176,7 @@ export default function DashboardPage() {
                 <div className="col-span-12 lg:col-span-8">
                     <FocusSessionCard
                         nextSession={data.nextSession}
-                        onViewFullAgenda={() => window.location.href = '/calendar'}
+                        onViewFullAgenda={() => router.push('/calendar')}
                     />
                 </div>
 

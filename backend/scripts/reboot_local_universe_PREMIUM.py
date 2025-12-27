@@ -29,6 +29,7 @@ from app.db.models import (
     ServiceType,
     ClinicalEntry,
     MessageLog,
+    DailyConversationAnalysis,
     BookingStatus,
     FormTemplate,
 )
@@ -313,6 +314,144 @@ async def seed_forms(db, org_id):
     print(f"   ✅ {len(SEED_FORMS)} Executive Forms crafted")
 
 
+async def seed_monitoring_data(db, org_id, patient_id, patient_name, trend="growth"):
+    """Generate 7 days of DailyConversationAnalysis for Sentinel Pulse visualization.
+
+    Args:
+        trend: "growth" (Marcus: -0.4 → +0.8) or "crisis" (future Javier: +0.5 → -0.6)
+    """
+    print(f"   📊 Seeding monitoring data for {patient_name} ({trend} trend)...")
+
+    # Generate sentiment progression
+    if trend == "growth":
+        sentiments = [-0.4, -0.2, 0.1, 0.3, 0.5, 0.7, 0.8]
+        states = [
+            "Ansioso",
+            "Reflexivo",
+            "Esperanzado",
+            "Optimista",
+            "Claro",
+            "Motivado",
+            "Enfocado",
+        ]
+        summaries = [
+            "Paciente reporta ansiedad pre-retiro. Dificultad para dormir.",
+            "Reflexionando sobre intenciones. Disminuye la ansiedad.",
+            "Sesión de preparación efectiva. Paciente reporta claridad emergente.",
+            "Optimismo creciente. Conexión con propósito fundacional.",
+            "Estado estable. Practicando técnicas de enraizamiento.",
+            "Motivación alta. Lee materiales de integración proactivamente.",
+            "Listo para inmersión. Confianza en el proceso.",
+        ]
+        risk_flags = [["Insomnio Severo"], [], [], [], [], [], []]
+        suggestions = [
+            "Recomendar técnicas de enraizamiento antes de dormir",
+            None,
+            None,
+            None,
+            None,
+            None,
+            "Confirmar detalles logísticos del retiro",
+        ]
+    else:  # crisis
+        sentiments = [0.5, 0.2, 0.0, -0.2, -0.4, -0.5, -0.6]
+        states = [
+            "Motivado",
+            "Pensativo",
+            "Neutral",
+            "Preocupado",
+            "Ansioso",
+            "Aislado",
+            "Crisis",
+        ]
+        summaries = [
+            "Paciente motivado. Esperando confirmación de pago.",
+            "Silencio después de reminder de pago. Menos actividad.",
+            "Respuesta breve. Menciona 'dificultades financieras'.",
+            "Preocupación por no poder completar programa. Tono derrotista.",
+            "Evita responder llamadas. Mensajes cortos y evasivos.",
+            "Aislamiento social aumentado. Menciona 'no merezco esto'.",
+            "Ideación negativa persistente. Requiere intervención inmediata.",
+        ]
+        risk_flags = [
+            [],
+            [],
+            ["Estrés Financiero"],
+            ["Baja Autoestima"],
+            ["Aislamiento"],
+            ["Aislamiento", "Ideación Negativa"],
+            ["Ideación Negativa", "Crisis Inminente"],
+        ]
+        suggestions = [
+            None,
+            "Enviar reminder amable sobre opciones de pago",
+            "Ofrecer plan de pago alternativo",
+            "Llamada de check-in recomendada",
+            "Intervención urgente. Contactar hoy.",
+            "Alerta crítica. Coordinar con equipo de crisis.",
+            "ACCIÓN INMEDIATA: Llamar ahora. Evaluar seguridad.",
+        ]
+
+    # Create 7 days of analyses
+    for i in range(7):
+        days_ago = 6 - i  # 6 days ago → today
+        analysis = DailyConversationAnalysis(
+            organization_id=org_id,
+            patient_id=patient_id,
+            date=datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+            - timedelta(days=days_ago),
+            summary=summaries[i],
+            sentiment_score=sentiments[i],
+            emotional_state=states[i],
+            risk_flags=risk_flags[i],
+            suggestion=suggestions[i],
+            message_count=random.randint(2, 12),
+        )
+        db.add(analysis)
+
+    # CRITICAL FIX: Sync Patient.last_insight_json to match monitoring data
+    # This ensures Pulse (center) and Observatory (sidebar) show coherent data
+    # SCHEMA MUST MATCH PatientInsightsResponse (using snake_case for DB storage)
+    from sqlalchemy import select
+
+    patient_result = await db.execute(select(Patient).where(Patient.id == patient_id))
+    patient = patient_result.scalar_one()
+
+    # Update patient cache with latest sentiment
+    final_sentiment = sentiments[-1]
+
+    if trend == "growth":
+        patient.last_insight_json = {
+            "summary": "Paciente muestra una recuperación excepcional. Sentimiento positivo sostenido en comunicaciones recientes.",
+            "alerts": [],  # No alerts for growth
+            "suggestions": ["Mantener la frecuencia de seguimiento actual."],
+            "engagement_score": 95,
+            "risk_level": "low",
+            "risk_score": final_sentiment,
+            "key_themes": ["Breakthrough", "Claridad", "Liderazgo"],
+            "last_analysis": datetime.utcnow().isoformat(),
+        }
+    else:  # crisis
+        patient.last_insight_json = {
+            "summary": "ALERTA: Descenso agudo en el estado emocional detectado vía WhatsApp. Patrones de evitación y estrés financiero severo.",
+            "alerts": [
+                {"type": "critical", "message": "Ideación Negativa detectada"},
+                {"type": "warning", "message": "Crisis Inminente - Evaluar seguridad"},
+            ],
+            "suggestions": ["ACCIÓN INMEDIATA: Llamar ahora. Evaluar seguridad."],
+            "engagement_score": 20,
+            "risk_level": "high",
+            "risk_score": final_sentiment,
+            "key_themes": ["Crisis Financiera", "Aislamiento", "Riesgo de Fuga"],
+            "last_analysis": datetime.utcnow().isoformat(),
+        }
+
+    patient.last_insight_at = datetime.utcnow()
+    db.add(patient)
+
+    print(f"      ✅ 7 days of monitoring data created")
+
+
 async def seed_patients(db, org_id, service_map, therapist_id):
     print("\n🧬 SEEDING ARCHETYPES...")
 
@@ -437,6 +576,16 @@ async def seed_patients(db, org_id, service_map, therapist_id):
                     currency="EUR",
                 )
                 db.add(booking)
+
+        # MONITORING DATA SEEDING (Marcus = growth, Julian = crisis)
+        if p_data["first_name"] == "Marcus":
+            await seed_monitoring_data(
+                db, org_id, patient.id, "Marcus Thorne", trend="growth"
+            )
+        elif p_data["first_name"] == "Julian":
+            await seed_monitoring_data(
+                db, org_id, patient.id, "Julian Soler", trend="crisis"
+            )
 
         print(
             f"   👤 Created: {p_data['first_name']} {p_data['last_name']} ({p_data['journey_status']})"

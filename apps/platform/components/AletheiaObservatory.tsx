@@ -530,7 +530,7 @@ export default function AletheiaObservatory() {
                     </div>
 
                     {/* KEY THEMES */}
-                    {insights.keyThemes.length > 0 && (
+                    {insights.keyThemes?.length > 0 && (
                         <div className="flex flex-wrap gap-1">
                             {insights.keyThemes.map((theme, i) => (
                                 <span
@@ -544,7 +544,7 @@ export default function AletheiaObservatory() {
                     )}
 
                     {/* ALERTS */}
-                    {insights.alerts.length > 0 && (
+                    {insights.alerts?.length > 0 && (
                         <div className={`p-3 rounded border ${insights.alerts.some(a => a.type === 'critical')
                             ? 'bg-risk/10 border-risk/20'
                             : 'bg-warning/10 border-warning/20'

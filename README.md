@@ -227,4 +227,4 @@ KURA OS is crafted with the same care and intentionality that you bring to your 
 
 ---
 
-*© 2024-2025 KURA OS. All rights reserved.*
+*© 2025-2026 KURA OS. All rights reserved.*

@@ -20,6 +20,7 @@ export type PatientInsightsResponse = {
   suggestions: string[];
   engagementScore: number;
   riskLevel: 'low' | 'medium' | 'high';
+  riskScore?: number | null;  // Exact score from DB (-1.0 to +1.0)
   keyThemes: string[];
   lastAnalysis: string | null;
   cached: boolean;
@@ -34,6 +35,7 @@ export type AletheiaUIData = PatientInsightsResponse & {
 
 /**
  * Convert backend riskLevel to numeric score for gauge
+ * DEPRECATED: Use riskScore from API directly when available
  */
 function riskLevelToScore(level: string): number {
   switch (level) {
@@ -82,9 +84,10 @@ export async function getPatientInsights(
     const data: PatientInsightsResponse = await response.json();
 
     // Transform to UI format
+    // DIRECT LINE: Use exact riskScore from API if available, fallback to conversion only if null
     return {
       ...data,
-      riskScore: riskLevelToScore(data.riskLevel),
+      riskScore: data.riskScore ?? riskLevelToScore(data.riskLevel),  // Prefer real score
       riskTrend: inferTrend(data.alerts),
     };
   } catch (error) {

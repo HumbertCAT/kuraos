@@ -13,6 +13,8 @@ import JourneyStatusCard from '@/components/JourneyStatusCard';
 import AletheiaHUD from '@/components/AletheiaHUD';
 import MonitoringTab from '@/components/MonitoringTab';
 import SilentErrorBoundary from '@/components/SilentErrorBoundary';
+import PatientHero from '@/components/patient/PatientHero';
+import SentimentPulseWidget from '@/components/SentimentPulseWidget';
 import { usePatientStore } from '@/stores/patient-store';
 
 export default function PatientDetailPage() {
@@ -266,7 +268,7 @@ export default function PatientDetailPage() {
           <span className="font-medium">{tCommon('aletheiaAnalyzing', { count: processingCount })}</span>
         </div>
       )}
-      {/* Header */}
+      {/* Header - PatientHero v1.0 */}
       <div className="mb-6">
         {/* Top row: Back + Nav */}
         <div className="flex items-center gap-4 mb-4">
@@ -311,71 +313,18 @@ export default function PatientDetailPage() {
           </div>
         </div>
 
-        {/* Main row: Avatar + Name + Edit */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {/* Profile Photo */}
-            {patient.profile_image_url ? (
-              <img
-                src={patient.profile_image_url}
-                alt={`${patient.first_name} ${patient.last_name}`}
-                className="w-[72px] h-[72px] rounded-full object-cover border-2 border-border-subtle"
-              />
-            ) : (
-              <div className="w-[72px] h-[72px] rounded-full bg-brand/20 flex items-center justify-center text-brand text-2xl font-bold">
-                {patient.first_name?.[0]}{patient.last_name?.[0]}
-              </div>
-            )}
-            <h1 className="text-2xl font-bold text-foreground ">
-              {patient.first_name} {patient.last_name}
-            </h1>
-          </div>
-          <Link
-            href={`/patients/${patient.id}/edit`}
-            className="px-4 py-2 border border-border rounded-xl hover:bg-accent text-muted-foreground"
-          >
-            {t('edit')}
-          </Link>
-        </div>
-
-        {/* Actions row: Email, Call, WhatsApp, Send Form */}
-        <div className="flex gap-2 mt-3">
-          {patient.email && (
-            <a
-              href={`mailto:${patient.email}`}
-              className="inline-flex items-center gap-1 px-3 py-1.5 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80 transition-colors"
-            >
-              📧 {tCommon('email')}
-            </a>
-          )}
-          {patient.phone && (
-            <>
-              <a
-                href={`tel:${patient.phone}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 text-blue-400 rounded-lg text-sm font-medium hover:bg-blue-500/20 transition-colors"
-              >
-                📞 {tCommon('call')}
-              </a>
-              <a
-                href={`https://wa.me/${patient.phone.replace(/[^0-9]/g, '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-sm font-medium hover:bg-emerald-500/20 transition-colors"
-              >
-                💬 {tCommon('whatsapp')}
-              </a>
-            </>
-          )}
-          <button
-            onClick={() => setShowSendFormModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ai/10 text-ai rounded-lg text-sm font-medium hover:bg-ai/20 transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-            </svg>
-            {tCommon('sendForm')}
-          </button>
-        </div>
+        {/* PatientHero Component */}
+        <PatientHero
+          patient={patient}
+          stats={{
+            totalSessions: entries.length,
+            nextSession: patientBookings.find(b => b.status === 'CONFIRMED')?.start_time
+              ? new Date(patientBookings.find(b => b.status === 'CONFIRMED')?.start_time).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+              : undefined,
+            engagement: 85, // TODO: Calculate from actual data
+          }}
+          onSendForm={() => setShowSendFormModal(true)}
+        />
       </div>
 
       {/* AletheIA HUD - Clinical Intelligence Cockpit */}
@@ -391,35 +340,49 @@ export default function PatientDetailPage() {
         }}
       />
 
-      {/* Journey Status Card (v0.9.1 - Investor Demo) */}
-      {
-        patient.journey_status && Object.keys(patient.journey_status).length > 0 && (
-          <JourneyStatusCard journeyStatus={patient.journey_status} />
-        )
-      }
+      {/* === PULSE LAYOUT: 2-COLUMN GRID === */}
+      {patient.journey_status && Object.keys(patient.journey_status).length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+          {/* LEFT: Journey (Structure) */}
+          <div className="lg:col-span-2">
+            <JourneyStatusCard journeyStatus={patient.journey_status} />
+          </div>
 
-      {/* Tab Navigation */}
-      <div className="mb-6 border-b border-border-subtle">
-        <nav className="flex gap-4" aria-label="Patient tabs">
+          {/* RIGHT: Sentiment Pulse (Flow) */}
+          <div className="lg:col-span-3">
+            <SentimentPulseWidget
+              patientId={patientId}
+              tier={
+                // Demo tier logic: Elena shows PRO upsell, others CENTER
+                patient.email === 'elena.art@design.example.com' ? 'PRO' : 'CENTER'
+              }
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Segmented Tab Navigation */}
+      <div className="mb-6">
+        <div className="bg-muted/50 p-1 rounded-xl inline-flex gap-1">
           <button
             onClick={() => setActiveTab('journal')}
-            className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer ${activeTab === 'journal'
-              ? 'border-brand text-brand'
-              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all active:scale-95 ${activeTab === 'journal'
+              ? 'bg-card shadow-sm text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
               }`}
           >
             📝 {tCommon('clinicalJournal')}
           </button>
           <button
             onClick={() => setActiveTab('monitoring')}
-            className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors cursor-pointer flex items-center gap-2 ${activeTab === 'monitoring'
-              ? 'border-brand text-brand'
-              : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all active:scale-95 ${activeTab === 'monitoring'
+              ? 'bg-card shadow-sm text-foreground'
+              : 'text-muted-foreground hover:text-foreground'
               }`}
           >
             📊 {tCommon('monitoring')}
           </button>
-        </nav>
+        </div>
       </div>
 
       {/* Tab Content */}

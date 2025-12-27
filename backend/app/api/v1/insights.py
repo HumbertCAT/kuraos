@@ -8,7 +8,7 @@ Includes caching to avoid regenerating on every page load.
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, AliasChoices
 from typing import List, Optional
 from datetime import datetime, timedelta, timezone
 
@@ -28,17 +28,45 @@ class AlertItem(BaseModel):
 
 
 class PatientInsightsResponse(BaseModel):
+    model_config = {
+        "populate_by_name": True,  # Accept field name OR alias on INPUT
+    }
+
     summary: str
     alerts: List[AlertItem]
     suggestions: List[str]
-    engagementScore: int
-    riskLevel: str  # "low", "medium", "high"
-    keyThemes: List[str]
-    lastAnalysis: Optional[str] = None
+    # Accept both snake_case (new seed) and camelCase (old AI cache) on INPUT
+    # Output always as camelCase via serialization_alias
+    engagement_score: int = Field(
+        validation_alias=AliasChoices("engagement_score", "engagementScore"),
+        serialization_alias="engagementScore",
+    )
+    risk_level: str = Field(
+        validation_alias=AliasChoices("risk_level", "riskLevel"),
+        serialization_alias="riskLevel",
+    )
+    risk_score: Optional[float] = Field(
+        default=None,
+        validation_alias=AliasChoices("risk_score", "riskScore"),
+        serialization_alias="riskScore",
+    )
+    key_themes: List[str] = Field(
+        validation_alias=AliasChoices("key_themes", "keyThemes"),
+        serialization_alias="keyThemes",
+    )
+    last_analysis: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("last_analysis", "lastAnalysis"),
+        serialization_alias="lastAnalysis",
+    )
     cached: bool = False
 
 
-@router.post("/patient/{patient_id}", response_model=PatientInsightsResponse)
+@router.post(
+    "/patient/{patient_id}",
+    response_model=PatientInsightsResponse,
+    response_model_by_alias=True,
+)
 async def get_patient_insights(
     patient_id: UUID,
     refresh: bool = Query(False, description="Force regenerate insights"),
@@ -199,12 +227,28 @@ def _generate_fallback_insights(patient, entries, bookings) -> PatientInsightsRe
         engagement -= 10
     engagement = max(0, min(100, engagement))
 
-    # Determine risk level
-    risk = "low"
-    if any(a.type == "critical" for a in alerts):
-        risk = "high"
-    elif any(a.type == "warning" for a in alerts):
-        risk = "medium"
+    # Determine risk level and score
+    # CRITICAL: Check if patient already has risk_score from monitoring data
+    if patient.last_insight_json and "risk_score" in patient.last_insight_json:
+        # Use the exact score from monitoring/seeded data
+        risk_score = patient.last_insight_json["risk_score"]
+        # Infer risk level from score
+        if risk_score < -0.3:
+            risk = "high"
+        elif risk_score < 0:
+            risk = "medium"
+        else:
+            risk = "low"
+    else:
+        # Fallback: calculate from alerts (old behavior)
+        risk = "low"
+        risk_score = 0.5  # Default low risk
+        if any(a.type == "critical" for a in alerts):
+            risk = "high"
+            risk_score = -0.9
+        elif any(a.type == "warning" for a in alerts):
+            risk = "medium"
+            risk_score = -0.4
 
     # Generate summary
     if any(a.type == "critical" for a in alerts):
@@ -224,10 +268,11 @@ def _generate_fallback_insights(patient, entries, bookings) -> PatientInsightsRe
         summary=summary,
         alerts=alerts,
         suggestions=suggestions[:3],
-        engagementScore=engagement,
-        riskLevel=risk,
-        keyThemes=key_themes,
-        lastAnalysis=datetime.utcnow().isoformat() if entries else None,
+        engagement_score=engagement,
+        risk_level=risk,
+        risk_score=risk_score,
+        key_themes=key_themes,
+        last_analysis=datetime.utcnow().isoformat() if entries else None,
         cached=False,
     )
 

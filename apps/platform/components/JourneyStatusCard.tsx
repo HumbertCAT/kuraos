@@ -27,12 +27,26 @@ const JOURNEY_DEFINITIONS: Record<string, {
     type: 'psychedelic' | 'coaching' | 'medical' | 'wellness' | 'default';
     stages: string[];
 }> = {
-    retreat_ibiza_2025: {
-        name: "Retiro Ibiza 2025",
+    retreat_ibiza: {
+        name: "The Sovereign Mind Protocol",
         emoji: "🧬",
-        description: "Ceremonia Grupal Psilocibina",
+        description: "Retiro Ibiza 2025",
         type: 'psychedelic',
-        stages: ["AWAITING_SCREENING", "BLOCKED_MEDICAL", "PREPARATION_PHASE", "AWAITING_PAYMENT", "CONFIRMED", "COMPLETED"],
+        stages: ["APPLICATION", "SCREENING", "PREPARATION", "IMMERSION", "INTEGRATION", "ALUMNI"],
+    },
+    architects_circle: {
+        name: "Architects' Circle Membership",
+        emoji: "🏛️",
+        description: "Membresía ejecutiva exclusiva",
+        type: 'coaching',
+        stages: ["ONBOARDING", "ACTIVE_MEMBER", "ALUMNI"],
+    },
+    neuro_repatterning: {
+        name: "Neuro-Repatterning Strategy",
+        emoji: "🧠",
+        description: "Estrategia de reprogramación neural",
+        type: 'coaching',
+        stages: ["DISCOVERY", "AWAITING_PAYMENT", "CONFIRMED", "COMPLETED"],
     },
     microdosis_fadiman: {
         name: "Programa Microdosis",
@@ -170,6 +184,17 @@ const STATUS_CONFIG: Record<string, {
     PREPARATION_PHASE: { label: "En preparación", shortLabel: "Preparación", category: 'active', icon: Sparkles },
     ANALYSIS_IN_PROGRESS: { label: "Análisis en progreso", shortLabel: "Análisis", category: 'active', icon: Sparkles },
     ONBOARDING: { label: "Onboarding activo", shortLabel: "Onboarding", category: 'active', icon: Play },
+
+    // Sovereign Mind Protocol stages
+    APPLICATION: { label: "Solicitud recibida", shortLabel: "Solicitud", category: 'waiting', icon: ClipboardCheck },
+    SCREENING: { label: "Evaluación en curso", shortLabel: "Screening", category: 'active', icon: Sparkles },
+    PREPARATION: { label: "Fase de preparación", shortLabel: "Preparación", category: 'active', icon: Sparkles },
+    IMMERSION: { label: "Inmersión activa", shortLabel: "Inmersión", category: 'active', icon: Sparkles },
+    INTEGRATION: { label: "Integración post-ceremonia", shortLabel: "Integración", category: 'active', icon: Sparkles },
+    ALUMNI: { label: "Alumni del programa", shortLabel: "Alumni", category: 'success', icon: GraduationCap },
+    ACTIVE_MEMBER: { label: "Miembro activo", shortLabel: "Activo", category: 'success', icon: UserCheck },
+    DISCOVERY: { label: "Descubrimiento inicial", shortLabel: "Discovery", category: 'active', icon: Sparkles },
+
     DEEP_DIVE: { label: "Fase intensa", shortLabel: "Deep Dive", category: 'active', icon: Sparkles },
     ACTIVE_STUDENT: { label: "Estudiante activo", shortLabel: "Activo", category: 'success', icon: UserCheck },
     READY_FOR_SESSION: {
@@ -317,9 +342,9 @@ function JourneyCard({ journeyKey, currentStatus }: JourneyCardProps) {
                                         ) : isCurrentStage ? (
                                             // Current: Pulsing ring
                                             <div className={`w-5 h-5 rounded-full flex items-center justify-center ${statusConfig.category === 'blocked' ? 'bg-risk' :
-                                                    statusConfig.category === 'warning' ? 'bg-warning' :
-                                                        statusConfig.category === 'success' ? 'bg-success' :
-                                                            'bg-brand animate-pulse'
+                                                statusConfig.category === 'warning' ? 'bg-warning' :
+                                                    statusConfig.category === 'success' ? 'bg-success' :
+                                                        'bg-brand animate-pulse'
                                                 }`}>
                                                 <Icon className="w-3 h-3 text-white" />
                                             </div>
@@ -339,8 +364,8 @@ function JourneyCard({ journeyKey, currentStatus }: JourneyCardProps) {
                                     {/* Connector Line */}
                                     {index < journeyDef.stages.length - 1 && (
                                         <div className={`flex-1 h-0.5 mx-1 ${isPastStage && !isBlockedPath
-                                                ? 'bg-success'
-                                                : 'bg-muted-foreground/20'
+                                            ? 'bg-success'
+                                            : 'bg-muted-foreground/20'
                                             } ${isFutureStage ? 'border-dashed border-t border-muted-foreground/30 bg-transparent h-0' : ''}`} />
                                     )}
                                 </div>
@@ -352,9 +377,9 @@ function JourneyCard({ journeyKey, currentStatus }: JourneyCardProps) {
                     <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">Inicio</span>
                         <span className={`font-medium ${statusConfig.category === 'blocked' ? 'text-risk' :
-                                statusConfig.category === 'warning' ? 'text-warning' :
-                                    statusConfig.category === 'success' ? 'text-success' :
-                                        'text-brand'
+                            statusConfig.category === 'warning' ? 'text-warning' :
+                                statusConfig.category === 'success' ? 'text-success' :
+                                    'text-brand'
                             }`}>
                             {isTerminal
                                 ? (statusConfig.category === 'success' ? '✓ Completado' : '✗ Bloqueado')
