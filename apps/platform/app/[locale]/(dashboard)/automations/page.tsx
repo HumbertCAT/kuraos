@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronLeft, Zap, Power, Trash2, Download, Sparkles, MessageSquarePlus, Bot, Settings } from 'lucide-react';
+import { Zap, Power, Trash2, Download, Sparkles, MessageSquarePlus, Bot, Settings, BarChart3 } from 'lucide-react';
 import IconRenderer from '@/components/IconRenderer';
 
 import { API_URL } from '@/lib/api';
@@ -211,23 +211,15 @@ export default function AutomationsPage() {
         <div className="max-w-4xl mx-auto">
             {/* Header */}
             <div className="mb-8">
-                <button
-                    onClick={() => router.push(`/${locale}/settings`)}
-                    className="flex items-center gap-2 text-foreground/60 hover:text-foreground mb-4 transition-colors"
-                >
-                    <ChevronLeft className="w-4 h-4" />
-                    Volver a Configuración
-                </button>
-
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-200">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-200 dark:shadow-violet-900/30">
                         <Bot className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                        <h1 className="type-h1 bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
                             Equipo de Agentes Clínicos
                         </h1>
-                        <p className="text-foreground/60">Protocolos inteligentes de automatización clínica</p>
+                        <p className="type-body text-muted-foreground">Protocolos inteligentes de automatización clínica</p>
                     </div>
                 </div>
             </div>
@@ -319,10 +311,16 @@ export default function AutomationsPage() {
                                         <IconRenderer name={rule.icon} className="w-6 h-6" />
                                     </div>
 
-                                    {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-foreground text-lg">{rule.name}</h3>
-                                        <p className="text-foreground/60 text-sm mt-1">{rule.description}</p>
+                                    {/* Content - Clickable to navigate to stats */}
+                                    <div
+                                        className="flex-1 min-w-0 cursor-pointer group"
+                                        onClick={() => router.push(`/${locale}/automations/${rule.id}`)}
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="type-ui font-semibold text-foreground text-lg group-hover:text-ai transition-colors">{rule.name}</h3>
+                                            <BarChart3 className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </div>
+                                        <p className="type-body text-muted-foreground text-sm mt-1">{rule.description}</p>
                                         <p className="text-xs text-muted-foreground mt-2">
                                             Habilidad: {triggerLabels[rule.trigger_event] || rule.trigger_event}
                                         </p>
