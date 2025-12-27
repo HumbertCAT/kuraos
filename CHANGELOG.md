@@ -5,6 +5,30 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.13] - 2025-12-27
+
+### Added - Dashboard 2.0 "Past, Present, Future"
+
+Complete Dashboard refactor with new philosophy: focus on **The Present** moment.
+
+#### Part 1: Layout & Focus Card
+- **FocusSessionCard**: Hero showing next session with patient avatar, Aletheia insights, "Preparar Sesión" CTA
+- **Free Time State**: Coffee cup icon, "Agenda despejada" with quick links
+- **Glass UI**: `backdrop-blur-sm` on hero section
+
+#### Part 2: Metrics & Pipeline
+- **VitalSignCard**: Now with trend indicators (📈📉➖), `font-mono` values
+- **New Metrics**: "Tasa de Ocupación 85%" replaces static client count
+- **PipelineVelocity**: 3-stage funnel (Nuevos → Contactados → Cierre) with progress bar
+
+#### Part 3: Active Journeys Widget
+- **Mini-Boarding Pass** cards with colored left borders by journey type
+- **Status badges**: BLOCKED (red), PAYMENT_PENDING (amber), ACTIVE (green)
+- **Priority queue**: Actionable list of journeys needing attention
+- **Tactile**: `active:scale-[0.98]`, hover arrow reveal
+
+---
+
 ## [1.0.12.1] - 2025-12-27
 
 ### Added - Logic & Flows to Design System
