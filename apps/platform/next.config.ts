@@ -18,3 +18,4 @@ const nextConfig = {
 
 // Compose plugins: first MDX, then i18n
 export default withNextIntl(withMDX(nextConfig));
+// Force rebuild Sat Dec 27 03:46:18 CET 2025
