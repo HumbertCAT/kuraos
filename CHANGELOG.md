@@ -38,6 +38,12 @@ This release consolidates a full night of intensive development (23:30 → 03:06
 - `ActiveJourneysWidget` - Mini-boarding pass cards
 - `VitalSignCard` - Metrics with trend indicators
 
+#### 🌐 Full Bilingual Support (EN/ES)
+- **Navigation**: CONNECT/PRACTICE/GROW vs ATRAER/SERVIR/CRECER
+- **Greeting**: "Good morning, {name}" vs "Buenos días, {name}"
+- **Dashboard widgets**: All labels, badges, and status texts translated
+- **TrinityNav**: Section titles, link labels, search placeholder
+
 ---
 
 ## [1.0.14] - 2025-12-27
