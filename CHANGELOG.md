@@ -820,10 +820,39 @@ KURA OS is now live! A complete operating system for therapists to manage their 
 ### Automation & DevEx
 - **Startup Scripts**: Automated dev environment scripts.
 - **Docker Compose**: Enhanced with stripe-webhook service.
+---
+
+## [0.8.1] - 2025-12-11
+
+### Lead Automation
+- **AI Clinical Agents Alpha**: First playbook automation system.
+- **Memory Handover**: Lead notes preserved in patient profile on conversion.
 
 ---
 
-## [0.6.1] - 2024-12-10
+## [0.8.0] - 2025-12-10
+
+### Lead CRM
+- **Lead Fork Architecture**: Separated Leads (CRM) from Patients (Clinical).
+- **Kanban Board**: Drag-drop leads through NEW → CONTACTED → QUALIFIED.
+- **Speed-to-Lead**: WhatsApp integration for immediate engagement.
+- **Ghost Detector**: Visual urgency indicators for stale leads.
+- **Auto-Conversion**: Public bookings auto-convert leads to patients.
+
+---
+
+## [0.7.0] - 2025-12-09
+
+### Booking & Payments
+- **Service Management**: 1:1 and Group session types.
+- **Availability Schedules**: Weekly schedules with date overrides.
+- **Public Booking Wizard**: 4-step flow (service → date → payment → confirm).
+- **Stripe Integration**: Checkout Sessions + Webhooks.
+- **Google Calendar Sync**: Bidirectional sync for availability.
+
+---
+
+## [0.6.1] - 2025-12-08
 
 ### Governance UI
 - **SuperAdmin Panel**: System settings and org management.
@@ -832,7 +861,7 @@ KURA OS is now live! A complete operating system for therapists to manage their 
 
 ---
 
-## [0.6.0] - 2024-12-10
+## [0.6.0] - 2025-12-08
 
 ### Governance Architecture
 - **Subscription Tiers**: FREE, PRO, TRIAL with patient limits.
@@ -841,7 +870,7 @@ KURA OS is now live! A complete operating system for therapists to manage their 
 
 ---
 
-## [0.5.5] - 2024-12-10
+## [0.5.5] - 2025-12-07
 
 ### Async AI Analysis
 - **Async Processing**: Background task for AI analysis with polling.
@@ -849,7 +878,7 @@ KURA OS is now live! A complete operating system for therapists to manage their 
 
 ---
 
-## [0.5.0] - 2024-12-09
+## [0.5.0] - 2025-12-06
 
 ### AI Observatory & Multimedia
 - **Multiple Analyses**: Support for multiple AI insights per entry.
@@ -858,7 +887,7 @@ KURA OS is now live! A complete operating system for therapists to manage their 
 
 ---
 
-## [0.4.0] - 2024-12-09
+## [0.4.0] - 2025-12-05
 
 ### Clinical Journal
 - **ClinicalEntry Model**: Polymorphic entries (Note, Audio, Doc, AI).
@@ -866,7 +895,7 @@ KURA OS is now live! A complete operating system for therapists to manage their 
 
 ---
 
-## [0.3.0] - 2024-12-09
+## [0.3.0] - 2025-12-04
 
 ### Patient Management
 - **CRUD Operations**: Full patient profile management.
@@ -874,94 +903,65 @@ KURA OS is now live! A complete operating system for therapists to manage their 
 
 ---
 
-## [0.2.0] - 2024-12-09
+## [0.2.0] - 2025-12-03
 
 ### Identity & Persistence
 - **Migrations**: Alembic async setup.
 - **JWT Auth**: HttpOnly cookies, full auth flow.
 - **i18n**: Locale-aware routing (EN/ES).
 
-
-### Project Scaffold
-- **Monorepo**: Next.js + FastAPI + Docker structure.
-- **Authentication**: JWT, HttpOnly cookies, RBAC.
-- **i18n**: Multi-language support foundation.
-
 ---
 
-## [0.1.0] - 2024-09-15 🌱 GENESIS
+## [0.1.0] - 2025-12-01 🌱 GENESIS
 
 ### 🪐 PsychedelicTherapistOS is Born
 
-> The project originally began as **PsychedelicTherapistOS**, a specialized operating system designed for the unique needs of psychedelic-assisted therapy.
+> The project began on **December 1st, 2025** with Google Antigravity. In just 27 days, we built a complete Clinical Operating System from scratch.
 
 **The Problem We Solved:**
 - Traditional medical software lacked flexibility for non-linear therapeutic journeys
 - Audio-first clinical notes were unsupported
 - Real-time risk triage during integration phases was missing
-- Patient journey tracking was afterthought, not core
+- Patient journey tracking was an afterthought, not core
 
 **The Solution:**
-- **Monorepo Architecture**: Next.js 14 + FastAPI unified "Cockpit"
+- **Monorepo Architecture**: Next.js 15 + FastAPI unified "Cockpit"
 - **Multimedia Clinical Entries**: Photos, audio recordings, rich text
 - **Patient Journey Timeline**: Emphasized therapeutic arc over appointments
 - **Target Vertical**: Psychedelic-assisted therapy, retreats, integration
 
 ---
 
-## 📜 The Evolution: v0.1.0 → v0.8.2
+## 📜 The Miracle Month: December 2025
 
-### v0.1.x - v0.2.x: Foundation (Sep-Oct 2024)
-- **Database Design**: PostgreSQL + Alembic migrations
-- **Auth System**: JWT with HttpOnly cookies, full auth flow
-- **i18n Setup**: Locale-aware routing (EN/ES/CA/IT)
-- **Initial Models**: Organization, User, Patient scaffolding
+> Built entirely with **Google Antigravity** in < 30 days.
 
-### v0.3.x: Patient Core (Oct 2024)
-- **CRUD Operations**: Full patient profile management
-- **Search & Filter**: Patient list with basic filtering
-- **Profile Data**: Birth data, language preferences, consent tracking
+### Week 1 (Dec 1-7): Foundation
+- **v0.1.x-v0.2.x**: Database design, JWT auth, i18n (EN/ES/CA/IT)
+- **v0.3.x**: Patient CRUD, search, profile data
+- **v0.4.x-v0.5.x**: Clinical Journal, AI Observatory Alpha
 
-### v0.4.x: Clinical Journal (Nov 2024)
-- **ClinicalEntry Model**: Polymorphic entries (Note, Audio, Document, AI Analysis)
-- **Rich Text Composer**: TipTap-powered Notion-like editor
-- **File Uploads**: Backend storage for multimedia attachments
+### Week 2 (Dec 8-12): Business Layer
+- **v0.6.x**: Governance & Subscription tiers
+- **v0.7.x**: Booking & Payments (Stripe)
+- **v0.8.x**: Lead CRM & Kanban board
+- **v0.9.0**: Rebranding to KURA OS (kuraos.ai)
 
-### v0.5.x: AI Observatory Alpha (Nov 2024)
-- **Multiple Analyses**: Support for multiple AI insights per entry
-- **Multimedia Input**: Audio recording and photo capture in-browser
-- **Timeline Redesign**: Modern clinical timeline UI
-- **Async Processing**: Background task for AI analysis with polling
-- **Full-Context Audio**: Enhanced prompts for audio session synthesis
+### Week 3 (Dec 12-20): Production Launch
+- **v1.0.0**: Public Launch 🎉
+- **v1.0.1-v1.0.3**: Black Box backups, Cyber-Clinical UI
 
-### v0.6.x: Governance & Tiers (Dec 2024)
-- **Subscription Tiers**: FREE, PRO, TRIAL with patient limits
-- **AI Credit System**: Cost tracking for text/audio/image analysis
-- **Dynamic Config**: Database-driven system settings
-- **SuperAdmin Panel**: System settings and org management
-- **Premium Settings UI**: Profile card, subscription status, AI preferences
-
-### v0.7.x: Booking & Payments (Dec 2024 - Feb 2025)
-- **Service Management**: 1:1 and Group session types
-- **Availability Schedules**: Weekly schedules with date overrides
-- **Public Booking Wizard**: 4-step flow (service → date → payment → confirm)
-- **Stripe Integration**: Checkout Sessions + Webhooks
-- **Google Calendar Sync**: Bidirectional sync for availability
-
-### v0.8.0 - v0.8.1: Lead CRM & Automation (Mar-Aug 2025)
-- **Lead Fork Architecture**: Separated Leads (CRM) from Patients (Clinical)
-- **Kanban Board**: Drag-drop leads through NEW → CONTACTED → QUALIFIED
-- **Speed-to-Lead**: WhatsApp integration for immediate engagement
-- **Ghost Detector**: Visual urgency indicators for stale leads
-- **Auto-Conversion**: Public bookings auto-convert leads to patients
-- **Memory Handover**: Lead notes preserved in patient profile
-- **AI Clinical Agents Alpha**: First playbook automation system
+### Week 4 (Dec 21-27): THE COMMAND CENTER
+- **v1.0.4-v1.0.6**: Theme Engine, AletheIA Observatory, Security
+- **v1.0.7-v1.0.9**: Clean Room, Design System, Clinical Roster
+- **v1.0.10-v1.0.12**: Journey Cards, Neural Flow UI
+- **v1.1.0**: Dashboard 3.0 "The Command Center" 🚀
 
 ---
 
-## 🦋 The Rebranding Pivot (v0.9.0 - Aug 2025)
+## 🦋 The Rebranding Pivot (v0.9.0)
 
-> In mid-2025, **PsychedelicTherapistOS** became **KURA OS** (kuraos.ai).
+> **PsychedelicTherapistOS** became **KURA OS** (kuraos.ai).
 
 **Rationale:**
 - While psychedelic vertical remained the "North Star," the name "KURA" provided:
@@ -969,22 +969,9 @@ KURA OS is now live! A complete operating system for therapists to manage their 
   - Versatility for broader practitioner types
   - Domain availability (kuraos.ai)
 
-**Scope Expansion:**
-- From "Clinical ERP" to full-stack business solution
-- Lead CRM became first-class feature
-- AI Agents transitioned from passive to active (drafting, re-engaging)
-
-**Architectural Guardrail (v0.9.9):**
-- Structural separation between Leads and Patients
-- Initial inquiries route through `leads` table
-- Clinical database protected from non-therapeutic contacts
-- HIPAA/GDPR integrity preserved
-
 ---
 
 ## 🛡️ The AletheIA Philosophy
-
-A core tenet established during the early development:
 
 - **Risk Assessment**: Not just medical safety, but clinical insight
 - **Human-in-the-Loop**: "Draky Mode" (Draft Only) for therapeutic sovereignty
@@ -992,7 +979,18 @@ A core tenet established during the early development:
 
 ---
 
-*This changelog chronicles the journey from a specialized therapy tool to a comprehensive Clinical Operating System.*
+## 🤖 Built with Google Antigravity
 
-*© 2024-2025 KURA OS. All rights reserved.*
+From zero to production in 27 days:
+- 40+ database models
+- 100+ API endpoints
+- 50+ React components
+- 10+ AI integrations
+- Full Stripe/Twilio/Google Calendar integration
+- HIPAA-ready architecture
 
+*A testament to what's possible when human vision meets AI engineering.*
+
+---
+
+*© 2025 KURA OS. All rights reserved.*
