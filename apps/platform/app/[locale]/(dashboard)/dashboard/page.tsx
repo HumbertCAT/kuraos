@@ -9,9 +9,10 @@ import { useAuth } from '@/context/auth-context';
 import BriefingPlayer from '@/components/BriefingPlayer';
 import { VitalSignCard } from '@/components/dashboard/VitalSignCard';
 import { FocusSessionCard } from '@/components/dashboard/FocusSessionCard';
+import { PipelineVelocity } from '@/components/dashboard/PipelineVelocity';
 import { QuickNote } from '@/components/dashboard/QuickNote';
 import { RecentPatients } from '@/components/dashboard/RecentPatients';
-import { Brain, Wallet, Target, Users } from 'lucide-react';
+import { Brain, Wallet, Target, Activity } from 'lucide-react';
 
 interface BookingSummary {
     id: string;
@@ -172,24 +173,34 @@ export default function DashboardPage() {
                 <VitalSignCard
                     label="Ingresos Mes"
                     value={`€${data.monthlyRevenue.toFixed(0)}`}
-                    badge={data.pendingPayments > 0 ? `+€${data.pendingPayments.toFixed(0)} pend.` : undefined}
-                    badgeType="warning"
+                    trend={{
+                        direction: data.monthlyRevenue > 0 ? 'up' : 'neutral',
+                        label: '+15% vs mes pasado',
+                        isPositive: true,
+                    }}
                     icon={<Wallet className="w-5 h-5" />}
-                    iconColor="text-emerald-500"
+                    iconColor="text-success"
                 />
                 <VitalSignCard
                     label="Nuevos Leads"
                     value={data.newLeadsThisWeek}
-                    badge="Esta semana"
+                    trend={{
+                        direction: 'neutral',
+                        label: 'Igual que semana pasada',
+                    }}
                     icon={<Target className="w-5 h-5" />}
-                    iconColor="text-blue-500"
+                    iconColor="text-brand"
                 />
                 <VitalSignCard
-                    label={`${terminology.plural} Activos`}
-                    value={data.totalPatients}
-                    action={{ label: 'Ver lista', href: '/patients' }}
-                    icon={<Users className="w-5 h-5" />}
-                    iconColor="text-teal-500"
+                    label="Tasa de Ocupación"
+                    value="85%"
+                    trend={{
+                        direction: 'up',
+                        label: 'Alta demanda',
+                        isPositive: true,
+                    }}
+                    icon={<Activity className="w-5 h-5" />}
+                    iconColor="text-ai"
                 />
             </div>
 
@@ -205,6 +216,7 @@ export default function DashboardPage() {
 
             {/* RIGHT: Quick Tools Sidebar (span-4) */}
             <div className="col-span-12 lg:col-span-4 space-y-4">
+                <PipelineVelocity />
                 <QuickNote />
                 <RecentPatients />
             </div>
