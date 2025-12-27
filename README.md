@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.1.3b-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.4-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 [![License](https://img.shields.io/badge/license-Proprietary-blue.svg)]()
 
@@ -257,6 +257,7 @@ kuraos/
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 
 ### Completed
+- [x] **v1.1.4** - HELP CENTER: Documentation Library + Sidebar Navigation (December 2025)
 - [x] **v1.1.3b** - SENTINEL PULSE: Real-time emotional monitoring + Data Coherence (December 2025)
 - [x] **v1.1.3** - CLINICAL CANVAS: 2-column patient profile layout (December 2025)
 - [x] **v1.1.2** - GOLDEN SEED: Premium demo archetypes (December 2025)
@@ -274,9 +275,12 @@ See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 ### Coming Soon
 - [ ] Google OAuth Integration (SSO)
 - [ ] WhatsApp Business API (Meta Cloud)
+- [ ] Onboarding Wizard (self-service setup)
+- [ ] Live Components in MDX (dynamic documentation)
 - [ ] Mobile App (React Native)
 - [ ] The Mirror: Patient-facing progress visualization
 - [ ] Time Capsule: Delayed messaging system
+
 
 ---
 

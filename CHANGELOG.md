@@ -5,6 +5,47 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2025-12-27 📚 HELP CENTER "THE KNOWLEDGE LIBRARY"
+
+### 🎉 Documentation Reinvented
+
+This release transforms an error 500 into a complete knowledge library with professional documentation architecture.
+
+#### 🛠 Infrastructure Fix (Critical)
+- **Migrated to `next-mdx-remote`**: Replaced `fs.readFileSync` which failed on Vercel serverless
+- **Inline Content Strategy**: All help content embedded in TypeScript for Vercel compatibility
+- **Production-Ready**: No more 500 errors on help pages
+
+#### 🚚 Route Migration
+- **NEW**: `/help` standalone route (was buried in `/settings/help`)
+- **Sidebar Navigation**: Collapsible 4-pillar navigation (HelpSidebar component)
+- **DocsLayout**: Professional documentation layout with persistent sidebar
+- **TrinityNav**: Added "Ayuda" link with HelpCircle icon in footer
+
+#### 📚 Content Architecture (4 Pillars)
+Rewrote all help content from scratch with current KURA OS v1.1.3b features:
+
+| Pillar | Articles | Topics |
+|--------|----------|--------|
+| 🚀 **Primeros Pasos** | 3 | Tu Primera Sesión, Journeys, Demo Mode |
+| 📋 **Módulos Core** | 5 | Soul Record, Diario Clínico, Reservas, Forms, CRM |
+| 🧠 **Inteligencia** | 4 | AletheIA, Sentinel Pulse, Agents, Chatbot |
+| ⚙️ **Cuenta** | 4 | Settings, Integrations, Plans, Credits |
+
+#### 🖼 Visual Components
+- **FocusImage**: Smart zoom component with CSS transforms (for future calibration)
+- **Master Screenshots**: Dashboard, Patient Profile, AletheIA Sidebar
+- **Click-to-Expand**: Modal view for full context
+
+#### 💡 Technical Notes
+- `lib/mdx.tsx`: 900+ lines with 15 complete help articles
+- `components/help/HelpSidebar.tsx`: Collapsible pillar navigation
+- `components/mdx/FocusImage.tsx`: Reusable image zoom component
+
+**Future Improvement (Q1 2026)**: Replace static screenshots with Live React Components in MDX for truly dynamic documentation.
+
+---
+
 ## [1.1.3b] - 2025-12-27 🦅 SENTINEL PULSE & DATA COHERENCE
 
 ### 🎉 The System Speaks with One Voice

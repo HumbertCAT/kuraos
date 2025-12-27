@@ -173,6 +173,7 @@ The system now speaks with One Voice. Data coherence achieved between Sentinel P
 - [ ] Self-service onboarding wizard
 - [ ] Demo Mode button for investors
 - [ ] Form analytics (completion rates)
+- [ ] Live Components in MDX (dynamic help documentation)
 
 ---
 
