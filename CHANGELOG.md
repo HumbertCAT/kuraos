@@ -71,11 +71,48 @@ cd apps/marketing && pnpm dev
 
 **Package Manager**: Use `pnpm` for marketing (faster than npm)
 
-#### ⚠️ Known Issue
-- **PostCSS MapGenerator**: If you see this error, run:
-  ```bash
-  cd apps/marketing && rm -rf .next node_modules/.cache && pnpm install
-  ```
+#### ⚠️ Known Issues & Troubleshooting
+
+##### 1. PostCSS MapGenerator Error
+```
+TypeError: MapGenerator is not a constructor
+```
+**Cause**: Outdated PostCSS cache or dependency mismatch.
+**Solution**:
+```bash
+cd apps/marketing && rm -rf .next node_modules/.cache && pnpm install
+```
+
+##### 2. Turbopack Freeze (Server Hangs on Compile)
+```
+○ Compiling /landing ...
+# Server accepts connections but never responds
+```
+**Root Cause Analysis**:
+- Next.js 16+ uses Turbopack by default for dev (faster than Webpack)
+- Turbopack caches compiled modules in `.next/` directory
+- When the cache becomes corrupted (often after git operations, dependency changes, or abrupt stops), Turbopack enters an infinite compile loop
+- The server starts, accepts TCP connections, but the compile phase never completes
+
+**Symptoms**:
+- `curl` connects but hangs waiting for response
+- Browser shows endless loading
+- Log shows "Compiling /[route] ..." with no progress
+- Restarting server or Mac doesn't help (cache persists)
+
+**Solution**:
+```bash
+# 1. Kill all node processes
+killall -9 node
+
+# 2. Clear Turbopack cache and restart
+cd apps/marketing && rm -rf .next && pnpm dev
+```
+
+**Prevention**:
+- Always use `./scripts/stop-dev.sh` before closing terminal
+- After major git operations (merge, rebase), clear `.next/`
+- If in doubt, nuke the cache
 
 ---
 
