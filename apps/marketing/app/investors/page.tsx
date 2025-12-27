@@ -21,7 +21,10 @@ import {
     Rocket,
     MapPin,
     User,
-    ArrowRight
+    ArrowRight,
+    Scale,
+    HeartCrack,
+    PuzzleIcon
 } from 'lucide-react';
 
 /**
@@ -111,8 +114,8 @@ export default function InvestorsPage() {
                             key={i}
                             onClick={() => goToSlide(i + 1)}
                             className={`h-2 rounded-full transition-all duration-300 ${currentSlide === i + 1
-                                    ? 'bg-teal-400 w-8 shadow-[0_0_12px_rgba(45,212,191,0.6)]'
-                                    : 'bg-white/20 w-2 hover:bg-white/40'
+                                ? 'bg-teal-400 w-8 shadow-[0_0_12px_rgba(45,212,191,0.6)]'
+                                : 'bg-white/20 w-2 hover:bg-white/40'
                                 }`}
                         />
                     ))}
@@ -242,52 +245,84 @@ function SlideCover() {
 }
 
 // ============================================
-// SLIDE 2: THE PROBLEM
+// SLIDE 2: THE PROBLEM (6 Friction Cards)
 // ============================================
 function SlideProblem() {
     const frictions = [
         {
-            icon: AlertTriangle,
-            title: 'Revenue Loss',
-            stat: '40%',
-            description: 'of high-ticket leads are lost due to slow response times.',
+            icon: TrendingUp,
+            emoji: '📉',
+            title: 'Lead Leakage',
+            category: 'Revenue',
+            description: '40% of leads vanish. Responding 5 minutes late to a WhatsApp inquiry means losing the client.',
+            color: 'text-red-400',
         },
         {
-            icon: Workflow,
-            title: 'Data Silos',
-            stat: '0',
-            description: 'Clinical notes, booking data, and financials never speak to each other.',
+            icon: PuzzleIcon,
+            emoji: '🧩',
+            title: 'Context Blindness',
+            category: 'Clinical',
+            description: 'Dangerous silos. Your booking system doesn\'t know your client is on anti-depressants. Your notes don\'t know they haven\'t paid.',
+            color: 'text-orange-400',
         },
         {
-            icon: Users,
-            title: 'Manual Burnout',
-            stat: '∞',
-            description: 'Zero retention automation. The therapist is trapped in admin work.',
+            icon: Activity,
+            emoji: '🐹',
+            title: 'The Hamster Wheel',
+            category: 'Ops',
+            description: 'Zero leverage. Without automation, your income is strictly tied to your manual labor hours. No scale.',
+            color: 'text-amber-400',
+        },
+        {
+            icon: Scale,
+            emoji: '⚖️',
+            title: 'Legal Roulette',
+            category: 'Risk',
+            description: 'Compliance nightmares. Collecting sensitive health data on Google Forms or WhatsApp is a liability time-bomb.',
+            color: 'text-red-500',
+        },
+        {
+            icon: Wallet,
+            emoji: '💸',
+            title: 'The Payment Chase',
+            category: 'Fintech',
+            description: 'Admin hell. Manually tracking deposits, installments, and bank transfers for €3,000 retreats.',
+            color: 'text-orange-500',
+        },
+        {
+            icon: HeartCrack,
+            emoji: '🕳️',
+            title: 'The Integration Void',
+            category: 'Ethics',
+            description: 'The post-session drop. Clients experience profound breakthroughs, then return home to zero support. Retention fails.',
+            color: 'text-amber-500',
         },
     ];
 
     return (
         <SlideWrapper>
             <div>
-                <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-4">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-4">
                     <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                         The Clinical-Commercial
                     </span>
                     <br />
                     <span className="text-red-400">Divide.</span>
                 </h2>
-                <p className="text-xl text-white/40 mb-16">
-                    Great Healers. Terrible Operators.
+                <p className="text-lg text-white/40 mb-12">
+                    Great Healers. Terrible Operators. <span className="text-white/60">The 6 silent killers of a modern practice.</span>
                 </p>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-3 gap-4">
                     {frictions.map((item, i) => (
-                        <GlassCard key={i} glow="red" className="p-8">
-                            <item.icon className="w-8 h-8 text-white/30 mb-6" />
-                            <div className="text-5xl font-mono font-black text-red-400 mb-3 tracking-tight">
-                                {item.stat}
+                        <GlassCard key={i} glow="red" className="p-5">
+                            <div className="flex items-start gap-3 mb-3">
+                                <span className="text-2xl">{item.emoji}</span>
+                                <div>
+                                    <h3 className="text-base font-bold text-white">{item.title}</h3>
+                                    <p className={`text-xs font-mono uppercase tracking-wider ${item.color}`}>{item.category}</p>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
                             <p className="text-white/40 text-sm leading-relaxed">{item.description}</p>
                         </GlassCard>
                     ))}
