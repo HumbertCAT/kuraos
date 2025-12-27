@@ -1,14 +1,14 @@
 import { notFound } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { getHelpPost, HELP_CHAPTERS } from '@/lib/mdx';
+import { getHelpContent, parseMarkdown, HELP_CHAPTERS } from '@/lib/mdx';
 
 interface Props {
     params: Promise<{ slug: string; locale: string }>;
 }
 
 export default async function HelpArticlePage({ params }: Props) {
-    const { slug, locale } = await params;
+    const { slug } = await params;
 
     // Find chapter metadata
     const chapterIndex = HELP_CHAPTERS.findIndex(c => c.slug === slug);
@@ -20,11 +20,10 @@ export default async function HelpArticlePage({ params }: Props) {
     const prevChapter = chapterIndex > 0 ? HELP_CHAPTERS[chapterIndex - 1] : null;
     const nextChapter = chapterIndex < HELP_CHAPTERS.length - 1 ? HELP_CHAPTERS[chapterIndex + 1] : null;
 
-    // Fetch MDX content
-    const post = await getHelpPost(locale, slug);
+    // Get inline content
+    const content = getHelpContent(slug);
 
-    if (!post) {
-        // Show placeholder if MDX file doesn't exist yet
+    if (!content) {
         return (
             <div className="max-w-3xl mx-auto">
                 <Breadcrumb />
@@ -44,9 +43,11 @@ export default async function HelpArticlePage({ params }: Props) {
             <Breadcrumb />
             <ChapterHeader chapter={currentChapter} />
 
-            {/* MDX Content */}
-            <div className="bg-card rounded-2xl border border-border p-8 shadow-sm prose prose-slate max-w-none dark:prose-invert">
-                {post.content}
+            {/* Rendered Content */}
+            <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
+                <div className="prose prose-slate dark:prose-invert max-w-none">
+                    {parseMarkdown(content)}
+                </div>
             </div>
 
             <Navigation prev={prevChapter} next={nextChapter} />
