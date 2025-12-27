@@ -77,9 +77,9 @@ export default function LandingPage() {
                         <a href="#features" className="text-white/60 hover:text-white transition-colors text-sm">Features</a>
                         <a href="#technology" className="text-white/60 hover:text-white transition-colors text-sm">Technology</a>
                         <a href="#pricing" className="text-white/60 hover:text-white transition-colors text-sm">Pricing</a>
-                        <a href="https://app.kuraos.ai" className="text-white/60 hover:text-white transition-colors text-sm">Login</a>
+                        <a href="https://app.kuraos.ai/es/login" className="text-white/60 hover:text-white transition-colors text-sm">Login</a>
                         <a
-                            href="https://app.kuraos.ai/register"
+                            href="https://app.kuraos.ai/es/register"
                             className="px-4 py-2 bg-teal-500 text-black font-semibold text-sm rounded-lg hover:bg-teal-400 transition-colors"
                         >
                             Start Free
@@ -101,9 +101,9 @@ export default function LandingPage() {
                         <a href="#features" className="block text-white/60 hover:text-white">Features</a>
                         <a href="#technology" className="block text-white/60 hover:text-white">Technology</a>
                         <a href="#pricing" className="block text-white/60 hover:text-white">Pricing</a>
-                        <a href="https://app.kuraos.ai" className="block text-white/60 hover:text-white">Login</a>
+                        <a href="https://app.kuraos.ai/es/login" className="block text-white/60 hover:text-white">Login</a>
                         <a
-                            href="https://app.kuraos.ai/register"
+                            href="https://app.kuraos.ai/es/register"
                             className="block px-4 py-2 bg-teal-500 text-black font-semibold rounded-lg text-center"
                         >
                             Start Free
@@ -147,7 +147,7 @@ export default function LandingPage() {
                         {/* CTAs */}
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
                             <a
-                                href="https://app.kuraos.ai/register"
+                                href="https://app.kuraos.ai/es/register"
                                 className="inline-flex items-center gap-2 px-8 py-4 bg-teal-500 text-black font-bold rounded-xl hover:bg-teal-400 transition-all shadow-[0_0_40px_rgba(45,212,191,0.4)] hover:shadow-[0_0_60px_rgba(45,212,191,0.6)]"
                             >
                                 Start Free Trial
@@ -537,7 +537,7 @@ export default function LandingPage() {
                                         </li>
                                     ))}
                                 </ul>
-                                <a href="https://app.kuraos.ai/register" className="block w-full py-3 text-center bg-white/5 border border-white/10 rounded-lg text-white/80 hover:bg-white/10 transition-all">
+                                <a href="https://app.kuraos.ai/es/register" className="block w-full py-3 text-center bg-white/5 border border-white/10 rounded-lg text-white/80 hover:bg-white/10 transition-all">
                                     Start Free
                                 </a>
                             </div>
@@ -561,7 +561,7 @@ export default function LandingPage() {
                                         </li>
                                     ))}
                                 </ul>
-                                <a href="https://app.kuraos.ai/register" className="block w-full py-3 text-center bg-teal-500 text-black font-bold rounded-lg hover:bg-teal-400 transition-all">
+                                <a href="https://app.kuraos.ai/es/register" className="block w-full py-3 text-center bg-teal-500 text-black font-bold rounded-lg hover:bg-teal-400 transition-all">
                                     Get Started
                                 </a>
                             </div>
@@ -685,7 +685,7 @@ export default function LandingPage() {
                     </p>
 
                     <a
-                        href="https://app.kuraos.ai/register"
+                        href="https://app.kuraos.ai/es/register"
                         className="inline-flex items-center gap-2 px-8 py-4 bg-teal-500 text-black font-bold rounded-xl hover:bg-teal-400 transition-all shadow-[0_0_40px_rgba(45,212,191,0.4)] mb-12"
                     >
                         Start Your Free Trial
