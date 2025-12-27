@@ -5,6 +5,35 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] - 2025-12-27
+
+### Added - Design System & Tactile UI
+
+#### Design System Playground
+- **Route `/design-system`**: Internal Kitchen Sink page
+- **Typography Scale**: type-h1, type-h2, type-body, type-ui
+- **Color Palette**: Base, Brand, Status semantic tokens
+- **Components**: Buttons, Badges, Cards, Inputs, AletheIA widgets
+
+#### Tactile UI Layer (`globals.css`)
+- **`.btn` base**: `active:scale-95` (clicky feel)
+- **`.btn-brand`**: Shadow glow `shadow-brand/25` + hover lift
+- **`.btn-*` variants**: primary, secondary, ghost, destructive, outline, success
+- **`.card`**: Light/Dark mode optimized shadows
+- **`.card-hover`**: Brand glow on interactive cards
+- **Brand focus rings**: All inputs use `ring-brand/50`
+- **`.badge-*`**: Semantic badges (risk, success, warning, ai, brand)
+
+### Changed - Spanish Translations (Trinity)
+- CONNECT → ATRAER
+- PRACTICE → SERVIR  
+- GROW → CRECER
+- Bookings → Reservas
+- Campaigns → Campañas
+- Soon → Pronto
+
+---
+
 ## [1.0.7] - 2025-12-27
 
 ### Added - The Clean Room (Data Retention & Anonymization)
