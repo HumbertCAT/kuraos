@@ -11,7 +11,7 @@ import { VitalSignCard } from '@/components/dashboard/VitalSignCard';
 import { FocusSessionCard } from '@/components/dashboard/FocusSessionCard';
 import { PipelineVelocity } from '@/components/dashboard/PipelineVelocity';
 import { QuickNote } from '@/components/dashboard/QuickNote';
-import { RecentPatients } from '@/components/dashboard/RecentPatients';
+import { ActiveJourneysWidget } from '@/components/dashboard/ActiveJourneysWidget';
 import { Brain, Wallet, Target, Activity } from 'lucide-react';
 
 interface BookingSummary {
@@ -218,7 +218,7 @@ export default function DashboardPage() {
             <div className="col-span-12 lg:col-span-4 space-y-4">
                 <PipelineVelocity />
                 <QuickNote />
-                <RecentPatients />
+                <ActiveJourneysWidget />
             </div>
         </div>
     );
