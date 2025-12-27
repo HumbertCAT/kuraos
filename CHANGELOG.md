@@ -5,6 +5,24 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.11] - 2025-12-27
+
+### Fixed - Agents Navigation & Branding Cleanup
+
+#### Navigation Fix
+- **Agentes link** now correctly points to `/automations` (standalone page)
+- Previously pointed to `/settings/automations` (nested page)
+- Agent names are now **clickable** → navigate to stats detail page
+- Removed "Volver a Configuración" button
+- Added **BarChart3 icon** on hover indicating stats available
+
+#### Branding Cleanup
+- All scripts now use "KURA OS" instead of "TherapistOS"
+- Database name updated to `kuraos` in backup/restore scripts
+- Updated paths in `backup_db.sh`
+
+---
+
 ## [1.0.10] - 2025-12-27
 
 ### Added - Journey Cards 2.0 "The Boarding Pass"
