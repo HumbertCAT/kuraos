@@ -331,6 +331,22 @@ async def seed_patients(db, org_id, service_map, therapist_id):
                 changed_at=datetime.utcnow() - timedelta(days=30),  # 1 month ago
             )
             db.add(log_active)
+        elif p_data["first_name"] == "Marcus":
+            # Marcus: The Whale - 1 month journey (APPLICATION → PREPARATION)
+            log_app = JourneyLog(
+                patient_id=patient.id,
+                journey_key=p_data["journey_key"],
+                to_stage="APPLICATION",
+                changed_at=datetime.utcnow() - timedelta(days=30),  # 1 month ago
+            )
+            db.add(log_app)
+            log_prep = JourneyLog(
+                patient_id=patient.id,
+                journey_key=p_data["journey_key"],
+                to_stage="PREPARATION",
+                changed_at=datetime.utcnow() - timedelta(hours=5),  # 5 hours ago
+            )
+            db.add(log_prep)
         else:
             # Default: single journey log
             log = JourneyLog(

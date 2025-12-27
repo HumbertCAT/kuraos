@@ -28,39 +28,40 @@ const journeyTypeColors: Record<string, string> = {
 };
 
 // Premium Demo Data - matches Golden Seed Protocol archetypes
+// Priority order: Action required first (Ghost, Red Flag), then Active (Whale, Success)
 const MOCK_JOURNEYS: ActiveJourney[] = [
     {
         id: '1',
-        patientId: 'marcus-thorne',
-        patientName: 'Marcus Thorne',
-        journeyName: 'The Sovereign Mind',
-        journeyType: 'psychedelic',
-        status: 'ACTIVE',
+        patientId: 'julian-soler',
+        patientName: 'Julian Soler',
+        journeyName: 'Neuro-Repatterning Strategy',
+        journeyType: 'coaching',
+        status: 'PAYMENT_PENDING',
         priority: 'high',
     },
     {
         id: '2',
         patientId: 'elena-velazquez',
         patientName: 'Elena Velázquez',
-        journeyName: 'Blocked: Medical',
+        journeyName: 'The Sovereign Mind Protocol',
         journeyType: 'psychedelic',
         status: 'BLOCKED',
         priority: 'high',
     },
     {
         id: '3',
-        patientId: 'julian-soler',
-        patientName: 'Julian Soler',
-        journeyName: 'Neuro-Repatterning',
-        journeyType: 'coaching',
-        status: 'PAYMENT_PENDING',
+        patientId: 'marcus-thorne',
+        patientName: 'Marcus Thorne',
+        journeyName: 'The Sovereign Mind Protocol',
+        journeyType: 'psychedelic',
+        status: 'ACTIVE',
         priority: 'medium',
     },
     {
         id: '4',
         patientId: 'sarah-jenkins',
         patientName: 'Sarah Jenkins',
-        journeyName: "Architects' Circle",
+        journeyName: "Architects' Circle Membership",
         journeyType: 'integration',
         status: 'ACTIVE',
         priority: 'normal',
