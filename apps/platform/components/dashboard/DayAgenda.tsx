@@ -80,13 +80,23 @@ export function DayAgenda({ slots, onNewBooking }: DayAgendaProps) {
             {/* Smart Content */}
             <div className="space-y-3">
                 {isAgendaClear ? (
-                    /* Empty State - Beautiful */
-                    <div className="bg-muted/30 border border-dashed border-border rounded-xl p-6 text-center">
-                        <Coffee className="w-8 h-8 mx-auto text-muted-foreground mb-3" />
-                        <p className="type-body text-foreground mb-1">Agenda despejada</p>
-                        <p className="type-body text-muted-foreground leading-relaxed">
-                            Tiempo para Nurture o descanso.
-                        </p>
+                    /* Empty State - Show Next Up */
+                    <div className="space-y-3">
+                        <div className="bg-muted/30 border border-dashed border-border rounded-xl p-4">
+                            <div className="flex items-center gap-3">
+                                <Calendar className="w-5 h-5 text-brand flex-shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                    <p className="type-ui text-muted-foreground mb-0.5">Próxima sesión</p>
+                                    <p className="type-body font-medium text-foreground">Marcus Thorne</p>
+                                    <p className="type-body text-muted-foreground">Mañana · 10:00 AM</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="text-center py-2">
+                            <p className="type-body text-muted-foreground">
+                                Hoy despejado — tiempo para nurture 🌱
+                            </p>
+                        </div>
                     </div>
                 ) : (
                     /* Upcoming Events List */

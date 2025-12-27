@@ -58,37 +58,42 @@ function getStatusBadge(patient: Patient): { label: string; className: string } 
   return statusMap[status] || { label: status.replace(/_/g, ' '), className: 'badge badge-muted' };
 }
 
-// Health Dot based on risk assessment
-function HealthDot({ riskLevel }: { riskLevel?: number | null }) {
-  // Default to neutral if no risk data
-  if (riskLevel === null || riskLevel === undefined) {
+// Health Dot based on journey status (derived from status, not risk score)
+function HealthDot({ journeyStatus }: { journeyStatus?: Record<string, string> | null }) {
+  // Default to neutral if no status data
+  if (!journeyStatus || Object.keys(journeyStatus).length === 0) {
     return (
       <div className="relative group">
         <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-popover text-popover-foreground rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-          Sin datos de riesgo
+          Nuevo
         </div>
       </div>
     );
   }
 
-  // Map risk level to color
-  let colorClass = 'bg-success';
-  let label = 'Bajo';
+  const status = Object.values(journeyStatus)[0] as string;
 
-  if (riskLevel < -0.5) {
+  // Map status to health color
+  let colorClass = 'bg-success';
+  let label = 'Bien';
+
+  if (status?.includes('BLOCKED') || status?.includes('HIGH_RISK')) {
     colorClass = 'bg-risk animate-pulse';
-    label = 'Alto';
-  } else if (riskLevel < 0) {
+    label = 'Alerta';
+  } else if (status?.includes('AWAITING') || status?.includes('STAGNATION') || status?.includes('PAYMENT')) {
     colorClass = 'bg-warning';
-    label = 'Medio';
+    label = 'Pendiente';
+  } else if (status?.includes('PREPARATION') || status?.includes('SCREENING')) {
+    colorClass = 'bg-ai';
+    label = 'En proceso';
   }
 
   return (
     <div className="relative group">
       <div className={`w-2.5 h-2.5 rounded-full ${colorClass}`} />
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-popover text-popover-foreground rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-        Riesgo: {label}
+        {label}
       </div>
     </div>
   );
@@ -322,14 +327,14 @@ export default function PatientsPage() {
                     {/* Last Session */}
                     <td className="px-4 py-3 hidden md:table-cell">
                       <span className="type-body text-muted-foreground">
-                        Sin actividad
+                        Reciente
                       </span>
                     </td>
 
                     {/* Health Dot */}
                     <td className="px-4 py-3 hidden sm:table-cell">
                       <div className="flex justify-center">
-                        <HealthDot riskLevel={null} />
+                        <HealthDot journeyStatus={patient.journey_status} />
                       </div>
                     </td>
 
