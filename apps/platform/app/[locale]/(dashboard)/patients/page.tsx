@@ -2,43 +2,124 @@
 
 import { useTranslations } from 'next-intl';
 import { useState, useEffect, useCallback } from 'react';
-import { Link, usePathname } from '@/i18n/navigation';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api';
 import { Patient, PatientListResponse } from '@/types/auth';
-import { PatientCardSkeleton } from '@/components/ui/Skeleton';
 import EmptyState, { PatientsEmptyIcon } from '@/components/ui/EmptyState';
-import SectionHeader from '@/components/SectionHeader';
-import { Users } from 'lucide-react';
+import { Users, Search, MessageCircle, ChevronRight } from 'lucide-react';
 import { useTerminology } from '@/hooks/use-terminology';
+
+/**
+ * The Clinical Roster - v1.0.9
+ * High-density data table for efficient patient management.
+ * Replaces the low-density card grid layout.
+ */
 
 // Status options for filter dropdown
 const STATUS_OPTIONS = [
   { value: '', label: 'Todos los estados' },
-  // Blocked/Alert
   { value: 'BLOCKED_MEDICAL', label: '⛔ Bloqueado (Médico)' },
   { value: 'BLOCKED_HIGH_RISK', label: '⛔ Riesgo Alto' },
   { value: 'STAGNATION_ALERT', label: '⚠️ Estancado' },
-  // Awaiting
   { value: 'AWAITING_PAYMENT', label: '💳 Pago Pendiente' },
-  { value: 'AWAITING_SCREENING', label: '📋 Screening' },
-  { value: 'AWAITING_BIRTH_DATA', label: '📅 Faltan Datos' },
-  { value: 'AWAITING_WAIVER', label: '📝 Waiver Pendiente' },
-  // In Progress
-  { value: 'PREPARATION_PHASE', label: '🔄 En Preparación' },
-  { value: 'ANALYSIS_IN_PROGRESS', label: '🔮 En Análisis' },
-  { value: 'ONBOARDING', label: '🚀 Onboarding' },
-  { value: 'DEEP_DIVE', label: '🌊 Deep Dive' },
-  // Success
   { value: 'ACTIVE_STUDENT', label: '✅ Activo' },
   { value: 'CONFIRMED', label: '✅ Confirmado' },
   { value: 'GRADUATED', label: '🎓 Graduado' },
-  { value: 'COMPLETED', label: '🏆 Completado' },
 ];
+
+// Map status to semantic badge class
+function getStatusBadge(patient: Patient): { label: string; className: string } {
+  if (!patient.journey_status || Object.keys(patient.journey_status).length === 0) {
+    return { label: 'Nuevo', className: 'badge badge-brand' };
+  }
+
+  const statuses = Object.values(patient.journey_status);
+  const status = statuses[0] as string;
+
+  const statusMap: Record<string, { label: string; className: string }> = {
+    // Blocked/Alert (Risk)
+    'BLOCKED_MEDICAL': { label: 'Bloqueado', className: 'badge badge-risk' },
+    'BLOCKED_HIGH_RISK': { label: 'Alto Riesgo', className: 'badge badge-risk' },
+    'STAGNATION_ALERT': { label: 'Estancado', className: 'badge badge-warning' },
+    // Awaiting (Warning)
+    'AWAITING_PAYMENT': { label: 'Pago Pend.', className: 'badge badge-warning' },
+    'AWAITING_SCREENING': { label: 'Screening', className: 'badge badge-muted' },
+    // In Progress (AI)
+    'PREPARATION_PHASE': { label: 'Preparación', className: 'badge badge-ai' },
+    'ANALYSIS_IN_PROGRESS': { label: 'Análisis', className: 'badge badge-ai' },
+    'ONBOARDING': { label: 'Onboarding', className: 'badge badge-brand' },
+    // Success (Green)
+    'ACTIVE_STUDENT': { label: 'Activo', className: 'badge badge-success' },
+    'CONFIRMED': { label: 'Confirmado', className: 'badge badge-success' },
+    'GRADUATED': { label: 'Graduado', className: 'badge badge-success' },
+    'COMPLETED': { label: 'Completado', className: 'badge badge-success' },
+  };
+
+  return statusMap[status] || { label: status.replace(/_/g, ' '), className: 'badge badge-muted' };
+}
+
+// Health Dot based on risk assessment
+function HealthDot({ riskLevel }: { riskLevel?: number | null }) {
+  // Default to neutral if no risk data
+  if (riskLevel === null || riskLevel === undefined) {
+    return (
+      <div className="relative group">
+        <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-popover text-popover-foreground rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          Sin datos de riesgo
+        </div>
+      </div>
+    );
+  }
+
+  // Map risk level to color
+  let colorClass = 'bg-success';
+  let label = 'Bajo';
+
+  if (riskLevel < -0.5) {
+    colorClass = 'bg-risk animate-pulse';
+    label = 'Alto';
+  } else if (riskLevel < 0) {
+    colorClass = 'bg-warning';
+    label = 'Medio';
+  }
+
+  return (
+    <div className="relative group">
+      <div className={`w-2.5 h-2.5 rounded-full ${colorClass}`} />
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-popover text-popover-foreground rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+        Riesgo: {label}
+      </div>
+    </div>
+  );
+}
+
+// Table Row Skeleton
+function TableRowSkeleton() {
+  return (
+    <tr className="border-b border-border animate-pulse">
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-muted" />
+          <div className="space-y-1.5">
+            <div className="h-4 w-32 bg-muted rounded" />
+            <div className="h-3 w-24 bg-muted rounded" />
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-3"><div className="h-5 w-20 bg-muted rounded-full" /></td>
+      <td className="px-4 py-3"><div className="h-4 w-16 bg-muted rounded" /></td>
+      <td className="px-4 py-3 text-center"><div className="w-2.5 h-2.5 rounded-full bg-muted mx-auto" /></td>
+      <td className="px-4 py-3"><div className="h-8 w-20 bg-muted rounded" /></td>
+    </tr>
+  );
+}
 
 export default function PatientsPage() {
   const t = useTranslations('Patients');
   const terminology = useTerminology();
   const pathname = usePathname();
+  const router = useRouter();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -60,11 +141,10 @@ export default function PatientsPage() {
     }
   }, []);
 
-  // Reload patients whenever we navigate to this page
   useEffect(() => {
     loadPatients('', '');
-    setSearch(''); // Reset search on page visit
-    setStatusFilter(''); // Reset filter on page visit
+    setSearch('');
+    setStatusFilter('');
   }, [pathname, loadPatients]);
 
   function handleSearch(e: React.FormEvent) {
@@ -78,172 +158,202 @@ export default function PatientsPage() {
     loadPatients(search, newStatus);
   }
 
+  function handleRowClick(patientId: string) {
+    router.push(`/patients/${patientId}`);
+  }
+
+  // Generate avatar initials and color
+  function getAvatarProps(patient: Patient) {
+    const initials = `${patient.first_name[0]}${patient.last_name[0]}`.toUpperCase();
+    const colors = [
+      'from-violet-500 to-fuchsia-500',
+      'from-blue-500 to-cyan-500',
+      'from-emerald-500 to-teal-500',
+      'from-orange-500 to-amber-500',
+      'from-pink-500 to-rose-500',
+      'from-indigo-500 to-purple-500',
+    ];
+    const colorIndex = (patient.first_name.charCodeAt(0) + patient.last_name.charCodeAt(0)) % colors.length;
+    return { initials, gradient: colors[colorIndex] };
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
+      {/* ========== HEADER ========== */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-brand/10 dark:bg-brand/20 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center">
             <Users className="w-6 h-6 text-brand" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground ">{terminology.plural}</h1>
-            <p className="text-sm text-foreground/60 dark:text-muted-foreground">Gestiona tu cartera de {terminology.plural.toLowerCase()}</p>
+            <h1 className="type-h1">{terminology.plural}</h1>
+            <p className="type-body text-muted-foreground">
+              Gestiona tu cartera de {terminology.plural.toLowerCase()}
+            </p>
           </div>
         </div>
-        <Link
-          href="/patients/new"
-          className="px-4 py-2 bg-brand text-white rounded-xl hover:opacity-90 transition-opacity font-medium"
-        >
-          + Añadir {terminology.singular}
+        <Link href="/patients/new" className="btn btn-md btn-brand">
+          + Nuevo {terminology.singular}
         </Link>
       </div>
 
-      {/* Search and Filter */}
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="flex gap-2 flex-wrap">
+      {/* ========== SEARCH & FILTER BAR ========== */}
+      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+        {/* Search Input */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
             placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-[200px] p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground  bg-surface"
+            className="w-full pl-10 pr-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground"
           />
-          <select
-            value={statusFilter}
-            onChange={handleStatusChange}
-            className="p-3 border border-border-subtle rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground  bg-surface min-w-[180px]"
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            className="px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-opacity"
-          >
-            {t('search')}
-          </button>
         </div>
+
+        {/* Status Filter */}
+        <select
+          value={statusFilter}
+          onChange={handleStatusChange}
+          className="px-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl text-foreground min-w-[180px]"
+        >
+          {STATUS_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+
+        {/* Search Button */}
+        <button type="submit" className="btn btn-md btn-primary">
+          Buscar
+        </button>
       </form>
 
-      {/* Results */}
+      {/* ========== RESULTS COUNT ========== */}
+      {!loading && patients.length > 0 && (
+        <p className="type-body text-muted-foreground">
+          {total} {terminology.plural.toLowerCase()} encontrados
+        </p>
+      )}
+
+      {/* ========== DATA TABLE ========== */}
       {loading ? (
-        // Skeleton loading state
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
-            <PatientCardSkeleton key={i} />
-          ))}
+        <div className="card overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-muted/50">
+              <tr className="border-b border-border">
+                <th className="px-4 py-3 text-left type-ui text-muted-foreground">{terminology.singular}</th>
+                <th className="px-4 py-3 text-left type-ui text-muted-foreground">Estado</th>
+                <th className="px-4 py-3 text-left type-ui text-muted-foreground hidden md:table-cell">Última Sesión</th>
+                <th className="px-4 py-3 text-center type-ui text-muted-foreground hidden sm:table-cell">Salud</th>
+                <th className="px-4 py-3 text-right type-ui text-muted-foreground">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...Array(8)].map((_, i) => (
+                <TableRowSkeleton key={i} />
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : patients.length === 0 ? (
-        // Empty state
         <EmptyState
           icon={<PatientsEmptyIcon />}
           title={`No hay ${terminology.plural.toLowerCase()}`}
           description={`Empieza añadiendo tu primer ${terminology.singular.toLowerCase()}`}
           action={
-            <Link
-              href="/patients/new"
-              className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
+            <Link href="/patients/new" className="btn btn-md btn-brand">
               + Añadir {terminology.singular}
             </Link>
           }
         />
       ) : (
-        <>
-          <p className="text-sm text-foreground/60 mb-4">{total} {terminology.plural.toLowerCase()} encontrados</p>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {patients.map((patient) => {
-              // Generate color based on name
-              const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500', 'bg-pink-500', 'bg-teal-500'];
-              const colorIndex = (patient.first_name.charCodeAt(0) + patient.last_name.charCodeAt(0)) % colors.length;
-              const initials = `${patient.first_name[0]}${patient.last_name[0]}`.toUpperCase();
+        <div className="card overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-muted/50">
+              <tr className="border-b border-border">
+                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">{terminology.singular.toUpperCase()}</th>
+                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">ESTADO</th>
+                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider hidden md:table-cell">ÚLTIMA SESIÓN</th>
+                <th className="px-4 py-3 text-center type-ui text-muted-foreground tracking-wider hidden sm:table-cell">SALUD</th>
+                <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider">ACCIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              {patients.map((patient) => {
+                const { initials, gradient } = getAvatarProps(patient);
+                const badge = getStatusBadge(patient);
 
-              // Get journey status badge
-              const getStatusBadge = () => {
-                if (!patient.journey_status || Object.keys(patient.journey_status).length === 0) {
-                  return { label: 'Nuevo', bg: 'bg-muted', text: 'text-muted-foreground' };
-                }
-
-                // Get the most relevant status
-                const statuses = Object.values(patient.journey_status);
-                const status = statuses[0] as string;
-
-                // Map status to badge style
-                const statusMap: Record<string, { label: string; bg: string; text: string }> = {
-                  // Blocked/Alert states (red)
-                  'BLOCKED_MEDICAL': { label: '⛔ Bloqueado', bg: 'bg-red-100', text: 'text-red-700' },
-                  'BLOCKED_HIGH_RISK': { label: '⛔ Riesgo Alto', bg: 'bg-red-100', text: 'text-red-700' },
-                  'STAGNATION_ALERT': { label: '⚠️ Estancado', bg: 'bg-amber-100', text: 'text-amber-700' },
-
-                  // Awaiting states (yellow/orange)
-                  'AWAITING_PAYMENT': { label: '💳 Pago Pendiente', bg: 'bg-yellow-100', text: 'text-yellow-700' },
-                  'AWAITING_SCREENING': { label: '📋 Screening', bg: 'bg-orange-100', text: 'text-orange-700' },
-                  'AWAITING_BIRTH_DATA': { label: '📅 Faltan Datos', bg: 'bg-orange-100', text: 'text-orange-700' },
-                  'AWAITING_WAIVER': { label: '📝 Waiver', bg: 'bg-orange-100', text: 'text-orange-700' },
-
-                  // In Progress states (blue)
-                  'PREPARATION_PHASE': { label: '🔄 Preparación', bg: 'bg-blue-100', text: 'text-blue-700' },
-                  'ANALYSIS_IN_PROGRESS': { label: '🔮 Análisis', bg: 'bg-indigo-100', text: 'text-indigo-700' },
-                  'ONBOARDING': { label: '🚀 Onboarding', bg: 'bg-sky-100', text: 'text-sky-700' },
-                  'DEEP_DIVE': { label: '🌊 Deep Dive', bg: 'bg-blue-100', text: 'text-blue-700' },
-
-                  // Success states (green)
-                  'ACTIVE_STUDENT': { label: '✅ Activo', bg: 'bg-green-100', text: 'text-green-700' },
-                  'CONFIRMED': { label: '✅ Confirmado', bg: 'bg-green-100', text: 'text-green-700' },
-                  'READY_FOR_SESSION': { label: '✅ Listo', bg: 'bg-green-100', text: 'text-green-700' },
-                  'GRADUATED': { label: '🎓 Graduado', bg: 'bg-emerald-100', text: 'text-emerald-700' },
-                  'COMPLETED': { label: '🏆 Completado', bg: 'bg-emerald-100', text: 'text-emerald-700' },
-                };
-
-                return statusMap[status] || { label: status, bg: 'bg-muted', text: 'text-muted-foreground' };
-              };
-
-              const badge = getStatusBadge();
-
-              return (
-                <Link
-                  key={patient.id}
-                  href={`/patients/${patient.id}`}
-                  className="block p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md hover:border-border transition-all"
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Profile Photo or Initials Avatar */}
-                    {patient.profile_image_url ? (
-                      <img
-                        src={patient.profile_image_url}
-                        alt={`${patient.first_name} ${patient.last_name}`}
-                        className="w-[72px] h-[72px] rounded-full object-cover border-2 border-border flex-shrink-0"
-                      />
-                    ) : (
-                      <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-500 flex items-center justify-center text-white font-semibold text-xl flex-shrink-0">
-                        {initials}
+                return (
+                  <tr
+                    key={patient.id}
+                    onClick={() => handleRowClick(patient.id)}
+                    className="border-b border-border hover:bg-muted/40 cursor-pointer transition-colors"
+                  >
+                    {/* Patient Info */}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {patient.profile_image_url ? (
+                          <img
+                            src={patient.profile_image_url}
+                            alt={`${patient.first_name} ${patient.last_name}`}
+                            className="w-9 h-9 rounded-full object-cover border border-border"
+                          />
+                        ) : (
+                          <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-xs font-semibold`}>
+                            {initials}
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="type-ui font-medium text-foreground truncate">
+                            {patient.first_name} {patient.last_name}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {patient.email || patient.phone || 'Sin contacto'}
+                          </p>
+                        </div>
                       </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-foreground truncate">
-                          {patient.first_name} {patient.last_name}
-                        </h3>
-                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${badge.bg} ${badge.text} flex-shrink-0`}>
-                          {badge.label}
-                        </span>
+                    </td>
+
+                    {/* Status Badge */}
+                    <td className="px-4 py-3">
+                      <span className={badge.className}>{badge.label}</span>
+                    </td>
+
+                    {/* Last Session */}
+                    <td className="px-4 py-3 hidden md:table-cell">
+                      <span className="type-body text-muted-foreground">
+                        Sin actividad
+                      </span>
+                    </td>
+
+                    {/* Health Dot */}
+                    <td className="px-4 py-3 hidden sm:table-cell">
+                      <div className="flex justify-center">
+                        <HealthDot riskLevel={null} />
                       </div>
-                      {patient.email && (
-                        <p className="text-sm text-foreground/60 truncate">{patient.email}</p>
-                      )}
-                      {patient.phone && (
-                        <p className="text-sm text-muted-foreground">{patient.phone}</p>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                        <Link
+                          href={`/patients/${patient.id}`}
+                          className="btn btn-sm btn-ghost"
+                        >
+                          Ver
+                          <ChevronRight className="w-3 h-3" />
+                        </Link>
+                        <button className="btn btn-sm btn-ghost p-2">
+                          <MessageCircle className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
