@@ -44,6 +44,7 @@ interface DashboardData {
 
 export default function DashboardPage() {
     const t = useTranslations('Dashboard');
+    const tGreeting = useTranslations('Greeting');
     const terminology = useTerminology();
     const { user } = useAuth();
     const [loading, setLoading] = useState(true);
@@ -52,9 +53,9 @@ export default function DashboardPage() {
     // Get greeting based on time
     const getGreeting = () => {
         const hour = new Date().getHours();
-        if (hour < 12) return t('greeting.morning');
-        if (hour < 19) return t('greeting.afternoon');
-        return t('greeting.evening');
+        if (hour < 12) return tGreeting('morning', { name: firstName });
+        if (hour < 19) return tGreeting('afternoon', { name: firstName });
+        return tGreeting('evening', { name: firstName });
     };
 
     useEffect(() => {
@@ -161,8 +162,8 @@ export default function DashboardPage() {
         <div className="p-6 space-y-6">
             {/* ========== GHOST HEADER: THE BRIEFING ========== */}
             <header className="pb-2">
-                <h1 className="type-h1 text-foreground">{getGreeting()}, {firstName}</h1>
-                <p className="type-body text-muted-foreground mt-1">Tu resumen diario está listo</p>
+                <h1 className="type-h1 text-foreground">{getGreeting()}</h1>
+                <p className="type-body text-muted-foreground mt-1">{tGreeting('subtitle')}</p>
                 <div className="mt-3">
                     <BriefingPlayer compact />
                 </div>

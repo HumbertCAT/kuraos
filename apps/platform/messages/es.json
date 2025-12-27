@@ -105,15 +105,34 @@
     }
   },
   "Navigation": {
-    "dashboard": "Panel",
-    "patients": "Pacientes",
-    "bookings": "Reservas",
-    "forms": "Formularios",
-    "services": "Servicios",
-    "calendar": "Calendario",
-    "automations": "Agentes IA",
+    "dashboard": "Dashboard",
+    "sections": {
+      "connect": "ATRAER",
+      "practice": "SERVIR",
+      "grow": "CRECER"
+    },
+    "links": {
+      "calendar": "Calendario",
+      "services": "Servicios",
+      "crm": "CRM",
+      "clients": "Clientes",
+      "bookings": "Reservas",
+      "forms": "Formularios",
+      "campaigns": "Campañas",
+      "agents": "Agentes IA"
+    },
+    "badges": {
+      "soon": "Pronto"
+    },
+    "search": "Buscar...",
     "observatory": "Observatorio",
     "settings": "Configuración"
+  },
+  "Greeting": {
+    "morning": "Buenos días, {name}",
+    "afternoon": "Buenas tardes, {name}",
+    "evening": "Buenas noches, {name}",
+    "subtitle": "Tu resumen diario está listo"
   },
   "Auth": {
     "login": "Iniciar Sesión",

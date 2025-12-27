@@ -84,30 +84,30 @@ export function TrinityNav() {
     const sections: NavSection[] = [
         {
             id: 'connect',
-            title: 'ATRAER',
+            title: t('sections.connect'),
             icon: <Flame className="w-3.5 h-3.5" />,
             items: [
-                { href: '/calendar', label: t('calendar'), icon: <Calendar className="w-4 h-4" /> },
-                { href: '/services', label: t('services'), icon: <Briefcase className="w-4 h-4" /> },
-                { href: '/leads', label: 'CRM', icon: <Users className="w-4 h-4" /> },
+                { href: '/calendar', label: t('links.calendar'), icon: <Calendar className="w-4 h-4" /> },
+                { href: '/services', label: t('links.services'), icon: <Briefcase className="w-4 h-4" /> },
+                { href: '/leads', label: t('links.crm'), icon: <Users className="w-4 h-4" /> },
             ],
         },
         {
             id: 'practice',
-            title: 'SERVIR',
+            title: t('sections.practice'),
             icon: <Stethoscope className="w-3.5 h-3.5" />,
             items: [
-                { href: '/patients', label: terminology.plural, icon: <User className="w-4 h-4" /> },
-                { href: '/bookings', label: 'Reservas', icon: <Calendar className="w-4 h-4" /> },
-                { href: '/forms', label: t('forms'), icon: <FileText className="w-4 h-4" /> },
+                { href: '/patients', label: t('links.clients'), icon: <User className="w-4 h-4" /> },
+                { href: '/bookings', label: t('links.bookings'), icon: <Calendar className="w-4 h-4" /> },
+                { href: '/forms', label: t('links.forms'), icon: <FileText className="w-4 h-4" /> },
             ],
         },
         {
             id: 'grow',
-            title: 'CRECER',
+            title: t('sections.grow'),
             icon: <Sprout className="w-3.5 h-3.5" />,
             items: [
-                { href: '/campaigns', label: 'Campañas', icon: <Megaphone className="w-4 h-4" />, comingSoon: true },
+                { href: '/campaigns', label: t('links.campaigns'), icon: <Megaphone className="w-4 h-4" />, comingSoon: true },
             ],
         },
     ];
@@ -142,7 +142,7 @@ export function TrinityNav() {
                 <div className="px-3 pb-3">
                     <button className="relative w-full flex items-center gap-2 h-9 px-3 text-xs text-muted-foreground bg-muted/50 rounded-lg hover:bg-muted transition-all">
                         <Search className="w-4 h-4" />
-                        <span className="flex-1 text-left">Buscar...</span>
+                        <span className="flex-1 text-left">{t('search')}</span>
                         <span className="text-[10px] text-muted-foreground/70 font-mono">⌘K</span>
                     </button>
                 </div>

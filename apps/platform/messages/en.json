@@ -106,14 +106,33 @@
   },
   "Navigation": {
     "dashboard": "Dashboard",
-    "patients": "Patients",
-    "bookings": "Bookings",
-    "forms": "Forms",
-    "services": "Services",
-    "calendar": "Calendar",
-    "automations": "AI Agents",
+    "sections": {
+      "connect": "CONNECT",
+      "practice": "PRACTICE",
+      "grow": "GROW"
+    },
+    "links": {
+      "calendar": "Calendar",
+      "services": "Services",
+      "crm": "CRM",
+      "clients": "Clients",
+      "bookings": "Bookings",
+      "forms": "Forms",
+      "campaigns": "Campaigns",
+      "agents": "AI Agents"
+    },
+    "badges": {
+      "soon": "Soon"
+    },
+    "search": "Search...",
     "observatory": "Observatory",
     "settings": "Settings"
+  },
+  "Greeting": {
+    "morning": "Good morning, {name}",
+    "afternoon": "Good afternoon, {name}",
+    "evening": "Good evening, {name}",
+    "subtitle": "Your daily briefing is ready"
   },
   "Auth": {
     "login": "Login",
