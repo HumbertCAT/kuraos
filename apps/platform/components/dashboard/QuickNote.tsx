@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Lightbulb } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const STORAGE_KEY = 'kura-quick-note';
 
 export function QuickNote() {
+    const t = useTranslations('Dashboard.quickNote');
     const [note, setNote] = useState('');
     const [saved, setSaved] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -41,7 +43,7 @@ export function QuickNote() {
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                     <Lightbulb className="w-4 h-4 text-amber-500" />
-                    <span className="type-ui text-amber-700 dark:text-amber-400">Nota Rápida</span>
+                    <span className="type-ui text-amber-700 dark:text-amber-400">{t('title')}</span>
                 </div>
                 {saved && (
                     <span className="type-ui text-success animate-pulse">✓</span>
@@ -50,7 +52,7 @@ export function QuickNote() {
             <textarea
                 value={note}
                 onChange={handleChange}
-                placeholder="💡 Idea rápida / Recordatorio..."
+                placeholder={`💡 ${t('placeholder')}`}
                 className="w-full h-24 bg-transparent text-sm font-mono leading-relaxed resize-none focus:outline-none placeholder:text-amber-400/50 dark:placeholder:text-amber-500/30 text-foreground"
             />
             {note.length > 0 && (
@@ -58,10 +60,9 @@ export function QuickNote() {
                     onClick={clearNote}
                     className="type-body text-muted-foreground hover:text-risk transition-colors"
                 >
-                    Limpiar
+                    {t('clear')}
                 </button>
             )}
         </div>
     );
 }
-

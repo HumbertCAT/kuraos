@@ -52,3 +52,5 @@ venv/
 backups/*.sql.gz
 backups/*.sql
 !backups/.gitkeep
+.vercel
+.env*.local

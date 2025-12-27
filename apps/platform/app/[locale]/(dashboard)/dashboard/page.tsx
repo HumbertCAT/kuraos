@@ -52,9 +52,9 @@ export default function DashboardPage() {
     // Get greeting based on time
     const getGreeting = () => {
         const hour = new Date().getHours();
-        if (hour < 12) return 'Buenos días';
-        if (hour < 19) return 'Buenas tardes';
-        return 'Buenas noches';
+        if (hour < 12) return t('greeting.morning');
+        if (hour < 19) return t('greeting.afternoon');
+        return t('greeting.evening');
     };
 
     useEffect(() => {
@@ -187,32 +187,32 @@ export default function DashboardPage() {
             {/* ========== ROW 2: BUSINESS PULSE (Secondary) ========== */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <VitalSignCard
-                    label="Ingresos Mes"
+                    label={t('vitalSigns.monthlyIncome')}
                     value={`€${data.monthlyRevenue.toFixed(0)}`}
                     trend={{
                         direction: data.monthlyRevenue > 0 ? 'up' : 'neutral',
-                        label: '+15% vs mes pasado',
+                        label: `+15% ${t('vitalSigns.vsLastMonth')}`,
                         isPositive: true,
                     }}
                     icon={<Wallet className="w-5 h-5" />}
                     iconColor="text-success"
                 />
                 <VitalSignCard
-                    label="Nuevos Leads"
+                    label={t('vitalSigns.newLeads')}
                     value={data.newLeadsThisWeek}
                     trend={{
                         direction: 'neutral',
-                        label: 'Igual que semana pasada',
+                        label: t('vitalSigns.sameAsLastWeek'),
                     }}
                     icon={<Target className="w-5 h-5" />}
                     iconColor="text-brand"
                 />
                 <VitalSignCard
-                    label="Tasa de Ocupación"
+                    label={t('vitalSigns.occupancyRate')}
                     value="85%"
                     trend={{
                         direction: 'up',
-                        label: 'Alta demanda',
+                        label: t('vitalSigns.highDemand'),
                         isPositive: true,
                     }}
                     icon={<Activity className="w-5 h-5" />}

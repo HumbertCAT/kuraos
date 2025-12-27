@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from '@/i18n/navigation';
 import { Clock, Coffee, AlertTriangle, ChevronRight, Calendar, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface NextSession {
     id: string;
@@ -30,6 +31,7 @@ interface FocusSessionCardProps {
  * Philosophy: Focus on what's happening NOW.
  */
 export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSessionCardProps) {
+    const t = useTranslations('Dashboard.focusSession');
     const [timeUntil, setTimeUntil] = useState<string>('');
     const [isUrgent, setIsUrgent] = useState(false);
 
@@ -43,19 +45,19 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
             const hours = Math.floor(minutes / 60);
 
             if (minutes < 0) {
-                setTimeUntil('Ahora');
+                setTimeUntil(t('now'));
                 setIsUrgent(true);
             } else if (minutes < 15) {
-                setTimeUntil(`En ${minutes} min`);
+                setTimeUntil(t('inMinutes', { minutes }));
                 setIsUrgent(true);
             } else if (minutes < 60) {
-                setTimeUntil(`En ${minutes} min`);
+                setTimeUntil(t('inMinutes', { minutes }));
                 setIsUrgent(false);
             } else if (hours < 2) {
-                setTimeUntil(`En ${hours}h ${minutes % 60}m`);
+                setTimeUntil(t('inHours', { hours, minutes: minutes % 60 }));
                 setIsUrgent(false);
             } else {
-                setTimeUntil(`En ${hours} horas`);
+                setTimeUntil(t('inHoursOnly', { hours }));
                 setIsUrgent(false);
             }
         }
@@ -63,7 +65,7 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
         updateTime();
         const interval = setInterval(updateTime, 60000);
         return () => clearInterval(interval);
-    }, [nextSession]);
+    }, [nextSession, t]);
 
     // ============ STATE B: FREE TIME ============
     if (!nextSession) {
@@ -76,9 +78,9 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                             <Coffee className="w-8 h-8 text-amber-600 dark:text-amber-400" />
                         </div>
                         <div>
-                            <h2 className="type-h2 text-foreground">Agenda despejada</h2>
+                            <h2 className="type-h2 text-foreground">{t('agendaClear')}</h2>
                             <p className="type-body text-muted-foreground mt-1">
-                                No tienes sesiones programadas próximamente.
+                                {t('noUpcomingSessions')}
                             </p>
                         </div>
                     </div>
@@ -88,7 +90,7 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                         onClick={onViewFullAgenda}
                         className="btn btn-ghost text-muted-foreground"
                     >
-                        Ver Agenda Completa
+                        {t('viewFullAgenda')}
                         <ChevronRight className="w-4 h-4" />
                     </button>
                 </div>
@@ -96,14 +98,14 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                 {/* Subtle suggestion */}
                 <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between">
                     <p className="text-sm text-muted-foreground">
-                        💡 Buen momento para revisar notas o contactar leads pendientes.
+                        {t('freeTimeTip')}
                     </p>
                     <div className="flex gap-2">
                         <Link href="/leads" className="btn btn-sm btn-secondary">
-                            Ver Leads
+                            {t('viewLeads')}
                         </Link>
                         <Link href="/patients" className="btn btn-sm btn-secondary">
-                            Ver Clientes
+                            {t('viewClients')}
                         </Link>
                     </div>
                 </div>
@@ -127,7 +129,7 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                         <span className="type-h2 font-bold">{nextSession.patientInitials}</span>
                     </div>
                     <div>
-                        <p className="type-ui text-muted-foreground tracking-wider">PRÓXIMA SESIÓN</p>
+                        <p className="type-ui text-muted-foreground tracking-wider">{t('nextSession')}</p>
                         <h2 className="type-h2 text-foreground mt-1">{nextSession.patientName}</h2>
                         <p className="type-body text-muted-foreground">{nextSession.serviceName}</p>
                     </div>
@@ -162,7 +164,7 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                         href={`/patients/${nextSession.id}`}
                         className="btn btn-brand shadow-lg shadow-brand/20"
                     >
-                        Preparar Sesión
+                        {t('prepareSession')}
                         <ChevronRight className="w-4 h-4" />
                     </Link>
                 </div>
@@ -175,12 +177,12 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                     className="btn btn-ghost btn-sm text-muted-foreground"
                 >
                     <Calendar className="w-4 h-4" />
-                    Ver Agenda Completa
+                    {t('viewFullAgenda')}
                 </button>
 
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <User className="w-3 h-3" />
-                    <span>Última sesión hace 2 semanas</span>
+                    <span>{t('lastSessionAgo', { time: '2 weeks' })}</span>
                 </div>
             </div>
         </div>

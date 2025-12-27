@@ -2,6 +2,7 @@
 
 import { Link } from '@/i18n/navigation';
 import { ArrowRight, AlertCircle, Clock, Sparkles, ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ActiveJourney {
     id: string;
@@ -24,28 +25,6 @@ const journeyTypeColors: Record<string, string> = {
     coaching: 'border-l-blue-500',
     integration: 'border-l-violet-500',
     microdosing: 'border-l-amber-500',
-};
-
-// Status badge styles
-const statusConfig: Record<string, { label: string; className: string; icon?: React.ReactNode }> = {
-    ACTIVE: {
-        label: 'Activo',
-        className: 'bg-success/10 text-success'
-    },
-    BLOCKED: {
-        label: 'Bloqueado',
-        className: 'bg-risk/10 text-risk',
-        icon: <AlertCircle className="w-3 h-3" />
-    },
-    PAYMENT_PENDING: {
-        label: 'Esperando Pago',
-        className: 'bg-warning/10 text-warning',
-        icon: <Clock className="w-3 h-3" />
-    },
-    AWAITING_INTAKE: {
-        label: 'En Intake',
-        className: 'bg-brand/10 text-brand'
-    },
 };
 
 // Mock data for demonstration
@@ -89,7 +68,33 @@ export function ActiveJourneysWidget({
     journeys = MOCK_JOURNEYS,
     maxItems = 4
 }: ActiveJourneysWidgetProps) {
+    const t = useTranslations('Dashboard.activeJourneys');
     const displayJourneys = journeys.slice(0, maxItems);
+
+    // Status badge styles with translated labels
+    const getStatusConfig = (status: string) => {
+        const configs: Record<string, { label: string; className: string; icon?: React.ReactNode }> = {
+            ACTIVE: {
+                label: t('active'),
+                className: 'bg-success/10 text-success'
+            },
+            BLOCKED: {
+                label: t('blocked'),
+                className: 'bg-risk/10 text-risk',
+                icon: <AlertCircle className="w-3 h-3" />
+            },
+            PAYMENT_PENDING: {
+                label: t('awaitingPayment'),
+                className: 'bg-warning/10 text-warning',
+                icon: <Clock className="w-3 h-3" />
+            },
+            AWAITING_INTAKE: {
+                label: t('integration'),
+                className: 'bg-brand/10 text-brand'
+            },
+        };
+        return configs[status] || configs.ACTIVE;
+    };
 
     return (
         <div className="card bg-card/80 backdrop-blur-sm border-border/50 p-5">
@@ -97,15 +102,15 @@ export function ActiveJourneysWidget({
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-ai" />
-                    <h3 className="type-ui text-muted-foreground tracking-wider">JOURNEYS ACTIVOS</h3>
+                    <h3 className="type-ui text-muted-foreground tracking-wider">{t('title')}</h3>
                 </div>
-                <span className="text-xs text-muted-foreground font-mono">{journeys.length} total</span>
+                <span className="text-xs text-muted-foreground font-mono">{journeys.length} {t('total')}</span>
             </div>
 
             {/* Journey Cards Stack */}
             <div className="space-y-2">
                 {displayJourneys.map((journey) => {
-                    const status = statusConfig[journey.status];
+                    const status = getStatusConfig(journey.status);
                     const borderColor = journeyTypeColors[journey.journeyType] || 'border-l-gray-400';
 
                     return (
@@ -143,7 +148,7 @@ export function ActiveJourneysWidget({
                     href="/patients"
                     className="btn btn-ghost btn-sm w-full mt-3 justify-center text-muted-foreground"
                 >
-                    Ver todos los Journeys
+                    {t('title')}
                     <ChevronRight className="w-4 h-4" />
                 </Link>
             )}
@@ -152,7 +157,7 @@ export function ActiveJourneysWidget({
             {displayJourneys.length === 0 && (
                 <div className="text-center py-6">
                     <Sparkles className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">Sin journeys activos</p>
+                    <p className="text-sm text-muted-foreground">{t('title')}</p>
                 </div>
             )}
         </div>

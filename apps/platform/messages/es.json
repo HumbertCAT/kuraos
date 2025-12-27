@@ -1,9 +1,21 @@
 {
   "terminology": {
-    "patient": { "singular": "Paciente", "plural": "Pacientes" },
-    "client": { "singular": "Cliente", "plural": "Clientes" },
-    "consultant": { "singular": "Consultante", "plural": "Consultantes" },
-    "participant": { "singular": "Participante", "plural": "Participantes" }
+    "patient": {
+      "singular": "Paciente",
+      "plural": "Pacientes"
+    },
+    "client": {
+      "singular": "Cliente",
+      "plural": "Clientes"
+    },
+    "consultant": {
+      "singular": "Consultante",
+      "plural": "Consultantes"
+    },
+    "participant": {
+      "singular": "Participante",
+      "plural": "Participantes"
+    }
   },
   "Index": {
     "title": "Bienvenido a KURA OS",
@@ -12,6 +24,11 @@
   "Dashboard": {
     "title": "Dashboard",
     "subtitle": "Tu centro de control clínico. Visualiza pacientes prioritarios, reservas próximas, sugerencias de AletheIA e ingresos en un vistazo.",
+    "greeting": {
+      "morning": "Buenos días",
+      "afternoon": "Buenas tardes",
+      "evening": "Buenas noches"
+    },
     "loadingError": "Problema cargando datos",
     "checkConsole": "Abre DevTools (F12) → Console para ver detalles.",
     "totalPatients": "Pacientes Totales",
@@ -40,7 +57,52 @@
     "financialSummary": "Resumen Financiero",
     "confirmedRevenue": "Ingresos Confirmados",
     "pendingPayments": "Pagos Pendientes",
-    "totalPotential": "Total Potencial"
+    "totalPotential": "Total Potencial",
+    "focusSession": {
+      "agendaClear": "Agenda despejada",
+      "noUpcomingSessions": "No tienes sesiones programadas próximamente.",
+      "viewFullAgenda": "Ver Agenda Completa",
+      "freeTimeTip": "💡 Buen momento para revisar notas o contactar leads pendientes.",
+      "viewLeads": "Ver Leads",
+      "viewClients": "Ver Clientes",
+      "nextSession": "PRÓXIMA SESIÓN",
+      "prepareSession": "Preparar Sesión",
+      "lastSessionAgo": "Última sesión hace {time}",
+      "inMinutes": "En {minutes} min",
+      "inHours": "En {hours}h {minutes}m",
+      "inHoursOnly": "En {hours} horas",
+      "now": "Ahora"
+    },
+    "vitalSigns": {
+      "monthlyIncome": "INGRESOS MES",
+      "newLeads": "NUEVOS LEADS",
+      "occupancyRate": "TASA DE OCUPACIÓN",
+      "vsLastMonth": "vs mes pasado",
+      "sameAsLastWeek": "Igual que semana pasada",
+      "highDemand": "Alta demanda"
+    },
+    "pipeline": {
+      "title": "FLUJO DE PACIENTES",
+      "new": "Nuevos",
+      "contacted": "Contactados",
+      "closing": "Cierre",
+      "total": "total",
+      "estimatedConversion": "Conversión estimada",
+      "viewFullPipeline": "Ver Pipeline Completo"
+    },
+    "activeJourneys": {
+      "title": "JOURNEYS ACTIVOS",
+      "total": "total",
+      "blocked": "Bloqueado",
+      "awaitingPayment": "Esperando Pago",
+      "active": "Activo",
+      "integration": "Integración"
+    },
+    "quickNote": {
+      "title": "Nota Rápida",
+      "placeholder": "Idea rápida / Recordatorio...",
+      "clear": "Limpiar"
+    }
   },
   "Navigation": {
     "dashboard": "Panel",
