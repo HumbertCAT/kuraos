@@ -5,6 +5,80 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2025-12-27 🏛️ THE CYBER-CLINICAL TEMPLE
+
+### 🎉 Marketing Revolution
+
+Complete rebuild of public-facing assets with premium Fintech/Cyber-Clinical aesthetic.
+
+#### 🌐 Landing Page v2.0 (`apps/marketing/app/landing/page.tsx`)
+
+**NEW Sections:**
+| # | Section | Content |
+|---|---------|---------|
+| 1 | **Hero** | Layered dashboard preview (CRM → Clinical → Sentinel Pulse floating) |
+| 2 | **Problem** | Chaos → Order visual (fragmented tools → unified Kura) |
+| 3 | **Trinity** | 3 pillars × 5 features (Connect/Practice/Grow with glows) |
+| 4 | **Deep Tech** | Sentinel Pulse (emotional curve) + Aletheia (risk alert demo) |
+| 5 | **Security** | Clean Room / Vault / GDPR-HIPAA |
+| 6 | **Pricing** | 3 cards + Full Comparison Table (17 features × 3 plans) |
+| 7 | **Footer** | "HELP THEM HEAL. WE HANDLE THE REST." |
+
+**Design System:**
+- Background: Deep Space (#030305) with 40px grid
+- Cards: Obsidian Glass (`bg-white/[0.02] border-white/10 backdrop-blur`)
+- Typography: Massive gradients, `tracking-tighter`
+- Glows: `blur-[200px]` atmospheric orbs (Teal/Violet/Blue)
+
+#### 📊 Investor Deck v9.0 (`apps/marketing/app/investors/page.tsx`)
+
+**Content Density Upgrade:**
+- **Problem Section**: 5 friction cards (3+2 centered grid)
+  - Revenue Bleed, Context Blindness, Hamster Wheel, Legal Roulette, Integration Void
+- **Trinity Section**: 5 features per pillar (15 total)
+- **Arsenal Section**: 5 proprietary techs (3+2 centered grid)
+  - Sentinel Pulse, AI Margin Control, Neural Circuits, Privacy Vault, Draft Mode
+
+**Navigation**: 10 slides with keyboard (←→ Space) + dot navigation
+
+#### 🔧 Platform Fixes
+- **Register Logo**: Fixed `h-42` → `h-24` to match login styling
+- **Auth URLs**: All links now use `/es/login` and `/es/register` locales
+
+#### 🛠 Development Workflow
+
+**Marketing App Development:**
+```bash
+# Start local dev
+cd apps/marketing && pnpm dev
+
+# URLs:
+# - Landing:   http://localhost:3002/landing
+# - Investors: http://localhost:3002/investors
+# - Root:      http://localhost:3002 (redirects to /landing)
+
+# Production:
+# - Marketing: kuraos.ai (Vercel)
+# - Platform:  app.kuraos.ai (Vercel)
+```
+
+**Port Mapping:**
+| App | Port | URL |
+|-----|------|-----|
+| Platform | 3001 | app.kuraos.ai |
+| Marketing | 3002 | kuraos.ai |
+| Backend | 8001 | api.kuraos.ai |
+
+**Package Manager**: Use `pnpm` for marketing (faster than npm)
+
+#### ⚠️ Known Issue
+- **PostCSS MapGenerator**: If you see this error, run:
+  ```bash
+  cd apps/marketing && rm -rf .next node_modules/.cache && pnpm install
+  ```
+
+---
+
 ## [1.1.4] - 2025-12-27 📚 HELP CENTER "THE KNOWLEDGE LIBRARY"
 
 ### 🎉 Documentation Reinvented
