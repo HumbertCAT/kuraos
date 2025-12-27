@@ -24,11 +24,13 @@ from app.db.models import (
     Organization,
     Patient,
     JourneyLog,
+    JourneyTemplate,
     Booking,
     ServiceType,
     ClinicalEntry,
     MessageLog,
     BookingStatus,
+    FormTemplate,
 )
 
 # --- DATA DEFINITIONS (FROM ANALYST) ---
@@ -63,6 +65,63 @@ SEED_SERVICES = [
         "kind": "ONE_ON_ONE",
         "scheduling_type": "CALENDAR",
         "is_active": True,
+    },
+]
+
+# Premium Journey Templates (Conscious Luxury naming)
+SEED_JOURNEYS = [
+    {
+        "key": "retreat_ibiza",
+        "name": "The Sovereign Mind Protocol",
+        "allowed_stages": [
+            "APPLICATION",
+            "SCREENING",
+            "PREPARATION",
+            "IMMERSION",
+            "INTEGRATION",
+            "ALUMNI",
+        ],
+        "initial_stage": "APPLICATION",
+    },
+    {
+        "key": "architects_circle",
+        "name": "Architects' Circle Membership",
+        "allowed_stages": ["ONBOARDING", "ACTIVE_MEMBER", "ALUMNI"],
+        "initial_stage": "ONBOARDING",
+    },
+    {
+        "key": "neuro_repatterning",
+        "name": "Neuro-Repatterning Strategy",
+        "allowed_stages": ["DISCOVERY", "AWAITING_PAYMENT", "CONFIRMED", "COMPLETED"],
+        "initial_stage": "DISCOVERY",
+    },
+]
+
+# Luxury Forms (Executive branding)
+SEED_FORMS = [
+    {
+        "title": "Executive Neuro-Assessment (Medical)",
+        "description": "Comprehensive medical screening for high-performance protocol eligibility.",
+        "form_type": "INTAKE",
+        "schema": {
+            "fields": [
+                {
+                    "id": "medications",
+                    "type": "textarea",
+                    "label": "Current Medications",
+                }
+            ]
+        },
+    },
+    {
+        "title": "Leadership Intentions Framework",
+        "description": "Strategic intention-setting for executive transformation journeys.",
+        "form_type": "PRE_SESSION",
+        "schema": {
+            "fields": [
+                {"id": "intention", "type": "textarea", "label": "Primary Intention"}
+            ]
+        },
     },
 ]
 
@@ -156,6 +215,8 @@ async def wipe_data(db, org_id):
         f"DELETE FROM clinical_entries WHERE patient_id IN (SELECT id FROM patients WHERE organization_id = '{org_id}')",
         f"DELETE FROM leads WHERE organization_id = '{org_id}'",
         f"DELETE FROM service_types WHERE organization_id = '{org_id}'",
+        f"DELETE FROM journey_templates WHERE organization_id = '{org_id}'",
+        f"DELETE FROM form_templates WHERE organization_id = '{org_id}'",
     ]
 
     for sql in tables_to_clean:
@@ -201,6 +262,40 @@ async def seed_services(db, org_id):
     return service_map
 
 
+async def seed_journeys(db, org_id):
+    """Create premium journey templates with Conscious Luxury naming."""
+    print("\n🗺️  DEFINING JOURNEY ARCHETYPES...")
+    for j in SEED_JOURNEYS:
+        journey = JourneyTemplate(
+            organization_id=org_id,
+            name=j["name"],
+            key=j["key"],
+            allowed_stages=j["allowed_stages"],
+            initial_stage=j["initial_stage"],
+            is_active=True,
+        )
+        db.add(journey)
+    await db.flush()
+    print(f"   ✅ {len(SEED_JOURNEYS)} Premium Journeys defined")
+
+
+async def seed_forms(db, org_id):
+    """Create luxury forms with executive branding."""
+    print("\n📝 CRAFTING LUXURY FORMS...")
+    for f in SEED_FORMS:
+        form = FormTemplate(
+            organization_id=org_id,
+            title=f["title"],
+            description=f["description"],
+            form_type=f["form_type"],
+            schema=f["schema"],
+            is_active=True,
+        )
+        db.add(form)
+    await db.flush()
+    print(f"   ✅ {len(SEED_FORMS)} Executive Forms crafted")
+
+
 async def seed_patients(db, org_id, service_map, therapist_id):
     print("\n🧬 SEEDING ARCHETYPES...")
 
@@ -218,15 +313,33 @@ async def seed_patients(db, org_id, service_map, therapist_id):
         db.add(patient)
         await db.flush()
 
-        # Journey Log
-        log = JourneyLog(
-            patient_id=patient.id,
-            journey_key=p_data["journey_key"],
-            to_stage=p_data["journey_status"],
-            changed_at=datetime.utcnow()
-            - timedelta(hours=50 if p_data.get("ghost_mode") else 2),
-        )
-        db.add(log)
+        # Journey Log - with fake history for Timeline visualization
+        if p_data["first_name"] == "Sarah":
+            # Sarah: 6-month arc with two journey points
+            log_onboard = JourneyLog(
+                patient_id=patient.id,
+                journey_key=p_data["journey_key"],
+                to_stage="ONBOARDING",
+                changed_at=datetime.utcnow() - timedelta(days=180),  # 6 months ago
+            )
+            db.add(log_onboard)
+            log_active = JourneyLog(
+                patient_id=patient.id,
+                journey_key=p_data["journey_key"],
+                to_stage="ACTIVE_MEMBER",
+                changed_at=datetime.utcnow() - timedelta(days=30),  # 1 month ago
+            )
+            db.add(log_active)
+        else:
+            # Default: single journey log
+            log = JourneyLog(
+                patient_id=patient.id,
+                journey_key=p_data["journey_key"],
+                to_stage=p_data["journey_status"],
+                changed_at=datetime.utcnow()
+                - timedelta(hours=50 if p_data.get("ghost_mode") else 2),
+            )
+            db.add(log)
 
         # Clinical Entry (Note/Alert)
         if "clinical_entry" in p_data:
@@ -253,6 +366,19 @@ async def seed_patients(db, org_id, service_map, therapist_id):
                     status="DELIVERED",
                 )
                 db.add(m)
+
+        # Ghost Concierge: Add automation follow-up message for Julian
+        if p_data.get("ghost_mode"):
+            concierge_msg = MessageLog(
+                organization_id=org_id,
+                patient_id=patient.id,
+                direction="OUTBOUND",
+                content="[Agente Concierge] Detectamos que tu reserva está pendiente. ¿Necesitas ayuda para completarla? Responde AYUDA para asistencia.",
+                timestamp=datetime.utcnow() - timedelta(hours=12),
+                provider_id=f"automation_concierge_{uuid.uuid4()}",
+                status="DELIVERED",
+            )
+            db.add(concierge_msg)
 
         # Booking Logic (Simplified)
         if p_data["journey_status"] in ["PREPARATION", "ACTIVE_MEMBER"]:
@@ -296,6 +422,8 @@ async def main():
 
         # Execute Protocols
         await wipe_data(db, org_id)
+        await seed_journeys(db, org_id)
+        await seed_forms(db, org_id)
         services = await seed_services(db, org_id)
         await seed_patients(db, org_id, services, admin.id)
 
