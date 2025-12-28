@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.1.4-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.7-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 [![License](https://img.shields.io/badge/license-Proprietary-blue.svg)]()
 
@@ -257,6 +257,9 @@ kuraos/
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 
 ### Completed
+- [x] **v1.1.7** - THE GOLDEN KEY: Native Google OAuth + Password Recovery (December 2025)
+- [x] **v1.1.6** - INVESTOR DECK V12: The Pitch Temple (December 2025)
+- [x] **v1.1.5** - THE CYBER-CLINICAL TEMPLE: Premium Dark Mode Redesign (December 2025)
 - [x] **v1.1.4** - HELP CENTER: Documentation Library + Sidebar Navigation (December 2025)
 - [x] **v1.1.3b** - SENTINEL PULSE: Real-time emotional monitoring + Data Coherence (December 2025)
 - [x] **v1.1.3** - CLINICAL CANVAS: 2-column patient profile layout (December 2025)
@@ -273,9 +276,8 @@ See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 - [x] **v1.0.0** - Public Launch 🎉 (December 2025)
 
 ### Coming Soon
-- [ ] Google OAuth Integration (SSO)
+- [ ] **v1.1.8** - THE ACTIVATION PROTOCOL: Luxury Onboarding (driver.js tours)
 - [ ] WhatsApp Business API (Meta Cloud)
-- [ ] Onboarding Wizard (self-service setup)
 - [ ] Live Components in MDX (dynamic documentation)
 - [ ] Mobile App (React Native)
 - [ ] The Mirror: Patient-facing progress visualization
