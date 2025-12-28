@@ -197,7 +197,7 @@ export default function PatientsPage() {
             </p>
           </div>
         </div>
-        <Link href="/patients/new" className="btn btn-md btn-brand">
+        <Link href="/patients/new" className="btn btn-md btn-brand" data-tour="btn-new-patient">
           + Nuevo {terminology.singular}
         </Link>
       </div>

@@ -170,6 +170,9 @@ export default function DashboardPage() {
                 </div>
             </header>
 
+            {/* ========== ONBOARDING PROTOCOL ========== */}
+            <ActivationWidget />
+
             {/* ========== ROW 1: CLINICAL COCKPIT (Top Priority) ========== */}
             <div className="grid grid-cols-12 gap-6">
                 {/* LEFT: Focus Area - "The Present" (span-8) */}

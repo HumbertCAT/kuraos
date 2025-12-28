@@ -33,6 +33,7 @@ interface NavItem {
     label: string;
     icon: React.ReactNode;
     comingSoon?: boolean;
+    dataTour?: string;
 }
 
 interface NavSection {
@@ -98,7 +99,7 @@ export function TrinityNav() {
             title: t('sections.practice'),
             icon: <Stethoscope className="w-3.5 h-3.5" />,
             items: [
-                { href: '/patients', label: t('links.clients'), icon: <User className="w-4 h-4" /> },
+                { href: '/patients', label: t('links.clients'), icon: <User className="w-4 h-4" />, dataTour: 'sidebar-patients' },
                 { href: '/bookings', label: t('links.bookings'), icon: <Calendar className="w-4 h-4" /> },
                 { href: '/forms', label: t('links.forms'), icon: <FileText className="w-4 h-4" /> },
             ],
@@ -223,6 +224,7 @@ export function TrinityNav() {
                                                         : 'text-sidebar-foreground hover:bg-card/50 hover:text-foreground'
                                                     }`}
                                                 title={isCollapsed ? item.label : undefined}
+                                                data-tour={item.dataTour}
                                             >
                                                 {item.icon}
                                                 {!isCollapsed && item.label}

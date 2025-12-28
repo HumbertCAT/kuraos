@@ -52,6 +52,13 @@ export default function NewPatientPage() {
 
     try {
       const patient = await api.patients.create(payload);
+
+      // Trigger Onboarding Completion
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('kura_onboarding_stage', '1');
+        window.dispatchEvent(new Event('kura_mission_complete'));
+      }
+
       router.push(`/patients/${patient.id}`);
     } catch (err: any) {
       setError(err.message || 'Failed to create patient');
@@ -80,6 +87,7 @@ export default function NewPatientPage() {
               name="first_name"
               type="text"
               required
+              data-tour="input-name"
               className="w-full p-3 border border-input-border bg-input rounded-lg focus:ring-2 focus:ring-ring outline-none text-foreground"
             />
           </div>
