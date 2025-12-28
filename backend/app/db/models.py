@@ -107,9 +107,9 @@ class ThemePreference(str, enum.Enum):
     - SUNSET: Warm orange-based palette
     """
 
-    DEFAULT = "default"
-    OCEAN = "ocean"
-    SUNSET = "sunset"
+    DEFAULT = "DEFAULT"
+    OCEAN = "OCEAN"
+    SUNSET = "SUNSET"
 
 
 class TerminologyPreference(str, enum.Enum):

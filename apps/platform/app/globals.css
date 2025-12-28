@@ -177,7 +177,7 @@
 /* 🌊 OCEAN THEME                              */
 /* -------------------------------------------------------------------------- */
 
-[data-theme='ocean'] {
+[data-theme='OCEAN'] {
   /* Light Mode Ocean */
   --background: #F0F9FF;       /* Sky 50 */
   --foreground: #0C4A6E;       /* Sky 900 */
@@ -210,7 +210,7 @@
   --ai: #7C3AED;
 }
 
-[data-theme='ocean'].dark {
+[data-theme='OCEAN'].dark {
   /* Dark Mode Ocean */
   --background: #0C1929;
   --foreground: #E0F2FE;
@@ -247,7 +247,7 @@
 /* 🌅 SUNSET THEME                             */
 /* -------------------------------------------------------------------------- */
 
-[data-theme='sunset'] {
+[data-theme='SUNSET'] {
   /* Light Mode Sunset */
   --background: #FFFBEB;       /* Amber 50 */
   --foreground: #78350F;       /* Amber 900 */
@@ -280,7 +280,7 @@
   --ai: #7C3AED;
 }
 
-[data-theme='sunset'].dark {
+[data-theme='SUNSET'].dark {
   /* Dark Mode Sunset */
   --background: #1C1410;
   --foreground: #FEF3C7;

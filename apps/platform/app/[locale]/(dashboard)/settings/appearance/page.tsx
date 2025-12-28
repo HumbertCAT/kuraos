@@ -5,23 +5,23 @@ import { useTheme } from 'next-themes';
 import { CyberCard } from '@/components/ui/CyberCard';
 import { Sun, Moon, Waves, Sunset } from 'lucide-react';
 
-type ColorTheme = 'default' | 'ocean' | 'sunset';
+type ColorTheme = 'DEFAULT' | 'OCEAN' | 'SUNSET';
 
 const THEMES: { id: ColorTheme; label: string; icon: React.ElementType; colors: { brand: string; bg: string } }[] = [
     {
-        id: 'default',
+        id: 'DEFAULT',
         label: 'Kura Original',
         icon: Sun,
         colors: { brand: '#0D9488', bg: '#F8FAFC' },
     },
     {
-        id: 'ocean',
+        id: 'OCEAN',
         label: 'Océano',
         icon: Waves,
         colors: { brand: '#0EA5E9', bg: '#F0F9FF' },
     },
     {
-        id: 'sunset',
+        id: 'SUNSET',
         label: 'Sunset',
         icon: Sunset,
         colors: { brand: '#F59E0B', bg: '#FFFBEB' },
@@ -30,7 +30,7 @@ const THEMES: { id: ColorTheme; label: string; icon: React.ElementType; colors: 
 
 export default function AppearancePage() {
     const { theme, setTheme } = useTheme();
-    const [colorTheme, setColorTheme] = useState<ColorTheme>('default');
+    const [colorTheme, setColorTheme] = useState<ColorTheme>('DEFAULT');
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {

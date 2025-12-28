@@ -20,7 +20,7 @@ depends_on = None
 def upgrade() -> None:
     # Create enum type with checkfirst to avoid duplicate errors
     theme_preference_enum = ENUM(
-        "default", "ocean", "sunset", name="themepreference", create_type=False
+        "DEFAULT", "OCEAN", "SUNSET", name="themepreference", create_type=False
     )
     theme_preference_enum.create(op.get_bind(), checkfirst=True)
 
@@ -29,9 +29,9 @@ def upgrade() -> None:
         "users",
         sa.Column(
             "theme_preference",
-            sa.Enum("default", "ocean", "sunset", name="themepreference"),
+            sa.Enum("DEFAULT", "OCEAN", "SUNSET", name="themepreference"),
             nullable=False,
-            server_default="default",
+            server_default="DEFAULT",
         ),
     )
 
