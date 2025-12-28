@@ -21,7 +21,7 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       // Add user ID to session if available
-      if (token?.sub) {
+      if (token?.sub && session.user) {
         session.user.id = token.sub;
       }
       return session;
