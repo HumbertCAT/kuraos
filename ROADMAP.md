@@ -4,121 +4,17 @@
 
 ---
 
-## 📊 Current Status: v1.1.3b (December 2025)
+## 📊 Current Status: v1.1.7 (December 2025)
 
 **🎉 LIVE at https://app.kuraos.ai**
 
-The system now speaks with One Voice. Data coherence achieved between Sentinel Pulse and AletheIA Observatory.
+Native Google OAuth + Password Recovery deployed. The Golden Key unlocked.
 
 ---
 
-## ✅ Completed Releases (Reverse Chronological)
+## � Release History
 
-### v1.1.3b — SENTINEL PULSE & DATA COHERENCE 🦅
-*December 27, 2025*
-- [x] Sentinel Pulse Widget: 7-day emotional chart with 3 states (Active/Dormant/Locked)
-- [x] Operation Direct Line: Float precision fix, AliasChoices pattern
-- [x] Golden Seed: Marcus (+0.80), Julian (-0.60), Elena (-0.90) archetypes
-- [x] Schema alignment: `last_insight_json` matches `PatientInsightsResponse`
-
-### v1.1.3 — THE CLINICAL CANVAS 🏥
-*December 27, 2025*
-- [x] 2-column patient layout: Journey Boarding Pass + Sentinel Pulse
-- [x] PatientHero component refactor
-- [x] Dynamic stage icons with status-based actions
-
-### v1.1.2 — PREMIUM DEMO "GOLDEN SEED PROTOCOL" 💎
-*December 27, 2025*
-- [x] 4 character archetypes with rich histories
-- [x] Unsplash avatars with static UUIDs
-- [x] Pre-populated journey stages and clinical notes
-
-### v1.1.1 — INTELLIGENCE ENGINE 🧠
-*December 27, 2025*
-- [x] ProviderFactory: Multi-model AI routing
-- [x] CostLedger: Real-time token-based FinOps
-- [x] AI Governance Admin Panel: Financial HUD, Model Registry
-- [x] Clean Ledger Refactor: No legacy calls in clinical flow
-
-### v1.1.0 — THE COMMAND CENTER 🚀
-*December 27, 2025*
-- [x] Dashboard 3.0: Ghost Header, Clinical-First Grid
-- [x] FocusSessionCard, PipelineVelocity, ActiveJourneysWidget
-- [x] VitalSignCard with live trend indicators
-
-### v1.0.12 — NEURAL FLOW UI ⚡
-*December 26, 2025*
-- [x] Agent Circuit Board visualization
-- [x] Glass KPI Cards with backdrop-blur
-- [x] Semantic nodes: Trigger → Condition → Action
-
-### v1.0.10 — JOURNEY CARDS 2.0 🎫
-*December 26, 2025*
-- [x] Boarding Pass style journey cards
-- [x] Dynamic context-aware actions
-- [x] Smart timelines with icon-nodes
-
-### v1.0.9 — CLINICAL ROSTER 📋
-*December 26, 2025*
-- [x] High-density patient table
-- [x] Health Dots risk indicators
-- [x] Semantic status badges
-
-### v1.0.8 — DESIGN SYSTEM & TACTILE UI 🎨
-*December 26, 2025*
-- [x] Design System Playground (`/design-system`)
-- [x] Tactile buttons with `active:scale-95`
-- [x] Glass cards, premium shadow effects
-
-### v1.0.7 — THE CLEAN ROOM 🔐
-*December 26, 2025*
-- [x] The Incinerator: 30-day audio lifecycle
-- [x] The Vault: Anonymous datasets for IP preservation
-- [x] The Scrubber: PII sanitization service
-
-### v1.0.6 — SECURITY & GOVERNANCE 🛡️
-*December 25, 2025*
-- [x] Log sanitization (no PII in Twilio logs)
-- [x] Strict Pydantic schemas with `extra="ignore"`
-- [x] Structured JSONB for clinical form data
-
-### v1.0.5 — ALETHEIA OBSERVATORY 🔭
-*December 25, 2025*
-- [x] Intelligence Rail sidebar
-- [x] Patient Mode: Risk score, themes, flags
-- [x] Global Mode: Clinic Radar, pending actions
-- [x] Zustand patient store for context
-
-### v1.0.4 — THEME ENGINE 🌓
-*December 25, 2025*
-- [x] Real-time Theme Editor with live preview
-- [x] Dual Dark/Light mode support
-- [x] HSL color picker with persistence
-
-### v1.0.3 — CYBER-CLINICAL UI 🖥️
-*December 24, 2025*
-- [x] Trinity Navigation (3-column layout)
-- [x] `next-themes` integration
-- [x] Semantic CSS variables (Tailwind v4)
-
-### v1.0.2 — THE BLACK BOX 📦
-*December 24, 2025*
-- [x] PostgreSQL automated backups (6h cycle)
-- [x] Admin Backups panel with restore
-- [x] ADR-005 to ADR-009 documented
-
-### v1.0.1 — PRODUCTION POLISH 🔧
-*December 24, 2025*
-- [x] Login loop fix
-- [x] Secret Manager integration
-- [x] Stripe/Twilio CLI automation
-
-### v1.0.0 — PUBLIC LAUNCH 🎉
-*December 23, 2025*
-- [x] Core platform: Auth, Patients, Clinical Entries
-- [x] Booking engine with Stripe
-- [x] Clinical AI Agents (Playbooks)
-- [x] Lead CRM with Kanban
+> For completed releases, see [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -169,7 +65,7 @@ The system now speaks with One Voice. Data coherence achieved between Sentinel P
 | **VitalSignCard Trends** | Booking aggregations by week | 🟢 LOW |
 
 ### 🧪 Product Polish
-- [ ] Google OAuth (SSO)
+- [ ] **v1.1.8** - THE ACTIVATION PROTOCOL: Luxury onboarding with driver.js tours
 - [ ] Self-service onboarding wizard
 - [ ] Demo Mode button for investors
 - [ ] Form analytics (completion rates)
