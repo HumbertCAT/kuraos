@@ -21,6 +21,7 @@ from app.api.v1.schemas import (
     AuthResponse,
     UserResponse,
     OrganizationResponse,
+    GoogleOAuthRequest,
 )
 from app.api.deps import CurrentUser
 
@@ -213,6 +214,228 @@ async def logout(response: Response):
         domain=None if _is_localhost else ".kuraos.ai",  # Must match set_cookie domain
     )
     return {"message": "Logged out successfully"}
+
+
+@router.post("/forgot-password", summary="Request password reset")
+async def forgot_password(
+    email: str,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Send password reset email.
+
+    - Generates secure reset token
+    - Token expires in 1 hour
+    - Sends email via Brevo
+    """
+    from datetime import datetime, timedelta
+    from app.services.email import email_service
+
+    # Find user by email
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
+    # Always return success to prevent email enumeration
+    if not user:
+        return {"message": "Si el email existe, recibirás un enlace de recuperación"}
+
+    # Generate secure token
+    reset_token = secrets.token_urlsafe(32)
+    expires_at = datetime.utcnow() + timedelta(hours=1)
+
+    # Save token to user
+    user.password_reset_token = reset_token
+    user.password_reset_expires = expires_at
+    await db.commit()
+
+    # Build reset URL
+    reset_url = f"{settings.FRONTEND_URL}/es/reset-password?token={reset_token}"
+
+    # Send email via Brevo
+    try:
+        await email_service.send_automation_email(
+            to_email=user.email,
+            to_name=user.full_name or "Usuario",
+            subject="Recuperar contraseña - KURA OS",
+            template_type="password_reset",
+            context={
+                "reset_url": reset_url,
+                "user_name": user.full_name or "Usuario",
+                "expires_hours": 1,
+            },
+        )
+    except Exception as e:
+        # Log error but don't expose to user
+        import logging
+
+        logging.error(f"Failed to send password reset email: {e}")
+
+    return {"message": "Si el email existe, recibirás un enlace de recuperación"}
+
+
+@router.post("/reset-password", summary="Reset password with token")
+async def reset_password(
+    token: str,
+    new_password: str,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Reset password using a valid reset token.
+
+    - Validates token exists and not expired
+    - Updates password hash
+    - Clears reset token
+    """
+    from datetime import datetime
+
+    # Find user by token
+    result = await db.execute(select(User).where(User.password_reset_token == token))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Token inválido o expirado"
+        )
+
+    # Check expiration (use timezone-aware datetime)
+    from datetime import timezone
+
+    now = datetime.now(timezone.utc)
+    if user.password_reset_expires and user.password_reset_expires < now:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Token expirado. Solicita un nuevo enlace.",
+        )
+
+    # Update password
+    user.hashed_password = get_password_hash(new_password)
+    user.password_reset_token = None
+    user.password_reset_expires = None
+    await db.commit()
+
+    return {"message": "Contraseña actualizada correctamente"}
+
+
+@router.post("/oauth/google", response_model=AuthResponse, summary="Google OAuth login")
+async def google_oauth(
+    request: GoogleOAuthRequest,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Authenticate via Google OAuth.
+
+    - Verifies Google ID token
+    - Creates user if not exists (auto-register)
+    - Creates organization if new user
+    - Sets httpOnly JWT cookie
+    """
+    from google.oauth2 import id_token
+    from google.auth.transport import requests as google_requests
+
+    # Verify Google ID token
+    try:
+        idinfo = id_token.verify_oauth2_token(
+            request.id_token, google_requests.Request(), settings.GOOGLE_CLIENT_ID
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid Google token: {str(e)}",
+        )
+
+    # Extract user info from token
+    email = idinfo.get("email")
+    full_name = idinfo.get("name", "")
+    picture = idinfo.get("picture")
+
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email not found in Google token",
+        )
+
+    # Find or create user
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        # Auto-register: Create new organization and user
+        org = Organization(
+            name=full_name.split()[0] if full_name else email.split("@")[0],
+            type=OrgType.SOLO,
+            referral_code=generate_referral_code(),
+        )
+        db.add(org)
+        await db.flush()
+
+        # Create user with random password (OAuth users don't need password)
+        user = User(
+            email=email,
+            hashed_password=get_password_hash(secrets.token_urlsafe(32)),
+            full_name=full_name,
+            role=UserRole.OWNER,
+            organization_id=org.id,
+            profile_image_url=picture,
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+        await db.refresh(org)
+    else:
+        # Update profile image if changed
+        if picture and user.profile_image_url != picture:
+            user.profile_image_url = picture
+            await db.commit()
+            await db.refresh(user)
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="User account is disabled"
+        )
+
+    # Get organization
+    result = await db.execute(
+        select(Organization).where(Organization.id == user.organization_id)
+    )
+    org = result.scalar_one()
+
+    # Create JWT token
+    access_token = create_access_token(
+        subject=str(user.id),
+        expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+    )
+
+    # Set httpOnly cookie
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+        secure=not _is_localhost,
+        path="/",
+        domain=None if _is_localhost else ".kuraos.ai",
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    )
+
+    return AuthResponse(
+        user=UserResponse(
+            id=user.id,
+            email=user.email,
+            full_name=user.full_name,
+            role=user.role.value,
+            is_active=user.is_active,
+            organization_id=user.organization_id,
+        ),
+        organization=OrganizationResponse(
+            id=org.id,
+            name=org.name,
+            type=org.type.value,
+            referral_code=org.referral_code,
+            theme_config=org.theme_config,
+        ),
+        message="Login successful",
+    )
 
 
 @router.get("/me", summary="Get current user")

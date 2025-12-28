@@ -5,6 +5,44 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.7] - 2025-12-28 🔐 THE GOLDEN KEY
+
+### 🔑 Native Google OAuth
+Direct Google authentication bypassing NextAuth for full backend control.
+
+- **Backend Endpoint**: `/auth/oauth/google` - Verifies Google ID tokens directly
+- **Auto-Registration**: New Google users get automatic account + organization creation
+- **Frontend Integration**: Google Identity Services SDK with custom styled button
+- **Security**: httpOnly JWT cookies, server-side token verification
+
+### 🔓 Password Recovery System
+Complete "Forgot Password" flow with Brevo email integration.
+
+- **Forgot Password Page**: `/forgot-password` - Email input with secure token generation
+- **Reset Password Page**: `/reset-password?token=xxx` - New password form with validation
+- **Email Template**: Professional HTML email via Brevo with reset link
+- **Token Security**: 
+  - Cryptographic tokens (`secrets.token_urlsafe(32)`)
+  - 1-hour expiration
+  - Single-use (cleared after password change)
+
+### 🛡️ Auth Provider Hardening
+Fixed client-side redirect loop on public auth pages.
+
+- **Public Routes**: AuthProvider now skips auth checks for `/login`, `/register`, `/forgot-password`, `/reset-password`
+- **Root Cause**: React context was redirecting unauthenticated users even on public pages
+- **Fix**: Added `isPublicRoute` check before triggering auth verification
+
+### 🐛 Bug Fixes
+- Fixed timezone-aware datetime comparison in password reset expiry check
+- Fixed Pydantic forward reference error for `GoogleOAuthRequest`
+- Added `await` to async email send call
+
+### 📦 Dependencies
+- Added `google-auth` to backend requirements for OAuth token verification
+
+---
+
 ## [1.1.6] - 2025-12-28 📊 INVESTOR DECK V12 "THE PITCH TEMPLE"
 
 ### 🎉 Complete Investor Deck Redesign

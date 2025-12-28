@@ -25,6 +25,12 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class GoogleOAuthRequest(BaseModel):
+    """Request schema for Google OAuth login."""
+
+    id_token: str
+
+
 # ============ Response Schemas ============
 
 

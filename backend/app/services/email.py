@@ -240,6 +240,40 @@ class EmailService:
                 </div>
             </div>
             """
+        elif template_type == "password_reset":
+            user_name = context.get("user_name", "Usuario")
+            reset_url = context.get("reset_url", "#")
+            expires_hours = context.get("expires_hours", 1)
+
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center;">
+                    <h1 style="color: white; margin: 0;">🔐 Recuperar Contraseña</h1>
+                </div>
+                <div style="padding: 30px; background: #f0fdf4;">
+                    <p style="color: #1e293b; font-size: 16px;">Hola {user_name},</p>
+                    <p style="color: #334155; font-size: 16px;">
+                        Has solicitado restablecer tu contraseña. Haz clic en el botón para crear una nueva:
+                    </p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{reset_url}" style="background: #10b981; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                            Restablecer Contraseña
+                        </a>
+                    </div>
+                    <p style="color: #64748b; font-size: 14px;">
+                        Este enlace expira en <strong>{expires_hours} hora(s)</strong>.
+                    </p>
+                    <p style="color: #64748b; font-size: 12px; margin-top: 20px;">
+                        Si no solicitaste este cambio, ignora este email. Tu contraseña no será modificada.
+                    </p>
+                </div>
+                <div style="padding: 20px; text-align: center; background: #1e293b;">
+                    <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+                        KURA OS - Sistema Operativo para Terapeutas
+                    </p>
+                </div>
+            </div>
+            """
         else:
             logger.warning(f"Unknown email template type: {template_type}")
             return False

@@ -319,6 +319,14 @@ class User(Base):
     profile_image_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     social_media: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
+    # Password reset
+    password_reset_token: Mapped[Optional[str]] = mapped_column(
+        String(100), nullable=True, index=True
+    )
+    password_reset_expires: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

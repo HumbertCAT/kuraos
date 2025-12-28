@@ -178,7 +178,7 @@ export default function RegisterPage() {
 
         {/* Footer */}
         <p className="text-center text-slate-600 text-xs mt-6">
-          © 2024 KURA OS. Sistema Operativo para Terapeutas.
+          © 2025 KURA OS. Sistema Operativo para Terapeutas.
         </p>
       </div>
     </div>

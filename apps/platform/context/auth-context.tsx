@@ -1,9 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from '@/i18n/navigation';
+import { useRouter, usePathname } from '@/i18n/navigation';
 import { api } from '@/lib/api';
 import { User, Organization, LoginRequest, RegisterRequest } from '@/types/auth';
+
+// Routes that should not trigger auth checks
+const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password'];
 
 interface AuthContextType {
   user: User | null;
@@ -24,10 +27,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [globalTheme, setGlobalTheme] = useState<Record<string, string> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Check if current route is public (skip auth for these)
+  const isPublicRoute = PUBLIC_ROUTES.some(route => pathname?.includes(route));
 
   useEffect(() => {
+    // Skip auth check for public routes
+    if (isPublicRoute) {
+      setIsLoading(false);
+      return;
+    }
     checkAuth();
-  }, []);
+  }, [isPublicRoute]);
 
   async function checkAuth() {
     try {
