@@ -1,4 +1,8 @@
-# KURA OS Agent Rules (v1.1.4)
+---
+trigger: always_on
+---
+
+# KURA OS Agent Rules
 
 > **⚠️ EXCEPTIONS PROTOCOL:** These rules are strict by default. If a rule blocks a legitimate critical fix or debugging task, **ask the user for explicit approval** before bypassing it.
 
