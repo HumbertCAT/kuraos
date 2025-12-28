@@ -5,41 +5,77 @@ description: Process to publish a new version of KURA OS (docs, git, deploy)
 # Release Process
 
 > **CRITICAL**: Run this workflow when the user says "Publish version X.Y.Z" or "Release to production".
-> **DO NOT SKIP ANY STEP. ALL STEPS ARE MANDATORY.**
+> **PHILOSOPHY**: "Measure twice, cut once." If the Semantic Audit fails, ABORT the release.
 
 ---
 
-## Pre-Flight Checklist ✅
+## 🛡️ Phase 1: The Gatekeeper (Semantic & Type Audit)
 
-Before proceeding with git commands, **complete ALL documentation updates**:
+Before touching docs or git, verify System Integrity:
+
+### Semantic Audit (Design System Police)
+Scan for forbidden hardcoded values. If any grep returns results, **STOP and ask user to fix**.
+
+// turbo
+```bash
+# Check for forbidden arbitrary pixels (e.g., w-[30px])
+grep -r "\-\[" apps/platform/app --include="*.tsx" | grep -v "node_modules" | head -20
+
+# Check for forbidden hex colors (e.g., bg-[#])
+grep -r "bg-\[#" apps/platform/app --include="*.tsx" | grep -v "node_modules"
+
+# Check for forbidden generic grays
+grep -r "text-gray-" apps/platform/app --include="*.tsx" | grep -v "node_modules"
+```
+
+### Type Safety Check
+Ensure we aren't tagging broken code.
+
+// turbo
+```bash
+cd apps/platform && pnpm run build
+```
+
+---
+
+## 📝 Phase 2: Documentation (The Paper Trail)
+
+Only proceed if Phase 1 passed.
 
 ### 1. CHANGELOG.md (MANDATORY)
 - [ ] Add header `## [X.Y.Z] - YYYY-MM-DD` at the top
-- [ ] List all changes under: Added, Changed, Fixed, Removed, Infrastructure
-- [ ] Use bullet points with **bold feature names**
+- [ ] List changes under: Added, Changed, Fixed, Infrastructure
 
 ### 2. README.md (MANDATORY)
 - [ ] Update version badge: `version-X.Y.Z-purple`
-- [ ] Update "Completed" section with new version
-- [ ] Update "Recent Features" if major module was released
+- [ ] Update "Last Updates" section
 
-### 3. ROADMAP.md (MANDATORY)  
-- [ ] Add new version section if significant features
-- [ ] Mark completed milestones as `[x]`
+### 3. ROADMAP.md (MANDATORY)
+- [ ] Reference CHANGELOG for completed items
+- [ ] Update "Coming Soon" if applicable
 
 ---
 
-## Git Release
+## 📦 Phase 3: The Black Box (Safety Backup)
+
+Trigger pre-deploy backup to ensure we have a restore point.
 
 // turbo
-1. Stage and commit ALL changes:
+```bash
+./scripts/backup_db.sh
+```
+
+---
+
+## 🚀 Phase 4: Git Release
+
+// turbo
 ```bash
 git add -A
-git commit -m "chore(release): vX.Y.Z - [Brief description]"
+git commit -m "chore(release): vX.Y.Z"
 ```
 
 // turbo
-2. Create and push tag:
 ```bash
 git tag -a vX.Y.Z -m "Release vX.Y.Z"
 git push origin main --tags
@@ -47,22 +83,21 @@ git push origin main --tags
 
 ---
 
-## Deploy
+## 🚢 Phase 5: Deploy
 
 // turbo
-1. **Backend (Cloud Run)**:
 ```bash
 ./scripts/deploy.sh
 ```
 
-2. **Frontend (Vercel)**: Auto-triggers on git push.
+Frontend (Vercel): Auto-triggers on git push. Monitor Vercel dashboard.
 
 ---
 
-## Notify User
+## ✅ Phase 6: Notify User
 
-Confirm with user:
-- ✅ Version number
-- ✅ Key features
-- ✅ Production URLs
-- ✅ All 3 docs updated (CHANGELOG, README, ROADMAP)
+Report Status:
+- 🛡️ Semantic Audit: PASSED
+- 📦 Backup: Created
+- 🚀 Version: vX.Y.Z Live
+- 🔗 URLs: https://app.kuraos.ai / https://api.kuraos.ai
