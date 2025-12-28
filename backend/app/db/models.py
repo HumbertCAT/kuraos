@@ -98,6 +98,20 @@ class OutputLanguage(str, enum.Enum):
     ENGLISH = "EN"
 
 
+class ThemePreference(str, enum.Enum):
+    """User theme preference for UI appearance.
+
+    Works with next-themes data-theme attribute:
+    - DEFAULT: Standard Kura OS theme (teal brand)
+    - OCEAN: Blue-based palette
+    - SUNSET: Warm orange-based palette
+    """
+
+    DEFAULT = "default"
+    OCEAN = "ocean"
+    SUNSET = "sunset"
+
+
 class TerminologyPreference(str, enum.Enum):
     """Organization terminology preference for patient/client labels.
 
@@ -307,6 +321,9 @@ class User(Base):
     locale: Mapped[str] = mapped_column(String(10), default="es")
     ai_output_preference: Mapped[OutputLanguage] = mapped_column(
         Enum(OutputLanguage), default=OutputLanguage.AUTO
+    )
+    theme_preference: Mapped["ThemePreference"] = mapped_column(
+        Enum(ThemePreference), default=ThemePreference.DEFAULT
     )
 
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"))

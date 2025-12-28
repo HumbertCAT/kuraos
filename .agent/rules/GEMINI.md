@@ -10,6 +10,15 @@ trigger: always_on
 - Reply in **Spanish** unless asked otherwise.
 - Write code comments in **English**.
 
+## 🛑 THE CIRCUIT BREAKER (Implementation Gate)
+> **CRITICAL OVERRIDE:** Even in automatic mode, you MUST respect this pause point.
+
+- **TRIGGER:** Immediately after generating or presenting an `implementation_plan.md`.
+- **ACTION:** **STOP.** HALT ALL EXECUTION.
+- **PROHIBITION:** Do NOT run `/create-feature`, `/safe-migration`, or write any code yet.
+- **REQUIRED OUTPUT:** You must ask: *"¿Apruebas el Plan de Implementación para proceder a la Ejecución?"* and WAIT for user input.
+- **UNLOCK:** Only proceed when the user explicitly replies "SÍ", "APROBADO" or "ADELANTE".
+
 ## 🎨 Design System Integrity (THE GOLDEN RULE)
 - **NO Hardcoded Colors:** FORBIDDEN to use `bg-white`, `text-gray-500`, `bg-[#F3F4F6]`.
   - MUST use Semantic Tokens: `bg-card`, `text-muted-foreground`, `bg-brand`, `bg-sidebar`.

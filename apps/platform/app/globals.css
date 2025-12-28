@@ -173,6 +173,146 @@
   --ai: #A78BFA;       /* Violet 400 */
 }
 
+/* -------------------------------------------------------------------------- */
+/* 🌊 OCEAN THEME                              */
+/* -------------------------------------------------------------------------- */
+
+[data-theme='ocean'] {
+  /* Light Mode Ocean */
+  --background: #F0F9FF;       /* Sky 50 */
+  --foreground: #0C4A6E;       /* Sky 900 */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0369A1;
+  --sidebar-border: #BAE6FD;
+  --header: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: #0C4A6E;
+  --popover: #FFFFFF;
+  --popover-foreground: #0C4A6E;
+  --primary: #0284C7;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E0F2FE;
+  --secondary-foreground: #0369A1;
+  --muted: #E0F2FE;
+  --muted-foreground: #0369A1;
+  --accent: #E0F2FE;
+  --accent-foreground: #0C4A6E;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #BAE6FD;
+  --input: #FFFFFF;
+  --input-border: #BAE6FD;
+  --ring: #0284C7;
+  --brand: #0EA5E9;
+  --risk: #E11D48;
+  --success: #059669;
+  --warning: #D97706;
+  --ai: #7C3AED;
+}
+
+[data-theme='ocean'].dark {
+  /* Dark Mode Ocean */
+  --background: #0C1929;
+  --foreground: #E0F2FE;
+  --sidebar: #0C1929;
+  --sidebar-foreground: #7DD3FC;
+  --sidebar-border: #164E63;
+  --header: #0C1929;
+  --card: #132337;
+  --card-foreground: #E0F2FE;
+  --popover: #0C1929;
+  --popover-foreground: #E0F2FE;
+  --primary: #38BDF8;
+  --primary-foreground: #0C4A6E;
+  --secondary: #164E63;
+  --secondary-foreground: #E0F2FE;
+  --muted: #164E63;
+  --muted-foreground: #7DD3FC;
+  --accent: #164E63;
+  --accent-foreground: #E0F2FE;
+  --destructive: #7F1D1D;
+  --destructive-foreground: #FAFAFA;
+  --border: #164E63;
+  --input: #0C1929;
+  --input-border: #164E63;
+  --ring: #38BDF8;
+  --brand: #38BDF8;
+  --risk: #FB7185;
+  --success: #34D399;
+  --warning: #FBBF24;
+  --ai: #A78BFA;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 🌅 SUNSET THEME                             */
+/* -------------------------------------------------------------------------- */
+
+[data-theme='sunset'] {
+  /* Light Mode Sunset */
+  --background: #FFFBEB;       /* Amber 50 */
+  --foreground: #78350F;       /* Amber 900 */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #B45309;
+  --sidebar-border: #FDE68A;
+  --header: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: #78350F;
+  --popover: #FFFFFF;
+  --popover-foreground: #78350F;
+  --primary: #D97706;
+  --primary-foreground: #FFFFFF;
+  --secondary: #FEF3C7;
+  --secondary-foreground: #B45309;
+  --muted: #FEF3C7;
+  --muted-foreground: #B45309;
+  --accent: #FEF3C7;
+  --accent-foreground: #78350F;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #FDE68A;
+  --input: #FFFFFF;
+  --input-border: #FDE68A;
+  --ring: #D97706;
+  --brand: #F59E0B;
+  --risk: #E11D48;
+  --success: #059669;
+  --warning: #EA580C;
+  --ai: #7C3AED;
+}
+
+[data-theme='sunset'].dark {
+  /* Dark Mode Sunset */
+  --background: #1C1410;
+  --foreground: #FEF3C7;
+  --sidebar: #1C1410;
+  --sidebar-foreground: #FCD34D;
+  --sidebar-border: #78350F;
+  --header: #1C1410;
+  --card: #2D1F18;
+  --card-foreground: #FEF3C7;
+  --popover: #1C1410;
+  --popover-foreground: #FEF3C7;
+  --primary: #FBBF24;
+  --primary-foreground: #78350F;
+  --secondary: #78350F;
+  --secondary-foreground: #FEF3C7;
+  --muted: #78350F;
+  --muted-foreground: #FCD34D;
+  --accent: #78350F;
+  --accent-foreground: #FEF3C7;
+  --destructive: #7F1D1D;
+  --destructive-foreground: #FAFAFA;
+  --border: #78350F;
+  --input: #1C1410;
+  --input-border: #78350F;
+  --ring: #FBBF24;
+  --brand: #FBBF24;
+  --risk: #FB7185;
+  --success: #34D399;
+  --warning: #FB923C;
+  --ai: #A78BFA;
+}
+
 /* GLOBAL RESET */
 body {
   @apply bg-background text-foreground antialiased;

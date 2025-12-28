@@ -2,10 +2,11 @@
 
 import { usePathname } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { Settings, CreditCard, HelpCircle } from 'lucide-react';
+import { Settings, CreditCard, HelpCircle, Palette } from 'lucide-react';
 
 const TABS = [
     { href: '/settings/general', label: 'Configuración', icon: Settings },
+    { href: '/settings/appearance', label: 'Apariencia', icon: Palette },
     { href: '/settings/plan', label: 'Mi Plan', icon: CreditCard },
     { href: '/settings/help', label: 'Ayuda', icon: HelpCircle },
 ];
@@ -19,6 +20,7 @@ export default function SettingsLayout({
 
     // Determine active tab from pathname
     const getActiveTab = () => {
+        if (pathname.includes('/settings/appearance')) return '/settings/appearance';
         if (pathname.includes('/settings/plan') || pathname.includes('/settings/billing')) return '/settings/plan';
         if (pathname.includes('/settings/help')) return '/settings/help';
         return '/settings/general';
@@ -49,8 +51,8 @@ export default function SettingsLayout({
                                     key={tab.href}
                                     href={tab.href}
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${isActive
-                                            ? 'bg-card text-foreground shadow-sm'
-                                            : 'text-foreground/70 hover:text-foreground hover:bg-card/50'
+                                        ? 'bg-card text-foreground shadow-sm'
+                                        : 'text-foreground/70 hover:text-foreground hover:bg-card/50'
                                         }`}
                                 >
                                     <Icon className="w-4 h-4" />
