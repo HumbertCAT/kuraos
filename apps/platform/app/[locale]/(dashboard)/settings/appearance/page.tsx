@@ -59,7 +59,7 @@ export default function AppearancePage() {
     return (
         <div className="space-y-8">
             {/* Color Theme Section */}
-            <CyberCard>
+            <CyberCard className="p-6">
                 <h2 className="type-h2 text-foreground mb-2">Tema de Color</h2>
                 <p className="type-body text-muted-foreground mb-6">
                     Elige la paleta de colores que prefieras para tu experiencia.
@@ -75,8 +75,8 @@ export default function AppearancePage() {
                                 key={t.id}
                                 onClick={() => handleColorThemeChange(t.id)}
                                 className={`relative p-4 rounded-xl border-2 transition-all active:scale-95 ${isActive
-                                        ? 'border-brand bg-brand/5'
-                                        : 'border-border hover:border-brand/50 bg-card'
+                                    ? 'border-brand bg-brand/5'
+                                    : 'border-border hover:border-brand/50 bg-card'
                                     }`}
                             >
                                 {/* Color Preview */}
@@ -108,7 +108,7 @@ export default function AppearancePage() {
             </CyberCard>
 
             {/* Light/Dark Mode Section */}
-            <CyberCard>
+            <CyberCard className="p-6">
                 <h2 className="type-h2 text-foreground mb-2">Modo de Visualización</h2>
                 <p className="type-body text-muted-foreground mb-6">
                     Elige entre modo claro y oscuro.
@@ -118,8 +118,8 @@ export default function AppearancePage() {
                     <button
                         onClick={() => handleModeChange('light')}
                         className={`flex-1 p-4 rounded-xl border-2 transition-all active:scale-95 ${!isDark
-                                ? 'border-brand bg-brand/5'
-                                : 'border-border hover:border-brand/50 bg-card'
+                            ? 'border-brand bg-brand/5'
+                            : 'border-border hover:border-brand/50 bg-card'
                             }`}
                     >
                         <Sun className="w-8 h-8 mx-auto mb-2 text-amber-500" />
@@ -129,8 +129,8 @@ export default function AppearancePage() {
                     <button
                         onClick={() => handleModeChange('dark')}
                         className={`flex-1 p-4 rounded-xl border-2 transition-all active:scale-95 ${isDark
-                                ? 'border-brand bg-brand/5'
-                                : 'border-border hover:border-brand/50 bg-card'
+                            ? 'border-brand bg-brand/5'
+                            : 'border-border hover:border-brand/50 bg-card'
                             }`}
                     >
                         <Moon className="w-8 h-8 mx-auto mb-2 text-indigo-400" />
