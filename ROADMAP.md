@@ -1,17 +1,5 @@
 # KURA OS - Strategic Roadmap
 
-> **Vision:** To become the operating system for the next generation of mental health, starting with Conscious Practitioners.
-
----
-
-## 📊 Current Status: v1.1.7 (December 2025)
-
-**🎉 LIVE at https://app.kuraos.ai**
-
-Native Google OAuth + Password Recovery deployed. The Golden Key unlocked.
-
----
-
 ## � Release History
 
 > For completed releases, see [CHANGELOG.md](CHANGELOG.md)
@@ -40,7 +28,6 @@ Native Google OAuth + Password Recovery deployed. The Golden Key unlocked.
 
 ## 📅 Q1 2026: Growth & Polish
 
-**Goal:** First 50 paying organizations
 
 ### 🍄 The Mycelium Protocol (Viral Growth)
 | Feature | Description | Priority |
@@ -118,49 +105,5 @@ Native Google OAuth + Password Recovery deployed. The Golden Key unlocked.
 | **Push Notifications** | Risk alerts, booking reminders |
 | **Offline Mode** | View patient data without internet |
 
----
-
-## 🌐 2027: Horizontal Expansion
-
-### New Verticals
-- [ ] Psychology (CBT, DBT, Psychoanalysis)
-- [ ] Psychiatry (EHR integration, e-prescription)
-- [ ] Coaching (Business, Life, Executive)
-
-### AI Co-Pilot
-- [ ] Real-time session suggestions
-- [ ] Live transcription
-- [ ] Auto-documentation
-
-### Global Markets
-- [ ] LATAM: Full Spanish support ✅
-- [ ] US: HIPAA + insurance billing
-- [ ] EU: GDPR + multilingual
-
----
-
-## 🏆 Success Metrics
-
-| Metric | Q1 2026 | Q4 2026 | 2027 |
-|--------|---------|---------|------|
-| Active Organizations | 50 | 500 | 2,000 |
-| Monthly Active Users | 100 | 1,000 | 5,000 |
-| MRR | $2,500 | $25,000 | $100,000 |
-| Patient Records | 1,000 | 25,000 | 100,000 |
-| Churn Rate | 10% | <5% | <3% |
-
----
-
-## 💜 Guiding Principles
-
-1. **Prosperity is Clinical**: An underpaid, burnt-out therapist cannot heal effectively. Financial health fuels clinical impact.
-
-2. **Agents, Not Tools**: Active Intelligence, not passive software. AI is a teammate, not a feature.
-
-3. **Institutional Trust**: Hospital-grade security for the independent practitioner. HIPAA/GDPR by default.
-
-4. **Radical Simplicity**: If it needs a manual, it's broken. Zero-training required.
-
----
 
 *Last updated: December 27, 2025 (v1.1.3b SENTINEL PULSE)*

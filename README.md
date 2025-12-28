@@ -8,13 +8,19 @@
 
 ---
 
+## � Release History
+
+> For completed releases, see [CHANGELOG.md](CHANGELOG.md)
+
+---
+
 ## 🌟 The Vision
 
-**KURA OS** is a specialized SaaS platform designed for **Therapists, Healers, and Conscious Practitioners**. 
+To become the operating system for the next generation of mental health.
 
 We believe that every healing journey deserves a system as intentional as the work itself. KURA OS replaces the chaos of spreadsheets, scattered notes, and disconnected tools with a **unified command center** that honors both clinical rigor and spiritual depth.
 
-### The Problem We Solve
+## The Problem We Solve
 
 | Pain Point | KURA OS Solution |
 |------------|-----------------|
@@ -225,6 +231,18 @@ This creates 4 archetype patients (Marcus, Elena, Julian, Sarah) with rich histo
 
 ---
 
+## 🏆 Success Metrics
+
+| Metric | Q1 2026 | Q4 2026 | 2027 |
+|--------|---------|---------|------|
+| Active Organizations | 50 | 500 | 2,000 |
+| Monthly Active Users | 100 | 1,000 | 5,000 |
+| MRR | $2,500 | $25,000 | $100,000 |
+| Patient Records | 1,000 | 25,000 | 100,000 |
+| Churn Rate | 10% | <5% | <3% |
+
+---
+
 ## 📂 Project Structure
 
 ```
@@ -252,7 +270,7 @@ kuraos/
 
 ---
 
-## 🌱 Roadmap
+## 🌱 Last Updates
 
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 

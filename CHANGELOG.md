@@ -1,4 +1,4 @@
-# Changelog
+# KURA OS - Changelog
 
 All notable changes to KURA OS will be documented in this file.
 
