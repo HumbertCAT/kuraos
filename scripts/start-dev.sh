@@ -1,9 +1,30 @@
 #!/bin/bash
 
 # Kura OS Development Startup Script
-# This script starts all services including Stripe webhook listener
+# Usage: ./scripts/start-dev.sh [--clean|--reset]
+#
+# Options:
+#   --clean, --reset    Delete database volume and start fresh
 
 echo "🚀 Starting KuraOS Development Environment..."
+
+# Parse arguments
+CLEAN_START=false
+for arg in "$@"; do
+    case $arg in
+        --clean|--reset)
+            CLEAN_START=true
+            shift
+            ;;
+    esac
+done
+
+# Handle clean start - ONLY way to delete data
+if [ "$CLEAN_START" = true ]; then
+    echo "⚠️  CLEAN START: Removing database volume..."
+    docker-compose down -v
+    echo "   Database volume deleted."
+fi
 
 # Check if .env file exists (single source of truth in project root)
 if [ ! -f .env ]; then
@@ -15,9 +36,9 @@ fi
 echo "📦 Starting Docker containers..."
 docker-compose up -d
 
-# Wait for backend to be ready
-echo "⏳ Waiting for backend to be ready..."
-sleep 5
+# Wait for backend to be ready (includes auto-migration)
+echo "⏳ Waiting for backend (includes auto-migration)..."
+sleep 8
 
 # Check if Stripe CLI is installed
 if ! command -v stripe &> /dev/null; then
@@ -107,11 +128,13 @@ echo "📍 Services:"
 echo "   - Platform:  http://localhost:3001  (main app)"
 echo "   - Marketing: http://localhost:3002  (landing page)"
 echo "   - Backend:   http://localhost:8001  (API)"
-echo "   - Database:  localhost:5433"
+echo "   - Database:  localhost:5433 (PERSISTENT)"
 echo ""
 echo "📝 Logs:"
 echo "   - Docker:    docker-compose logs -f"
 echo "   - Stripe:    tail -f stripe-webhook.log"
 echo "   - Marketing: tail -f marketing.log"
 echo ""
+echo "🔄 Migrations run automatically on startup"
+echo "🗑️  To reset DB: ./scripts/start-dev.sh --clean"
 echo "🛑 To stop: ./scripts/stop-dev.sh"
