@@ -5,6 +5,53 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.6] - 2025-12-28 📊 INVESTOR DECK V12 "THE PITCH TEMPLE"
+
+### 🎉 Complete Investor Deck Redesign
+
+Strategic redesign of the investor presentation with premium aesthetics and compelling narrative flow.
+
+#### 📊 Deck Structure (15 Slides)
+| # | Slide | Content |
+|---|-------|---------|
+| 1 | **Hero** | Logo + CONNECT·PRACTICE·GROW + Gradient title |
+| 2 | **Problem** | 4-quadrant pain grid (2x2 with red hover glow) |
+| 3 | **Market** | $120B TAM with bento layout |
+| 4 | **Kill Sheet** | Competitive matrix with valuations |
+| 5 | **Market Map** | 2D positioning chart |
+| 6 | **Advantage** | 3 unfair advantages |
+| 7 | **Trinity** | CONNECT·PRACTICE·GROW (5 features each) |
+| 8 | **Arsenal** | 6 proprietary tech pillars (color-coded) |
+| 9 | **Sentinel Pulse** | Clinical Safety HUD with pulsing alert |
+| 10 | **Security** | Sovereignty by Design (3 layers) |
+| 11 | **Venture Economics** | €450 ARPU breakdown |
+| 12 | **Financial** | J-curve trajectory |
+| 13 | **Traction** | Early metrics |
+| 14 | **Founder** | Humbert Torroella profile (Builder + Healer) |
+| 15 | **Ask** | €250K SAFE, €1M ARR target |
+
+#### 🎨 Visual Upgrades
+- **Hero Slide**: Gradient text (INTELLIGENT/PRACTICE/INFRASTRUCTURE), gradient CTA button
+- **Problem Slide**: 4 pain quadrants with hover red glow
+- **Arsenal Slide**: 6 color-coded pillars (Sentinel, Shield, Trinity, Omni-Scribe, Neuro-Nurture, Vault)
+- **Sentinel Pulse**: Real-time monitoring HUD with SVG risk chart
+- **Founder Slide**: Organic layout with round photo, floating stats cards (±1° rotation)
+
+#### 🖼️ Assets Added
+- `/public/kura-logo-full.png` - Full KURA OS logo with transparency
+- `/public/humbert-photo.jpg` - Founder portrait
+
+#### 🔧 Technical Changes
+- Removed page number display
+- Slide reordering for optimal narrative flow
+- Added `Sparkles` icon import for Trinity Agents
+
+#### 🔐 Infrastructure
+- **Brevo API Key**: Created `BREVO_API_KEY` secret in Google Secret Manager (kura-os project)
+- **Sender**: humbert@kuraos.ai validated
+
+---
+
 ## [1.1.5] - 2025-12-27 🏛️ THE CYBER-CLINICAL TEMPLE
 
 ### 🎉 Marketing Revolution
