@@ -12,7 +12,7 @@ import { FocusSessionCard } from '@/components/dashboard/FocusSessionCard';
 import { PipelineVelocity } from '@/components/dashboard/PipelineVelocity';
 import { QuickNote } from '@/components/dashboard/QuickNote';
 import { ActiveJourneysWidget } from '@/components/dashboard/ActiveJourneysWidget';
-import { ActivationWidget } from '@/components/dashboard/ActivationWidget';
+// import { ActivationWidget } from '@/components/dashboard/ActivationWidget'; // v1.1.8 - Temporarily disabled
 import { Brain, Wallet, Target, Activity } from 'lucide-react';
 
 interface BookingSummary {
@@ -171,8 +171,8 @@ export default function DashboardPage() {
                 </div>
             </header>
 
-            {/* ========== ONBOARDING PROTOCOL ========== */}
-            <ActivationWidget />
+            {/* ========== ONBOARDING PROTOCOL (v1.1.8 - Temporarily disabled) ========== */}
+            {/* <ActivationWidget /> */}
 
             {/* ========== ROW 1: CLINICAL COCKPIT (Top Priority) ========== */}
             <div className="grid grid-cols-12 gap-6">
