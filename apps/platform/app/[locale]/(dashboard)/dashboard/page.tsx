@@ -12,6 +12,7 @@ import { FocusSessionCard } from '@/components/dashboard/FocusSessionCard';
 import { PipelineVelocity } from '@/components/dashboard/PipelineVelocity';
 import { QuickNote } from '@/components/dashboard/QuickNote';
 import { ActiveJourneysWidget } from '@/components/dashboard/ActiveJourneysWidget';
+import { ActivationWidget } from '@/components/dashboard/ActivationWidget';
 import { Brain, Wallet, Target, Activity } from 'lucide-react';
 
 interface BookingSummary {
