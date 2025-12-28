@@ -108,5 +108,6 @@
 | **Push Notifications** | Risk alerts, booking reminders |
 | **Offline Mode** | View patient data without internet |
 
+---
 
-*Last updated: December 27, 2025 (v1.1.3b SENTINEL PULSE)*
+*Last updated: December 28, 2025 (v1.1.7 THE GOLDEN KEY)*

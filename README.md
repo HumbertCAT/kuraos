@@ -323,4 +323,6 @@ KURA OS is crafted with the same care and intentionality that you bring to your 
 
 ---
 
+*Last updated: December 28, 2025 (v1.1.7 THE GOLDEN KEY)*
+
 *© 2025-2026 KURA OS. All rights reserved.*

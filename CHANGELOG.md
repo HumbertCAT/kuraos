@@ -1379,4 +1379,6 @@ From zero to production in 27 days:
 
 ---
 
+*Last updated: December 28, 2025 (v1.1.7 THE GOLDEN KEY)*
+
 *© 2025 KURA OS. All rights reserved.*
