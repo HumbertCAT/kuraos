@@ -54,3 +54,4 @@ backups/*.sql
 !backups/.gitkeep
 .vercel
 .env*.local
+*.pid

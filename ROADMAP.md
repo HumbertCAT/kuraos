@@ -1,8 +1,11 @@
 # KURA OS - Strategic Roadmap
 
-## � Release History
+## 📚 Documentation
 
-> For completed releases, see [CHANGELOG.md](CHANGELOG.md)
+| Document | Description |
+|----------|-------------|
+| [README.md](README.md) | Project overview & quick start |
+| [CHANGELOG.md](CHANGELOG.md) | Complete release history |
 
 ---
 

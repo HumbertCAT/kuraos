@@ -1,5 +1,14 @@
 # KURA OS - Changelog
 
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [README.md](README.md) | Project overview & quick start |
+| [ROADMAP.md](ROADMAP.md) | Strategic roadmap & pending features |
+
+---
+
 All notable changes to KURA OS will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

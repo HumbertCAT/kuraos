@@ -8,9 +8,12 @@
 
 ---
 
-## � Release History
+## 📚 Documentation
 
-> For completed releases, see [CHANGELOG.md](CHANGELOG.md)
+| Document | Description |
+|----------|-------------|
+| [CHANGELOG.md](CHANGELOG.md) | Complete release history |
+| [ROADMAP.md](ROADMAP.md) | Strategic roadmap & pending features |
 
 ---
 
