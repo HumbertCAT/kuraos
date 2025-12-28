@@ -42,3 +42,22 @@
 * **Infra:** Cloud Run (Backend) + Vercel (Frontend) + Cloud SQL (Unix Socket).
 * **Security:** Secrets in Google Secret Manager. Cookies are `httpOnly`.
 * **Terminology:** `PATIENT` | `CLIENT` | `CONSULTANT` (Respect via `useTerminology`).
+
+## 📦 Monorepo Structure
+| App | Path | Port | Description |
+|-----|------|------|-------------|
+| **Platform** | `apps/platform/` | `:3001` | Main SaaS app (authenticated) |
+| **Marketing** | `apps/marketing/` | `:3002` | Landing pages (public) |
+| **Backend** | `backend/` | `:8001` | FastAPI REST API |
+| **Database** | (Docker) | `:5433` | PostgreSQL (local) |
+
+> ⚠️ **Port Sensitivity:** Always use `:3001` for Platform, `:3002` for Marketing, `:8001` for Backend.
+
+## 🗄️ Alembic Migration Safety
+* **Migrations path:** `backend/alembic/versions/`
+* **Enum handling:** Use `checkfirst=True` when creating Enum types to avoid `DuplicateObjectError`
+* **Production sync:** If migration fails in prod, manually stamp version in `alembic_version` table:
+  ```sql
+  UPDATE alembic_version SET version_num = 'target_revision_id';
+  ```
+* **Downgrade:** Never hard-drop Enum types without `IF EXISTS`
