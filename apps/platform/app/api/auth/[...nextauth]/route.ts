@@ -19,13 +19,6 @@ const handler = NextAuth({
       if (url.startsWith('/')) return `${baseUrl}${url}`;
       return `${baseUrl}/es/dashboard`;
     },
-    async session({ session, token }) {
-      // Add user ID to session if available
-      if (token?.sub && session.user) {
-        session.user.id = token.sub;
-      }
-      return session;
-    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
