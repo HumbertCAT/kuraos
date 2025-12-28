@@ -32,33 +32,17 @@ def upgrade() -> None:
         END $$;
     """)
 
-    op.create_table(
-        "anonymous_datasets",
-        sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column(
-            "source_type",
-            sa.Enum(
-                "CLINICAL_NOTE",
-                "TRANSCRIPT",
-                "CHAT_ANALYSIS",
-                name="datasettype",
-                create_type=False,
-            ),
-            nullable=False,
-        ),
-        sa.Column("content", sa.Text(), nullable=False),
-        sa.Column(
-            "meta_analysis", postgresql.JSONB(astext_type=sa.Text()), nullable=True
-        ),
-        sa.Column("language", sa.String(length=10), nullable=False),
-        sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.text("now()"),
-            nullable=False,
-        ),
-        sa.PrimaryKeyConstraint("id"),
-    )
+    # Create table with IF NOT EXISTS
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS anonymous_datasets (
+            id UUID NOT NULL PRIMARY KEY,
+            source_type datasettype NOT NULL,
+            content TEXT NOT NULL,
+            meta_analysis JSONB,
+            language VARCHAR(10) NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
+        );
+    """)
     op.alter_column("ai_usage_logs", "user_id", existing_type=sa.UUID(), nullable=True)
     op.alter_column(
         "ai_usage_logs",
@@ -115,12 +99,12 @@ def upgrade() -> None:
         existing_type=sa.VARCHAR(length=50),
         nullable=True,
     )
-    op.create_index("ix_ai_usage_model", "ai_usage_logs", ["model_id"], unique=False)
-    op.create_index(
-        "ix_ai_usage_org_date",
-        "ai_usage_logs",
-        ["organization_id", "created_at"],
-        unique=False,
+    # Create indexes idempotently
+    op.execute(
+        "CREATE INDEX IF NOT EXISTS ix_ai_usage_model ON ai_usage_logs (model_id)"
+    )
+    op.execute(
+        "CREATE INDEX IF NOT EXISTS ix_ai_usage_org_date ON ai_usage_logs (organization_id, created_at)"
     )
     op.drop_constraint(
         "ai_usage_logs_entry_id_fkey", "ai_usage_logs", type_="foreignkey"
@@ -162,20 +146,14 @@ def upgrade() -> None:
         nullable=False,
         existing_server_default=sa.text("'CALENDAR'::character varying"),
     )
-    op.create_index(
-        op.f("ix_service_types_schedule_id"),
-        "service_types",
-        ["schedule_id"],
-        unique=False,
+    op.execute(
+        "CREATE INDEX IF NOT EXISTS ix_service_types_schedule_id ON service_types (schedule_id)"
     )
-    op.create_index(
-        op.f("ix_specific_availability_schedule_id"),
-        "specific_availability",
-        ["schedule_id"],
-        unique=False,
+    op.execute(
+        "CREATE INDEX IF NOT EXISTS ix_specific_availability_schedule_id ON specific_availability (schedule_id)"
     )
-    op.create_index(
-        op.f("ix_time_off_schedule_id"), "time_off", ["schedule_id"], unique=False
+    op.execute(
+        "CREATE INDEX IF NOT EXISTS ix_time_off_schedule_id ON time_off (schedule_id)"
     )
     op.add_column(
         "users", sa.Column("password_reset_token", sa.String(length=100), nullable=True)
@@ -184,13 +162,10 @@ def upgrade() -> None:
         "users",
         sa.Column("password_reset_expires", sa.DateTime(timezone=True), nullable=True),
     )
-    op.create_index(
-        op.f("ix_users_password_reset_token"),
-        "users",
-        ["password_reset_token"],
-        unique=False,
+    op.execute(
+        "CREATE INDEX IF NOT EXISTS ix_users_password_reset_token ON users (password_reset_token)"
     )
-    op.drop_column("users", "is_super_admin")
+    op.execute("ALTER TABLE users DROP COLUMN IF EXISTS is_super_admin")
     # ### end Alembic commands ###
 
 
