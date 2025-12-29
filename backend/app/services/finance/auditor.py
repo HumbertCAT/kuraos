@@ -5,12 +5,20 @@ Compares total internal costs (AiUsageLog) vs. Google Cloud Billing (BigQuery).
 Detects catastrophic cost bugs at project level.
 """
 
-from google.cloud import bigquery
+# Optional BigQuery import - don't crash boot if not available
+try:
+    from google.cloud import bigquery
+
+    BIGQUERY_AVAILABLE = True
+except ImportError:
+    bigquery = None
+    BIGQUERY_AVAILABLE = False
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from app.db.models import AiUsageLog
 from app.core.config import settings
@@ -26,12 +34,20 @@ class GlobalCostReconciler:
 
     def __init__(self, db: AsyncSession):
         self.db = db
-        self.bq_client = bigquery.Client()
+        self._bq_client: Optional[any] = None  # Lazy initialization
 
-        # Full table ID: project.dataset.table
+        # Validate config but don't crash if missing (endpoint will handle error)
         self.table_id = getattr(settings, "BILLING_TABLE_ID", None)
-        if not self.table_id:
-            raise ValueError("BILLING_TABLE_ID not configured in .env")
+
+    @property
+    def bq_client(self):
+        """Lazy initialization of BigQuery client."""
+        if not BIGQUERY_AVAILABLE:
+            raise RuntimeError("google-cloud-bigquery not installed")
+
+        if self._bq_client is None:
+            self._bq_client = bigquery.Client()
+        return self._bq_client
 
     async def get_internal_total_cost(
         self, start_date: datetime, end_date: datetime
@@ -55,7 +71,18 @@ class GlobalCostReconciler:
 
         Filters to AI/Generative services only (Vertex AI, Gemini API).
         Returns: Total cost in USD
+
+        Raises:
+            RuntimeError: If BigQuery not available or table_id not configured
         """
+        if not BIGQUERY_AVAILABLE:
+            raise RuntimeError(
+                "BigQuery client not available - install google-cloud-bigquery"
+            )
+
+        if not self.table_id:
+            raise ValueError("BILLING_TABLE_ID not configured in .env")
+
         query = f"""
         SELECT SUM(cost) as total_cost
         FROM `{self.table_id}`
