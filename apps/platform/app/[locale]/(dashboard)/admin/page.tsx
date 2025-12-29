@@ -141,6 +141,29 @@ export default function AdminPage() {
         return String(n);
     };
 
+    // Tier monthly subscription prices (v1.1.12)
+    const TIER_PRICES: Record<string, number> = {
+        BUILDER: 0,
+        PRO: 49,
+        CENTER: 149
+    };
+
+    // AI Cost Health Semaphore (v1.1.12)
+    // Compares AI cost vs prorated subscription budget
+    const getCostSemaphore = (costEur: number, tier: string): string => {
+        const monthlyPrice = TIER_PRICES[tier] || 0;
+        if (monthlyPrice === 0) return '🔴'; // Free tier = no revenue
+
+        const dayOfMonth = new Date().getDate();
+        const proratedBudget = (monthlyPrice / 30) * dayOfMonth;
+        const ratio = costEur / proratedBudget;
+
+        if (ratio > 1) return '🔴';      // >100% - losing money
+        if (ratio >= 0.5) return '🟠';   // 50-100% - warning
+        if (ratio >= 0.1) return '🟡';   // 10-50% - acceptable
+        return '🟢';                      // <10% - healthy
+    };
+
     // Sync tab from URL
     useEffect(() => {
         if (tabFromUrl && ['settings', 'organizations', 'templates', 'automations'].includes(tabFromUrl)) {
@@ -407,8 +430,8 @@ export default function AdminPage() {
                                     </td>
                                     <td className="px-6 py-4 text-sm text-foreground/70">{org.patient_count}</td>
                                     <td className="px-6 py-4">
-                                        <span className="font-mono text-sm text-foreground">
-                                            {formatTokens(org.ai_usage_tokens)} tok / €{org.ai_usage_cost_eur.toFixed(4)}
+                                        <span className="font-mono text-sm text-foreground whitespace-nowrap">
+                                            {formatTokens(org.ai_usage_tokens)}TOK/{org.ai_usage_cost_eur.toFixed(4).replace('.', ',')}€ {getCostSemaphore(org.ai_usage_cost_eur, org.tier)}
                                         </span>
                                     </td>
                                 </tr>
