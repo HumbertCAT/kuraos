@@ -269,7 +269,7 @@ export default function AdminPage() {
         { key: 'automations', label: 'Automations', icon: '🤖' },
         { key: 'backups', label: 'Backups', icon: '🛡️' },
         { key: 'theme', label: 'Themes', icon: '🎨' },
-        { key: 'ai', label: 'AI Governance', icon: '🧠' },
+        { key: 'ai', label: 'AI Gov', icon: '🧠' },
     ];
 
     return (
