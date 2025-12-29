@@ -14,36 +14,6 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.10] - 2025-12-29 🔍 GLOBAL COST RECONCILIATION
-
-### 🏦 Financial Safety Net
-- **BigQuery Integration**: Global cost health check comparing internal ledger vs. GCP billing
-  - Detects catastrophic cost bugs (infinite loops, pricing errors)
-  - Project-level reconciliation (not per-org - deferred to v1.2.0)
-  - `/finance/reconciliation/global` endpoint (admin-only)
-- **Drift Detection**: Automatic status classification (healthy/warning/critical)
-  - Healthy: <2% drift
-  - Warning: 2-10% drift
-  - Critical: >10% drift
-
-### 📊 Cost Governance Architecture
-- `GlobalCostReconciler` service: Compares `AiUsageLog` sum vs. BigQuery export
-- Manual BigQuery Billing Export setup required (documented)
-- Protects against invoice surprises
-
-### Technical
-- Added `google-cloud-bigquery==3.14.1`
-- New service: `app/services/finance/auditor.py`
-- New API: `app/api/v1/finance.py`
-- Config: `BILLING_TABLE_ID` setting
-
-### Deferred to v1.2.0 (Vertex AI Migration)
-- Resource Labels (per-org cost tracking)
-- Requires migration from `google-generativeai` to `google-cloud-aiplatform`
-- Unlocks Model Garden (Claude, Llama, Mistral)
-
----
-
 ## [1.1.11] - 2025-12-29 💰 INTERNAL MARGIN REPORT
 
 ### 🏦 Financial Governance (Safe Implementation)
