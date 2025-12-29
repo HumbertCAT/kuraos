@@ -126,12 +126,14 @@ class ProviderFactory:
             except Exception:
                 pass  # Skip if model initialization fails
 
-        # OpenAI Whisper (audio transcription)
+        # OpenAI Whisper (audio transcription) - $0.006 per minute
+        # Displaying as cost per 1M "tokens" (where 1 token = 1 second)
+        # 1M seconds = 16,666 minutes × $0.006 = $100
         models.append({
             "id": "whisper-1",
             "provider": "openai",
             "supports_audio": True,
-            "cost": {"input": 0.0001, "output": 0},  # $0.006/min = $0.0001/sec
+            "cost": {"input": 6.00, "output": 0},  # $6.00 per 1M seconds ≈ $0.006/min
         })
 
         # Phase 3: Add Claude, Llama, Mistral models
