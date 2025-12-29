@@ -290,14 +290,6 @@ app.include_router(
     tags=["AI Governance"],
 )
 
-# Finance & Cost Reconciliation (Super Admin only)
-from app.api.v1 import finance
-
-app.include_router(
-    finance.router,
-    prefix=f"{settings.API_V1_STR}/finance",
-    tags=["Finance"],
-)
 
 # Mount static files for serving uploads
 app.mount("/static", StaticFiles(directory="static"), name="static")
