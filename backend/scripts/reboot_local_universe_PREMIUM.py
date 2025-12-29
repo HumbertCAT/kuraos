@@ -40,7 +40,6 @@ from app.db.models import (
 SEED_SYSTEM_SETTINGS = [
     # AI Model default
     ("AI_MODEL", "gemini-2.5-flash", "Default AI model"),
-    ("AI_COST_MULTIMODAL", 5, "Credits per audio/image analysis"),
     # Tier patient limits (v1.1.8 naming)
     ("TIER_USERS_LIMIT_BUILDER", 3, "Max active patients for BUILDER tier"),
     ("TIER_USERS_LIMIT_PRO", 50, "Max active patients for PRO tier"),
