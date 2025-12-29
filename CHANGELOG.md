@@ -14,6 +14,37 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.9.1] - 2025-12-29 💰 AI USE - FRONTEND
+
+### 🎨 Admin UI Transparency
+- **AI Usage Column**: Replaced abstract "Credits" with transparent "AI USE"
+  - Format: `12.5K tok / €0.45` (tokens consumed / real cost)
+  - Compact display with K/M suffix for readability
+  - Monospace font for data clarity
+
+### Technical
+- Updated `AdminOrganization` interface with `ai_usage_tokens` and `ai_usage_cost_eur`
+- Added `formatTokens` helper for human-readable token counts
+- Modified Organizations table in Admin panel
+
+---
+
+## [1.1.9] - 2025-12-29 💰 AI USE - BACKEND
+
+### 🔢 AI Usage Metrics
+- **Real Token Tracking**: Backend now aggregates actual AI usage from `AiUsageLog`
+  - `ai_usage_tokens`: Total tokens (input + output) consumed this month
+  - `ai_usage_cost_eur`: Real cost with margin applied
+- **UTC-Aware Aggregation**: Explicit timezone handling to avoid month-boundary edge cases
+- **Optimized Queries**: Pre-fetched maps (2 queries instead of N+1 per organization)
+
+### Technical
+- Enhanced `/api/v1/admin/organizations` endpoint
+- Aligns with Kura OS `DateTime(timezone=True)` standard
+- Foundation for v1.2.0 Cost Reconciliation (Resource Labels + BigQuery)
+
+---
+
 ## [1.1.8] - 2025-12-29 🤖 THE NEURAL LEDGER
 
 ### 🧠 AI Governance Overhaul
