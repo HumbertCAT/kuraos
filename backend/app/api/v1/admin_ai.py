@@ -204,6 +204,9 @@ async def get_ai_config(
                 [
                     "gemini-2.5-flash",
                     "gemini-2.5-pro",
+                    "gemini-2.5-flash-lite",
+                    "gemini-3-pro",
+                    "gemini-2.0-flash",
                 ],
             ),
             vertex_ai_enabled=config_row.value.get("vertex_ai_enabled", True),
@@ -212,7 +215,13 @@ async def get_ai_config(
     # Default config
     return AiConfig(
         cost_margin=1.5,
-        active_models=["gemini-2.5-flash", "gemini-2.5-pro"],
+        active_models=[
+            "gemini-2.5-flash",
+            "gemini-2.5-pro",
+            "gemini-2.5-flash-lite",
+            "gemini-3-pro",
+            "gemini-2.0-flash",
+        ],
         vertex_ai_enabled=True,
     )
 
@@ -235,7 +244,13 @@ async def update_ai_config(
     else:
         current_config = {
             "cost_margin": 1.5,
-            "active_models": ["gemini-2.5-flash", "gemini-2.5-pro"],
+            "active_models": [
+                "gemini-2.5-flash",
+                "gemini-2.5-pro",
+                "gemini-2.5-flash-lite",
+                "gemini-3-pro",
+                "gemini-2.0-flash",
+            ],
             "vertex_ai_enabled": True,
         }
 

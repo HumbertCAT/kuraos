@@ -27,17 +27,22 @@ class CostLedger:
         - Task-type categorization for analytics
     """
 
-    # Pricing per 1M tokens (USD) - December 2024
+    # Pricing per 1M tokens (USD) - December 2025
     # Source: https://cloud.google.com/vertex-ai/generative-ai/pricing
+    # Note: These are TEXT prices. Audio input is typically higher.
     PRICING = {
-        # Gemini models
-        "gemini-2.5-flash": {"input": Decimal("0.075"), "output": Decimal("0.30")},
-        "gemini-2.5-pro": {"input": Decimal("1.25"), "output": Decimal("5.00")},
-        "gemini-3-pro-preview": {"input": Decimal("1.25"), "output": Decimal("5.00")},
-        "gemini-2.0-flash": {"input": Decimal("0.075"), "output": Decimal("0.30")},
+        # Gemini 3.x models (Latest - December 2025)
+        "gemini-3-pro": {"input": Decimal("2.00"), "output": Decimal("12.00")},
+        # Gemini 2.5 models
+        "gemini-2.5-pro": {"input": Decimal("1.25"), "output": Decimal("10.00")},
+        "gemini-2.5-flash": {"input": Decimal("0.15"), "output": Decimal("0.60")},
+        "gemini-2.5-flash-lite": {"input": Decimal("0.10"), "output": Decimal("0.40")},
+        # Gemini 2.0 models (Legacy)
+        "gemini-2.0-flash": {"input": Decimal("0.10"), "output": Decimal("0.40")},
+        "gemini-2.0-flash-lite": {"input": Decimal("0.075"), "output": Decimal("0.30")},
         # Vertex AI Speech (Chirp) - per 15 seconds of audio
         "chirp-2": {"input": Decimal("0.016"), "output": Decimal("0")},
-        # Phase 3: Claude models
+        # Phase 3: Claude models (Vertex AI)
         "claude-3-5-sonnet-v2": {"input": Decimal("3.00"), "output": Decimal("15.00")},
         "claude-3-5-haiku": {"input": Decimal("0.25"), "output": Decimal("1.25")},
         # Phase 3: Llama models (Vertex AI pricing)

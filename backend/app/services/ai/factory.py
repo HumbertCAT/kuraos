@@ -105,15 +105,26 @@ class ProviderFactory:
 
         models = []
 
-        # Gemini models
-        for model_id in ["gemini-2.5-flash", "gemini-2.5-pro"]:
-            provider = GeminiProvider(model_id)
-            models.append({
-                "id": model_id,
-                "provider": provider.provider_id,
-                "supports_audio": provider.supports_audio(),
-                "cost": provider.get_cost_structure(),
-            })
+        # Gemini models (2025)
+        gemini_models = [
+            "gemini-2.5-flash",
+            "gemini-2.5-pro",
+            "gemini-2.5-flash-lite",
+            "gemini-3-pro",
+            "gemini-2.0-flash",
+            "gemini-2.0-flash-lite",
+        ]
+        for model_id in gemini_models:
+            try:
+                provider = GeminiProvider(model_id)
+                models.append({
+                    "id": model_id,
+                    "provider": provider.provider_id,
+                    "supports_audio": provider.supports_audio(),
+                    "cost": provider.get_cost_structure(),
+                })
+            except Exception:
+                pass  # Skip if model initialization fails
 
         # Phase 3: Add Claude, Llama, Mistral models
 

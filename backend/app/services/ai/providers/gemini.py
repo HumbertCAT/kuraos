@@ -27,23 +27,33 @@ class GeminiProvider(AIProvider):
         - Document/image analysis
 
     Models:
-        - gemini-2.5-flash: Fast, cost-effective, audio support
+        - gemini-2.5-flash: Fast, cost-effective, audio support (DEFAULT)
         - gemini-2.5-pro: Higher quality, complex reasoning
-        - gemini-3-pro-preview: Latest preview model
+        - gemini-2.5-flash-lite: Ultra-efficient for high throughput
+        - gemini-3-pro: Latest model with advanced reasoning
+        - gemini-2.0-flash: Legacy fast model
     """
 
-    # Pricing per 1M tokens (USD) - December 2024
+    # Pricing per 1M tokens (USD) - December 2025
+    # Source: https://cloud.google.com/vertex-ai/generative-ai/pricing
     COST_STRUCTURE = {
-        "gemini-2.5-flash": {"input": 0.075, "output": 0.30},
-        "gemini-2.5-pro": {"input": 1.25, "output": 5.00},
-        "gemini-3-pro-preview": {"input": 1.25, "output": 5.00},
-        "gemini-2.0-flash": {"input": 0.075, "output": 0.30},
+        # Gemini 3.x (Latest)
+        "gemini-3-pro": {"input": 2.00, "output": 12.00},
+        # Gemini 2.5
+        "gemini-2.5-pro": {"input": 1.25, "output": 10.00},
+        "gemini-2.5-flash": {"input": 0.15, "output": 0.60},
+        "gemini-2.5-flash-lite": {"input": 0.10, "output": 0.40},
+        # Gemini 2.0 (Legacy)
+        "gemini-2.0-flash": {"input": 0.10, "output": 0.40},
+        "gemini-2.0-flash-lite": {"input": 0.075, "output": 0.30},
     }
 
     # Models that support native audio input
     AUDIO_CAPABLE_MODELS = {
+        "gemini-3-pro",
         "gemini-2.5-flash",
         "gemini-2.5-pro",
+        "gemini-2.5-flash-lite",
         "gemini-2.0-flash",
     }
 
