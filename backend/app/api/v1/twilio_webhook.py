@@ -65,6 +65,10 @@ async def twilio_whatsapp_webhook(
     # Determine message content
     content = Body.strip() if Body else ""
 
+    # Look up patient by phone number FIRST (needed for logging)
+    result = await db.execute(select(Patient).where(Patient.phone == phone_clean))
+    patient = result.scalar_one_or_none()
+
     # Handle audio messages
     if NumMedia > 0 and MediaUrl0 and is_audio_message(MediaContentType0):
         logger.info("🎤 Audio message received, transcribing...")
@@ -74,8 +78,14 @@ async def twilio_whatsapp_webhook(
         if settings.TWILIO_ACCOUNT_SID and settings.TWILIO_AUTH_TOKEN:
             twilio_auth = (settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
-        # Transcribe the audio
-        transcribed = await transcribe_audio(MediaUrl0, twilio_auth)
+        # Transcribe the audio (with usage logging if patient found)
+        transcribed = await transcribe_audio(
+            MediaUrl0,
+            twilio_auth,
+            db=db if patient else None,
+            organization_id=str(patient.organization_id) if patient else None,
+            patient_id=str(patient.id) if patient else None,
+        )
 
         # Combine with any text content
         if content:
@@ -92,10 +102,7 @@ async def twilio_whatsapp_webhook(
 
     logger.info(f"📱 WhatsApp message received (length: {len(content)} chars)")
 
-    # Look up patient by phone number
-    result = await db.execute(select(Patient).where(Patient.phone == phone_clean))
-    patient = result.scalar_one_or_none()
-
+    # Check if patient was found (lookup done earlier for audio logging)
     if not patient:
         # Unknown sender - log warning but return 200 to not block Twilio
         logger.warning("⚠️ Unknown WhatsApp sender")
