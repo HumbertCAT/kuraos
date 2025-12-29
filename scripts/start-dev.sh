@@ -21,7 +21,32 @@ done
 
 # Handle clean start - ONLY way to delete data
 if [ "$CLEAN_START" = true ]; then
-    echo "⚠️  CLEAN START: Removing database volume..."
+    # SAFETY CHECK 1: Block in production
+    if [ "$ENVIRONMENT" = "production" ] || [ "$NODE_ENV" = "production" ]; then
+        echo "🚫 ERROR: --clean is BLOCKED in production environment!"
+        echo "   This would delete all data which is illegal under HIPAA."
+        echo "   If you really need to reset production, use proper backup/restore procedures."
+        exit 1
+    fi
+    
+    # SAFETY CHECK 2: Double-confirm
+    echo ""
+    echo "⚠️  ╔══════════════════════════════════════════════════════════════╗"
+    echo "   ║  DANGER: This will DELETE ALL DATA from the local database!  ║"
+    echo "   ║  - All patients and clinical entries                         ║"
+    echo "   ║  - All AI usage logs and costs                               ║"
+    echo "   ║  - All settings and configurations                           ║"
+    echo "   ║  This action CANNOT be undone!                               ║"
+    echo "   ╚══════════════════════════════════════════════════════════════╝"
+    echo ""
+    read -p "   Type 'BORRAR TODO' to confirm: " CONFIRM
+    
+    if [ "$CONFIRM" != "BORRAR TODO" ]; then
+        echo "❌ Aborted. Database NOT deleted."
+        exit 0
+    fi
+    
+    echo "🗑️  Removing database volume..."
     docker-compose down -v
     echo "   Database volume deleted."
 fi
