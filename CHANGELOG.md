@@ -44,6 +44,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.11] - 2025-12-29 💰 INTERNAL MARGIN REPORT
+
+### 🏦 Financial Governance (Safe Implementation)
+- **Internal Ledger Analysis**: Gross margin calculation from AiUsageLog
+  - COGS: `cost_provider_usd` (what we pay Google)
+  - Revenue: `cost_user_credits` (what we charge users)
+  - Margin: Revenue - COGS
+- **Health Status Classification**: healthy/acceptable/low_margin/unprofitable
+- **New Endpoint**: `GET /admin/finance/margins` (superuser only)
+
+### 📊 Business Intelligence
+- Real-time profitability tracking
+- No external dependencies (pure SQL aggregation)
+- 30-day default window (configurable)
+
+### Technical
+- New service: `app/services/finance/internal_ledger.py`
+- Added to existing `admin.py` (no new route file)
+- Zero deployment risk (no new libraries)
+
+### Strategic Note
+- Deferred v1.1.10 (BigQuery reconciliation) to v1.2.0
+- Current implementation sufficient for financial safety
+- External reconciliation awaits Vertex AI migration
+
+---
+
+## [1.1.10] - UNRELEASED ❌
+
+**Status:** Deployment failed (4 attempts). Rolled back.  
+**Root Cause:** Dependency conflicts with `google-cloud-bigquery`  
+**Decision:** Deferred to v1.2.0 (Vertex AI migration)  
+**See:** Forensic report in conversation artifacts
+
+**Lesson Learned:** `git revert` doesn't delete new files. Manual cleanup required.
+
+---
+
 ## [1.1.9.1] - 2025-12-29 💰 AI USE - FRONTEND
 
 ### 🎨 Admin UI Transparency
