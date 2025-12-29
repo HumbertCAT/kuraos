@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 from app.db.session import get_db
 from app.api.v1.auth import require_superuser
 from app.db.models import User
+from app.services.finance.auditor import GlobalCostReconciler
 
 
 router = APIRouter()
@@ -48,9 +49,6 @@ async def get_global_reconciliation(
     """
     end_date = datetime.now(timezone.utc)
     start_date = end_date - timedelta(days=days)
-
-    # Import here to avoid boot-time failures if BigQuery not configured
-    from app.services.finance.auditor import GlobalCostReconciler
 
     try:
         reconciler = GlobalCostReconciler(db)
