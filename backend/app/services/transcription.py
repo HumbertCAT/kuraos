@@ -5,6 +5,9 @@ Transcribes WhatsApp audio messages for AletheIA analysis.
 
 import logging
 import tempfile
+import uuid
+from datetime import datetime
+from decimal import Decimal
 from typing import Optional
 
 import httpx
@@ -25,6 +28,9 @@ AUDIO_CONTENT_TYPES = {
     "audio/aac",
 }
 
+# Whisper pricing: $0.006 per minute = $0.0001 per second
+WHISPER_COST_PER_SECOND = Decimal("0.0001")
+
 
 def is_audio_message(content_type: Optional[str]) -> bool:
     """Check if the content type is a supported audio format."""
@@ -35,13 +41,97 @@ def is_audio_message(content_type: Optional[str]) -> bool:
     return base_type.startswith("audio/")
 
 
-async def transcribe_audio(media_url: str, twilio_auth: tuple = None) -> str:
+async def log_whisper_usage(
+    db,
+    organization_id: str,
+    audio_duration_seconds: int,
+    user_id: Optional[str] = None,
+    patient_id: Optional[str] = None,
+):
+    """
+    Log Whisper transcription usage to ai_usage_logs.
+
+    Args:
+        db: Database session
+        organization_id: UUID of the organization
+        audio_duration_seconds: Duration of audio in seconds
+        user_id: Optional user UUID
+        patient_id: Optional patient UUID
+    """
+    try:
+        from app.db.models import AiUsageLog
+
+        # Calculate cost (Whisper charges $0.006/minute)
+        cost_provider = Decimal(audio_duration_seconds) * WHISPER_COST_PER_SECOND
+        margin = Decimal("1.5")  # Default margin
+        cost_user = cost_provider * margin
+
+        log = AiUsageLog(
+            id=uuid.uuid4(),
+            created_at=datetime.utcnow(),
+            organization_id=organization_id,
+            user_id=user_id,
+            patient_id=patient_id,
+            provider="openai",
+            model_id="whisper-1",
+            task_type="transcription",
+            tokens_input=audio_duration_seconds,  # Using seconds as "tokens"
+            tokens_output=0,
+            cost_provider_usd=float(cost_provider),
+            cost_user_credits=float(cost_user),
+        )
+
+        db.add(log)
+        await db.flush()
+        logger.info(
+            f"📊 Logged Whisper usage: {audio_duration_seconds}s, ${cost_provider:.4f}"
+        )
+    except Exception as e:
+        logger.warning(f"Failed to log Whisper usage: {e}")
+
+
+def _estimate_audio_duration(file_size_bytes: int, content_type: str) -> int:
+    """
+    Estimate audio duration from file size.
+
+    Uses approximate bitrates for common formats.
+    Returns duration in seconds.
+    """
+    # Approximate bitrates (bits per second)
+    bitrate_map = {
+        "audio/ogg": 64000,  # ~64 kbps typical for voice
+        "audio/mpeg": 128000,  # ~128 kbps for mp3
+        "audio/mp4": 96000,  # ~96 kbps for m4a
+        "audio/amr": 12200,  # AMR narrow band
+        "audio/aac": 96000,  # ~96 kbps
+    }
+
+    base_type = content_type.split(";")[0].strip().lower()
+    bitrate = bitrate_map.get(base_type, 64000)  # Default to 64kbps
+
+    # Duration = (file_size * 8) / bitrate
+    duration_seconds = (file_size_bytes * 8) / bitrate
+    return max(1, int(duration_seconds))  # Minimum 1 second
+
+
+async def transcribe_audio(
+    media_url: str,
+    twilio_auth: tuple = None,
+    db=None,
+    organization_id: str = None,
+    user_id: str = None,
+    patient_id: str = None,
+) -> str:
     """
     Download audio from Twilio and transcribe using OpenAI Whisper.
 
     Args:
         media_url: URL to the audio file from Twilio
         twilio_auth: Optional (account_sid, auth_token) for authenticated download
+        db: Optional database session for logging usage
+        organization_id: Optional org UUID for logging
+        user_id: Optional user UUID for logging
+        patient_id: Optional patient UUID for logging
 
     Returns:
         Transcribed text with [🎤 AUDIO] prefix, or error message
@@ -74,6 +164,9 @@ async def transcribe_audio(media_url: str, twilio_auth: tuple = None) -> str:
             audio_data = response.content
             content_type = response.headers.get("content-type", "audio/ogg")
 
+        # Estimate duration for cost tracking
+        audio_duration = _estimate_audio_duration(len(audio_data), content_type)
+
         # Determine file extension from content type
         ext_map = {
             "audio/ogg": ".ogg",
@@ -104,6 +197,16 @@ async def transcribe_audio(media_url: str, twilio_auth: tuple = None) -> str:
 
             transcribed_text = transcript.text.strip()
             logger.info("✅ Audio transcribed successfully")
+
+            # Log usage if db context provided
+            if db and organization_id:
+                await log_whisper_usage(
+                    db=db,
+                    organization_id=organization_id,
+                    audio_duration_seconds=audio_duration,
+                    user_id=user_id,
+                    patient_id=patient_id,
+                )
 
             return f"[🎤 AUDIO]: {transcribed_text}"
 

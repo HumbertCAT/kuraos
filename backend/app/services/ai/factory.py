@@ -126,6 +126,14 @@ class ProviderFactory:
             except Exception:
                 pass  # Skip if model initialization fails
 
+        # OpenAI Whisper (audio transcription)
+        models.append({
+            "id": "whisper-1",
+            "provider": "openai",
+            "supports_audio": True,
+            "cost": {"input": 0.0001, "output": 0},  # $0.006/min = $0.0001/sec
+        })
+
         # Phase 3: Add Claude, Llama, Mistral models
 
         return models

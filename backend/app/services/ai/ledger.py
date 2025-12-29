@@ -42,6 +42,9 @@ class CostLedger:
         "gemini-2.0-flash-lite": {"input": Decimal("0.075"), "output": Decimal("0.30")},
         # Vertex AI Speech (Chirp) - per 15 seconds of audio
         "chirp-2": {"input": Decimal("0.016"), "output": Decimal("0")},
+        # OpenAI Whisper - $0.006 per minute = $0.0001 per second
+        # We track seconds as "tokens" for consistency. Cost = seconds * 0.0001
+        "whisper-1": {"input": Decimal("0.0001"), "output": Decimal("0")},
         # Phase 3: Claude models (Vertex AI)
         "claude-3-5-sonnet-v2": {"input": Decimal("3.00"), "output": Decimal("15.00")},
         "claude-3-5-haiku": {"input": Decimal("0.25"), "output": Decimal("1.25")},
