@@ -32,7 +32,32 @@ from app.db.models import (
     DailyConversationAnalysis,
     BookingStatus,
     FormTemplate,
+    SystemSetting,
 )
+
+# --- SYSTEM SETTINGS (Global Configuration) ---
+# These are seeded to ensure demo environment has consistent settings
+SEED_SYSTEM_SETTINGS = [
+    # Legacy settings (from v0.6.0 migration)
+    ("FREE_PATIENT_LIMIT", 5, "Maximum patients for FREE tier"),
+    ("FREE_CREDITS_MONTHLY", 100, "Monthly AI credits for FREE tier"),
+    ("PRO_CREDITS_MONTHLY", 500, "Monthly AI credits for PRO tier"),
+    ("AI_COST_TEXT", 1, "Credits per text analysis"),
+    ("AI_COST_MULTIMODAL", 5, "Credits per audio/image analysis"),
+    ("AI_MODEL", "gemini-2.5-flash", "Default AI model"),
+    # Tier patient limits (v1.1.8 naming)
+    ("TIER_USERS_LIMIT_BUILDER", 3, "Max active patients for BUILDER tier"),
+    ("TIER_USERS_LIMIT_PRO", 50, "Max active patients for PRO tier"),
+    ("TIER_USERS_LIMIT_CENTER", 150, "Max active patients for CENTER tier"),
+    # Tier Stripe commission fees
+    ("TIER_STRIPE_FEE_BUILDER", 0.05, "Stripe commission rate for BUILDER tier (5%)"),
+    ("TIER_STRIPE_FEE_PRO", 0.02, "Stripe commission rate for PRO tier (2%)"),
+    ("TIER_STRIPE_FEE_CENTER", 0.01, "Stripe commission rate for CENTER tier (1%)"),
+    # Tier AI credits
+    ("TIER_AI_CREDITS_BUILDER", 100, "Monthly AI credits for BUILDER tier"),
+    ("TIER_AI_CREDITS_PRO", 500, "Monthly AI credits for PRO tier"),
+    ("TIER_AI_CREDITS_CENTER", 2000, "Monthly AI credits for CENTER tier"),
+]
 
 # --- DATA DEFINITIONS (FROM ANALYST) ---
 
@@ -250,6 +275,36 @@ async def wipe_data(db, org_id):
         )
     )
     print("🗑️  Zone Cleared.")
+
+
+async def seed_system_settings(db):
+    """Seed all system_settings with global configuration values."""
+    print("\n⚙️  CONFIGURING SYSTEM SETTINGS...")
+
+    for key, value, description in SEED_SYSTEM_SETTINGS:
+        # Check if setting exists
+        existing = await db.execute(
+            select(SystemSetting).where(SystemSetting.key == key)
+        )
+        setting = existing.scalar_one_or_none()
+
+        if setting:
+            # Update existing
+            setting.value = value
+            setting.description = description
+        else:
+            # Create new
+            new_setting = SystemSetting(
+                key=key,
+                value=value,
+                description=description,
+            )
+            db.add(new_setting)
+
+        print(f"   ✓ {key} = {value}")
+
+    await db.flush()
+    print(f"   ✅ {len(SEED_SYSTEM_SETTINGS)} System Settings configured")
 
 
 async def seed_services(db, org_id):
@@ -609,6 +664,7 @@ async def main():
 
         # Execute Protocols
         await wipe_data(db, org_id)
+        await seed_system_settings(db)  # Global config first
         await seed_journeys(db, org_id)
         await seed_forms(db, org_id)
         services = await seed_services(db, org_id)
