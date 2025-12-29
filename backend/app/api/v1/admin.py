@@ -374,3 +374,40 @@ async def force_conversation_analysis(
         "analyzed": result.get("analyzed", 0),
         "risks_detected": result.get("risks_detected", 0),
     }
+
+
+# ============ Financial Reporting (v1.1.11) ============
+
+
+@router.get("/finance/margins", dependencies=[Depends(require_superuser)])
+async def get_financial_margins(days: int = 30, db: AsyncSession = Depends(get_db)):
+    """
+    Internal Financial Report: AI Cost vs Revenue Margins.
+
+    Calculates gross margin from internal ledger (AiUsageLog):
+    - Revenue: What we charge customers (cost_user_credits)
+    - COGS: What we pay Google (cost_provider_usd)
+    - Margin: Revenue - COGS
+
+    NO external dependencies. Safe implementation.
+
+    Args:
+        days: Analysis period in days (default: 30)
+
+    Returns:
+        {
+            "period_days": 30,
+            "total_requests": 1500,
+            "cogs_usd": 50.25,
+            "revenue_usd": 75.38,
+            "gross_margin_usd": 25.13,
+            "gross_margin_pct": 33.35,
+            "status": "healthy" | "acceptable" | "low_margin" | "unprofitable"
+        }
+
+    Requires: Superuser access
+    """
+    from app.services.finance.internal_ledger import InternalLedger
+
+    ledger = InternalLedger(db)
+    return await ledger.get_financial_report(days)
