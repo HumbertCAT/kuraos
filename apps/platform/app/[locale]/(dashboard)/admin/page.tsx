@@ -573,88 +573,90 @@ export default function AdminPage() {
                             </button>
                         ))}
                     </div>
-                    <table className="w-full">
-                        <thead className="bg-muted border-b border-border">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Playbook</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Trigger</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Actions</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Scope</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {automations
-                                .filter(a => automationsFilter === 'all' || (automationsFilter === 'system' ? a.is_system_template : !a.is_system_template))
-                                .map((rule) => {
-                                    // Map Lucide icon names to emojis
-                                    const iconMap: Record<string, string> = {
-                                        ShieldAlert: '🛡️',
-                                        Banknote: '💸',
-                                        HeartHandshake: '❤️',
-                                        Bell: '🔔',
-                                        Mail: '📧',
-                                        Clock: '⏰',
-                                        AlertTriangle: '⚠️',
-                                    };
-                                    const emoji = iconMap[rule.icon] || '🤖';
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[800px]">
+                            <thead className="bg-muted border-b border-border">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Playbook</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Trigger</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Actions</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Scope</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {automations
+                                    .filter(a => automationsFilter === 'all' || (automationsFilter === 'system' ? a.is_system_template : !a.is_system_template))
+                                    .map((rule) => {
+                                        // Map Lucide icon names to emojis
+                                        const iconMap: Record<string, string> = {
+                                            ShieldAlert: '🛡️',
+                                            Banknote: '💸',
+                                            HeartHandshake: '❤️',
+                                            Bell: '🔔',
+                                            Mail: '📧',
+                                            Clock: '⏰',
+                                            AlertTriangle: '⚠️',
+                                        };
+                                        const emoji = iconMap[rule.icon] || '🤖';
 
-                                    return (
-                                        <tr key={rule.id} className="hover:bg-accent">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-2xl">{emoji}</span>
-                                                    <div>
-                                                        <p className="font-medium text-foreground">{rule.name}</p>
-                                                        <p className="text-sm text-foreground/60 max-w-xs truncate">{rule.description}</p>
+                                        return (
+                                            <tr key={rule.id} className="hover:bg-accent">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-2xl">{emoji}</span>
+                                                        <div>
+                                                            <p className="font-medium text-foreground">{rule.name}</p>
+                                                            <p className="text-sm text-foreground/60 max-w-xs truncate">{rule.description}</p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="inline-flex items-center gap-1 text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded">
-                                                    {TRIGGER_LABELS[rule.trigger_event] || rule.trigger_event}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex flex-wrap gap-1">
-                                                    {(rule.actions || []).map((action, idx) => {
-                                                        const actionLabels: Record<string, string> = {
-                                                            send_email: '📧 Email',
-                                                            update_journey_status: '🔄 Journey',
-                                                            block_patient: '🚫 Block',
-                                                            notify_therapist: '🔔 Notify',
-                                                        };
-                                                        return (
-                                                            <span key={idx} className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded">
-                                                                {actionLabels[action.type] || action.type}
-                                                            </span>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div>
-                                                    <span className={`text-sm ${rule.is_system_template ? 'text-purple-600 font-medium' : 'text-foreground/70'}`}>
-                                                        {rule.is_system_template ? '🌐 System' : '🏢 Org'}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="inline-flex items-center gap-1 text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                                                        {TRIGGER_LABELS[rule.trigger_event] || rule.trigger_event}
                                                     </span>
-                                                    {!rule.is_system_template && rule.organization_id && (
-                                                        <p className="text-xs text-muted-foreground mt-0.5">{getOrgName(rule.organization_id)}</p>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded text-xs font-medium ${rule.is_active
-                                                    ? 'bg-green-100 text-green-700'
-                                                    : 'bg-muted text-foreground/60'
-                                                    }`}>
-                                                    {rule.is_active ? 'Active' : 'Inactive'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                        </tbody>
-                    </table>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {(rule.actions || []).map((action, idx) => {
+                                                            const actionLabels: Record<string, string> = {
+                                                                send_email: '📧 Email',
+                                                                update_journey_status: '🔄 Journey',
+                                                                block_patient: '🚫 Block',
+                                                                notify_therapist: '🔔 Notify',
+                                                            };
+                                                            return (
+                                                                <span key={idx} className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded">
+                                                                    {actionLabels[action.type] || action.type}
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div>
+                                                        <span className={`text-sm ${rule.is_system_template ? 'text-purple-600 font-medium' : 'text-foreground/70'}`}>
+                                                            {rule.is_system_template ? '🌐 System' : '🏢 Org'}
+                                                        </span>
+                                                        {!rule.is_system_template && rule.organization_id && (
+                                                            <p className="text-xs text-muted-foreground mt-0.5">{getOrgName(rule.organization_id)}</p>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`px-2 py-1 rounded text-xs font-medium ${rule.is_active
+                                                        ? 'bg-green-100 text-green-700'
+                                                        : 'bg-muted text-foreground/60'
+                                                        }`}>
+                                                        {rule.is_active ? 'Active' : 'Inactive'}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                            </tbody>
+                        </table>
+                    </div>
                     {automations.length === 0 && (
                         <div className="text-center py-12 text-foreground/60">
                             No automation templates found.
