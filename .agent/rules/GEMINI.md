@@ -20,6 +20,8 @@ trigger: always_on
 - **UNLOCK:** Only proceed when the user explicitly replies "SÍ", "APROBADO" or "ADELANTE".
 
 ## 🎨 Design System Integrity (THE GOLDEN RULE)
+> **SCOPE:** These rules apply ONLY to `apps/platform/`. Marketing projects (`apps/landing/`, `apps/investors/`, future marketing apps) are EXEMPT and may use any styling approach.
+
 - **NO Hardcoded Colors:** FORBIDDEN to use `bg-white`, `text-gray-500`, `bg-[#F3F4F6]`.
   - MUST use Semantic Tokens: `bg-card`, `text-muted-foreground`, `bg-brand`, `bg-sidebar`.
 - **UI Physics (Tactile Quality):**

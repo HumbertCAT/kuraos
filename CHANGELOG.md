@@ -14,6 +14,77 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.8] - 2025-12-29 🤖 THE NEURAL LEDGER
+
+### 🧠 AI Governance Overhaul
+Complete modernization of the AI tracking and pricing infrastructure.
+
+#### Neural Registry Updates (December 2025)
+| Model | Audio | Input $/M | Output $/M |
+|-------|-------|-----------|------------|
+| gemini-3-pro | ✅ | $2.00 | $12.00 |
+| gemini-2.5-pro | ✅ | $1.25 | $10.00 |
+| gemini-2.5-flash | ✅ | $0.15 | $0.60 |
+| gemini-2.5-flash-lite | ✅ | $0.10 | $0.40 |
+| gemini-2.0-flash | ✅ | $0.10 | $0.40 |
+| whisper-1 | ✅ | $0.006/min | - |
+
+#### OpenAI Whisper Integration
+- **Added to Neural Registry**: Whisper now visible in AI Gov dashboard
+- **Usage Logging**: Transcriptions logged to `ai_usage_logs` with provider="openai"
+- **Cost Tracking**: Estimates audio duration from file size for accurate billing
+- **Twilio Webhook**: Now passes db context for Whisper usage logging
+
+### ⚙️ Tier Settings Standardization
+Renamed all tier configuration for clarity:
+
+| Category | Old Name | New Name |
+|----------|----------|----------|
+| Patient Limits | `TIER_LIMIT_*` | `TIER_USERS_LIMIT_*` |
+| Stripe Commission | `TIER_FEE_*` | `TIER_STRIPE_FEE_*` |
+| AI Credits | - | `TIER_AI_CREDITS_*` |
+
+- **Alembic Migration**: Tier settings now auto-seeded via migration
+- **Code Updates**: `patients.py`, `auth.py` use new naming
+
+### 🛡️ Safety & Operations
+
+#### `--clean` Flag Protection
+- **Production Block**: Refuses to run if `ENVIRONMENT=production`
+- **Double Confirm**: Requires typing "BORRAR TODO" to proceed
+- **HIPAA Warning**: Explains legal implications in error message
+
+### 🎨 Theme System
+- **Multi-Theme Support**: Océano and Sunset palettes
+- **Hybrid Persistence**: Theme enum case alignment (uppercase)
+- **CyberCard Polish**: Padding fixes in Appearance page
+
+### 📚 Documentation & Agent Configuration
+
+#### Agent Rules v1.1.4
+- **Exceptions Protocol**: Ask for approval before bypassing strict rules
+- **Design System Scope**: Rules now EXEMPT marketing apps (`apps/landing/`, `apps/investors/`)
+- **Circuit Breaker**: Halts execution after presenting implementation_plan.md
+
+#### New Workflows
+- `/god-mode` - Complete Generator Protocol
+- `/plan-cycle` - Planning phase only
+- `/create-feature` - Feature scaffolding
+- `/safe-migration` - Alembic with backup
+- `/seed-demo` - Golden Seed refresh
+- `/audit` - Semantic integrity check
+
+#### Roadmap Updates
+- **AI Infrastructure Migration**: GenerativeAI → Vertex AI Model Garden (Q1-Q2 2026)
+- **Whisper → Chirp 2**: Migration planned for batch transcription ($0.003/min)
+
+### 🔧 Admin Panel Refinements
+- Renamed tabs: "Automations" → "Agents", "AI Governance" → "AI Gov"
+- Fixed `terminology_preference` not saving in organization list
+- Renamed "Form Templates" → "Forms", "Theme Engine" → "Themes"
+
+---
+
 ## [1.1.7] - 2025-12-28 🔐 THE GOLDEN KEY
 
 ### 🔑 Native Google OAuth
