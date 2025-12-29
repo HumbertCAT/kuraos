@@ -121,8 +121,6 @@ export default function AdminPage() {
     // Edit states
     const [editingKey, setEditingKey] = useState<string | null>(null);
     const [editValue, setEditValue] = useState('');
-    const [addCreditsOrgId, setAddCreditsOrgId] = useState<string | null>(null);
-    const [creditsAmount, setCreditsAmount] = useState(0);
 
     // Scope filters
     type ScopeFilter = 'all' | 'system' | 'org';
@@ -219,18 +217,6 @@ export default function AdminPage() {
     async function handleChangeTerminology(orgId: string, newTerm: string) {
         try {
             await api.admin.updateOrganization(orgId, { terminology_preference: newTerm });
-            loadData();
-        } catch (err: any) {
-            alert(err.message);
-        }
-    }
-
-    async function handleAddCredits(orgId: string) {
-        if (creditsAmount <= 0) return;
-        try {
-            await api.admin.addCredits(orgId, creditsAmount);
-            setAddCreditsOrgId(null);
-            setCreditsAmount(0);
             loadData();
         } catch (err: any) {
             alert(err.message);
@@ -391,7 +377,6 @@ export default function AdminPage() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Term</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Patients</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">AI Use</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -423,43 +408,8 @@ export default function AdminPage() {
                                     <td className="px-6 py-4 text-sm text-foreground/70">{org.patient_count}</td>
                                     <td className="px-6 py-4">
                                         <span className="font-mono text-sm text-foreground">
-                                            {formatTokens(org.ai_usage_tokens)} tok / €{org.ai_usage_cost_eur.toFixed(2)}
+                                            {formatTokens(org.ai_usage_tokens)} tok / €{org.ai_usage_cost_eur.toFixed(4)}
                                         </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {addCreditsOrgId === org.id ? (
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="number"
-                                                    value={creditsAmount}
-                                                    onChange={(e) => setCreditsAmount(Number(e.target.value))}
-                                                    className="w-20 text-sm border border-border rounded px-2 py-1 text-foreground"
-                                                    min="1"
-                                                />
-                                                <button
-                                                    onClick={() => handleAddCredits(org.id)}
-                                                    className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
-                                                >
-                                                    Add
-                                                </button>
-                                                <button
-                                                    onClick={() => setAddCreditsOrgId(null)}
-                                                    className="px-2 py-1 bg-muted text-foreground text-xs rounded"
-                                                >
-                                                    ✕
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <button
-                                                onClick={() => {
-                                                    setAddCreditsOrgId(org.id);
-                                                    setCreditsAmount(10);
-                                                }}
-                                                className="px-3 py-1 bg-emerald-100 text-emerald-700 text-sm rounded hover:bg-emerald-200"
-                                            >
-                                                + Credits
-                                            </button>
-                                        )}
                                     </td>
                                 </tr>
                             ))}
