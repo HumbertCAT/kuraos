@@ -583,7 +583,7 @@ async def get_my_usage(
     active_patients = patient_count_result.scalar() or 0
 
     # Get tier limit
-    tier_limit_key = f"TIER_LIMIT_{org.tier.value}"
+    tier_limit_key = f"TIER_USERS_LIMIT_{org.tier.value}"
     limit = await get_setting_int(db, tier_limit_key, 999)
 
     # Calculate percentage

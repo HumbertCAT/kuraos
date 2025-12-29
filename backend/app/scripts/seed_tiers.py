@@ -11,13 +11,17 @@ from app.services.settings import set_setting
 
 TIER_SETTINGS = [
     # Patient limits per tier
-    ("TIER_LIMIT_BUILDER", 3, "Max active patients for BUILDER tier"),
-    ("TIER_LIMIT_PRO", 50, "Max active patients for PRO tier"),
-    ("TIER_LIMIT_CENTER", 150, "Max active patients for CENTER tier"),
-    # Commission fees per tier (for future payment processing)
-    ("TIER_FEE_BUILDER", 0.05, "Commission rate for BUILDER tier (5%)"),
-    ("TIER_FEE_PRO", 0.02, "Commission rate for PRO tier (2%)"),
-    ("TIER_FEE_CENTER", 0.01, "Commission rate for CENTER tier (1%)"),
+    ("TIER_USERS_LIMIT_BUILDER", 3, "Max active patients for BUILDER tier"),
+    ("TIER_USERS_LIMIT_PRO", 50, "Max active patients for PRO tier"),
+    ("TIER_USERS_LIMIT_CENTER", 150, "Max active patients for CENTER tier"),
+    # Stripe commission fees per tier
+    ("TIER_STRIPE_FEE_BUILDER", 0.05, "Stripe commission rate for BUILDER tier (5%)"),
+    ("TIER_STRIPE_FEE_PRO", 0.02, "Stripe commission rate for PRO tier (2%)"),
+    ("TIER_STRIPE_FEE_CENTER", 0.01, "Stripe commission rate for CENTER tier (1%)"),
+    # AI credits per tier
+    ("TIER_AI_CREDITS_BUILDER", 100, "Monthly AI credits for BUILDER tier"),
+    ("TIER_AI_CREDITS_PRO", 500, "Monthly AI credits for PRO tier"),
+    ("TIER_AI_CREDITS_CENTER", 2000, "Monthly AI credits for CENTER tier"),
 ]
 
 

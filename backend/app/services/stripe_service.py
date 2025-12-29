@@ -228,6 +228,7 @@ async def handle_checkout_completed(
     org.stripe_subscription_id = subscription_id
 
     # Update AI credits based on tier
+    # TODO: Read from TIER_AI_CREDITS_{tier} in system_settings
     if org.tier == OrgTier.PRO:
         org.ai_credits_monthly_quota = 500
     elif org.tier == OrgTier.CENTER:

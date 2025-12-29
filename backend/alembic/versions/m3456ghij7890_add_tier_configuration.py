@@ -22,17 +22,20 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Add tier configuration settings."""
-    # Insert tier limits and fees into system_settings
+    # Insert tier limits, stripe fees, and AI credits into system_settings
     # Using INSERT ... ON CONFLICT to be idempotent
     op.execute("""
         INSERT INTO system_settings (key, value, description)
         VALUES 
-            ('TIER_LIMIT_BUILDER', '3', 'Max active patients for BUILDER tier'),
-            ('TIER_LIMIT_PRO', '50', 'Max active patients for PRO tier'),
-            ('TIER_LIMIT_CENTER', '150', 'Max active patients for CENTER tier'),
-            ('TIER_FEE_BUILDER', '0.05', 'Commission rate for BUILDER tier (5%)'),
-            ('TIER_FEE_PRO', '0.02', 'Commission rate for PRO tier (2%)'),
-            ('TIER_FEE_CENTER', '0.01', 'Commission rate for CENTER tier (1%)')
+            ('TIER_USERS_LIMIT_BUILDER', '3', 'Max active patients for BUILDER tier'),
+            ('TIER_USERS_LIMIT_PRO', '50', 'Max active patients for PRO tier'),
+            ('TIER_USERS_LIMIT_CENTER', '150', 'Max active patients for CENTER tier'),
+            ('TIER_STRIPE_FEE_BUILDER', '0.05', 'Stripe commission rate for BUILDER tier (5%)'),
+            ('TIER_STRIPE_FEE_PRO', '0.02', 'Stripe commission rate for PRO tier (2%)'),
+            ('TIER_STRIPE_FEE_CENTER', '0.01', 'Stripe commission rate for CENTER tier (1%)'),
+            ('TIER_AI_CREDITS_BUILDER', '100', 'Monthly AI credits for BUILDER tier'),
+            ('TIER_AI_CREDITS_PRO', '500', 'Monthly AI credits for PRO tier'),
+            ('TIER_AI_CREDITS_CENTER', '2000', 'Monthly AI credits for CENTER tier')
         ON CONFLICT (key) DO NOTHING;
     """)
 
@@ -42,7 +45,8 @@ def downgrade() -> None:
     op.execute("""
         DELETE FROM system_settings 
         WHERE key IN (
-            'TIER_LIMIT_BUILDER', 'TIER_LIMIT_PRO', 'TIER_LIMIT_CENTER',
-            'TIER_FEE_BUILDER', 'TIER_FEE_PRO', 'TIER_FEE_CENTER'
+            'TIER_USERS_LIMIT_BUILDER', 'TIER_USERS_LIMIT_PRO', 'TIER_USERS_LIMIT_CENTER',
+            'TIER_STRIPE_FEE_BUILDER', 'TIER_STRIPE_FEE_PRO', 'TIER_STRIPE_FEE_CENTER',
+            'TIER_AI_CREDITS_BUILDER', 'TIER_AI_CREDITS_PRO', 'TIER_AI_CREDITS_CENTER'
         );
     """)
