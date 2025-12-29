@@ -38,13 +38,9 @@ from app.db.models import (
 # --- SYSTEM SETTINGS (Global Configuration) ---
 # These are seeded to ensure demo environment has consistent settings
 SEED_SYSTEM_SETTINGS = [
-    # Legacy settings (from v0.6.0 migration)
-    ("FREE_PATIENT_LIMIT", 5, "Maximum patients for FREE tier"),
-    ("FREE_CREDITS_MONTHLY", 100, "Monthly AI credits for FREE tier"),
-    ("PRO_CREDITS_MONTHLY", 500, "Monthly AI credits for PRO tier"),
-    ("AI_COST_TEXT", 1, "Credits per text analysis"),
-    ("AI_COST_MULTIMODAL", 5, "Credits per audio/image analysis"),
+    # AI Model default
     ("AI_MODEL", "gemini-2.5-flash", "Default AI model"),
+    ("AI_COST_MULTIMODAL", 5, "Credits per audio/image analysis"),
     # Tier patient limits (v1.1.8 naming)
     ("TIER_USERS_LIMIT_BUILDER", 3, "Max active patients for BUILDER tier"),
     ("TIER_USERS_LIMIT_PRO", 50, "Max active patients for PRO tier"),
