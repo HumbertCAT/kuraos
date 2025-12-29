@@ -251,6 +251,7 @@ async def wipe_data(db, org_id):
         f"DELETE FROM bookings WHERE organization_id = '{org_id}'",
         f"DELETE FROM journey_logs WHERE patient_id IN (SELECT id FROM patients WHERE organization_id = '{org_id}')",
         f"DELETE FROM clinical_entries WHERE patient_id IN (SELECT id FROM patients WHERE organization_id = '{org_id}')",
+        f"DELETE FROM ai_usage_logs WHERE organization_id = '{org_id}'",  # Must be before patients (FK)
         f"DELETE FROM leads WHERE organization_id = '{org_id}'",
         f"DELETE FROM service_types WHERE organization_id = '{org_id}'",
         f"DELETE FROM journey_templates WHERE organization_id = '{org_id}'",
