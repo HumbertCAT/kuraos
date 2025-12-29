@@ -25,6 +25,8 @@ interface AdminOrganization {
     ai_credits_purchased: number;
     ai_credits_used_this_month: number;
     patient_count: number;
+    ai_usage_tokens: number;  // v1.1.9.1
+    ai_usage_cost_eur: number;  // v1.1.9.1
 }
 
 const TERMINOLOGY_OPTIONS = ['CLIENT', 'PATIENT', 'CONSULTANT'] as const;
@@ -132,6 +134,13 @@ export default function AdminPage() {
         if (!orgId) return '';
         const org = organizations.find(o => o.id === orgId);
         return org?.name || 'Unknown Org';
+    };
+
+    // Helper to format token counts (v1.1.9.1)
+    const formatTokens = (n: number): string => {
+        if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+        if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+        return String(n);
     };
 
     // Sync tab from URL
@@ -381,7 +390,7 @@ export default function AdminPage() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Tier</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Term</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Patients</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Credits</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">AI Use</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Actions</th>
                             </tr>
                         </thead>
@@ -413,15 +422,9 @@ export default function AdminPage() {
                                     </td>
                                     <td className="px-6 py-4 text-sm text-foreground/70">{org.patient_count}</td>
                                     <td className="px-6 py-4">
-                                        <div className="text-sm">
-                                            <span className="font-medium text-foreground">
-                                                {org.ai_credits_monthly_quota - org.ai_credits_used_this_month + org.ai_credits_purchased}
-                                            </span>
-                                            <span className="text-foreground/60 ml-1">available</span>
-                                        </div>
-                                        <div className="text-xs text-foreground/60">
-                                            Monthly: {org.ai_credits_used_this_month}/{org.ai_credits_monthly_quota} | Purchased: {org.ai_credits_purchased}
-                                        </div>
+                                        <span className="font-mono text-sm text-foreground">
+                                            {formatTokens(org.ai_usage_tokens)} tok / €{org.ai_usage_cost_eur.toFixed(2)}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         {addCreditsOrgId === org.id ? (
