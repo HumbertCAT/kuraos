@@ -153,22 +153,22 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
                         <div
                             key={analysis.id}
                             className={`rounded-xl overflow-hidden transition-all border ${hasRisk
-                                    ? 'bg-red-50 border-l-4 border-l-red-500 border-red-200'
-                                    : 'bg-card border-border hover:border-slate-300 hover:shadow-sm'
+                                ? 'bg-red-50 border-l-4 border-l-red-500 border-red-200'
+                                : 'bg-card border-border hover:border-slate-300 hover:shadow-sm'
                                 }`}
                         >
                             {/* Header - Collapsed View */}
                             <button
                                 onClick={() => setExpandedDay(isExpanded ? null : analysis.id)}
-                                className={`w-full p-4 flex items-center gap-4 text-left transition-colors cursor-pointer ${hasRisk ? 'hover:bg-red-100/50' : 'hover:bg-slate-50'
+                                className={`w-full p-4 flex items-center gap-4 text-left transition-colors cursor-pointer ${hasRisk ? 'hover:bg-red-100/50 dark:hover:bg-red-900/30' : 'hover:bg-muted/50'
                                     }`}
                             >
                                 {/* Source Icon */}
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${hasRisk
-                                        ? 'bg-red-100'
-                                        : hasAudio
-                                            ? 'bg-violet-100'
-                                            : 'bg-slate-100'
+                                    ? 'bg-red-100'
+                                    : hasAudio
+                                        ? 'bg-violet-100'
+                                        : 'bg-slate-100'
                                     }`}>
                                     {hasRisk ? (
                                         <AlertTriangle className="w-5 h-5 text-red-600" />
@@ -211,7 +211,7 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
                                 {/* Expand Button - VISIBLE */}
                                 <div className="flex items-center gap-2">
                                     <span className="text-sm text-foreground/60">{analysis.message_count} msgs</span>
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isExpanded ? 'bg-violet-100 text-violet-600' : 'bg-slate-100 text-foreground/60 hover:bg-slate-200'
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isExpanded ? 'bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400' : 'bg-muted text-foreground/60 hover:bg-muted/80'
                                         }`}>
                                         {isExpanded ? (
                                             <ChevronDown className="w-5 h-5" />
@@ -224,7 +224,7 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
 
                             {/* Expanded Content */}
                             {isExpanded && (
-                                <div className={`border-t p-4 space-y-4 ${hasRisk ? 'border-red-200 bg-red-50/50' : 'border-border bg-slate-50'}`}>
+                                <div className={`border-t p-4 space-y-4 ${hasRisk ? 'border-red-200 dark:border-red-900 bg-red-50/50 dark:bg-red-950/20' : 'border-border bg-muted/30'}`}>
 
                                     {/* AI Summary */}
                                     <div className="p-4 bg-card rounded-lg border border-border shadow-sm">
@@ -260,8 +260,8 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
                                                         <div
                                                             key={msg.id}
                                                             className={`p-3 rounded-xl text-sm ${msg.direction === 'INBOUND'
-                                                                    ? 'bg-card border border-border mr-8 shadow-sm'
-                                                                    : 'bg-violet-100 text-violet-900 ml-8 border border-violet-200'
+                                                                ? 'bg-card border border-border mr-8 shadow-sm'
+                                                                : 'bg-violet-100 text-violet-900 ml-8 border border-violet-200'
                                                                 }`}
                                                         >
                                                             {/* Audio with player */}

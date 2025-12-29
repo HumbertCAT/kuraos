@@ -13,6 +13,7 @@ trigger: always_on
 ## 🛑 THE CIRCUIT BREAKER (Implementation Gate)
 > **CRITICAL OVERRIDE:** Even in automatic mode, you MUST respect this pause point.
 
+- **RULE** `ShouldAutoProceed=false` ALWAYS to implemtation plans
 - **TRIGGER:** Immediately after generating or presenting an `implementation_plan.md`.
 - **ACTION:** **STOP.** HALT ALL EXECUTION.
 - **PROHIBITION:** Do NOT run `/create-feature`, `/safe-migration`, or write any code yet.
