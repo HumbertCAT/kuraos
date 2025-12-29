@@ -14,6 +14,24 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.12] - 2025-12-30 🚦 AI COST HEALTH SEMAPHORE
+
+### 🏦 Financial Health Indicators
+- **Traffic Light System**: Visual health of AI costs vs subscription revenue
+  - 🔴 RED: >100% (losing money)
+  - 🟠 ORANGE: 50-100% (warning zone)
+  - 🟡 YELLOW: 10-50% (acceptable)
+  - 🟢 GREEN: 0-10% (healthy)
+- **Prorated Calculation**: Budget adjusted to current day of month
+- **Compact Format**: `3.0KTOK/0,0013€ 🟢`
+
+### Technical
+- Tier prices: BUILDER=0€, PRO=49€, CENTER=149€
+- BUILDER always 🔴 (no subscription revenue)
+- Technical debt: Will add Stripe booking margin when Box Office launches
+
+---
+
 ## [1.1.11] - 2025-12-29 💰 INTERNAL MARGIN REPORT
 
 ### 🏦 Financial Governance (Safe Implementation)
