@@ -266,7 +266,7 @@ export default function AdminPage() {
         { key: 'settings', label: 'Settings', icon: '⚙️' },
         { key: 'organizations', label: 'Organizations', icon: '🏢' },
         { key: 'templates', label: 'Forms', icon: '📋' },
-        { key: 'automations', label: 'Automations', icon: '🤖' },
+        { key: 'automations', label: 'Agents', icon: '🤖' },
         { key: 'backups', label: 'Backups', icon: '🛡️' },
         { key: 'theme', label: 'Themes', icon: '🎨' },
         { key: 'ai', label: 'AI Gov', icon: '🧠' },
