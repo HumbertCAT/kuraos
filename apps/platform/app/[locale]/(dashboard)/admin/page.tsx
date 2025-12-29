@@ -265,10 +265,10 @@ export default function AdminPage() {
     const tabs: { key: TabType; label: string; icon: string }[] = [
         { key: 'settings', label: 'Settings', icon: '⚙️' },
         { key: 'organizations', label: 'Organizations', icon: '🏢' },
-        { key: 'templates', label: 'Form Templates', icon: '📋' },
+        { key: 'templates', label: 'Forms', icon: '📋' },
         { key: 'automations', label: 'Automations', icon: '🤖' },
         { key: 'backups', label: 'Backups', icon: '🛡️' },
-        { key: 'theme', label: 'Theme Engine', icon: '🎨' },
+        { key: 'theme', label: 'Themes', icon: '🎨' },
         { key: 'ai', label: 'AI Governance', icon: '🧠' },
     ];
 
@@ -470,7 +470,7 @@ export default function AdminPage() {
                 <section className="bg-card rounded-xl border border-border overflow-hidden">
                     <div className="px-6 py-4 border-b border-border bg-muted flex justify-between items-center">
                         <div>
-                            <h2 className="text-lg font-semibold text-foreground">Form Templates</h2>
+                            <h2 className="text-lg font-semibold text-foreground">Forms</h2>
                             <p className="text-sm text-foreground/60">Manage system form templates</p>
                         </div>
                         <Link

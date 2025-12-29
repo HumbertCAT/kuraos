@@ -140,6 +140,9 @@ async def list_organizations(
                 id=org.id,
                 name=org.name,
                 tier=org.tier.value,
+                terminology_preference=org.terminology_preference.value
+                if org.terminology_preference
+                else "CLIENT",
                 ai_credits_monthly_quota=org.ai_credits_monthly_quota,
                 ai_credits_purchased=org.ai_credits_purchased,
                 ai_credits_used_this_month=org.ai_credits_used_this_month,
