@@ -51,6 +51,8 @@ class OrganizationAdminResponse(BaseModel):
     ai_credits_purchased: int
     ai_credits_used_this_month: int
     patient_count: int
+    ai_usage_tokens: int  # v1.1.9: Real usage tracking
+    ai_usage_cost_eur: float  # v1.1.9: Real cost with margin
 
     class Config:
         from_attributes = True
@@ -122,18 +124,41 @@ async def list_organizations(
 ):
     """List all organizations with usage stats. Requires superuser."""
     from sqlalchemy import func
-    from app.db.models import Patient
+    from datetime import datetime, timezone
+    from app.db.models import Patient, AiUsageLog
+
+    # UTC-aware start of month (aligns with Kura OS timezone standard)
+    now = datetime.now(timezone.utc)
+    start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     result = await db.execute(select(Organization))
     orgs = result.scalars().all()
 
+    # Pre-fetch patient counts (single query)
+    patient_counts_result = await db.execute(
+        select(Patient.organization_id, func.count(Patient.id)).group_by(
+            Patient.organization_id
+        )
+    )
+    patient_counts = dict(patient_counts_result.all())
+
+    # Pre-fetch AI usage for current month (single query)
+    usage_result = await db.execute(
+        select(
+            AiUsageLog.organization_id,
+            func.sum(AiUsageLog.tokens_input + AiUsageLog.tokens_output).label(
+                "total_tokens"
+            ),
+            func.sum(AiUsageLog.cost_user_credits).label("total_cost"),
+        )
+        .where(AiUsageLog.created_at >= start_of_month)
+        .group_by(AiUsageLog.organization_id)
+    )
+    usage_map = {row[0]: (row[1] or 0, row[2] or 0.0) for row in usage_result.all()}
+
     responses = []
     for org in orgs:
-        # Count patients for this org
-        patient_count_result = await db.execute(
-            select(func.count()).where(Patient.organization_id == org.id)
-        )
-        patient_count = patient_count_result.scalar() or 0
+        tokens, cost = usage_map.get(org.id, (0, 0.0))
 
         responses.append(
             OrganizationAdminResponse(
@@ -146,7 +171,9 @@ async def list_organizations(
                 ai_credits_monthly_quota=org.ai_credits_monthly_quota,
                 ai_credits_purchased=org.ai_credits_purchased,
                 ai_credits_used_this_month=org.ai_credits_used_this_month,
-                patient_count=patient_count,
+                patient_count=patient_counts.get(org.id, 0),
+                ai_usage_tokens=int(tokens),
+                ai_usage_cost_eur=float(cost),
             )
         )
 
