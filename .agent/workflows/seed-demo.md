@@ -9,23 +9,37 @@ description: Refresh demo data with Golden Seed archetypes
 
 ---
 
-## 🌱 Phase 1: Run Golden Seed
+## ⚠️ CHOOSE YOUR VERSION
+
+**Ask the user:** "¿Versión FULL (borra todo) o LIGHT (solo demo patients)?"
+
+### Option A: FULL RESET (Investor Demos)
+Wipes **ALL** organization data and rebuilds from scratch.
 
 // turbo
 ```bash
 docker compose exec backend python scripts/reboot_local_universe_PREMIUM.py
 ```
 
-Alternative (if not using Docker):
-```bash
-cd backend && python scripts/reboot_local_universe_PREMIUM.py
-```
+**Deletes:** All patients, bookings, journeys, forms, services, ai_usage_logs
+**Use when:** Complete reset needed for investor demo
 
 ---
 
-## 🧬 Phase 2: Verify Archetypes
+### Option B: LIGHT RESEED (Development)
+Only wipes the **4 demo archetypes** (Marcus, Elena, Julian, Sarah).
 
-Confirm the 4 archetypes were created:
+// turbo
+```bash
+docker compose exec backend python scripts/reseed_demo_patients.py
+```
+
+**Preserves:** Real patients, journeys, forms, services, ai_usage_logs
+**Use when:** Want demo data without losing real work
+
+---
+
+## 🧬 Archetypes Created (Both Versions)
 
 | Name | Archetype | Sentinel Score |
 |------|-----------|----------------|
@@ -36,7 +50,7 @@ Confirm the 4 archetypes were created:
 
 ---
 
-## 📊 Phase 3: Verify Sentinel Pulse
+## 📊 Verification
 
 1. Navigate to `localhost:3001/es/patients`
 2. Open Marcus → Sentinel Pulse should show **green trend**
@@ -50,3 +64,4 @@ Confirm to user:
 - 🌱 Seed: Executed
 - 👥 Archetypes: 4 patients created
 - 📊 Sentinel Pulse: Data visible
+
