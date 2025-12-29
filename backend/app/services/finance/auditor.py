@@ -3,16 +3,22 @@ Global Cost Reconciliation Service
 
 Compares total internal costs (AiUsageLog) vs. Google Cloud Billing (BigQuery).
 Detects catastrophic cost bugs at project level.
-
-CRITICAL: Uses Lazy Loading pattern - NO imports at module level.
-BigQuery is imported INSIDE methods to prevent boot crashes if library missing.
 """
+
+# Optional BigQuery import - don't crash boot if not available
+try:
+    from google.cloud import bigquery
+
+    BIGQUERY_AVAILABLE = True
+except ImportError:
+    bigquery = None
+    BIGQUERY_AVAILABLE = False
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from app.db.models import AiUsageLog
 from app.core.config import settings
@@ -24,13 +30,24 @@ class GlobalCostReconciler:
 
     Purpose: Detect major cost bugs (e.g., infinite loops, pricing errors).
     Scope: Project-level (not per-organization).
-
-    SAFETY: Uses lazy loading - app will boot even if BigQuery unavailable.
     """
 
     def __init__(self, db: AsyncSession):
         self.db = db
+        self._bq_client: Optional[any] = None  # Lazy initialization
+
+        # Validate config but don't crash if missing (endpoint will handle error)
         self.table_id = getattr(settings, "BILLING_TABLE_ID", None)
+
+    @property
+    def bq_client(self):
+        """Lazy initialization of BigQuery client."""
+        if not BIGQUERY_AVAILABLE:
+            raise RuntimeError("google-cloud-bigquery not installed")
+
+        if self._bq_client is None:
+            self._bq_client = bigquery.Client()
+        return self._bq_client
 
     async def get_internal_total_cost(
         self, start_date: datetime, end_date: datetime
@@ -52,18 +69,15 @@ class GlobalCostReconciler:
         """
         Sum all AI costs from GCP Billing Export (BigQuery).
 
-        LAZY IMPORT: Only loads BigQuery when method is called.
+        Filters to AI/Generative services only (Vertex AI, Gemini API).
+        Returns: Total cost in USD
 
         Raises:
-            RuntimeError: If BigQuery not available
-            ValueError: If BILLING_TABLE_ID not configured
+            RuntimeError: If BigQuery not available or table_id not configured
         """
-        # LAZY IMPORT - happens at runtime, not boot time
-        try:
-            from google.cloud import bigquery
-        except ImportError as e:
+        if not BIGQUERY_AVAILABLE:
             raise RuntimeError(
-                f"BigQuery library not available: {e}. Install google-cloud-bigquery."
+                "BigQuery client not available - install google-cloud-bigquery"
             )
 
         if not self.table_id:
@@ -87,9 +101,7 @@ class GlobalCostReconciler:
             ]
         )
 
-        # Create client at runtime
-        client = bigquery.Client()
-        result = client.query(query, job_config=job_config).result()
+        result = self.bq_client.query(query, job_config=job_config).result()
         row = next(iter(result), None)
 
         if row and row.total_cost is not None:
@@ -112,20 +124,7 @@ class GlobalCostReconciler:
             }
         """
         internal = await self.get_internal_total_cost(start_date, end_date)
-
-        # This may raise RuntimeError if BigQuery not available
-        try:
-            gcp = self.get_gcp_total_cost(start_date, end_date)
-        except RuntimeError as e:
-            # Return error status if BigQuery unavailable
-            return {
-                "internal_total_usd": float(internal),
-                "gcp_total_usd": 0.0,
-                "drift_usd": 0.0,
-                "drift_pct": 0.0,
-                "status": "error",
-                "error": str(e),
-            }
+        gcp = self.get_gcp_total_cost(start_date, end_date)
 
         drift_usd = float(internal - gcp)
 
