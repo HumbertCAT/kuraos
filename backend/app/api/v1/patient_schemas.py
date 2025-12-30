@@ -94,6 +94,9 @@ class PatientResponse(BaseModel):
     journey_status: Optional[dict] = None  # v0.9.x automation status
     profile_data: dict = Field(default_factory=dict)
     profile_image_url: Optional[str] = None
+    # Risk fields for AletheIA sidebar (extracted from last_insight_json)
+    risk_level: Optional[str] = None
+    risk_reason: Optional[str] = None
 
     class Config:
         from_attributes = True

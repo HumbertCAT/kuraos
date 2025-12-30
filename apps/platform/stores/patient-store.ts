@@ -146,13 +146,16 @@ export const usePatientStore = create<PatientState>((set, get) => ({
       if (riskResponse.ok) {
         const riskData = await riskResponse.json();
         highRiskPatients = (riskData.patients || [])
-          .filter((p: any) => p.risk_level === 'HIGH' || p.risk_level === 'MEDIUM')
+          .filter((p: any) => {
+            const level = (p.risk_level || '').toUpperCase();
+            return level === 'HIGH' || level === 'MEDIUM';
+          })
           .slice(0, 5)
           .map((p: any) => ({
             id: p.id,
             patientId: p.id,
             patientName: `${p.first_name} ${p.last_name}`,
-            riskLevel: p.risk_level || 'MEDIUM',
+            riskLevel: (p.risk_level || 'MEDIUM').toUpperCase(),
             reason: p.risk_reason || 'Sin actividad reciente',
           }));
       }

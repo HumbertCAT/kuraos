@@ -72,8 +72,23 @@ async def list_patients(
     result = await db.execute(query)
     patients = result.scalars().all()
 
+    # Extract risk info from last_insight_json for each patient
+    patient_responses = []
+    for p in patients:
+        data = p.__dict__.copy()
+        # Extract risk fields from cached insight JSON
+        if p.last_insight_json:
+            data["risk_level"] = p.last_insight_json.get("risk_level")
+            # Use first alert message as reason, or summary
+            alerts = p.last_insight_json.get("alerts", [])
+            if alerts:
+                data["risk_reason"] = alerts[0].get("message", "Alerta detectada")
+            else:
+                data["risk_reason"] = p.last_insight_json.get("summary", "")[:100]
+        patient_responses.append(PatientResponse.model_validate(data))
+
     return PatientListResponse(
-        patients=[PatientResponse.model_validate(p) for p in patients],
+        patients=patient_responses,
         total=total,
         page=page,
         per_page=per_page,
