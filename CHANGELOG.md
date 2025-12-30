@@ -14,6 +14,71 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.13] - 2025-12-30 🎫 PUBLIC BOOKING WIZARD
+
+### 🎉 Complete Public Booking Flow with Stripe Payments
+
+End-to-end session booking from public URL to confirmed payment.
+
+#### 🧙 Multi-Step Wizard (`/book/[therapist_id]`)
+- **Step 1 - Service Selection**: Rich service cards with duration, price, and group/individual badges
+- **Step 2 - Date & Time**: Week calendar with availability dots (blue indicators on available days)
+- **Step 3 - Client Details**: Name, email, phone, notes form with validation
+- **Step 4 - Payment**: Stripe PaymentElement with 10-minute expiration timer
+- **Step 5 - Confirmation**: Boarding pass style success page with booking reference
+
+#### ⏱️ Zombie Booking Prevention
+- **Expiration Timer**: Visual countdown (yellow → red when < 2 min)
+- **Auto-Expire**: Blocks payment submission after timeout
+- **"Start Over" CTA**: Clean reset on expiration
+
+#### 🌍 Timezone Intelligence
+- **Auto-Detection**: Uses browser's `Intl.DateTimeFormat` timezone
+- **Visual Indicator**: "Horarios en tu zona: Europe/Madrid"
+- **All Times Localized**: Slots displayed in client's timezone
+
+#### 💳 Stripe Integration
+- **PaymentElement**: Multi-method support (Card, Klarna, Bancontact, Amazon Pay)
+- **Test Mode Detection**: `sk_test_*` allows direct payments without Connect
+- **Connect Ready**: Production requires `stripe_connect_enabled` for split payments
+
+#### 🏪 Zustand State Management
+- **Persistent Store**: `useBookingStore` with `localStorage` persistence
+- **Hydration Guard**: Skeleton loading prevents SSR/CSR mismatch
+- **Cross-Step Persistence**: Data survives page refresh
+
+#### 🎨 Design System Compliance
+- **Semantic Tokens**: `bg-brand`, `text-foreground`, `border-border`
+- **Tactile UI**: `active:scale-95` on buttons
+- **Mobile Responsive**: Grid adapts to screen size
+
+### 🔧 Infrastructure
+
+#### Stripe Keys Updated
+- **Local (.env)**: Sandbox keys (`pk_test_*`, `sk_test_*`)
+- **Google Secret Manager**: Production keys (`pk_live_*`, `sk_live_*`)
+
+#### New Files
+```
+apps/platform/
+├── stores/booking-store.ts          # Zustand persistent store
+├── components/booking/
+│   ├── BookingWizard.tsx             # Orchestrator with hydration guard
+│   ├── StepService.tsx               # Service selection
+│   ├── StepSlot.tsx                  # Date/time picker with dots
+│   ├── StepForm.tsx                  # Client details form
+│   ├── StepPayment.tsx               # Stripe PaymentElement + timer
+│   ├── StepSuccess.tsx               # Boarding pass confirmation
+│   └── index.ts                      # Barrel exports
+└── app/[locale]/book/[id]/page.tsx   # Public booking page
+```
+
+### 📊 Backend Enhancements
+- **Dev Bypass**: `payments.py` allows direct payments in test mode
+- **Retry Button**: StepSlot shows "Reintentar" on API errors
+
+---
+
 ## [1.1.12] - 2025-12-30 🚦 AI COST HEALTH SEMAPHORE
 
 ### 🏦 Financial Health Indicators

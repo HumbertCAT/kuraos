@@ -110,4 +110,4 @@
 
 ---
 
-*Last updated: December 28, 2025 (v1.1.7 THE GOLDEN KEY)*
+*Last updated: December 30, 2025 (v1.1.13 PUBLIC BOOKING WIZARD)*
