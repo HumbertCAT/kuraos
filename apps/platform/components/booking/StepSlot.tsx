@@ -1,15 +1,16 @@
 /**
  * StepSlot - Date and time slot selection with timezone intelligence.
  * Displays calendar picker and available time slots in client's local timezone.
+ * Features: availability dots, retry on error, week navigation.
  */
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, ChevronLeft, ChevronRight, Loader2, Globe } from 'lucide-react';
+import { Calendar, Clock, ChevronLeft, ChevronRight, Loader2, Globe, RefreshCw, AlertCircle } from 'lucide-react';
 import { useBookingStore } from '@/stores/booking-store';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { format, addDays, startOfDay, isSameDay, parseISO, Locale } from 'date-fns';
+import { format, addDays, startOfDay, Locale } from 'date-fns';
 import { es, enUS, ca } from 'date-fns/locale';
 
 interface StepSlotProps {
@@ -31,23 +32,70 @@ export function StepSlot({ therapistId, locale, onNext, onBack }: StepSlotProps)
     const { service, selectedDate, slot: selectedSlot, setSelectedDate, setSlot, clientTimezone } = useBookingStore();
     const [slots, setSlots] = useState<Slot[]>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [weekStart, setWeekStart] = useState(startOfDay(new Date()));
+
+    // Track which dates have availability (for blue dots)
+    const [availableDates, setAvailableDates] = useState<Set<string>>(new Set());
+    const [loadingAvailability, setLoadingAvailability] = useState(false);
 
     const dateLocale = localeMap[locale] || enUS;
 
     // Generate 7 days from weekStart
     const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+    const today = startOfDay(new Date());
 
-    // Load slots when date changes
+    // Load week availability when week changes
+    useEffect(() => {
+        if (service) {
+            loadWeekAvailability();
+        }
+    }, [weekStart, service]);
+
+    // Load slots when specific date is selected
     useEffect(() => {
         if (selectedDate && service) {
             loadSlots(selectedDate);
         }
     }, [selectedDate, service]);
 
+    async function loadWeekAvailability() {
+        if (!service) return;
+        setLoadingAvailability(true);
+
+        const startDate = format(days[0], 'yyyy-MM-dd');
+        const endDate = format(days[6], 'yyyy-MM-dd');
+
+        try {
+            const data = await api.publicBooking.listSlots(
+                therapistId,
+                service.id,
+                startDate,
+                endDate
+            );
+
+            // Group slots by date and check availability
+            const datesWithSlots = new Set<string>();
+            data.forEach((slot: Slot) => {
+                if (slot.spots_left > 0) {
+                    const slotDate = slot.start.split('T')[0];
+                    datesWithSlots.add(slotDate);
+                }
+            });
+            setAvailableDates(datesWithSlots);
+        } catch (err) {
+            console.error('Error loading week availability:', err);
+            // Don't show error for availability check - it's just a hint
+        } finally {
+            setLoadingAvailability(false);
+        }
+    }
+
     async function loadSlots(date: string) {
         if (!service) return;
         setLoading(true);
+        setError(null);
+
         try {
             const data = await api.publicBooking.listSlots(
                 therapistId,
@@ -57,11 +105,18 @@ export function StepSlot({ therapistId, locale, onNext, onBack }: StepSlotProps)
             );
             // Filter only available slots
             setSlots(data.filter((s: Slot) => s.spots_left > 0));
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error loading slots:', err);
+            setError(err.message || 'Error al cargar los horarios');
             setSlots([]);
         } finally {
             setLoading(false);
+        }
+    }
+
+    function handleRetry() {
+        if (selectedDate) {
+            loadSlots(selectedDate);
         }
     }
 
@@ -69,6 +124,7 @@ export function StepSlot({ therapistId, locale, onNext, onBack }: StepSlotProps)
         const dateStr = format(date, 'yyyy-MM-dd');
         setSelectedDate(dateStr);
         setSlot(null as any); // Reset slot selection
+        setError(null);
     }
 
     function handleSlotSelect(slot: Slot) {
@@ -91,10 +147,11 @@ export function StepSlot({ therapistId, locale, onNext, onBack }: StepSlotProps)
         // Don't allow past dates
         if (newStart >= startOfDay(new Date())) {
             setWeekStart(newStart);
+            setSelectedDate(null as any);
+            setSlots([]);
+            setError(null);
         }
     }
-
-    const today = startOfDay(new Date());
 
     return (
         <div className="space-y-6">
@@ -127,12 +184,13 @@ export function StepSlot({ therapistId, locale, onNext, onBack }: StepSlotProps)
                 </button>
             </div>
 
-            {/* Day selector */}
+            {/* Day selector with availability dots */}
             <div className="grid grid-cols-7 gap-2">
                 {days.map((day) => {
                     const dateStr = format(day, 'yyyy-MM-dd');
                     const isSelected = selectedDate === dateStr;
                     const isPast = day < today;
+                    const hasAvailability = availableDates.has(dateStr);
 
                     return (
                         <button
@@ -140,7 +198,7 @@ export function StepSlot({ therapistId, locale, onNext, onBack }: StepSlotProps)
                             onClick={() => !isPast && handleDateSelect(day)}
                             disabled={isPast}
                             className={cn(
-                                "flex flex-col items-center p-2 sm:p-3 rounded-xl transition-all",
+                                "relative flex flex-col items-center p-2 sm:p-3 rounded-xl transition-all",
                                 isPast && "opacity-40 cursor-not-allowed",
                                 isSelected
                                     ? "bg-brand text-white"
@@ -153,6 +211,11 @@ export function StepSlot({ therapistId, locale, onNext, onBack }: StepSlotProps)
                             <span className="text-lg font-bold">
                                 {format(day, 'd')}
                             </span>
+
+                            {/* Availability indicator dot */}
+                            {!isPast && hasAvailability && !isSelected && (
+                                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-brand" />
+                            )}
                         </button>
                     );
                 })}
@@ -174,6 +237,18 @@ export function StepSlot({ therapistId, locale, onNext, onBack }: StepSlotProps)
                 ) : loading ? (
                     <div className="flex items-center justify-center py-12">
                         <Loader2 className="w-6 h-6 animate-spin text-brand" />
+                    </div>
+                ) : error ? (
+                    <div className="text-center py-8">
+                        <AlertCircle className="w-10 h-10 mx-auto mb-3 text-destructive opacity-70" />
+                        <p className="text-destructive text-sm mb-4">{error}</p>
+                        <button
+                            onClick={handleRetry}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors active:scale-95"
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                            Reintentar
+                        </button>
                     </div>
                 ) : slots.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">
