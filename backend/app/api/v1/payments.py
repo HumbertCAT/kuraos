@@ -90,7 +90,10 @@ async def create_payment_intent(
         )
 
     # Check if therapist has Connect enabled
-    if not org.stripe_connect_enabled or not org.stripe_connect_id:
+    # DEV BYPASS: In development, allow direct payments without Connect
+    dev_mode = not org.stripe_connect_enabled or not org.stripe_connect_id
+
+    if dev_mode and settings.ENVIRONMENT == "production":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El terapeuta aún no ha configurado sus cobros. Pídele que conecte su cuenta bancaria.",
@@ -100,32 +103,48 @@ async def create_payment_intent(
     amount_cents = int(booking.amount_paid * 100)
     currency = booking.currency.lower()
 
-    # Calculate application fee based on org tier
-    from app.services.stripe_service import StripeService
-
-    stripe_service = StripeService(db)
-    application_fee = stripe_service.calculate_application_fee(amount_cents, org.tier)
-
     try:
-        # Create PaymentIntent with Connect split payment
-        # This is the money-printing machine: we get application_fee on every transaction
-        payment_intent = stripe.PaymentIntent.create(
-            amount=amount_cents,
-            currency=currency,
-            metadata={
-                "booking_id": str(booking.id),
-                "patient_id": str(booking.patient_id),
-                "therapist_id": str(booking.therapist_id),
-                "org_id": str(org.id),
-            },
-            automatic_payment_methods={"enabled": True},
-            # Stripe Connect: Send money to therapist's connected account
-            transfer_data={
-                "destination": org.stripe_connect_id,
-            },
-            # Our platform commission
-            application_fee_amount=application_fee,
-        )
+        if dev_mode:
+            # DEV BYPASS: Direct payment without Connect (no split)
+            # TODO: Remove this in production or add proper flag
+            payment_intent = stripe.PaymentIntent.create(
+                amount=amount_cents,
+                currency=currency,
+                metadata={
+                    "booking_id": str(booking.id),
+                    "patient_id": str(booking.patient_id),
+                    "therapist_id": str(booking.therapist_id),
+                    "org_id": str(org.id),
+                    "dev_mode": "true",
+                },
+                automatic_payment_methods={"enabled": True},
+            )
+        else:
+            # PRODUCTION: Connect split payment
+            from app.services.stripe_service import StripeService
+
+            stripe_service = StripeService(db)
+            application_fee = stripe_service.calculate_application_fee(
+                amount_cents, org.tier
+            )
+
+            payment_intent = stripe.PaymentIntent.create(
+                amount=amount_cents,
+                currency=currency,
+                metadata={
+                    "booking_id": str(booking.id),
+                    "patient_id": str(booking.patient_id),
+                    "therapist_id": str(booking.therapist_id),
+                    "org_id": str(org.id),
+                },
+                automatic_payment_methods={"enabled": True},
+                # Stripe Connect: Send money to therapist's connected account
+                transfer_data={
+                    "destination": org.stripe_connect_id,
+                },
+                # Our platform commission
+                application_fee_amount=application_fee,
+            )
 
         # Store payment intent ID on booking
         booking.stripe_payment_intent_id = payment_intent.id
