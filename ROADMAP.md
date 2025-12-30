@@ -54,8 +54,43 @@
 | **ActiveJourneysWidget** | `/journeys/active` endpoint | 🟡 MEDIUM |
 | **VitalSignCard Trends** | Booking aggregations by week | 🟢 LOW |
 
-### 🧪 Product Polish
-- [ ] **v1.1.8** - THE ACTIVATION PROTOCOL: Luxury onboarding with driver.js tours
+### ✨ v1.1.14 - THE ACTIVATION PROTOCOL (Prioridad 1)
+Onboarding de lujo para enseñar al terapeuta a usar el sistema.
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Truth-Based Onboarding** | Estado derivado de `COUNT(*)` real, no flags | 📋 Planificado |
+| **ActivationWidget** | Progress tracker gamificado en Dashboard | 📋 Planificado |
+| **driver.js Tours** | Spotlights interactivos para guiar acciones | 📋 Planificado |
+| **canvas-confetti** | Celebraciones al completar misiones | 📋 Planificado |
+
+**Misiones**:
+1. Crear primer paciente (33%)
+2. Crear servicio (66%)
+3. Recibir primera reserva (100%)
+
+---
+
+### 🚪 v1.2.0 - THE PATIENT PORTAL (Prioridad 2)
+Portal token-based para pacientes. Referencia: `_legacy_recovery/`
+
+| Feature | Description | Legacy Reference |
+|---------|-------------|------------------|
+| **Form Viewer** | `/portal/forms/[token]` - Formularios de ingesta | `forms/form_page_legacy.tsx` |
+| **Booking Manager** | `/portal/booking/[token]` - Ver/cancelar/reagendar | `booking/manage_page_legacy.tsx` |
+| **Progress View** | `/portal/progress` - The Mirror (ADR-007) | Nuevo |
+
+**Arquitectura**:
+```
+apps/platform/app/[locale]/portal/
+├── booking/[token]/page.tsx   # Gestión de reserva
+├── forms/[token]/page.tsx     # Formularios públicos
+└── progress/page.tsx          # Visualización de progreso
+```
+
+---
+
+### 🧪 Product Polish (Ongoing)
 - [ ] Self-service onboarding wizard
 - [ ] Demo Mode button for investors
 - [ ] Form analytics (completion rates)
