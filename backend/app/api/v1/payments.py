@@ -90,10 +90,13 @@ async def create_payment_intent(
         )
 
     # Check if therapist has Connect enabled
-    # DEV BYPASS: In development, allow direct payments without Connect
-    dev_mode = not org.stripe_connect_enabled or not org.stripe_connect_id
+    # DEV BYPASS: In test mode (sk_test_*), allow direct payments without Connect
+    has_connect = org.stripe_connect_enabled and org.stripe_connect_id
+    is_test_mode = settings.STRIPE_SECRET_KEY and settings.STRIPE_SECRET_KEY.startswith(
+        "sk_test_"
+    )
 
-    if dev_mode and settings.ENVIRONMENT == "production":
+    if not has_connect and not is_test_mode:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El terapeuta aún no ha configurado sus cobros. Pídele que conecte su cuenta bancaria.",
@@ -104,7 +107,7 @@ async def create_payment_intent(
     currency = booking.currency.lower()
 
     try:
-        if dev_mode:
+        if not has_connect:
             # DEV BYPASS: Direct payment without Connect (no split)
             # TODO: Remove this in production or add proper flag
             payment_intent = stripe.PaymentIntent.create(
