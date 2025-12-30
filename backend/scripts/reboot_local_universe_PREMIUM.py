@@ -307,7 +307,10 @@ async def seed_system_settings(db):
     print(f"   ✅ {len(SEED_SYSTEM_SETTINGS)} System Settings configured")
 
 
-async def seed_services(db, org_id):
+async def seed_services(db, org_id, admin_id):
+    """Create premium services and assign them to the therapist."""
+    from app.db.models import service_therapist_link
+
     print("\n🏗️  REBUILDING PREMIUM INFRASTRUCTURE...")
     service_map = {}
     for s in SEED_SERVICES:
@@ -324,6 +327,14 @@ async def seed_services(db, org_id):
         )
         db.add(svc)
         await db.flush()
+
+        # Assign service to therapist (M2M link for public booking)
+        await db.execute(
+            service_therapist_link.insert().values(
+                service_type_id=svc.id, user_id=admin_id
+            )
+        )
+
         # Map by simplified key for booking logic
         key = (
             "retreat"
@@ -331,7 +342,10 @@ async def seed_services(db, org_id):
             else ("circle" if "Circle" in s["title"] else "neuro")
         )
         service_map[key] = svc
-    print(f"   ✅ {len(SEED_SERVICES)} Premium Services created")
+
+    print(
+        f"   ✅ {len(SEED_SERVICES)} Premium Services created & assigned to therapist"
+    )
     return service_map
 
 
@@ -703,7 +717,7 @@ async def main():
         await seed_schedules_and_availability(db, admin.id)  # Calendar setup
         await seed_journeys(db, org_id)
         await seed_forms(db, org_id)
-        services = await seed_services(db, org_id)
+        services = await seed_services(db, org_id, admin.id)
         await seed_patients(db, org_id, services, admin.id)
 
         await db.commit()
