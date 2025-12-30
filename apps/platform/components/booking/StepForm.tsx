@@ -1,11 +1,10 @@
 /**
- * StepForm - Client details form with validation.
+ * StepForm - Client details form with useState validation.
  * Collects name, email, phone, and optional notes.
  */
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState, FormEvent } from 'react';
 import { User, Mail, Phone, FileText, ChevronLeft, Loader2, AlertCircle } from 'lucide-react';
 import { useBookingStore, ClientDetails } from '@/stores/booking-store';
 import { api } from '@/lib/api';
@@ -16,13 +15,6 @@ interface StepFormProps {
     locale: string;
     onNext: () => void;
     onBack: () => void;
-}
-
-interface FormData {
-    name: string;
-    email: string;
-    phone?: string;
-    notes?: string;
 }
 
 const BOOKING_EXPIRATION_MINUTES = 10;
@@ -38,15 +30,38 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
         clientTimezone
     } = useBookingStore();
 
+    // Form state
+    const [name, setName] = useState(clientDetails?.name || '');
+    const [email, setEmail] = useState(clientDetails?.email || '');
+    const [phone, setPhone] = useState(clientDetails?.phone || '');
+    const [notes, setNotes] = useState(clientDetails?.notes || '');
+
+    // Validation errors
+    const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
-        defaultValues: clientDetails || {},
-        mode: 'onBlur',
-    });
+    function validate(): boolean {
+        const newErrors: { name?: string; email?: string } = {};
 
-    async function onSubmit(data: FormData) {
+        if (!name || name.length < 2) {
+            newErrors.name = 'Mínimo 2 caracteres';
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            newErrors.email = 'Email inválido';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
+
+    async function handleFormSubmit(e: FormEvent) {
+        e.preventDefault();
+
+        if (!validate()) return;
         if (!service || !slot) return;
 
         setSubmitting(true);
@@ -54,12 +69,7 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
 
         try {
             // Save client details to store
-            const details: ClientDetails = {
-                name: data.name,
-                email: data.email,
-                phone: data.phone,
-                notes: data.notes,
-            };
+            const details: ClientDetails = { name, email, phone, notes };
             setClientDetails(details);
 
             // Step 1: Create booking (PENDING status)
@@ -68,10 +78,10 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                 therapist_id: therapistId,
                 slot_start: slot.start,
                 target_timezone: clientTimezone,
-                patient_name: data.name,
-                patient_email: data.email,
-                patient_phone: data.phone || null,
-                patient_notes: data.notes || null,
+                patient_name: name,
+                patient_email: email,
+                patient_phone: phone || null,
+                patient_notes: notes || null,
             });
 
             // Step 2: Create payment intent
@@ -144,7 +154,7 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5">
                         Nombre completo *
@@ -152,8 +162,9 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                     <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
-                            {...register('name', { required: 'Nombre requerido', minLength: { value: 2, message: 'Mínimo 2 caracteres' } })}
                             type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="Tu nombre"
                             className={cn(
                                 "w-full pl-10 pr-4 py-3 rounded-xl border bg-card text-foreground",
@@ -163,7 +174,7 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                         />
                     </div>
                     {errors.name && (
-                        <p className="text-xs text-destructive mt-1">{errors.name.message}</p>
+                        <p className="text-xs text-destructive mt-1">{errors.name}</p>
                     )}
                 </div>
 
@@ -174,8 +185,9 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                     <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
-                            {...register('email', { required: 'Email requerido', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email inválido' } })}
                             type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="tu@email.com"
                             className={cn(
                                 "w-full pl-10 pr-4 py-3 rounded-xl border bg-card text-foreground",
@@ -185,7 +197,7 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                         />
                     </div>
                     {errors.email && (
-                        <p className="text-xs text-destructive mt-1">{errors.email.message}</p>
+                        <p className="text-xs text-destructive mt-1">{errors.email}</p>
                     )}
                 </div>
 
@@ -196,8 +208,9 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                     <div className="relative">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
-                            {...register('phone')}
                             type="tel"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                             placeholder="+34 600 000 000"
                             className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-brand focus:border-brand outline-none transition-all"
                         />
@@ -211,7 +224,8 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                     <div className="relative">
                         <FileText className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                         <textarea
-                            {...register('notes')}
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
                             placeholder="¿Algo que debamos saber antes de la sesión?"
                             rows={3}
                             className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-brand focus:border-brand outline-none transition-all resize-none"
