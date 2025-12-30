@@ -247,6 +247,7 @@ async def wipe_data(db, org_id):
     tables_to_clean = [
         f"DELETE FROM pending_actions WHERE organization_id = '{org_id}'",  # Ghost tasks like Juan Palomo
         f"DELETE FROM form_assignments WHERE patient_id IN (SELECT id FROM patients WHERE organization_id = '{org_id}')",
+        f"DELETE FROM daily_conversation_analyses WHERE organization_id = '{org_id}'",
         f"DELETE FROM message_logs WHERE organization_id = '{org_id}'",
         f"DELETE FROM bookings WHERE organization_id = '{org_id}'",
         f"DELETE FROM journey_logs WHERE patient_id IN (SELECT id FROM patients WHERE organization_id = '{org_id}')",
@@ -256,6 +257,9 @@ async def wipe_data(db, org_id):
         f"DELETE FROM service_types WHERE organization_id = '{org_id}'",
         f"DELETE FROM journey_templates WHERE organization_id = '{org_id}'",
         f"DELETE FROM form_templates WHERE organization_id = '{org_id}'",
+        # Calendar/Availability (v1.1.13)
+        f"DELETE FROM recurring_availability_slots WHERE schedule_id IN (SELECT id FROM availability_schedules WHERE user_id IN (SELECT id FROM users WHERE organization_id = '{org_id}'))",
+        f"DELETE FROM availability_schedules WHERE user_id IN (SELECT id FROM users WHERE organization_id = '{org_id}')",
     ]
 
     for sql in tables_to_clean:
@@ -363,6 +367,41 @@ async def seed_forms(db, org_id):
         db.add(form)
     await db.flush()
     print(f"   ✅ {len(SEED_FORMS)} Executive Forms crafted")
+
+
+async def seed_schedules_and_availability(db, admin_id):
+    """Create default calendar schedule and weekly availability for the admin.
+
+    This ensures the calendar page works immediately after Golden Seed.
+    """
+    from app.db.models import AvailabilitySchedule, RecurringAvailabilitySlot
+
+    print("\n📅 CONFIGURING CALENDAR AVAILABILITY...")
+
+    # Create default schedule
+    schedule = AvailabilitySchedule(
+        id=uuid.uuid4(),
+        user_id=admin_id,
+        name="Consultas Presenciales",
+        is_default=True,
+    )
+    db.add(schedule)
+    await db.flush()
+
+    # Create weekly availability slots (Mon-Fri, 9:00-18:00)
+    weekdays = [0, 1, 2, 3, 4]  # Monday to Friday
+    for day in weekdays:
+        slot = RecurringAvailabilitySlot(
+            id=uuid.uuid4(),
+            schedule_id=schedule.id,
+            day_of_week=day,
+            start_time="09:00",
+            end_time="18:00",
+        )
+        db.add(slot)
+
+    await db.flush()
+    print(f"   ✅ Schedule '{schedule.name}' with 5-day availability created")
 
 
 async def seed_monitoring_data(db, org_id, patient_id, patient_name, trend="growth"):
@@ -661,6 +700,7 @@ async def main():
         # Execute Protocols
         await wipe_data(db, org_id)
         await seed_system_settings(db)  # Global config first
+        await seed_schedules_and_availability(db, admin.id)  # Calendar setup
         await seed_journeys(db, org_id)
         await seed_forms(db, org_id)
         services = await seed_services(db, org_id)
