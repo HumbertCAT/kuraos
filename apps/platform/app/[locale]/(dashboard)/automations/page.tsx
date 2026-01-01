@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Zap, Power, Trash2, Download, Sparkles, MessageSquarePlus, Bot, Settings, BarChart3 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import IconRenderer from '@/components/IconRenderer';
+import PageHeader from '@/components/PageHeader';
 
 import { API_URL } from '@/lib/api';
 
@@ -33,6 +35,7 @@ export default function AutomationsPage() {
     const router = useRouter();
     const params = useParams();
     const locale = params.locale as string || 'es';
+    const t = useTranslations('Automations');
     const [activeTab, setActiveTab] = useState<'my' | 'marketplace'>('my');
     const [myRules, setMyRules] = useState<AutomationRule[]>([]);
     const [templates, setTemplates] = useState<AutomationRule[]>([]);
@@ -208,21 +211,12 @@ export default function AutomationsPage() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="mb-8">
-                <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-200 dark:shadow-violet-900/30">
-                        <Bot className="w-7 h-7 text-white" />
-                    </div>
-                    <div>
-                        <h1 className="type-h1 bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                            Equipo de Agentes Clínicos
-                        </h1>
-                        <p className="type-body text-muted-foreground">Protocolos inteligentes de automatización clínica</p>
-                    </div>
-                </div>
-            </div>
+        <div className="space-y-6">
+            <PageHeader
+                icon={Bot}
+                title={t('title')}
+                subtitle={t('subtitle')}
+            />
 
             {/* Alerts */}
             {success && (

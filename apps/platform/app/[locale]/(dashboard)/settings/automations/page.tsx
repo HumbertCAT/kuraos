@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ChevronLeft, Zap, Power, Trash2, Download, Sparkles, MessageSquarePlus, Bot, Settings } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import IconRenderer from '@/components/IconRenderer';
 
 import { API_URL } from '@/lib/api';
@@ -33,6 +34,7 @@ export default function AutomationsPage() {
     const router = useRouter();
     const params = useParams();
     const locale = params.locale as string || 'es';
+    const t = useTranslations('Automations');
     const [activeTab, setActiveTab] = useState<'my' | 'marketplace'>('my');
     const [myRules, setMyRules] = useState<AutomationRule[]>([]);
     const [templates, setTemplates] = useState<AutomationRule[]>([]);
@@ -208,7 +210,7 @@ export default function AutomationsPage() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="space-y-6">
             {/* Header */}
             <div className="mb-8">
                 <button
@@ -225,9 +227,9 @@ export default function AutomationsPage() {
                     </div>
                     <div>
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                            Equipo de Agentes Clínicos
+                            {t('title')}
                         </h1>
-                        <p className="text-foreground/60">Protocolos inteligentes de automatización clínica</p>
+                        <p className="text-foreground/60">{t('subtitle')}</p>
                     </div>
                 </div>
             </div>

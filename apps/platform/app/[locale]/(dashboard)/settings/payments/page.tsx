@@ -85,139 +85,135 @@ export default function PaymentsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-muted py-8 px-6">
-                <div className="max-w-4xl mx-auto flex items-center justify-center h-64">
-                    <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
-                </div>
+            <div className="flex items-center justify-center h-64">
+                <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-muted py-8 px-6">
-            <div className="max-w-4xl mx-auto space-y-8">
-                <SectionHeader
-                    icon={Wallet}
-                    title="Cobros"
-                    subtitle="Configura tu cuenta para recibir pagos de pacientes"
-                    gradientFrom="violet-500"
-                    gradientTo="purple-600"
-                    shadowColor="violet-500/25"
-                />
+        <div className="space-y-8">
+            <SectionHeader
+                icon={Wallet}
+                title="Cobros"
+                subtitle="Configura tu cuenta para recibir pagos de pacientes"
+                gradientFrom="violet-500"
+                gradientTo="purple-600"
+                shadowColor="violet-500/25"
+            />
 
-                {/* Message */}
-                {message && (
-                    <div className={`p-4 rounded-xl flex items-start gap-3 ${message.type === 'success'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : message.type === 'info'
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'bg-red-50 text-red-700 border border-red-200'
-                        }`}>
-                        {message.type === 'success' && <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />}
-                        {message.type === 'info' && <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />}
-                        {message.type === 'error' && <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />}
-                        {message.text}
+            {/* Message */}
+            {message && (
+                <div className={`p-4 rounded-xl flex items-start gap-3 ${message.type === 'success'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : message.type === 'info'
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : 'bg-red-50 text-red-700 border border-red-200'
+                    }`}>
+                    {message.type === 'success' && <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />}
+                    {message.type === 'info' && <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />}
+                    {message.type === 'error' && <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />}
+                    {message.text}
+                </div>
+            )}
+
+            {/* Connect Status Card */}
+            <div className="bg-card rounded-2xl p-8 shadow-sm border border-border">
+                <div className="flex items-start gap-6">
+                    {/* Status Icon */}
+                    <div className={`p-4 rounded-2xl ${status?.is_enabled ? 'bg-emerald-100' : 'bg-red-100'}`}>
+                        {status?.is_enabled ? (
+                            <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+                        ) : (
+                            <Ban className="w-8 h-8 text-red-500" />
+                        )}
                     </div>
-                )}
 
-                {/* Connect Status Card */}
-                <div className="bg-card rounded-2xl p-8 shadow-sm border border-border">
-                    <div className="flex items-start gap-6">
-                        {/* Status Icon */}
-                        <div className={`p-4 rounded-2xl ${status?.is_enabled ? 'bg-emerald-100' : 'bg-red-100'}`}>
-                            {status?.is_enabled ? (
-                                <CheckCircle2 className="w-8 h-8 text-emerald-600" />
-                            ) : (
-                                <Ban className="w-8 h-8 text-red-500" />
-                            )}
+                    {/* Status Info */}
+                    <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-xl font-semibold text-foreground">
+                                Estado de Cobros
+                            </h3>
+                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${status?.is_enabled
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : 'bg-red-100 text-red-700'
+                                }`}>
+                                {status?.is_enabled ? 'Activo' : 'Inactivo'}
+                            </span>
                         </div>
 
-                        {/* Status Info */}
-                        <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-xl font-semibold text-foreground">
-                                    Estado de Cobros
-                                </h3>
-                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${status?.is_enabled
-                                    ? 'bg-emerald-100 text-emerald-700'
-                                    : 'bg-red-100 text-red-700'
-                                    }`}>
-                                    {status?.is_enabled ? 'Activo' : 'Inactivo'}
-                                </span>
+                        <p className="text-foreground/70 mb-6">
+                            {status?.is_enabled
+                                ? 'Tu cuenta bancaria está conectada. Los pagos de pacientes se depositarán automáticamente.'
+                                : 'Conecta tu cuenta bancaria para empezar a recibir pagos de tus pacientes.'
+                            }
+                        </p>
+
+                        {!status?.is_enabled && (
+                            <button
+                                onClick={handleConnectOnboarding}
+                                disabled={actionLoading}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
+                            >
+                                {actionLoading ? (
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                ) : (
+                                    <ExternalLink className="w-5 h-5" />
+                                )}
+                                Conectar Cuenta Bancaria
+                            </button>
+                        )}
+
+                        {status?.is_enabled && status?.connect_id && (
+                            <div className="flex items-center gap-2 text-sm text-foreground/60">
+                                <Check className="w-4 h-4 text-emerald-500" />
+                                <span>ID de Cuenta: {status.connect_id}</span>
                             </div>
-
-                            <p className="text-foreground/70 mb-6">
-                                {status?.is_enabled
-                                    ? 'Tu cuenta bancaria está conectada. Los pagos de pacientes se depositarán automáticamente.'
-                                    : 'Conecta tu cuenta bancaria para empezar a recibir pagos de tus pacientes.'
-                                }
-                            </p>
-
-                            {!status?.is_enabled && (
-                                <button
-                                    onClick={handleConnectOnboarding}
-                                    disabled={actionLoading}
-                                    className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50"
-                                >
-                                    {actionLoading ? (
-                                        <Loader2 className="w-5 h-5 animate-spin" />
-                                    ) : (
-                                        <ExternalLink className="w-5 h-5" />
-                                    )}
-                                    Conectar Cuenta Bancaria
-                                </button>
-                            )}
-
-                            {status?.is_enabled && status?.connect_id && (
-                                <div className="flex items-center gap-2 text-sm text-foreground/60">
-                                    <Check className="w-4 h-4 text-emerald-500" />
-                                    <span>ID de Cuenta: {status.connect_id}</span>
-                                </div>
-                            )}
-                        </div>
+                        )}
                     </div>
                 </div>
+            </div>
 
-                {/* Info Card */}
-                <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-6 border border-violet-100">
-                    <h4 className="font-semibold text-foreground mb-3">¿Cómo funciona?</h4>
-                    <ul className="space-y-3 text-foreground/70">
-                        <li className="flex items-start gap-3">
-                            <span className="w-6 h-6 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-sm font-medium flex-shrink-0">1</span>
-                            <span>Conectas tu cuenta bancaria a través de Stripe (proceso seguro)</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <span className="w-6 h-6 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-sm font-medium flex-shrink-0">2</span>
-                            <span>Los pacientes pagan al reservar servicios en tu página pública</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                            <span className="w-6 h-6 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-sm font-medium flex-shrink-0">3</span>
-                            <span>El dinero se deposita automáticamente en tu cuenta (menos una pequeña comisión de plataforma)</span>
-                        </li>
-                    </ul>
-                </div>
+            {/* Info Card */}
+            <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-6 border border-violet-100">
+                <h4 className="font-semibold text-foreground mb-3">¿Cómo funciona?</h4>
+                <ul className="space-y-3 text-foreground/70">
+                    <li className="flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-sm font-medium flex-shrink-0">1</span>
+                        <span>Conectas tu cuenta bancaria a través de Stripe (proceso seguro)</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-sm font-medium flex-shrink-0">2</span>
+                        <span>Los pacientes pagan al reservar servicios en tu página pública</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-full bg-violet-200 text-violet-700 flex items-center justify-center text-sm font-medium flex-shrink-0">3</span>
+                        <span>El dinero se deposita automáticamente en tu cuenta (menos una pequeña comisión de plataforma)</span>
+                    </li>
+                </ul>
+            </div>
 
-                {/* Commission Info */}
-                <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
-                    <h4 className="font-semibold text-foreground mb-4">Comisiones por Plan</h4>
-                    <div className="grid sm:grid-cols-3 gap-4">
-                        <div className="p-4 bg-muted rounded-xl text-center">
-                            <p className="text-2xl font-bold text-foreground">5%</p>
-                            <p className="text-sm text-foreground/60">Builder (Gratis)</p>
-                        </div>
-                        <div className="p-4 bg-emerald-50 rounded-xl text-center border border-emerald-200">
-                            <p className="text-2xl font-bold text-emerald-600">3%</p>
-                            <p className="text-sm text-foreground/60">Pro (49€/mes)</p>
-                        </div>
-                        <div className="p-4 bg-violet-50 rounded-xl text-center border border-violet-200">
-                            <p className="text-2xl font-bold text-violet-600">2%</p>
-                            <p className="text-sm text-foreground/60">Center (149€/mes)</p>
-                        </div>
+            {/* Commission Info */}
+            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+                <h4 className="font-semibold text-foreground mb-4">Comisiones por Plan</h4>
+                <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="p-4 bg-muted rounded-xl text-center">
+                        <p className="text-2xl font-bold text-foreground">5%</p>
+                        <p className="text-sm text-foreground/60">Builder (Gratis)</p>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-4 text-center">
-                        * Además de las tarifas estándar de Stripe (~1.5% + 0.25€)
-                    </p>
+                    <div className="p-4 bg-emerald-50 rounded-xl text-center border border-emerald-200">
+                        <p className="text-2xl font-bold text-emerald-600">3%</p>
+                        <p className="text-sm text-foreground/60">Pro (49€/mes)</p>
+                    </div>
+                    <div className="p-4 bg-violet-50 rounded-xl text-center border border-violet-200">
+                        <p className="text-2xl font-bold text-violet-600">2%</p>
+                        <p className="text-sm text-foreground/60">Center (149€/mes)</p>
+                    </div>
                 </div>
+                <p className="text-xs text-muted-foreground mt-4 text-center">
+                    * Además de las tarifas estándar de Stripe (~1.5% + 0.25€)
+                </p>
             </div>
         </div>
     );

@@ -10,6 +10,7 @@ import {
     ArrowRightCircle, XCircle, Clock, Plus, Search,
     Filter, ChevronDown, Ghost, Link, Copy
 } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
 
 // Types
 interface Lead {
@@ -284,39 +285,28 @@ export default function LeadsPage() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-brand/10 dark:bg-brand/20 flex items-center justify-center">
-                        <UserPlus className="w-6 h-6 text-brand" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold text-foreground ">
-                            CRM - Interesados
-                        </h1>
-                        <p className="text-sm text-foreground/60 dark:text-muted-foreground">Gestiona tu pipeline antes de convertir a {terminology.plural.toLowerCase()}</p>
-                    </div>
+            <PageHeader
+                icon={UserPlus}
+                kicker="CONNECT"
+                title="CRM - Interesados"
+                subtitle={`Gestiona tu pipeline antes de convertir a ${terminology.plural.toLowerCase()}`}
+                action={{
+                    label: "Nuevo Lead",
+                    onClick: () => setShowCreateModal(true),
+                    icon: Plus
+                }}
+            >
+                <div className="relative max-w-md">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre, email o teléfono..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground placeholder:text-muted-foreground"
+                    />
                 </div>
-                <button
-                    onClick={() => setShowCreateModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-xl hover:opacity-90 transition-opacity font-medium"
-                >
-                    <Plus className="w-4 h-4" />
-                    Nuevo Lead
-                </button>
-            </div>
-
-            {/* Search */}
-            <div className="relative max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                    type="text"
-                    placeholder="Buscar por nombre, email o teléfono..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 border border-border-subtle bg-surface rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground  placeholder:text-muted-foreground"
-                />
-            </div>
+            </PageHeader>
 
             {/* Kanban Board */}
             <DragDropContext onDragEnd={handleDragEnd}>

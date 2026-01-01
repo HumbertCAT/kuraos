@@ -14,6 +14,39 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.14] - 2026-01-01 🧼 CLEAN SLATE & CLINICAL ROSTER
+
+### 🎉 Platform-Wide Standardization & Saneamiento
+Complete overhaul of the tabular infrastructure and brand alignment for v1.1.14.
+
+#### 🧼 Saneamiento (Protocolo Clean Slate)
+- **Cache & Environment Purge**: Compulsive cleaning of build caches and local environment states.
+- **Media Hygiene**: Audit and removal of orphaned static/media assets.
+- **Docker Pruning**: Cleaned volumes and legacy containers for optimal local performance.
+
+#### 📋 Clinical Roster (High-Density Tables)
+Standardization of all primary data tables for high-fidelity clinical operations:
+- **Bookings (Citas)**: New structure with `badge-success`/`badge-risk` semantic states and `.font-mono` alignment for time-sensitive data.
+- **Patients (Clientes)**: Optimized Name/Email vertical stacking to resolve layout collisions in constrained spaces.
+- **Services**: Revenue-critical columns (Price, Duration) migrated to monospace for easier scanability.
+- **Forms**: Replaced card grid with a professional table, introducing the "Rule of 2 Actions" with a refined "More" dropdown.
+
+#### 🤖 Agent Concept Rebranding
+- **Agents · Asistentes**: Rebranded "Automations" to reflect the AletheIA Intelligence philosophy.
+- **i18n Refactor**: Migrated module to full bilingual support (ES/EN) via `next-intl`.
+- **Full-Width Layout**: Removed legacy `max-w-4xl` constraints for a fluid, full-width dashboard experience.
+
+#### 🛡️ Design System & UX Hardening
+- **Avatar Resilience**: Implemented `flex-shrink-0` to maintain perfect circular geometry on all Roster views.
+- **Humbertix Fix**: Resolved "UNDEFINED" initials bug for patients missing surnames.
+- **Sidebar UX**: Profile links now point directly to `/settings/general` for faster navigation.
+- **Semantic Audit**: Removed forbidden raw dimensions (`text-[10px]`) in favor of design system tokens.
+
+#### 🔧 Infrastructure
+- **Build Blocker Fixed**: Resolved syntax error in `settings/payments/page.tsx` that prevented production compilation.
+
+---
+
 ## [1.1.13] - 2025-12-30 🎫 PUBLIC BOOKING WIZARD
 
 ### 🎉 Complete Public Booking Flow with Stripe Payments

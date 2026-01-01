@@ -271,7 +271,7 @@ export function TrinityNav() {
                 {/* User Profile - Links to Settings */}
                 {user && (
                     <Link
-                        href="/settings"
+                        href="/settings/general"
                         className={`flex items-center gap-2 p-2 rounded-lg hover:bg-accent/50 transition-colors ${isCollapsed ? 'justify-center' : ''
                             }`}
                         title={isCollapsed ? user.full_name : undefined}

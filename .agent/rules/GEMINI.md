@@ -52,3 +52,14 @@ trigger: always_on
 - **Workflow:** Use `/publish-release` workflow. Update `CHANGELOG.md` first.
 - **Infrastructure:** Production uses Cloud SQL via Unix sockets.
 - **Security:** Secrets in Google Secret Manager. Auth via `httpOnly` cookies.
+## 📂 Working Directory Rules
+> **CRITICAL:** Many commands are path-sensitive. Always verify CWD before execution.
+
+- **Scripts** (`start-dev.sh`, `stop-dev.sh`, `deploy.sh`, `backup_db.sh`):
+  - **ALWAYS** execute from project root: `/Users/humbert/Documents/KuraOS`
+  - **NEVER** from `/scripts/` directory (relative paths will fail)
+- **Vercel CLI**:
+  - **DO NOT** run `vercel --prod` from `apps/marketing/` (causes path duplication error)
+  - **USE** GitHub auto-deploy (push to `main` triggers Vercel)
+- **Docker/Git**: Execute from project root for `docker-compose.yml` access
+- **Frontend apps**: `cd apps/platform` or `cd apps/marketing` first, then `pnpm` commands

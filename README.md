@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.1.7-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.14-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 [![License](https://img.shields.io/badge/license-Proprietary-blue.svg)]()
 
@@ -278,6 +278,8 @@ kuraos/
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 
 ### Completed
+- [x] **v1.1.14** - CLEAN SLATE & CLINICAL ROSTER: Table standardization + Agent rebranding (January 2026)
+- [x] **v1.1.13** - PUBLIC BOOKING WIZARD: End-to-end Stripe flow (December 2025)
 - [x] **v1.1.7** - THE GOLDEN KEY: Native Google OAuth + Password Recovery (December 2025)
 - [x] **v1.1.6** - INVESTOR DECK V12: The Pitch Temple (December 2025)
 - [x] **v1.1.5** - THE CYBER-CLINICAL TEMPLE: Premium Dark Mode Redesign (December 2025)
@@ -323,6 +325,6 @@ KURA OS is crafted with the same care and intentionality that you bring to your 
 
 ---
 
-*Last updated: December 28, 2025 (v1.1.7 THE GOLDEN KEY)*
+*Last updated: January 01, 2026 (v1.1.14 CLEAN SLATE & CLINICAL ROSTER)*
 
 *© 2025-2026 KURA OS. All rights reserved.*

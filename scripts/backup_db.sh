@@ -15,7 +15,7 @@ mkdir -p "$BACKUP_DIR"
 
 # Run pg_dump inside Docker container
 echo "📦 Creating backup: $BACKUP_FILE"
-docker-compose exec -T db pg_dump -U postgres kuraos > "$BACKUP_FILE"
+docker-compose exec -T db pg_dump -U postgres therapistos > "$BACKUP_FILE"
 
 if [ $? -eq 0 ]; then
     SIZE=$(ls -lh "$BACKUP_FILE" | awk '{print $5}')

@@ -119,7 +119,7 @@
       "bookings": "Reservas",
       "forms": "Formularios",
       "campaigns": "Campañas",
-      "agents": "Agentes IA"
+      "agents": "Agentes · Asistentes"
     },
     "badges": {
       "soon": "Pronto"
@@ -376,8 +376,8 @@
     "subtitle": "Crea y gestiona tu catálogo de servicios. Define precios, duraciones, capacidades y páginas de reserva."
   },
   "Automations": {
-    "title": "Equipo de Agentes Clínicos",
-    "subtitle": "Activa protocolos inteligentes que automatizan recordatorios, seguimientos y comunicaciones con tus pacientes.",
+    "title": "Agentes · Asistentes",
+    "subtitle": "Protocolos inteligentes de automatización",
     "myAutomations": "Mis Agentes",
     "library": "Catálogo de Agentes",
     "install": "Activar",

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Plus, Edit, Trash2, Clock, Users, Euro, FileText, CalendarPlus, List, X, Package } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
-import SectionHeader from '@/components/SectionHeader';
+import PageHeader from '@/components/PageHeader';
 
 import { API_URL } from '@/lib/api';
 
@@ -212,6 +212,9 @@ export default function ServicesPage() {
 
             if (response.ok) {
                 setServices(services.filter(s => s.id !== serviceId));
+            } else if (response.status === 400) {
+                const error = await response.json();
+                alert(error.detail || 'No se puede eliminar un servicio con reservas activas. Considera pausarlo en su lugar.');
             }
         } catch (err) {
             console.error('Error deleting', err);
@@ -256,6 +259,11 @@ export default function ServicesPage() {
             oneOnOne: 'Individual',
             group: 'Group',
             minutes: 'min',
+            status: 'Status',
+            active: 'Active',
+            paused: 'Paused',
+            searchPlaceholder: 'Search services...',
+            actions: 'Actions',
         },
         es: {
             title: 'Servicios',
@@ -275,6 +283,11 @@ export default function ServicesPage() {
             oneOnOne: 'Individual',
             group: 'Grupal',
             minutes: 'min',
+            status: 'Estado',
+            active: 'Activo',
+            paused: 'Pausado',
+            searchPlaceholder: 'Buscar servicios...',
+            actions: 'Acciones',
         },
         ca: {
             title: 'Serveis',
@@ -294,6 +307,11 @@ export default function ServicesPage() {
             oneOnOne: 'Individual',
             group: 'Grupal',
             minutes: 'min',
+            status: 'Estat',
+            active: 'Actiu',
+            paused: 'Pausat',
+            searchPlaceholder: 'Cercar serveis...',
+            actions: 'Accions',
         }
     };
 
@@ -317,27 +335,19 @@ export default function ServicesPage() {
     return (
         <div className="space-y-6">
             <div className="max-w-6xl mx-auto">
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-brand/10 dark:bg-brand/20 flex items-center justify-center">
-                            <Package className="w-6 h-6 text-brand" />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold text-foreground">{t.title}</h1>
-                            <p className="text-sm text-muted-foreground">{t.subtitle}</p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={openCreateModal}
-                        className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground uppercase font-bold tracking-wider font-mono rounded-sm h-8 hover:bg-primary/90 transition-opacity"
-                    >
-                        <Plus size={20} />
-                        {t.addService}
-                    </button>
-                </div>
+                <PageHeader
+                    icon={Package}
+                    kicker="PRACTICE"
+                    title={t.title}
+                    subtitle={t.subtitle}
+                    action={{
+                        label: t.addService,
+                        onClick: openCreateModal,
+                        icon: Plus
+                    }}
+                />
 
-                {/* Services Grid */}
+                {/* Services Table */}
                 {services.length === 0 ? (
                     <div className="text-center py-12 bg-card rounded-xl border border-dashed border-border">
                         <div className="text-4xl mb-4">📦</div>
@@ -345,82 +355,91 @@ export default function ServicesPage() {
                         <p className="text-foreground/60 mt-1">{t.noServicesDesc}</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {services.map(service => (
-                            <div
-                                key={service.id}
-                                className={`bg-card rounded-xl border border-border p-5 hover:shadow-sm transition-shadow ${!service.is_active ? 'opacity-60' : ''}`}
-                            >
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <span className={`text-xs px-2 py-1 rounded-full ${service.kind === 'ONE_ON_ONE'
-                                            ? 'bg-blue-500/10 text-blue-400'
-                                            : 'bg-ai/10 text-ai'
-                                            }`}>
-                                            {service.kind === 'ONE_ON_ONE' ? t.oneOnOne : t.group}
-                                        </span>
-                                    </div>
-                                    <div className="flex gap-1">
-                                        <a
-                                            href={`/${locale}/book/${currentUser?.id}`}
-                                            target="_blank"
-                                            className="p-1.5 text-foreground/50 hover:text-brand hover:bg-brand/10 rounded"
-                                            title="Preview booking"
-                                        >
-                                            <CalendarPlus size={16} />
-                                        </a>
-                                        <button
-                                            onClick={() => openEditModal(service)}
-                                            className="p-1.5 text-foreground/50 hover:text-ai hover:bg-ai/10 rounded"
-                                        >
-                                            <Edit size={16} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(service.id)}
-                                            className="p-1.5 text-foreground/50 hover:text-red-600 hover:bg-red-50 rounded"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
-                                        <button
-                                            onClick={() => openBookingsModal(service)}
-                                            className="p-1.5 text-foreground/50 hover:text-amber-400 hover:bg-amber-500/10 rounded"
-                                            title="View bookings"
-                                        >
-                                            <List size={16} />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <h3 className="font-semibold text-foreground mb-2">{service.title}</h3>
-                                {service.description && (
-                                    <p className="text-sm text-foreground/60 mb-3 line-clamp-2">{service.description}</p>
-                                )}
-
-                                <div className="flex flex-wrap gap-3 text-sm text-foreground/70">
-                                    <div className="flex items-center gap-1">
-                                        <Clock size={14} className="text-foreground/50" />
-                                        {service.duration_minutes} {t.minutes}
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <Euro size={14} className="text-foreground/50" />
-                                        {service.price} {service.currency}
-                                    </div>
-                                    {service.kind === 'GROUP' && (
-                                        <div className="flex items-center gap-1">
-                                            <Users size={14} className="text-foreground/50" />
-                                            {service.capacity}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {service.intake_form_title && (
-                                    <div className="mt-3 flex items-center gap-1 text-xs text-brand">
-                                        <FileText size={12} />
-                                        {service.intake_form_title}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                    <div className="card overflow-hidden mt-6 shadow-sm">
+                        <table className="w-full">
+                            <thead className="bg-muted/50 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                                <tr className="border-b border-border">
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">{t.title.toUpperCase()}</th>
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">{t.duration.toUpperCase()}</th>
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">{t.price.toUpperCase()}</th>
+                                    <th className="px-4 py-3 text-center type-ui text-muted-foreground tracking-wider">{t.status.toUpperCase()}</th>
+                                    <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider">{t.actions.toUpperCase()}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {services.map((service) => (
+                                    <tr
+                                        key={service.id}
+                                        onClick={() => openEditModal(service)}
+                                        className={`border-b border-border hover:bg-muted/40 cursor-pointer transition-colors group ${!service.is_active ? 'opacity-70 bg-muted/5' : ''}`}
+                                    >
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-9 h-9 rounded-lg flex items-center justify-center border border-border/50 ${service.kind === 'ONE_ON_ONE' ? 'bg-blue-500/10 text-blue-500' : 'bg-ai/10 text-ai'}`}>
+                                                    <Package size={18} />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="type-ui font-medium text-foreground truncate">{service.title}</p>
+                                                    <p className="text-xs text-muted-foreground truncate">
+                                                        {service.kind === 'ONE_ON_ONE' ? t.oneOnOne : t.group}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center gap-1.5 text-foreground/70">
+                                                <Clock size={14} className="text-muted-foreground" />
+                                                <span className="type-ui font-mono text-xs text-foreground/80">{service.duration_minutes} {t.minutes}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center gap-1.5 text-foreground/70">
+                                                <Euro size={14} className="text-muted-foreground" />
+                                                <span className="type-ui font-mono text-xs font-medium text-foreground/80">{service.price} {service.currency}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            <span className={`badge ${service.is_active ? 'badge-success' : 'badge-muted'}`}>
+                                                {service.is_active ? t.active : t.paused}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                                                <a
+                                                    href={`/${locale}/book/${currentUser?.id}`}
+                                                    target="_blank"
+                                                    className="btn btn-sm btn-ghost p-2"
+                                                    title="Preview booking"
+                                                >
+                                                    <CalendarPlus size={16} />
+                                                </a>
+                                                <button
+                                                    onClick={() => openBookingsModal(service)}
+                                                    className="btn btn-sm btn-ghost p-2 text-amber-500"
+                                                    title="View bookings"
+                                                >
+                                                    <List size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => openEditModal(service)}
+                                                    className="btn btn-sm btn-ghost p-2 text-brand"
+                                                    title="Edit"
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(service.id)}
+                                                    className="btn btn-sm btn-ghost p-2 text-risk"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 )}
 
@@ -428,13 +447,39 @@ export default function ServicesPage() {
                 {showModal && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
                         <div className="bg-card rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-                            <div className="p-6 border-b">
+                            <div className="p-6 border-b flex justify-between items-center">
                                 <h2 className="text-xl font-bold text-foreground">
                                     {editingService ? t.edit : t.create}
                                 </h2>
+                                <button
+                                    onClick={() => setShowModal(false)}
+                                    className="p-2 hover:bg-muted rounded-lg transition-colors"
+                                >
+                                    <X size={20} />
+                                </button>
                             </div>
 
                             <div className="p-6 space-y-4">
+                                {/* Status Toggle (Top of form) */}
+                                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-xl border border-border/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-3 h-3 rounded-full animate-pulse ${formData.is_active ? 'bg-success' : 'bg-muted-foreground'}`} />
+                                        <span className="font-medium text-foreground">
+                                            {formData.is_active ? t.active : t.paused}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${formData.is_active ? 'bg-brand' : 'bg-muted-foreground/30'
+                                            }`}
+                                    >
+                                        <span
+                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.is_active ? 'translate-x-6' : 'translate-x-1'
+                                                }`}
+                                        />
+                                    </button>
+                                </div>
+
                                 {/* Title */}
                                 <div>
                                     <label className="block text-sm font-medium text-foreground mb-1">
@@ -615,80 +660,83 @@ export default function ServicesPage() {
                             </div>
                         </div>
                     </div>
-                )}
+                )
+                }
                 {/* Bookings Modal */}
-                {showBookingsModal && selectedServiceForBookings && (
-                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                        <div className="bg-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
-                            <div className="p-6 border-b flex justify-between items-center">
-                                <div>
-                                    <h2 className="text-xl font-semibold text-foreground">
-                                        Reservas: {selectedServiceForBookings.title}
-                                    </h2>
-                                    <p className="text-sm text-foreground/60">
-                                        {bookings.length} reserva(s) encontrada(s)
-                                    </p>
+                {
+                    showBookingsModal && selectedServiceForBookings && (
+                        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                            <div className="bg-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+                                <div className="p-6 border-b flex justify-between items-center">
+                                    <div>
+                                        <h2 className="text-xl font-semibold text-foreground">
+                                            Reservas: {selectedServiceForBookings.title}
+                                        </h2>
+                                        <p className="text-sm text-foreground/60">
+                                            {bookings.length} reserva(s) encontrada(s)
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowBookingsModal(false)}
+                                        className="p-2 hover:bg-accent rounded-lg"
+                                    >
+                                        <X size={20} />
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => setShowBookingsModal(false)}
-                                    className="p-2 hover:bg-accent rounded-lg"
-                                >
-                                    <X size={20} />
-                                </button>
-                            </div>
-                            <div className="p-6 overflow-y-auto max-h-[60vh]">
-                                {loadingBookings ? (
-                                    <div className="text-center py-8 text-foreground/60">Cargando...</div>
-                                ) : bookings.length === 0 ? (
-                                    <div className="text-center py-8">
-                                        <div className="text-4xl mb-2">📅</div>
-                                        <p className="text-foreground/60">No hay reservas para este servicio</p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-3">
-                                        {bookings.map(booking => (
-                                            <div
-                                                key={booking.id}
-                                                className="p-4 border rounded-lg hover:bg-card"
-                                            >
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <p className="font-medium text-foreground">
-                                                            {booking.patient_name}
-                                                        </p>
-                                                        <p className="text-sm text-foreground/60">
-                                                            {new Date(booking.start_time).toLocaleDateString(locale, {
-                                                                weekday: 'short',
-                                                                year: 'numeric',
-                                                                month: 'short',
-                                                                day: 'numeric',
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            })}
-                                                        </p>
+                                <div className="p-6 overflow-y-auto max-h-[60vh]">
+                                    {loadingBookings ? (
+                                        <div className="text-center py-8 text-foreground/60">Cargando...</div>
+                                    ) : bookings.length === 0 ? (
+                                        <div className="text-center py-8">
+                                            <div className="text-4xl mb-2">📅</div>
+                                            <p className="text-foreground/60">No hay reservas para este servicio</p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {bookings.map(booking => (
+                                                <div
+                                                    key={booking.id}
+                                                    className="p-4 border rounded-lg hover:bg-card"
+                                                >
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <p className="font-medium text-foreground">
+                                                                {booking.patient_name}
+                                                            </p>
+                                                            <p className="text-sm text-foreground/60">
+                                                                {new Date(booking.start_time).toLocaleDateString(locale, {
+                                                                    weekday: 'short',
+                                                                    year: 'numeric',
+                                                                    month: 'short',
+                                                                    day: 'numeric',
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit'
+                                                                })}
+                                                            </p>
+                                                        </div>
+                                                        <span className={`px-2 py-1 text-xs rounded-full ${booking.status === 'CONFIRMED'
+                                                            ? 'bg-green-100 text-green-700'
+                                                            : booking.status === 'PENDING'
+                                                                ? 'bg-amber-100 text-amber-700'
+                                                                : 'bg-muted text-foreground/70'
+                                                            }`}>
+                                                            {booking.status}
+                                                        </span>
                                                     </div>
-                                                    <span className={`px-2 py-1 text-xs rounded-full ${booking.status === 'CONFIRMED'
-                                                        ? 'bg-green-100 text-green-700'
-                                                        : booking.status === 'PENDING'
-                                                            ? 'bg-amber-100 text-amber-700'
-                                                            : 'bg-muted text-foreground/70'
-                                                        }`}>
-                                                        {booking.status}
-                                                    </span>
+                                                    <div className="mt-2 text-sm text-foreground/60">
+                                                        {booking.amount_paid} {booking.currency}
+                                                    </div>
                                                 </div>
-                                                <div className="mt-2 text-sm text-foreground/60">
-                                                    {booking.amount_paid} {booking.currency}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
-            </div>
-        </div>
+                    )
+                }
+            </div >
+        </div >
     );
 }
 

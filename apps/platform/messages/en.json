@@ -119,7 +119,7 @@
       "bookings": "Bookings",
       "forms": "Forms",
       "campaigns": "Campaigns",
-      "agents": "AI Agents"
+      "agents": "Agents · Assistants"
     },
     "badges": {
       "soon": "Soon"
@@ -376,8 +376,8 @@
     "subtitle": "Create and manage your service catalog. Set prices, durations, capacities and booking pages."
   },
   "Automations": {
-    "title": "Automations",
-    "subtitle": "Activate playbooks that automate reminders, follow-ups and communications with your patients.",
+    "title": "Agents · Assistants",
+    "subtitle": "Intelligent automation protocols",
     "myAutomations": "My Automations",
     "library": "Automation Library"
   }

@@ -8,7 +8,7 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Calendar, Clock, User, Search, CheckCircle, XCircle, AlertCircle, MoreVertical, Edit, Trash2, Check, X, CalendarCheck } from 'lucide-react';
-import SectionHeader from '@/components/SectionHeader';
+import PageHeader from '@/components/PageHeader';
 
 import { API_URL } from '@/lib/api';
 const locales = { es, en: enUS };
@@ -180,6 +180,20 @@ export default function BookingsPage() {
         setOpenMenu(null);
     }
 
+    // Generate avatar initials and color (from Clinical Roster pattern)
+    function getAvatarProps(booking: Booking) {
+        const initials = (booking.patient_name?.split(' ').map(n => n[0]).join('') || '?').toUpperCase().substring(0, 2);
+        const colors = [
+            'from-violet-500 to-fuchsia-500',
+            'from-blue-500 to-cyan-500',
+            'from-emerald-500 to-teal-500',
+            'from-orange-500 to-amber-500',
+            'from-pink-500 to-rose-500',
+            'from-indigo-500 to-purple-500',
+        ];
+        const colorIndex = (booking.patient_name?.charCodeAt(0) || 0) % colors.length;
+        return { initials, gradient: colors[colorIndex] };
+    }
     async function cancelBookingWithReason(bookingId: string) {
         const reason = prompt('Motivo de cancelación (opcional):');
         try {
@@ -242,32 +256,27 @@ export default function BookingsPage() {
         return { style: { backgroundColor: statusColors[event.status] || '#6366f1', borderRadius: '6px', color: 'white', border: 'none' } };
     };
 
-    const statusConfig: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
-        CONFIRMED: { color: 'text-emerald-600 bg-emerald-50', icon: <CheckCircle className="w-4 h-4" />, label: t.confirmed },
-        PENDING: { color: 'text-amber-600 bg-amber-50', icon: <AlertCircle className="w-4 h-4" />, label: t.pending },
-        CANCELLED: { color: 'text-red-600 bg-red-50', icon: <XCircle className="w-4 h-4" />, label: t.cancelled },
-        COMPLETED: { color: 'text-indigo-600 bg-indigo-50', icon: <CheckCircle className="w-4 h-4" />, label: t.completed },
+    const statusConfig: Record<string, { className: string; icon: React.ReactNode; label: string }> = {
+        CONFIRMED: { className: 'badge badge-success', icon: <CheckCircle className="w-3.5 h-4" />, label: t.confirmed },
+        PENDING: { className: 'badge badge-warning', icon: <AlertCircle className="w-3.5 h-4" />, label: t.pending },
+        CANCELLED: { className: 'badge badge-risk', icon: <XCircle className="w-3.5 h-4" />, label: t.cancelled },
+        COMPLETED: { className: 'badge badge-secondary', icon: <CheckCircle className="w-3.5 h-4" />, label: t.completed },
     };
 
     if (loading) return <div className="p-6 text-center text-foreground/60">Loading...</div>;
 
     return (
-        <div className="min-h-screen bg-muted py-8 px-6">
-            <div className="max-w-6xl mx-auto">
-                {/* Header */}
-                <SectionHeader
-                    icon={CalendarCheck}
-                    title={t.title}
-                    subtitle={t.subtitle}
-                    gradientFrom="from-emerald-500"
-                    gradientTo="to-teal-500"
-                    shadowColor="shadow-emerald-200"
-                />
-
+        <div className="space-y-6">
+            <PageHeader
+                icon={CalendarCheck}
+                kicker="CONNECT"
+                title={t.title}
+                subtitle={t.subtitle}
+            >
                 {/* Tabs + Filters Row */}
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     {/* Tabs */}
-                    <div className="flex gap-1 bg-muted p-1 rounded-lg">
+                    <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
                         <button
                             onClick={() => setActiveTab('future')}
                             className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'future' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
@@ -285,21 +294,21 @@ export default function BookingsPage() {
                     </div>
 
                     {/* Filters */}
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                        <div className="relative w-full sm:w-64">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <input
                                 type="text"
                                 placeholder={t.search}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 w-64"
+                                className="w-full pl-10 pr-4 py-2 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-brand outline-none transition-all"
                             />
                         </div>
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                            className="w-full sm:w-auto px-4 py-2 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-brand outline-none transition-all"
                         >
                             <option value="all">{t.allStatus}</option>
                             <option value="CONFIRMED">{t.confirmed}</option>
@@ -309,125 +318,135 @@ export default function BookingsPage() {
                         </select>
                     </div>
                 </div>
+            </PageHeader>
 
-                {/* Bookings List */}
-                {filteredBookings.length === 0 ? (
-                    <div className="text-center py-16 bg-card rounded-xl border border-border">
-                        <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                        <h3 className="text-lg font-semibold text-foreground">{t.noBookings}</h3>
-                        <p className="text-foreground/60 mt-1">{t.noBookingsDesc}</p>
-                    </div>
-                ) : (
-                    <div className="bg-card rounded-xl border border-border overflow-hidden">
-                        <table className="w-full">
-                            <thead className="bg-muted border-b">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.patient}</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.service}</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.dateTime}</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-foreground/70 uppercase">{t.status}</th>
-                                    <th className="px-6 py-3 text-right text-xs font-semibold text-foreground/70 uppercase">{t.actions}</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {filteredBookings.map((booking) => {
-                                    const startDate = new Date(booking.start_time);
-                                    const endDate = new Date(booking.end_time);
-                                    const config = statusConfig[booking.status] || statusConfig.PENDING;
+            {/* Bookings List */}
+            {filteredBookings.length === 0 ? (
+                <div className="text-center py-16 bg-card rounded-xl border border-border">
+                    <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-semibold text-foreground">{t.noBookings}</h3>
+                    <p className="text-foreground/60 mt-1">{t.noBookingsDesc}</p>
+                </div>
+            ) : (
+                <div className="card overflow-hidden">
+                    <table className="w-full">
+                        <thead className="bg-muted/50">
+                            <tr className="border-b border-border">
+                                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">{t.patient}</th>
+                                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">{t.service}</th>
+                                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">{t.dateTime}</th>
+                                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">ESTADO</th>
+                                <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider uppercase">{t.actions}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y-0">
+                            {filteredBookings.map((booking) => {
+                                const startDate = new Date(booking.start_time);
+                                const endDate = new Date(booking.end_time);
+                                const config = statusConfig[booking.status] || statusConfig.PENDING;
+                                const { initials, gradient } = getAvatarProps(booking);
 
-                                    return (
-                                        <tr key={booking.id} className="hover:bg-accent transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-medium text-sm">
-                                                        {booking.patient_name?.charAt(0).toUpperCase() || '?'}
-                                                    </div>
-                                                    <div>
-                                                        <Link
-                                                            href={`/patients/${booking.patient_id}`}
-                                                            className="font-medium text-foreground hover:text-indigo-600 hover:underline transition-colors"
-                                                        >
-                                                            {booking.patient_name}
-                                                        </Link>
-                                                        {booking.patient_email && <p className="text-xs text-foreground/60">{booking.patient_email}</p>}
-                                                    </div>
+                                return (
+                                    <tr
+                                        key={booking.id}
+                                        className="border-b border-border hover:bg-muted/40 transition-colors"
+                                    >
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-medium text-xs flex-shrink-0`}>
+                                                    {initials}
                                                 </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-foreground/70">{booking.service_title}</td>
-                                            <td className="px-6 py-4">
-                                                <div className="text-foreground font-medium">
-                                                    {startDate.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' })}
-                                                </div>
-                                                <div className="text-sm text-foreground/60">
-                                                    {startDate.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })} - {endDate.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${config.color}`}>
-                                                    {config.icon}
-                                                    {config.label}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="relative inline-block">
-                                                    <button
-                                                        onClick={() => setOpenMenu(openMenu === booking.id ? null : booking.id)}
-                                                        className="p-2 hover:bg-accent rounded-lg transition-colors"
+                                                <div className="flex flex-col min-w-0">
+                                                    <Link
+                                                        href={`/patients/${booking.patient_id}`}
+                                                        className="type-ui font-medium text-foreground hover:text-brand transition-colors truncate block"
+                                                        onClick={(e) => e.stopPropagation()}
                                                     >
-                                                        <MoreVertical className="w-4 h-4 text-foreground/60" />
-                                                    </button>
-                                                    {openMenu === booking.id && (
-                                                        <div className="absolute right-0 mt-1 w-40 bg-card border rounded-xl shadow-lg z-10 overflow-hidden">
-                                                            {booking.status === 'PENDING' && (
-                                                                <button onClick={() => updateBookingStatus(booking.id, 'CONFIRMED')} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50">
-                                                                    <Check className="w-4 h-4" /> {t.confirm}
-                                                                </button>
-                                                            )}
-                                                            {booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && (
-                                                                <button onClick={() => updateBookingStatus(booking.id, 'COMPLETED')} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50">
-                                                                    <CheckCircle className="w-4 h-4" /> {t.complete}
-                                                                </button>
-                                                            )}
-                                                            {booking.status !== 'CANCELLED' && (
-                                                                <button onClick={() => cancelBookingWithReason(booking.id)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:bg-amber-50">
-                                                                    <X className="w-4 h-4" /> {t.cancel}
-                                                                </button>
-                                                            )}
-                                                            <button onClick={() => deleteBooking(booking.id)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t">
-                                                                <Trash2 className="w-4 h-4" /> {t.delete}
-                                                            </button>
-                                                        </div>
+                                                        {booking.patient_name}
+                                                    </Link>
+                                                    {booking.patient_email && (
+                                                        <p className="text-xs text-muted-foreground truncate leading-tight">
+                                                            {booking.patient_email}
+                                                        </p>
                                                     )}
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-
-                {/* Calendar View */}
-                <div className="bg-card rounded-xl border border-border p-4">
-                    <h2 className="text-lg font-semibold text-foreground mb-4">{t.calendarView}</h2>
-                    <BigCalendar
-                        localizer={localizer}
-                        events={calendarEvents}
-                        startAccessor="start"
-                        endAccessor="end"
-                        style={{ height: 500 }}
-                        views={[Views.WEEK, Views.MONTH, Views.DAY]}
-                        view={currentView}
-                        onView={setCurrentView}
-                        date={currentDate}
-                        onNavigate={setCurrentDate}
-                        eventPropGetter={eventStyleGetter}
-                        culture={locale}
-                        min={new Date(2000, 0, 1, 8, 0, 0)}
-                        max={new Date(2000, 0, 1, 21, 0, 0)}
-                    />
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 hidden md:table-cell">
+                                            <span className="type-body text-muted-foreground">{booking.service_title}</span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="type-ui font-mono text-muted-foreground text-xs uppercase">
+                                                {startDate.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' })}
+                                            </div>
+                                            <div className="type-ui font-mono text-xs text-muted-foreground/60">
+                                                {startDate.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className={config.className}>
+                                                {config.label}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-right">
+                                            <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
+                                                <button
+                                                    onClick={() => setOpenMenu(openMenu === booking.id ? null : booking.id)}
+                                                    className="btn btn-sm btn-ghost p-2"
+                                                >
+                                                    <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                                                </button>
+                                                {openMenu === booking.id && (
+                                                    <div className="absolute right-0 mt-1 w-40 bg-card border rounded-xl shadow-lg z-10 overflow-hidden">
+                                                        {booking.status === 'PENDING' && (
+                                                            <button onClick={() => updateBookingStatus(booking.id, 'CONFIRMED')} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50">
+                                                                <Check className="w-4 h-4" /> {t.confirm}
+                                                            </button>
+                                                        )}
+                                                        {booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && (
+                                                            <button onClick={() => updateBookingStatus(booking.id, 'COMPLETED')} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50">
+                                                                <CheckCircle className="w-4 h-4" /> {t.complete}
+                                                            </button>
+                                                        )}
+                                                        {booking.status !== 'CANCELLED' && (
+                                                            <button onClick={() => cancelBookingWithReason(booking.id)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:bg-amber-50">
+                                                                <X className="w-4 h-4" /> {t.cancel}
+                                                            </button>
+                                                        )}
+                                                        <button onClick={() => deleteBooking(booking.id)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t">
+                                                            <Trash2 className="w-4 h-4" /> {t.delete}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
+            )}
+
+            {/* Calendar View */}
+            <div className="bg-card rounded-xl border border-border p-4">
+                <h2 className="text-lg font-semibold text-foreground mb-4">{t.calendarView}</h2>
+                <BigCalendar
+                    localizer={localizer}
+                    events={calendarEvents}
+                    startAccessor="start"
+                    endAccessor="end"
+                    style={{ height: 500 }}
+                    views={[Views.WEEK, Views.MONTH, Views.DAY]}
+                    view={currentView}
+                    onView={setCurrentView}
+                    date={currentDate}
+                    onNavigate={setCurrentDate}
+                    eventPropGetter={eventStyleGetter}
+                    culture={locale}
+                    min={new Date(2000, 0, 1, 8, 0, 0)}
+                    max={new Date(2000, 0, 1, 21, 0, 0)}
+                />
             </div>
         </div>
     );

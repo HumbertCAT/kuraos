@@ -8,7 +8,7 @@ import { format, parse, startOfWeek, getDay, addDays } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Plus, Clock, X, CalendarDays, CalendarCheck, Trash2, Ban, Settings2, ChevronDown, Link2 } from 'lucide-react';
-import SectionHeader from '@/components/SectionHeader';
+import PageHeader from '@/components/PageHeader';
 
 import { API_URL } from '@/lib/api';
 const locales = { es, en: enUS };
@@ -385,16 +385,12 @@ export default function CalendarPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-xl bg-brand/10 dark:bg-brand/20 flex items-center justify-center">
-          <CalendarDays className="w-6 h-6 text-brand" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground ">{t('title')}</h1>
-          <p className="text-sm text-foreground/60 dark:text-muted-foreground">{t('subtitle') || 'Configura tu disponibilidad y sincroniza con Google Calendar'}</p>
-        </div>
-      </div>
+      <PageHeader
+        icon={CalendarDays}
+        kicker="CONNECT"
+        title={t('title')}
+        subtitle={t('subtitle') || 'Configura tu disponibilidad y sincroniza con Google Calendar'}
+      />
 
       {/* Schedule Selector - Centered between header and content */}
       {activeTab === 'availability' && (

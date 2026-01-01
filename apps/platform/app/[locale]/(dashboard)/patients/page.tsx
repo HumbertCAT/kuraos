@@ -6,8 +6,9 @@ import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api';
 import { Patient, PatientListResponse } from '@/types/auth';
 import EmptyState, { PatientsEmptyIcon } from '@/components/ui/EmptyState';
-import { Users, Search, MessageCircle, ChevronRight } from 'lucide-react';
+import { Users, Search, MessageCircle, ChevronRight, UserPlus } from 'lucide-react';
 import { useTerminology } from '@/hooks/use-terminology';
+import PageHeader from '@/components/PageHeader';
 
 /**
  * The Clinical Roster - v1.0.9
@@ -169,7 +170,10 @@ export default function PatientsPage() {
 
   // Generate avatar initials and color
   function getAvatarProps(patient: Patient) {
-    const initials = `${patient.first_name[0]}${patient.last_name[0]}`.toUpperCase();
+    const firstInitial = patient.first_name?.[0] || '';
+    const lastInitial = patient.last_name?.[0] || '';
+    const initials = (firstInitial + lastInitial).toUpperCase() || '?';
+
     const colors = [
       'from-violet-500 to-fuchsia-500',
       'from-blue-500 to-cyan-500',
@@ -178,60 +182,53 @@ export default function PatientsPage() {
       'from-pink-500 to-rose-500',
       'from-indigo-500 to-purple-500',
     ];
-    const colorIndex = (patient.first_name.charCodeAt(0) + patient.last_name.charCodeAt(0)) % colors.length;
+    const colorIndex = (patient.first_name.charCodeAt(0) + (patient.last_name?.charCodeAt(0) || 0)) % colors.length;
     return { initials, gradient: colors[colorIndex] };
   }
 
   return (
     <div className="space-y-6">
-      {/* ========== HEADER ========== */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center">
-            <Users className="w-6 h-6 text-brand" />
+      <PageHeader
+        icon={Users}
+        kicker="PRACTICE"
+        title={terminology.plural}
+        subtitle={`Gestiona tu cartera de ${terminology.plural.toLowerCase()}`}
+        action={{
+          label: t('addPatient') || `+ Nuevo ${terminology.singular}`,
+          href: '/patients/new',
+          icon: UserPlus
+        }}
+      >
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder={t('searchPlaceholder')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl text-foreground placeholder-muted-foreground"
+            />
           </div>
-          <div>
-            <h1 className="type-h1">{terminology.plural}</h1>
-            <p className="type-body text-muted-foreground">
-              Gestiona tu cartera de {terminology.plural.toLowerCase()}
-            </p>
-          </div>
-        </div>
-        <Link href="/patients/new" className="btn btn-md btn-brand" data-tour="btn-new-patient">
-          + Nuevo {terminology.singular}
-        </Link>
-      </div>
 
-      {/* ========== SEARCH & FILTER BAR ========== */}
-      <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
-        {/* Search Input */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder={t('searchPlaceholder')}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={handleStatusChange}
+            className="px-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl text-foreground min-w-[180px] focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none"
+          >
+            {STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
 
-        {/* Status Filter */}
-        <select
-          value={statusFilter}
-          onChange={handleStatusChange}
-          className="px-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl text-foreground min-w-[180px]"
-        >
-          {STATUS_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-
-        {/* Search Button */}
-        <button type="submit" className="btn btn-md btn-primary">
-          Buscar
-        </button>
-      </form>
+          {/* Search Button */}
+          <button type="submit" className="btn btn-md btn-primary">
+            Buscar
+          </button>
+        </form>
+      </PageHeader>
 
       {/* ========== RESULTS COUNT ========== */}
       {!loading && patients.length > 0 && (
@@ -301,20 +298,22 @@ export default function PatientsPage() {
                           <img
                             src={patient.profile_image_url}
                             alt={`${patient.first_name} ${patient.last_name}`}
-                            className="w-9 h-9 rounded-full object-cover border border-border"
+                            className="w-9 h-9 rounded-full object-cover border border-border flex-shrink-0"
                           />
                         ) : (
-                          <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-xs font-semibold`}>
+                          <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-xs font-semibold flex-shrink-0`}>
                             {initials}
                           </div>
                         )}
-                        <div className="min-w-0">
+                        <div className="flex flex-col min-w-0">
                           <p className="type-ui font-medium text-foreground truncate">
                             {patient.first_name} {patient.last_name}
                           </p>
-                          <p className="text-xs text-muted-foreground truncate">
-                            {patient.email || patient.phone || 'Sin contacto'}
-                          </p>
+                          {patient.email && (
+                            <p className="text-xs text-muted-foreground truncate leading-tight">
+                              {patient.email}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </td>
@@ -326,7 +325,7 @@ export default function PatientsPage() {
 
                     {/* Last Session */}
                     <td className="px-4 py-3 hidden md:table-cell">
-                      <span className="type-body text-muted-foreground">
+                      <span className="type-ui font-mono text-xs text-muted-foreground uppercase">
                         Reciente
                       </span>
                     </td>

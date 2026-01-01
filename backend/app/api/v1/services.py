@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from app.db.base import get_db
-from app.db.models import ServiceType, ServiceMode, FormTemplate
+from app.db.models import ServiceType, ServiceMode, FormTemplate, Booking, BookingStatus
 from app.api.deps import CurrentUser
 
 router = APIRouter()
@@ -299,7 +299,21 @@ async def delete_service(
             detail="Service type not found",
         )
 
-    # TODO: Check for existing bookings and warn/prevent deletion
+    # Check for existing active/future bookings
+    # We block deletion if there are any CONFIRMED or PENDING bookings
+    active_bookings_count = await db.scalar(
+        select(func.count(Booking.id)).where(
+            Booking.service_type_id == service_id,
+            Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.PENDING]),
+        )
+    )
+
+    if active_bookings_count > 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"No se puede eliminar un servicio con {active_bookings_count} reservas activas/pendientes. Considera pausar el servicio en su lugar para que no acepte nuevas citas.",
+        )
+
     await db.delete(service)
     await db.commit()
 

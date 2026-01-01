@@ -138,10 +138,8 @@ export default function BillingPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-muted py-8 px-6">
-                <div className="max-w-6xl mx-auto flex items-center justify-center h-64">
-                    <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
-                </div>
+            <div className="flex items-center justify-center h-64">
+                <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
             </div>
         );
     }

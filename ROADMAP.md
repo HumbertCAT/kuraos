@@ -54,7 +54,17 @@
 | **ActiveJourneysWidget** | `/journeys/active` endpoint | 🟡 MEDIUM |
 | **VitalSignCard Trends** | Booking aggregations by week | 🟢 LOW |
 
-### ✨ v1.1.14 - THE ACTIVATION PROTOCOL (Prioridad 1)
+### ✨ v1.1.14 - CLEAN SLATE & CLINICAL ROSTER
+Estandarización masiva de tablas y saneamiento del entorno de desarrollo.
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Clinical Roster** | Estandarización de Bookings, Patients y Services | ✅ Completado |
+| **Agent Rebrand** | "Automatizaciones" → "Agentes · Asistentes" + i18n | ✅ Completado |
+| **Clean Slate** | Protocolo de limpieza de caches, media y docker | ✅ Completado |
+| **UX Hardening** | Fix Humbertix, avatars flex-shrink y vertical stacking | ✅ Completado |
+
+### ✨ v1.1.15 - THE ACTIVATION PROTOCOL (Prioridad 1)
 Onboarding de lujo para enseñar al terapeuta a usar el sistema.
 
 | Feature | Description | Status |
@@ -145,4 +155,4 @@ apps/platform/app/[locale]/portal/
 
 ---
 
-*Last updated: December 30, 2025 (v1.1.13 PUBLIC BOOKING WIZARD)*
+*Last updated: January 01, 2026 (v1.1.14 CLEAN SLATE)*

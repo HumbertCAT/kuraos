@@ -45,7 +45,7 @@ export default function PlanPage() {
     if (loading) return <div className="p-8 text-center text-foreground/60">Loading...</div>;
 
     return (
-        <div className="max-w-2xl mx-auto">
+        <div>
             <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
                 <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
                     <div className="flex items-center justify-between">
