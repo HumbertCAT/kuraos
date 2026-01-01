@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
           <img
             src="/kura-logo-dark.png"
             alt="KURA OS"
-            className="h-12 md:h-36 w-auto object-contain"
+            className="h-20 md:h-36 w-auto object-contain"
           />
         </Link>
 
