@@ -64,12 +64,12 @@ export default function LandingPage() {
 
             {/* Navbar */}
             <nav className="fixed top-0 left-0 right-0 z-50 bg-[#030305]/80 backdrop-blur-xl border-b border-white/5">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between">
                     <div className="flex items-center">
                         <img
                             src="/kura-logo-dark.png"
                             alt="KURA OS"
-                            className="h-24 md:h-40 w-auto object-contain"
+                            className="h-32 md:h-40 w-auto object-contain"
                         />
                     </div>
 
