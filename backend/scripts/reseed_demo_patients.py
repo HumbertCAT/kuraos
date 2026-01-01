@@ -267,7 +267,6 @@ async def wipe_demo_patients_only(db, org_id):
         f"DELETE FROM clinical_entries WHERE patient_id IN ({demo_ids_str})",
         f"DELETE FROM ai_usage_logs WHERE patient_id IN ({demo_ids_str})",
         f"DELETE FROM form_assignments WHERE patient_id IN ({demo_ids_str})",
-        f"DELETE FROM pending_actions WHERE patient_id IN ({demo_ids_str})",
         f"DELETE FROM patients WHERE id IN ({demo_ids_str})",
     ]
 

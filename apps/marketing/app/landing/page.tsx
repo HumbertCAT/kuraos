@@ -69,7 +69,7 @@ export default function LandingPage() {
                         <img
                             src="/kura-logo-dark.png"
                             alt="KURA OS"
-                            className="h-40 w-auto"
+                            className="h-16 md:h-40 w-auto object-contain"
                         />
                     </div>
 
