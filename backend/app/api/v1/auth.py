@@ -59,6 +59,7 @@ async def register(
 
     # Check referral code if provided
     referred_by_id = None
+    referring_org = None
     if request.referral_code:
         result = await db.execute(
             select(Organization).where(
@@ -75,9 +76,15 @@ async def register(
         type=OrgType.SOLO,
         referral_code=generate_referral_code(),
         referred_by_id=referred_by_id,
+        karma_score=50 if referred_by_id else 0,  # Welcome bonus for referred users
     )
     db.add(org)
     await db.flush()  # Get org.id before creating user
+
+    # Reward the referrer with Karma Points
+    if referring_org:
+        referring_org.karma_score += 100
+        db.add(referring_org)
 
     # Create owner user
     user = User(
@@ -124,6 +131,7 @@ async def register(
             name=org.name,
             type=org.type.value,
             referral_code=org.referral_code,
+            karma_score=org.karma_score,
             theme_config=org.theme_config,
         ),
         message="Registration successful",
@@ -194,6 +202,7 @@ async def login(
             name=org.name,
             type=org.type.value,
             referral_code=org.referral_code,
+            karma_score=org.karma_score,
             theme_config=org.theme_config,
         ),
         message="Login successful",
@@ -432,6 +441,7 @@ async def google_oauth(
             name=org.name,
             type=org.type.value,
             referral_code=org.referral_code,
+            karma_score=org.karma_score,
             theme_config=org.theme_config,
         ),
         message="Login successful",
@@ -467,6 +477,7 @@ async def get_me(current_user: CurrentUser, db: AsyncSession = Depends(get_db)):
             name=org.name,
             type=org.type.value,
             referral_code=org.referral_code,
+            karma_score=org.karma_score,
             theme_config=org.theme_config,
         ).model_dump(),
         "global_theme": global_theme,

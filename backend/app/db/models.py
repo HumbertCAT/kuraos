@@ -249,6 +249,7 @@ class Organization(Base):
     referred_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("organizations.id"), nullable=True
     )
+    karma_score: Mapped[int] = mapped_column(Integer, default=0)
 
     # Subscription tier
     tier: Mapped[OrgTier] = mapped_column(Enum(OrgTier), default=OrgTier.BUILDER)

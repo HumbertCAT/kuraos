@@ -64,6 +64,7 @@ class OrganizationResponse(BaseModel):
     name: str
     type: str
     referral_code: str
+    karma_score: int = 0
     terminology_preference: str = "CLIENT"
     theme_config: Optional[dict] = None  # CSS variables for theme
 

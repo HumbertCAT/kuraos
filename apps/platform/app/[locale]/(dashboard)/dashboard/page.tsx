@@ -10,7 +10,7 @@ import BriefingPlayer from '@/components/BriefingPlayer';
 import { VitalSignCard } from '@/components/dashboard/VitalSignCard';
 import { FocusSessionCard } from '@/components/dashboard/FocusSessionCard';
 import { PipelineVelocity } from '@/components/dashboard/PipelineVelocity';
-import { QuickNote } from '@/components/dashboard/QuickNote';
+import { ReferralWidget } from '@/components/dashboard/ReferralWidget';
 import { ActiveJourneysWidget } from '@/components/dashboard/ActiveJourneysWidget';
 // import { ActivationWidget } from '@/components/dashboard/ActivationWidget'; // v1.1.8 - Temporarily disabled
 import { Brain, Wallet, Target, Activity } from 'lucide-react';
@@ -280,9 +280,9 @@ export default function DashboardPage() {
                     <PipelineVelocity stages={data.pipelineStages} />
                 </div>
 
-                {/* RIGHT: Quick Note (span-4) */}
+                {/* RIGHT: The Mycelium (span-4) */}
                 <div className="col-span-12 lg:col-span-4">
-                    <QuickNote />
+                    <ReferralWidget />
                 </div>
             </div>
         </div>

@@ -21,6 +21,7 @@ export interface Organization {
   name: string;
   type: 'SOLO' | 'CLINIC';
   referral_code: string;
+  karma_score: number;
   terminology_preference: 'PATIENT' | 'CLIENT' | 'CONSULTANT';
   theme_config?: Record<string, string>;  // CSS theme variables
 }
