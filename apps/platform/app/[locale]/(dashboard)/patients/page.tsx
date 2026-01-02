@@ -6,7 +6,7 @@ import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { api, ListMetadata } from '@/lib/api';
 import { Patient } from '@/types/auth';
 import EmptyState, { PatientsEmptyIcon } from '@/components/ui/EmptyState';
-import { Users, Search, MessageCircle, ChevronRight, UserPlus } from 'lucide-react';
+import { Users, Search, MessageCircle, Eye, Pencil, UserPlus } from 'lucide-react';
 import { useTerminology } from '@/hooks/use-terminology';
 import PageHeader from '@/components/PageHeader';
 import PaginationToolbar from '@/components/ui/pagination-toolbar';
@@ -357,13 +357,20 @@ export default function PatientsPage() {
                       <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                         <Link
                           href={`/patients/${patient.id}`}
-                          className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all group"
+                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
                           title="Ver Perfil"
                         >
-                          <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                        <Link
+                          href={`/patients/${patient.id}/edit`}
+                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                          title="Editar"
+                        >
+                          <Pencil className="w-4 h-4" />
                         </Link>
                         <button
-                          className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all"
+                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
                           title="Chat"
                         >
                           <MessageCircle className="w-4 h-4" />

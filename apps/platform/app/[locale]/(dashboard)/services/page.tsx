@@ -447,28 +447,28 @@ export default function ServicesPage() {
                                                 <a
                                                     href={`/${locale}/book/${currentUser?.id}`}
                                                     target="_blank"
-                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all"
+                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
                                                     title="Preview booking"
                                                 >
                                                     <CalendarPlus size={16} />
                                                 </a>
                                                 <button
                                                     onClick={() => openBookingsModal(service)}
-                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-amber-500 transition-all"
+                                                    className="p-2 text-muted-foreground hover:text-amber-600 hover:bg-amber-100 rounded-lg transition-all"
                                                     title="View bookings"
                                                 >
                                                     <List size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => openEditModal(service)}
-                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all"
+                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
                                                     title="Edit"
                                                 >
                                                     <Edit size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(service.id)}
-                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-risk transition-all"
+                                                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
                                                     title="Delete"
                                                 >
                                                     <Trash2 size={16} />

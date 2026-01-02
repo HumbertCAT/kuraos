@@ -122,6 +122,25 @@ export default function FormsPage() {
         setQrModal({ title: form.title, url });
     }
 
+    async function handleDeleteForm(formId: string) {
+        if (!confirm('¿Seguro que quieres eliminar este formulario? Esta acción no se puede deshacer.')) return;
+        try {
+            const response = await fetch(`${API_URL}/forms/admin/templates/${formId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+            if (response.ok) {
+                setMyForms(prev => prev.filter(f => f.id !== formId));
+            } else {
+                const error = await response.json();
+                alert(error.detail || 'Error al eliminar');
+            }
+        } catch (err) {
+            console.error('Error deleting form', err);
+            alert('Error de conexión');
+        }
+    }
+
     if (loading) {
         return (
             <div className="min-h-screen bg-muted py-8 px-6">
@@ -258,48 +277,33 @@ export default function FormsPage() {
                                                     </button>
                                                 )}
                                                 <Link
-                                                    href={`/${locale}/forms/${form.id}/edit`}
-                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all"
+                                                    href={`/forms/${form.id}/edit`}
+                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
                                                     title="Configuración"
                                                 >
                                                     <Settings className="w-4 h-4" />
                                                 </Link>
-                                                <div className="relative inline-block">
-                                                    <button
-                                                        onClick={() => setOpenMenu(openMenu === form.id ? null : form.id)}
-                                                        className="p-2 hover:bg-white/5 rounded-lg transition-colors group"
-                                                    >
-                                                        <MoreVertical className="w-4 h-4 text-muted-foreground group-hover:text-brand" />
-                                                    </button>
-                                                    {openMenu === form.id && (
-                                                        <div className="absolute right-0 mt-1 w-48 bg-card border rounded-xl shadow-lg z-10 overflow-hidden text-left">
-                                                            <button
-                                                                onClick={() => {
-                                                                    showQRCode(form);
-                                                                    setOpenMenu(null);
-                                                                }}
-                                                                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-muted transition-colors"
-                                                            >
-                                                                <QrCode className="w-4 h-4" /> Ver Código QR
-                                                            </button>
-                                                            <Link
-                                                                href={`/${locale}/forms/${form.id}/submissions`}
-                                                                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-muted transition-colors"
-                                                                onClick={() => setOpenMenu(null)}
-                                                            >
-                                                                <BarChart3 className="w-4 h-4" /> Ver Estadísticas
-                                                            </Link>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setOpenMenu(null);
-                                                                }}
-                                                                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-border/50 transition-colors"
-                                                            >
-                                                                <Trash2 className="w-4 h-4" /> Eliminar
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                <button
+                                                    onClick={() => showQRCode(form)}
+                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                                                    title="Ver Código QR"
+                                                >
+                                                    <QrCode className="w-4 h-4" />
+                                                </button>
+                                                <Link
+                                                    href={`/forms/${form.id}/submissions`}
+                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                                                    title="Ver Estadísticas"
+                                                >
+                                                    <BarChart3 className="w-4 h-4" />
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleDeleteForm(form.id)}
+                                                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+                                                    title="Eliminar"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

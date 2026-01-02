@@ -210,7 +210,7 @@ export default function EditFormPage() {
 
             if (response.ok) {
                 const data = await response.json();
-                router.push(`/${locale}/forms/${data.id}/edit`);
+                router.push(`/forms/${data.id}/edit`);
             }
         } catch (err) {
             console.error(err);
@@ -298,7 +298,7 @@ export default function EditFormPage() {
             <div className="bg-card border-b border-border px-6 py-4">
                 <div className="max-w-6xl mx-auto flex justify-between items-center">
                     <div>
-                        <Link href={`/${locale}/forms`} className="text-foreground/60 hover:text-foreground text-sm">
+                        <Link href="/forms" className="text-foreground/60 hover:text-foreground text-sm">
                             ← Volver a formularios
                         </Link>
                         <h1 className="text-xl font-bold text-foreground">

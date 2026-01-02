@@ -85,7 +85,7 @@ export default function SubmissionsPage() {
                 {/* Header */}
                 <div className="mb-6">
                     <Link
-                        href={`/${locale}/forms`}
+                        href="/forms"
                         className="text-sm text-foreground/60 hover:text-foreground mb-2 inline-block"
                     >
                         ← Back to Forms
@@ -149,7 +149,7 @@ export default function SubmissionsPage() {
                                         </td>
                                         <td className="py-3 px-4 text-right">
                                             <Link
-                                                href={`/${locale}/patients/${assignment.patient_id}`}
+                                                href={`/patients/${assignment.patient_id}`}
                                                 className="text-foreground/70 hover:text-foreground text-sm"
                                             >
                                                 View Patient →

@@ -388,35 +388,41 @@ export default function BookingsPage() {
                                             </span>
                                         </td>
                                         <td className="px-4 py-3 text-right">
-                                            <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-                                                <button
-                                                    onClick={() => setOpenMenu(openMenu === booking.id ? null : booking.id)}
-                                                    className="p-2 hover:bg-white/5 rounded-lg transition-colors group"
-                                                >
-                                                    <MoreVertical className="w-4 h-4 text-muted-foreground group-hover:text-brand" />
-                                                </button>
-                                                {openMenu === booking.id && (
-                                                    <div className="absolute right-0 mt-1 w-40 bg-card border rounded-xl shadow-lg z-10 overflow-hidden">
-                                                        {booking.status === 'PENDING' && (
-                                                            <button onClick={() => updateBookingStatus(booking.id, 'CONFIRMED')} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50">
-                                                                <Check className="w-4 h-4" /> {t.confirm}
-                                                            </button>
-                                                        )}
-                                                        {booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && (
-                                                            <button onClick={() => updateBookingStatus(booking.id, 'COMPLETED')} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50">
-                                                                <CheckCircle className="w-4 h-4" /> {t.complete}
-                                                            </button>
-                                                        )}
-                                                        {booking.status !== 'CANCELLED' && (
-                                                            <button onClick={() => cancelBookingWithReason(booking.id)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:bg-amber-50">
-                                                                <X className="w-4 h-4" /> {t.cancel}
-                                                            </button>
-                                                        )}
-                                                        <button onClick={() => deleteBooking(booking.id)} className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t">
-                                                            <Trash2 className="w-4 h-4" /> {t.delete}
-                                                        </button>
-                                                    </div>
+                                            <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                                                {booking.status === 'PENDING' && (
+                                                    <button
+                                                        onClick={() => updateBookingStatus(booking.id, 'CONFIRMED')}
+                                                        className="p-2 text-muted-foreground hover:text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all"
+                                                        title={t.confirm}
+                                                    >
+                                                        <Check className="w-4 h-4" />
+                                                    </button>
                                                 )}
+                                                {booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && (
+                                                    <button
+                                                        onClick={() => updateBookingStatus(booking.id, 'COMPLETED')}
+                                                        className="p-2 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-100 rounded-lg transition-all"
+                                                        title={t.complete}
+                                                    >
+                                                        <CheckCircle className="w-4 h-4" />
+                                                    </button>
+                                                )}
+                                                {booking.status !== 'CANCELLED' && (
+                                                    <button
+                                                        onClick={() => cancelBookingWithReason(booking.id)}
+                                                        className="p-2 text-muted-foreground hover:text-amber-600 hover:bg-amber-100 rounded-lg transition-all"
+                                                        title={t.cancel}
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => deleteBooking(booking.id)}
+                                                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+                                                    title={t.delete}
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
