@@ -1,15 +1,17 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Settings, CreditCard, HelpCircle, Palette } from 'lucide-react';
+import { Settings, CreditCard, HelpCircle, Palette, Sparkles } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 
 const TABS = [
-    { href: '/settings/general', label: 'Configuración', icon: Settings },
-    { href: '/settings/appearance', label: 'Apariencia', icon: Palette },
-    { href: '/settings/plan', label: 'Mi Plan', icon: CreditCard },
-    { href: '/settings/help', label: 'Ayuda', icon: HelpCircle },
+    { href: '/settings/general', labelKey: 'tabGeneral', icon: Settings },
+    { href: '/settings/referrals', labelKey: 'tabReferrals', icon: Sparkles },
+    { href: '/settings/appearance', labelKey: 'tabAppearance', icon: Palette },
+    { href: '/settings/plan', labelKey: 'tabPlan', icon: CreditCard },
+    { href: '/settings/help', labelKey: 'tabHelp', icon: HelpCircle },
 ];
 
 export default function SettingsLayout({
@@ -18,9 +20,11 @@ export default function SettingsLayout({
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
+    const t = useTranslations('Settings');
 
     // Determine active tab from pathname
     const getActiveTab = () => {
+        if (pathname.includes('/settings/referrals')) return '/settings/referrals';
         if (pathname.includes('/settings/appearance')) return '/settings/appearance';
         if (pathname.includes('/settings/plan') || pathname.includes('/settings/billing')) return '/settings/plan';
         if (pathname.includes('/settings/help')) return '/settings/help';
@@ -33,9 +37,10 @@ export default function SettingsLayout({
         <div className="space-y-6">
             <PageHeader
                 icon={Settings}
-                title="Configuración"
-                subtitle="Gestiona tu cuenta, plan y obtén ayuda"
+                title={t('title')}
+                subtitle={t('subtitle')}
             />
+
 
             {/* Tab Navigation */}
             <div className="mb-8">
@@ -54,7 +59,7 @@ export default function SettingsLayout({
                                     }`}
                             >
                                 <Icon className="w-4 h-4" />
-                                <span>{tab.label}</span>
+                                <span>{t(tab.labelKey)}</span>
                             </Link>
                         );
                     })}
