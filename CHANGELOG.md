@@ -14,6 +14,24 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.17] - 2026-01-02 ⚡ THE OMNI-SEARCH (God Mode)
+
+### 🔎 Global Command Palette
+- **⌘K / Ctrl+K**: Spotlight-style command palette using `cmdk` library.
+- **Patient Index**: Instant search of all patients from anywhere in the app.
+- **Smart Navigation**: Keyboard shortcuts for Dashboard (`⌘D`), Patients (`⌘P`), Calendar (`⌘A`), and Settings (`⌘,`).
+- **Sidebar Trigger**: Search bar in TrinityNav now opens the omniscient modal.
+
+### 🎨 Design
+- **Cyber-Glass UI**: `backdrop-blur-md`, `bg-background/95`, `border-white/10` for premium aesthetic.
+- **Dark/Light Mode**: Fully themed for both modes with proper contrast.
+- **Keyboard Hints**: Visual `kbd` elements show available shortcuts.
+
+### 📦 Dependencies
+- Added `cmdk ^1.1.1` for command palette infrastructure.
+
+---
+
 ## [1.1.16] - 2026-01-02 🛡️ THE EFFICIENCY SWEEP
 
 ### 🛡️ Part 1: The Shield (Security & Stability)
