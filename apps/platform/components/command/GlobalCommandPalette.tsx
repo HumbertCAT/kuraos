@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { Command } from 'cmdk';
+import { api } from '@/lib/api';
 import {
     LayoutDashboard,
     Users,
@@ -11,7 +12,9 @@ import {
     FileText,
     Briefcase,
     Search,
-    Sparkles
+    Sparkles,
+    User,
+    Loader2
 } from 'lucide-react';
 
 interface CommandItem {
@@ -20,6 +23,13 @@ interface CommandItem {
     icon: React.ReactNode;
     path: string;
     shortcut?: string;
+}
+
+interface Patient {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email?: string;
 }
 
 const NAVIGATION_ITEMS: CommandItem[] = [
@@ -31,16 +41,21 @@ const NAVIGATION_ITEMS: CommandItem[] = [
     { id: 'settings', label: 'Ir a Configuración', icon: <Settings className="w-4 h-4" />, path: '/settings', shortcut: '⌘,' },
 ];
 
+// Custom event name for opening from sidebar
+const OPEN_COMMAND_EVENT = 'kura:open-command-palette';
+
 /**
  * GlobalCommandPalette - "The Omni-Search"
  * 
- * A Spotlight-style command palette for rapid navigation.
- * Opens with ⌘K (Mac) or Ctrl+K (Windows).
+ * A Spotlight-style command palette for rapid navigation and patient search.
+ * Opens with ⌘K (Mac) or Ctrl+K (Windows), or via sidebar click.
  * 
  * @since v1.1.17 - The Omni-Search
  */
 export function GlobalCommandPalette() {
     const [open, setOpen] = useState(false);
+    const [patients, setPatients] = useState<Patient[]>([]);
+    const [loadingPatients, setLoadingPatients] = useState(false);
     const router = useRouter();
 
     // Toggle listener for ⌘K / Ctrl+K
@@ -57,9 +72,37 @@ export function GlobalCommandPalette() {
             }
         };
 
+        // Listen for custom event from sidebar
+        const handleOpenEvent = () => setOpen(true);
+
         document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
+        window.addEventListener(OPEN_COMMAND_EVENT, handleOpenEvent);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener(OPEN_COMMAND_EVENT, handleOpenEvent);
+        };
     }, []);
+
+    // Fetch patients when modal opens
+    useEffect(() => {
+        if (!open) return;
+
+        const fetchPatients = async () => {
+            setLoadingPatients(true);
+            try {
+                const response = await api.patients.list(1);
+                const data = response.data || [];
+                setPatients(data.slice(0, 50)); // Limit to 50 for performance
+            } catch (error) {
+                console.error('[CommandPalette] Failed to fetch patients:', error);
+            } finally {
+                setLoadingPatients(false);
+            }
+        };
+
+        fetchPatients();
+    }, [open]);
 
     const handleSelect = useCallback((path: string) => {
         setOpen(false);
@@ -79,19 +122,17 @@ export function GlobalCommandPalette() {
                 onClick={() => setOpen(false)}
             />
 
-            {/* Visually Hidden Title for Screen Readers */}
-            <div className="sr-only">
-                <h2>Paleta de comandos - Navegación rápida</h2>
-            </div>
+            {/* SR-only title for accessibility (cosmetic warning from Radix is acceptable) */}
+            <h2 className="sr-only">Paleta de comandos - Navegación rápida</h2>
 
             {/* Command Panel */}
-            <div className="fixed left-1/2 top-[20%] -translate-x-1/2 w-full max-w-xl">
+            <div className="fixed left-1/2 top-[20%] -translate-x-1/2 w-full max-w-xl px-4">
                 <div className="bg-background/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl shadow-black/20 overflow-hidden">
                     {/* Search Input */}
                     <div className="flex items-center gap-3 px-4 py-4 border-b border-white/5">
                         <Search className="w-5 h-5 text-muted-foreground" />
                         <Command.Input
-                            placeholder="Escribe un comando o busca..."
+                            placeholder="Escribe un comando o busca pacientes..."
                             className="flex-1 bg-transparent text-lg text-foreground placeholder:text-muted-foreground outline-none"
                         />
                         <kbd className="hidden sm:flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground bg-muted/50 rounded border border-white/5">
@@ -107,30 +148,61 @@ export function GlobalCommandPalette() {
                         </Command.Empty>
 
                         {/* Navigation Group */}
-                        <Command.Group heading="Navegación" className="px-2 py-1.5">
-                            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                                Navegación
-                            </span>
+                        <Command.Group heading="Navegación">
+                            {NAVIGATION_ITEMS.map((item) => (
+                                <Command.Item
+                                    key={item.id}
+                                    value={item.label}
+                                    onSelect={() => handleSelect(item.path)}
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-foreground/80 hover:bg-muted/50 data-[selected=true]:bg-brand/10 data-[selected=true]:text-foreground transition-colors"
+                                >
+                                    <span className="text-muted-foreground">
+                                        {item.icon}
+                                    </span>
+                                    <span className="flex-1">{item.label}</span>
+                                    {item.shortcut && (
+                                        <kbd className="text-xs text-muted-foreground bg-muted/30 px-1.5 py-0.5 rounded">
+                                            {item.shortcut}
+                                        </kbd>
+                                    )}
+                                </Command.Item>
+                            ))}
                         </Command.Group>
 
-                        {NAVIGATION_ITEMS.map((item) => (
-                            <Command.Item
-                                key={item.id}
-                                value={item.label}
-                                onSelect={() => handleSelect(item.path)}
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-foreground/80 hover:bg-muted/50 data-[selected=true]:bg-brand/10 data-[selected=true]:text-foreground transition-colors"
-                            >
-                                <span className="text-muted-foreground group-data-[selected=true]:text-brand">
-                                    {item.icon}
-                                </span>
-                                <span className="flex-1">{item.label}</span>
-                                {item.shortcut && (
-                                    <kbd className="text-xs text-muted-foreground bg-muted/30 px-1.5 py-0.5 rounded">
-                                        {item.shortcut}
-                                    </kbd>
-                                )}
-                            </Command.Item>
-                        ))}
+                        {/* Patients Group */}
+                        <Command.Group heading="Pacientes">
+                            {loadingPatients ? (
+                                <div className="flex items-center justify-center py-4 text-muted-foreground">
+                                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                                    <span className="text-sm">Cargando pacientes...</span>
+                                </div>
+                            ) : patients.length > 0 ? (
+                                patients.map((patient) => (
+                                    <Command.Item
+                                        key={patient.id}
+                                        value={`${patient.first_name} ${patient.last_name} ${patient.email || ''}`}
+                                        onSelect={() => handleSelect(`/patients/${patient.id}`)}
+                                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-foreground/80 hover:bg-muted/50 data-[selected=true]:bg-brand/10 data-[selected=true]:text-foreground transition-colors"
+                                    >
+                                        <User className="w-4 h-4 text-muted-foreground" />
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-medium truncate">
+                                                {patient.first_name} {patient.last_name}
+                                            </div>
+                                            {patient.email && (
+                                                <div className="text-xs text-muted-foreground truncate">
+                                                    {patient.email}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Command.Item>
+                                ))
+                            ) : (
+                                <div className="py-3 px-3 text-sm text-muted-foreground">
+                                    Sin pacientes registrados
+                                </div>
+                            )}
+                        </Command.Group>
                     </Command.List>
 
                     {/* Footer Hint */}
@@ -151,4 +223,9 @@ export function GlobalCommandPalette() {
             </div>
         </Command.Dialog>
     );
+}
+
+// Export helper function to open the palette from anywhere
+export function openCommandPalette() {
+    window.dispatchEvent(new CustomEvent(OPEN_COMMAND_EVENT));
 }

@@ -8,6 +8,7 @@ import { useTerminology } from '@/hooks/use-terminology';
 import { useTranslations } from 'next-intl';
 import { ThemeToggle } from '@/components/theme-toggle';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { openCommandPalette } from '@/components/command/GlobalCommandPalette';
 import {
     Users,
     User,
@@ -139,10 +140,13 @@ export function TrinityNav() {
                 </Link>
             </div>
 
-            {/* Search - cleaner design */}
+            {/* Search - Triggers Command Palette */}
             {!isCollapsed && (
                 <div className="px-3 pb-3">
-                    <button className="relative w-full flex items-center gap-2 h-9 px-3 text-xs text-muted-foreground bg-muted/50 rounded-lg hover:bg-muted transition-all">
+                    <button
+                        onClick={openCommandPalette}
+                        className="relative w-full flex items-center gap-2 h-9 px-3 text-xs text-muted-foreground bg-muted/50 rounded-lg hover:bg-muted transition-all active:scale-[0.98]"
+                    >
                         <Search className="w-4 h-4" />
                         <span className="flex-1 text-left">{t('search')}</span>
                         <span className="text-[10px] text-muted-foreground/70 font-mono">⌘K</span>
