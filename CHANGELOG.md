@@ -14,25 +14,46 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.18] - 2026-01-02 🍄 THE MYCELIUM (Growth)
+## [1.1.18] - 2026-01-02 🍄 THE MYCELIUM (Viral Growth Engine)
+
+> **Theme:** "From acorn to forest." — Building the viral infrastructure that turns every user into a growth agent.
 
 ### 🍄 Referral System (The Spores)
-- **Karma Points**: New clean reward system (`karma_score`) separate from AI credits.
+- **Karma Points**: Clean reward system (`karma_score`) separate from AI credits.
 - **Registration w/ Referrals**: Accept `?ref=CODE` param to track referrer and reward +100 karma.
 - **Welcome Bonus**: New referred users start with +50 karma.
 - **Backfill Migration**: Auto-generated referral codes for existing organizations.
 
 ### 📊 Dashboard Widget (The Fruiting Body)
-- **ReferralWidget**: Replace QuickNote with viral growth widget.
+- **ReferralWidget**: Replaced QuickNote widget with viral growth widget.
 - **Features**: Display karma score, copy referral link, WhatsApp share button.
 - **Design**: Cyber-Glass card with `border-brand/20` and `Sparkles` icon.
 
+### 🏛️ The Growth Station (`/settings/referrals`)
+- **KarmaVaultCard**: Hero display of karma score with progress bar to next reward.
+- **ViralShareModule**: Expanded share buttons (WhatsApp, Email, LinkedIn, Copy).
+- **ReferralHistoryTable**: High-density roster of referred organizations.
+- **RewardsCatalog**: Tier-based rewards grid (BUILDER, PRO, CENTER).
+- **Backend Endpoint**: `GET /api/v1/growth/stats` for referral statistics.
+
+### 🌱 Powered By Attribution
+- **PoweredByKuraFooter**: Viral footer on public booking pages.
+- **Tracking**: `?ref=PUBLIC` parameter for organic registration attribution.
+- **SEO**: `rel="nofollow"` to prevent PageRank dilution.
+
 ### 🔧 Technical
 - Migration: `add_karma_score_to_organization` with SQL backfill.
-- Updated `Organization` schema with `karma_score: int`.
-- Updated TypeScript interfaces for frontend type safety.
+- Updated `Organization` schema with `karma_score`, `tier`, `referral_code`.
+- New components: `components/referrals/*` (4 files).
+- New page: `/settings/referrals/page.tsx`.
+- i18n: Full translations in ES, EN, CA, IT for Settings.referrals namespace.
+
+### 📋 Known Limitations (Technical Debt)
+- Reward redemption is manual (mailto to soporte@) pending automation in v1.1.19+.
+- See `docs/TECH_DEBT.md` for full pending automation details.
 
 ---
+
 
 ## [1.1.17] - 2026-01-02 ⚡ THE OMNI-SEARCH (God Mode)
 

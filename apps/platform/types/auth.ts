@@ -20,6 +20,7 @@ export interface Organization {
   id: string;
   name: string;
   type: 'SOLO' | 'CLINIC';
+  tier: 'BUILDER' | 'PRO' | 'CENTER';
   referral_code: string;
   karma_score: number;
   terminology_preference: 'PATIENT' | 'CLIENT' | 'CONSULTANT';

@@ -32,13 +32,16 @@
 ## 📅 Q1 2026: Growth & Polish
 
 
-### 🍄 The Mycelium Protocol (Viral Growth)
-| Feature | Description | Priority |
-|---------|-------------|----------|
-| **Referral Engine** | `referral_code` + `referred_by` in Organization | 🔴 HIGH |
-| **Karma Credits** | Reward referrers with AletheIA credits | 🔴 HIGH |
-| **"Powered By" Attribution** | Footer links on public pages (90-day cookie) | 🟡 MEDIUM |
-| **Referral Dashboard** | Share stats, WhatsApp/LinkedIn buttons | 🟡 MEDIUM |
+### 🍄 The Mycelium Protocol (Viral Growth) ✅ v1.1.18
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Referral Engine** | `referral_code` + `referred_by` in Organization | ✅ **Implemented** |
+| **Karma Credits** | Reward referrers with karma points (+100/+50) | ✅ **Implemented** |
+| **"Powered By" Attribution** | Footer links on public pages with `?ref=PUBLIC` | ✅ **Implemented** |
+| **Referral Dashboard** | Share stats, WhatsApp/LinkedIn buttons | ✅ **Implemented** |
+| **Reward Redemption** | Automated karma-to-benefits exchange | 🟡 **Pending (v1.1.19+)** |
+| **Redemption History** | Track karma spending | 🟡 **Pending (v1.1.19+)** |
+
 
 ### 🔗 Meta Cloud API Migration (ADR-004)
 | Feature | Description | Priority |
@@ -156,4 +159,4 @@ apps/platform/app/[locale]/portal/
 
 ---
 
-*Last updated: January 02, 2026 (v1.1.15 THE CONTROL DECK)*
+*Last updated: January 02, 2026 (v1.1.18 THE MYCELIUM)*

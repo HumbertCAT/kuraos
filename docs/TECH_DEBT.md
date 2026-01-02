@@ -90,8 +90,42 @@ This document tracks known technical debt, architectural shortcuts, and clinical
 
 ---
 
+## 🍄 v1.1.18 THE MYCELIUM (Growth Station)
+
+> [!NOTE]
+> v1.1.18 implemented the viral growth engine with referral tracking, karma points, and a rewards catalog. Some features are MVP/manual pending automation.
+
+### 1. Growth Station MVP Features ✅
+- **Referral Tracking**: `referred_by_id` + `karma_score` in Organization model
+- **Karma Rewards**: +50 welcome bonus (referred), +100 referrer reward
+- **ReferralWidget**: Dashboard share tools (WhatsApp, Email, LinkedIn, Copy)
+- **Powered By Footer**: Viral attribution on public pages with `?ref=PUBLIC` tracking
+- **Growth Station Page**: `/settings/referrals` with karma vault, history, rewards catalog
+
+### 2. Pending Automation (Technical Debt)
+
+| Feature | Current State | Required Implementation |
+|---------|---------------|------------------------|
+| **Reward Redemption** | 🟡 mailto to soporte@kuraos.ai | `POST /api/v1/growth/redeem` |
+| **+1 Patient Slot** | 🟡 Manual request | `UPDATE organizations SET max_patients +=1` |
+| **Feature Unlock** | 🟡 Manual | Feature flag system in DB |
+| **AI Token Grant** | 🟡 Manual | `INSERT INTO ai_usage_log (credit)` |
+| **Redemption History** | ❌ Missing | New table `karma_redemptions` |
+
+### 3. Future Enhancements (Roadmap Reference)
+
+| Feature | Priority | Roadmap Target |
+|---------|----------|----------------|
+| Automated reward redemption | 🔴 HIGH | v1.1.19+ |
+| Patient-to-Patient referrals | 🟡 MEDIUM | v1.2.0 |
+| Derivation network (therapist referrals) | 🟡 MEDIUM | v1.2.0+ |
+| Golden Ticket system (patient graduation) | 🟢 LOW | v1.2.0+ |
+| Tier-gating for "Powered By" footer | 🟢 LOW | Post-PRO launch |
+
+---
+
 ## 🤖 AI & Automation
-(No changes in v1.1.15)
+(No changes in v1.1.18)
 
 ---
 
@@ -101,4 +135,4 @@ This document tracks known technical debt, architectural shortcuts, and clinical
     - **Issue**: `backup_db.sh` looks for specific DB names.
     - **Fix**: Standardize on `POSTGRES_DB` env variable across all release scripts.
 
-*Last updated: January 02, 2026 (v1.1.16 THE EFFICIENCY SWEEP)*
+*Last updated: January 02, 2026 (v1.1.18 THE MYCELIUM)*
