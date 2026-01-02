@@ -9,6 +9,7 @@ import { Link } from '@/i18n/navigation';
 import { api } from '@/lib/api';
 import { ThemeEditor } from '@/components/admin/ThemeEditor';
 import AiGovernance from './components/AiGovernance';
+import { Pencil, Trash2, Download, RotateCcw } from 'lucide-react';
 
 interface SystemSetting {
     key: string;
@@ -372,9 +373,10 @@ export default function AdminPage() {
                                                     setEditingKey(setting.key);
                                                     setEditValue(JSON.stringify(setting.value));
                                                 }}
-                                                className="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded hover:bg-purple-200"
+                                                className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                                                title="Edit"
                                             >
-                                                Edit
+                                                <Pencil className="h-4 w-4" />
                                             </button>
                                         </>
                                     )}
@@ -520,20 +522,20 @@ export default function AdminPage() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2">
+                                            <div className="flex justify-end gap-1">
                                                 <Link
                                                     href={`/${locale}/admin/templates/${template.id}/edit`}
-                                                    className="text-foreground/70 hover:text-foreground p-1"
+                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
                                                     title="Edit"
                                                 >
-                                                    ✏️
+                                                    <Pencil className="h-4 w-4" />
                                                 </Link>
                                                 <button
                                                     onClick={() => handleDeleteTemplate(template.id)}
-                                                    className="text-red-500 hover:text-red-700 p-1"
+                                                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                                     title="Delete"
                                                 >
-                                                    🗑️
+                                                    <Trash2 className="h-4 w-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -846,26 +848,28 @@ function BackupsTab() {
                                     {backup.age_hours < 1 ? 'Just now' : `${Math.round(backup.age_hours)}h ago`}
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <div className="flex justify-end gap-2">
+                                    <div className="flex justify-end gap-1">
                                         <button
                                             onClick={() => handleDownload(backup.filename)}
-                                            className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded hover:bg-blue-200"
-                                            title="Download to your computer"
+                                            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                                            title="Download"
                                         >
-                                            ⬇️ Download
+                                            <Download className="h-4 w-4" />
                                         </button>
                                         <button
                                             onClick={() => openRestoreModal(backup.filename)}
                                             disabled={restoring === backup.filename}
-                                            className="px-3 py-1 bg-amber-100 text-amber-700 text-sm rounded hover:bg-amber-200 disabled:opacity-50"
+                                            className="p-2 text-muted-foreground hover:text-amber-600 hover:bg-amber-100 rounded-lg transition-colors disabled:opacity-50"
+                                            title="Restore"
                                         >
-                                            {restoring === backup.filename ? '⏳' : '🔄'} Restore
+                                            <RotateCcw className={`h-4 w-4 ${restoring === backup.filename ? 'animate-spin' : ''}`} />
                                         </button>
                                         <button
                                             onClick={() => handleDelete(backup.filename)}
-                                            className="px-3 py-1 bg-red-100 text-red-700 text-sm rounded hover:bg-red-200"
+                                            className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                                            title="Delete"
                                         >
-                                            🗑️
+                                            <Trash2 className="h-4 w-4" />
                                         </button>
                                     </div>
                                 </td>
