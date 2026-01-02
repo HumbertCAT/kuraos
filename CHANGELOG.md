@@ -14,6 +14,17 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [1.1.15.2] - 2026-01-02
+- **Fix**: Resolved `TypeError` in Dashboard and Services Modal by correctly handling `PaginatedResponse` shape ({data, meta}).
+- **Fix**: Standardized Agenda logic to show future-only bookings, sorted ascending by start time.
+- **Fix**: Standardized all `Link` and `useRouter` imports to `@/i18n/navigation` to resolve 404 regressions in production for `/patients/new`.
+- **Backend**: Added `sort_by` and `order` parameters to the bookings list endpoint.
+
+## [1.1.15.1] - 2026-01-02
+### Fixed
+- **Navigation**: Standardized localized `Link` usage in `PageHeader` and admin modules to prevent 404 prefetch errors.
+- **Stability**: Added defensive checks to AletheIA widgets (`Observatory`, `SentimentPulse`) to prevent runtime crashes on empty data.
+
 ## [1.1.15] - 2026-01-02 🕹️ THE CONTROL DECK & CLINICAL PRECISION
 
 ### 🕹️ Control Deck UI Evolution

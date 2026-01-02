@@ -159,15 +159,8 @@ export default function LeadsPage() {
     const loadLeads = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_URL}/leads`, {
-                credentials: 'include',
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setLeads(data.leads || []);
-            } else {
-                setError('Error al cargar leads');
-            }
+            const data = await api.leads.list({ limit: 100 });
+            setLeads(data.data || data.leads || []);
         } catch (err) {
             console.error('Error loading leads:', err);
             setError('Error de conexión');
@@ -197,17 +190,7 @@ export default function LeadsPage() {
 
         // API call
         try {
-            const response = await fetch(`${API_URL}/leads/${leadId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ status: newStatus }),
-            });
-
-            if (!response.ok) {
-                // Revert on error
-                loadLeads();
-            }
+            await api.leads.update(leadId, { status: newStatus });
         } catch (err) {
             console.error('Error updating lead status:', err);
             loadLeads();
@@ -217,25 +200,15 @@ export default function LeadsPage() {
     // Convert lead to patient
     const handleConvert = async (leadId: string) => {
         try {
-            const response = await fetch(`${API_URL}/leads/${leadId}/convert`, {
-                method: 'POST',
-                credentials: 'include',
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                // Remove from kanban (it's now CONVERTED)
-                setLeads(prev => prev.filter(lead => lead.id !== leadId));
-                setSelectedLead(null);
-                // Could navigate to patient page here
-                alert(`✅ ${data.message}`);
-            } else {
-                const error = await response.json();
-                alert(`Error: ${error.detail}`);
-            }
-        } catch (err) {
+            const data = await api.leads.convert(leadId);
+            // Remove from kanban (it's now CONVERTED)
+            setLeads(prev => prev.filter(lead => lead.id !== leadId));
+            setSelectedLead(null);
+            // Could navigate to patient page here
+            alert(`✅ ${data.message}`);
+        } catch (err: any) {
             console.error('Error converting lead:', err);
-            alert('Error de conexión');
+            alert(`Error: ${err.message || 'Error de conexión'}`);
         }
     };
 
@@ -260,7 +233,7 @@ export default function LeadsPage() {
     };
 
     // Filter leads by search
-    const filteredLeads = leads.filter(lead => {
+    const filteredLeads = (Array.isArray(leads) ? leads : []).filter(lead => {
         if (!searchQuery) return true;
         const q = searchQuery.toLowerCase();
         return (
@@ -597,12 +570,7 @@ function LeadDetailSheet({
     const handleMarkLost = async () => {
         if (!confirm('¿Marcar este lead como perdido?')) return;
         try {
-            await fetch(`${API_URL}/leads/${lead.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ status: 'LOST' }),
-            });
+            await api.leads.update(lead.id, { status: 'LOST' });
             onClose();
             onUpdate();
         } catch (err) {

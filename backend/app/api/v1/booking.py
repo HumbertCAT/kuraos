@@ -58,6 +58,12 @@ async def list_bookings(
     ),
     start_date: Optional[date] = Query(None, description="Filter from date"),
     end_date: Optional[date] = Query(None, description="Filter to date"),
+    sort_by: Optional[str] = Query(
+        None, description="Field to sort by (e.g. start_time)"
+    ),
+    order: Optional[str] = Query(
+        "desc", regex="^(asc|desc)$", description="Sort order"
+    ),
 ):
     """
     List all bookings for the current therapist.
@@ -130,7 +136,17 @@ async def list_bookings(
     total_confirmed_revenue = float(revenue_result.scalar() or 0.0)
 
     # Apply pagination and sorting
-    query = query.order_by(Booking.start_time.desc())
+    sort_field = Booking.start_time
+    if sort_by == "start_time":
+        sort_field = Booking.start_time
+    elif sort_by == "created_at":
+        sort_field = Booking.created_at
+
+    if order == "asc":
+        query = query.order_by(sort_field.asc())
+    else:
+        query = query.order_by(sort_field.desc())
+
     query = query.offset((page - 1) * per_page).limit(per_page)
 
     result = await db.execute(query)

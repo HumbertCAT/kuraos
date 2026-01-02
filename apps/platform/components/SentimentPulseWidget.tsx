@@ -286,12 +286,12 @@ export default function SentimentPulseWidget({ patientId, tier = 'CENTER' }: Sen
                 <div className="flex items-center justify-between">
                     <span className="type-body text-muted-foreground">Estado actual</span>
                     <span className="type-body font-medium text-foreground">
-                        {latestAnalysis.emotional_state || 'Neutro'}
+                        {latestAnalysis?.emotional_state || 'Neutro'}
                     </span>
                 </div>
 
                 {/* Risk Flags */}
-                {latestAnalysis.risk_flags.length > 0 && (
+                {latestAnalysis?.risk_flags && latestAnalysis.risk_flags.length > 0 && (
                     <div className="bg-risk/10 border border-risk/20 rounded-lg p-3">
                         <div className="flex items-start gap-2">
                             <AlertTriangle className="w-4 h-4 text-risk flex-shrink-0 mt-0.5 animate-pulse" />
@@ -308,7 +308,7 @@ export default function SentimentPulseWidget({ patientId, tier = 'CENTER' }: Sen
                 )}
 
                 {/* Suggestion */}
-                {latestAnalysis.suggestion && (
+                {latestAnalysis?.suggestion && (
                     <div className="bg-ai/10 border border-ai/20 rounded-lg p-3">
                         <p className="type-ui text-ai mb-1">💡 Sugerencia</p>
                         <p className="type-body text-sm text-foreground/80">
@@ -319,7 +319,7 @@ export default function SentimentPulseWidget({ patientId, tier = 'CENTER' }: Sen
 
                 {/* Message count */}
                 <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{latestAnalysis.message_count} mensajes hoy</span>
+                    <span className="text-muted-foreground">{latestAnalysis?.message_count || 0} mensajes hoy</span>
                 </div>
             </div>
         </div>

@@ -238,7 +238,7 @@ export default function ServicesPage() {
             });
             if (res.ok) {
                 const data = await res.json();
-                setBookings(data);
+                setBookings(data.data || data); // Handle both wrapped and unwrapped for safety
             }
         } catch (err) {
             console.error('Failed to load bookings:', err);

@@ -120,14 +120,14 @@ export const api = {
     },
 
     get: async (id: string) => {
-      const res = await fetch(`${API_URL}/patients/${id}`, {
+      const res = await fetch(`${API_URL}/patients/${id}/`, {
         credentials: 'include',
       });
       return handleResponse<any>(res);
     },
 
     update: async (id: string, data: any) => {
-      const res = await fetch(`${API_URL}/patients/${id}`, {
+      const res = await fetch(`${API_URL}/patients/${id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -162,7 +162,7 @@ export const api = {
     },
     
     get: async (id: string) => {
-      const res = await fetch(`${API_URL}/services/${id}`, {
+      const res = await fetch(`${API_URL}/services/${id}/`, {
         credentials: 'include',
       });
       return handleResponse<any>(res);
@@ -179,7 +179,7 @@ export const api = {
     },
 
     update: async (id: string, data: any) => {
-      const res = await fetch(`${API_URL}/services/${id}`, {
+      const res = await fetch(`${API_URL}/services/${id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -202,7 +202,7 @@ export const api = {
 
   clinicalEntries: {
     list: async (patientId: string) => {
-      const res = await fetch(`${API_URL}/clinical-entries/patient/${patientId}`, {
+      const res = await fetch(`${API_URL}/clinical-entries/patient/${patientId}/`, {
         credentials: 'include',
       });
       return handleResponse<any>(res);
@@ -219,7 +219,7 @@ export const api = {
     },
 
     update: async (id: string, data: any) => {
-      const res = await fetch(`${API_URL}/clinical-entries/${id}`, {
+      const res = await fetch(`${API_URL}/clinical-entries/${id}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -390,6 +390,8 @@ export const api = {
       end_date?: string;
       page?: number;
       per_page?: number;
+      sort_by?: string;
+      order?: 'asc' | 'desc';
     }) => {
       const params = new URLSearchParams();
       if (filters?.service_id) params.append('service_id', filters.service_id);
@@ -399,6 +401,8 @@ export const api = {
       if (filters?.end_date) params.append('end_date', filters.end_date);
       if (filters?.page) params.append('page', String(filters.page));
       if (filters?.per_page) params.append('per_page', String(filters.per_page));
+      if (filters?.sort_by) params.append('sort_by', filters.sort_by);
+      if (filters?.order) params.append('order', filters.order);
       
       const res = await fetch(`${API_URL}/booking/?${params}`, {
         credentials: 'include',
@@ -407,7 +411,7 @@ export const api = {
     },
 
     updateStatus: async (bookingId: string, newStatus: string) => {
-      const res = await fetch(`${API_URL}/booking/${bookingId}/status?new_status=${newStatus}`, {
+      const res = await fetch(`${API_URL}/booking/${bookingId}/status/?new_status=${newStatus}`, {
         method: 'PATCH',
         credentials: 'include',
       });
@@ -434,7 +438,7 @@ export const api = {
     },
 
     update: async (scheduleId: string, name: string) => {
-      const res = await fetch(`${API_URL}/schedules/${scheduleId}`, {
+      const res = await fetch(`${API_URL}/schedules/${scheduleId}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
@@ -455,7 +459,7 @@ export const api = {
     },
 
     setDefault: async (scheduleId: string) => {
-      const res = await fetch(`${API_URL}/schedules/${scheduleId}/set-default`, {
+      const res = await fetch(`${API_URL}/schedules/${scheduleId}/set-default/`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -533,7 +537,7 @@ export const api = {
     },
 
     approve: async (actionId: string) => {
-      const res = await fetch(`${API_URL}/pending-actions/${actionId}/approve`, {
+      const res = await fetch(`${API_URL}/pending-actions/${actionId}/approve/`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -541,7 +545,7 @@ export const api = {
     },
 
     reject: async (actionId: string) => {
-      const res = await fetch(`${API_URL}/pending-actions/${actionId}/reject`, {
+      const res = await fetch(`${API_URL}/pending-actions/${actionId}/reject/`, {
         method: 'POST',
         credentials: 'include',
       });
@@ -569,6 +573,46 @@ export const api = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
+      });
+      return handleResponse<any>(res);
+    },
+  },
+
+  leads: {
+    list: async (filters?: { limit?: number; offset?: number; status?: string; include_archived?: boolean }) => {
+      const params = new URLSearchParams();
+      if (filters?.limit) params.append('limit', String(filters.limit));
+      if (filters?.offset) params.append('offset', String(filters.offset));
+      if (filters?.status) params.append('status', filters.status);
+      if (filters?.include_archived) params.append('include_archived', String(filters.include_archived));
+      
+      const res = await fetch(`${API_URL}/leads/?${params}`, {
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+    
+    get: async (id: string) => {
+      const res = await fetch(`${API_URL}/leads/${id}/`, {
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+    
+    update: async (id: string, data: any) => {
+      const res = await fetch(`${API_URL}/leads/${id}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+    
+    convert: async (id: string) => {
+      const res = await fetch(`${API_URL}/leads/${id}/convert/`, {
+        method: 'POST',
+        credentials: 'include',
       });
       return handleResponse<any>(res);
     },

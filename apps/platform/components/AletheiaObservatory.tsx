@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { BrainCircuit, AlertTriangle, RefreshCw, Bot, Radio, ChevronRight, Activity, X, Edit, Send, Clock, Sparkles } from 'lucide-react';
 import { CyberButton } from './ui/CyberButton';
 import { usePatientStore, GlobalAlert } from '@/stores/patient-store';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api';
 import BriefingPlayer from './BriefingPlayer';
 
@@ -215,7 +215,7 @@ export default function AletheiaObservatory() {
                                     </button>
                                 </div>
 
-                                {globalInsights?.activeAlerts.length === 0 && (
+                                {globalInsights?.activeAlerts?.length === 0 && (
                                     <div className="text-center py-3">
                                         <Activity className="mx-auto text-success mb-1" size={16} />
                                         <p className="type-body text-muted-foreground">
@@ -224,7 +224,7 @@ export default function AletheiaObservatory() {
                                     </div>
                                 )}
 
-                                {globalInsights?.activeAlerts.map((alert: GlobalAlert) => (
+                                {globalInsights?.activeAlerts?.map((alert: GlobalAlert) => (
                                     <Link
                                         key={alert.id}
                                         href={`/patients/${alert.patientId}`}

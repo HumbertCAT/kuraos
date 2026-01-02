@@ -146,7 +146,7 @@ export default function DailyInsightsFeed({ analyses, messages = [] }: DailyInsi
                 {analyses.map((analysis) => {
                     const dayMessages = getMessagesForDay(analysis.date);
                     const isExpanded = expandedDay === analysis.id;
-                    const hasRisk = analysis.risk_flags.length > 0;
+                    const hasRisk = (analysis.risk_flags?.length ?? 0) > 0;
                     const hasAudio = dayHasAudio(dayMessages);
 
                     return (

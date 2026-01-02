@@ -65,13 +65,18 @@ export default function DashboardPage() {
             try {
                 const [patientsResult, bookingsResult, leadsResult] = await Promise.allSettled([
                     api.patients.list(),
-                    api.bookings.list({}),
-                    fetch(`${API_URL}/leads/?limit=100`, { credentials: 'include' }).then(r => r.ok ? r.json() : { leads: [] }),
+                    api.bookings.list({
+                        start_date: new Date().toISOString().split('T')[0], // API takes YYYY-MM-DD
+                        sort_by: 'start_time',
+                        order: 'asc',
+                        per_page: 20
+                    }),
+                    api.leads.list({ limit: 100 }),
                 ]);
 
                 const patientsRes = patientsResult.status === 'fulfilled' ? patientsResult.value : { data: [], meta: { total: 0 } } as any;
                 const bookingsRes = bookingsResult.status === 'fulfilled' ? bookingsResult.value : { data: [] };
-                const leadsRes = leadsResult.status === 'fulfilled' ? leadsResult.value : { leads: [] };
+                const leadsRes = leadsResult.status === 'fulfilled' ? leadsResult.value : { data: [], leads: [] };
 
                 const totalPatients = patientsRes.meta?.total || (patientsRes.data || []).length;
                 const bookings = (bookingsRes.data || []) as BookingSummary[];
@@ -86,7 +91,7 @@ export default function DashboardPage() {
                 // Leads this week
                 const oneWeekAgo = new Date();
                 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-                const leads = leadsRes.leads || [];
+                const leads = Array.isArray(leadsRes.data) ? leadsRes.data : (leadsRes.leads || []);
                 const newLeadsThisWeek = leads.filter((l: any) => new Date(l.created_at) > oneWeekAgo).length;
 
                 // Find next upcoming session (within next 24 hours)
@@ -97,8 +102,7 @@ export default function DashboardPage() {
                 const upcomingBookings = bookings
                     .filter(b => {
                         const bookingDate = new Date(b.start_time);
-                        return bookingDate > now && bookingDate < tomorrow &&
-                            (b.status === 'CONFIRMED' || b.status === 'PENDING');
+                        return bookingDate > now && (b.status === 'CONFIRMED' || b.status === 'PENDING');
                     })
                     .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
 

@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { API_URL } from '@/lib/api';
 import { useTranslations } from 'next-intl';
 import { useParams, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { api } from '@/lib/api';
 import { ThemeEditor } from '@/components/admin/ThemeEditor';
 import AiGovernance from './components/AiGovernance';

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import FormRenderer from '@/components/FormRenderer';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 
