@@ -657,4 +657,13 @@ export const api = {
       return handleResponse<any>(res);
     },
   },
+
+  dashboard: {
+    getFocus: async () => {
+      const res = await fetch(`${API_URL}/dashboard/focus`, {
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+  },
 };

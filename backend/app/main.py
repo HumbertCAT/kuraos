@@ -19,6 +19,7 @@ from app.api.v1 import (
     public_forms,
     analysis,
     growth,
+    dashboard,
     clinical_entries,
     uploads,
     admin,
@@ -190,6 +191,9 @@ app.include_router(
 )
 app.include_router(
     growth.router, prefix=f"{settings.API_V1_STR}/growth", tags=["Growth"]
+)
+app.include_router(
+    dashboard.router, prefix=f"{settings.API_V1_STR}/dashboard", tags=["Dashboard"]
 )
 app.include_router(
     clinical_entries.router,

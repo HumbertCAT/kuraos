@@ -14,6 +14,29 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.19] - 2026-01-02 🔮 THE ORACLE (Intelligent Focus)
+
+> **Theme:** "The server thinks so you don't have to."
+
+### 🧠 Dedicated Focus Endpoint
+- **New Endpoint:** `GET /api/v1/dashboard/focus` - Pre-computed next session data
+- **Patient Insight:** Real AletheIA insights from `Patient.last_insight_json`
+- **Efficient Query:** Single JOIN (Booking→Patient) instead of bulk fetch + filter
+- **Smart Type Calculation:** `warning` (risk≥70), `info` (risk≥40), `success` (risk<40)
+
+### 🔌 Frontend Wiring
+- **Removed Mock:** Eliminated hardcoded "Sueño irregular" insight
+- **api.dashboard.getFocus():** New API client method
+- **FocusSessionCard:** Now displays real patient insights
+- **Empty State:** "Sin análisis previos" when patient has no insights
+
+### 🔧 Technical
+- New file: `backend/app/api/v1/dashboard.py` (170 lines)
+- Helper functions: `_format_time_ago()`, `_calculate_insight_type()`
+- Response schema: `FocusResponse` with `BookingSummary`, `PatientSummary`, `InsightData`
+
+---
+
 ## [1.1.18] - 2026-01-02 🍄 THE MYCELIUM (Viral Growth Engine)
 
 > **Theme:** "From acorn to forest." — Building the viral infrastructure that turns every user into a growth agent.

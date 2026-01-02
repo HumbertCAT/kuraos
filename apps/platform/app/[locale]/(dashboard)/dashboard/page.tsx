@@ -76,7 +76,7 @@ export default function DashboardPage() {
     useEffect(() => {
         async function loadDashboard() {
             try {
-                const [patientsResult, bookingsResult, leadsResult] = await Promise.allSettled([
+                const [patientsResult, bookingsResult, leadsResult, focusResult] = await Promise.allSettled([
                     api.patients.list(1),
                     api.bookings.list({
                         start_date: new Date().toISOString().split('T')[0], // API takes YYYY-MM-DD
@@ -85,6 +85,7 @@ export default function DashboardPage() {
                         per_page: 20
                     }),
                     api.leads.list({ limit: 100 }),
+                    api.dashboard.getFocus(),
                 ]);
 
                 const patientsRes = patientsResult.status === 'fulfilled' ? patientsResult.value : { data: [], meta: { total: 0 } } as any;
@@ -134,36 +135,21 @@ export default function DashboardPage() {
                 const targetMonthlySlots = 40; // Benchmark: 40 sessions/month
                 const occupancyRate = Math.min(100, Math.round((thisMonthSessions / targetMonthlySlots) * 100));
 
-                // Find next upcoming session
-                const now = new Date();
-                const upcomingBookings = bookings
-                    .filter(b => {
-                        const bookingDate = new Date(b.start_time);
-                        return bookingDate > now && (b.status === 'CONFIRMED' || b.status === 'PENDING');
-                    })
-                    .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
-
+                // ------ WIRING: Focus Session (The Oracle) ------
+                const focusRes = focusResult.status === 'fulfilled' ? focusResult.value : null;
                 let nextSession: DashboardData['nextSession'] = null;
 
-                if (upcomingBookings.length > 0) {
-                    const next = upcomingBookings[0];
-                    const initials = next.patient_name
-                        .split(' ')
-                        .map((n: string) => n.charAt(0))
-                        .join('')
-                        .toUpperCase()
-                        .slice(0, 2);
-
+                if (focusRes?.has_session && focusRes.booking && focusRes.patient) {
                     nextSession = {
-                        id: next.id,
-                        patientName: next.patient_name,
-                        patientInitials: initials,
-                        serviceName: next.service_title,
-                        startTime: new Date(next.start_time),
-                        aletheiaInsight: {
-                            type: 'warning',
-                            message: 'Último reporte: Sueño irregular',
-                        },
+                        id: focusRes.patient.id,
+                        patientName: focusRes.patient.name,
+                        patientInitials: focusRes.patient.initials,
+                        serviceName: focusRes.booking.service_name,
+                        startTime: new Date(focusRes.booking.start_time),
+                        aletheiaInsight: focusRes.insight?.available ? {
+                            type: focusRes.insight.type as 'warning' | 'info' | 'success',
+                            message: focusRes.insight.message,
+                        } : undefined,
                     };
                 }
 
