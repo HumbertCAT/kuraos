@@ -56,7 +56,7 @@ export function ReferralWidget() {
             <div className="bg-muted/50 rounded-lg p-3 mb-3">
                 <div className="flex items-center justify-between">
                     <div className="flex-1">
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Tu código</p>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Tu código</p>
                         <p className="font-mono text-sm font-bold text-brand">{organization.referral_code}</p>
                     </div>
                     <button
