@@ -14,6 +14,26 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.18] - 2026-01-02 🍄 THE MYCELIUM (Growth)
+
+### 🍄 Referral System (The Spores)
+- **Karma Points**: New clean reward system (`karma_score`) separate from AI credits.
+- **Registration w/ Referrals**: Accept `?ref=CODE` param to track referrer and reward +100 karma.
+- **Welcome Bonus**: New referred users start with +50 karma.
+- **Backfill Migration**: Auto-generated referral codes for existing organizations.
+
+### 📊 Dashboard Widget (The Fruiting Body)
+- **ReferralWidget**: Replace QuickNote with viral growth widget.
+- **Features**: Display karma score, copy referral link, WhatsApp share button.
+- **Design**: Cyber-Glass card with `border-brand/20` and `Sparkles` icon.
+
+### 🔧 Technical
+- Migration: `add_karma_score_to_organization` with SQL backfill.
+- Updated `Organization` schema with `karma_score: int`.
+- Updated TypeScript interfaces for frontend type safety.
+
+---
+
 ## [1.1.17] - 2026-01-02 ⚡ THE OMNI-SEARCH (God Mode)
 
 ### 🔎 Global Command Palette
