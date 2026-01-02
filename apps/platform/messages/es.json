@@ -82,6 +82,14 @@
       "highDemand": "Alta demanda",
       "sessions": "sesiones"
     },
+    "referralWidget": {
+      "title": "El Micelio",
+      "tagline": "Invita a un colega. Gana Karma. Construyamos la red.",
+      "yourCode": "Tu código",
+      "copyLink": "Copiar enlace",
+      "shareWhatsApp": "Compartir vía WhatsApp",
+      "whatsappMessage": "🚀 Descubre KURA OS - La plataforma que uso para gestionar mi práctica terapéutica.\n\nÚsala con mi código: {code}\n{url}"
+    },
     "pipeline": {
       "title": "FLUJO DE PACIENTES",
       "new": "Nuevos",

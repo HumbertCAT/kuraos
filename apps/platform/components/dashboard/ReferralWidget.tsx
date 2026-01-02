@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/context/auth-context';
 import { Sparkles, Copy, MessageCircle, Check } from 'lucide-react';
 
@@ -14,13 +15,18 @@ import { Sparkles, Copy, MessageCircle, Check } from 'lucide-react';
  */
 export function ReferralWidget() {
     const { organization } = useAuth();
+    const locale = useLocale();
+    const t = useTranslations('Dashboard.referralWidget');
     const [copied, setCopied] = useState(false);
 
     if (!organization) return null;
 
-    const referralUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/es/register?ref=${organization.referral_code}`;
+    const referralUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/${locale}/register?ref=${organization.referral_code}`;
     const whatsappText = encodeURIComponent(
-        `🚀 Descubre KURA OS - La plataforma que uso para gestionar mi práctica terapéutica.\n\nÚsala con mi código: ${organization.referral_code}\n${referralUrl}`
+        t('whatsappMessage', {
+            code: organization.referral_code,
+            url: referralUrl
+        })
     );
 
     const handleCopy = async () => {
@@ -39,7 +45,7 @@ export function ReferralWidget() {
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-warning" />
-                    <h3 className="type-ui text-foreground">El Micelio</h3>
+                    <h3 className="type-ui text-foreground">{t('title')}</h3>
                 </div>
                 <div className="flex items-center gap-1.5 px-2.5 py-1 bg-warning/10 rounded-lg">
                     <Sparkles className="w-3.5 h-3.5 text-warning" />
@@ -49,20 +55,20 @@ export function ReferralWidget() {
 
             {/* Message */}
             <p className="text-sm text-muted-foreground mb-4">
-                Invita a un colega. Gana Karma. Construyamos la red.
+                {t('tagline')}
             </p>
 
             {/* Referral Code Display */}
             <div className="bg-muted/50 rounded-lg p-3 mb-3">
                 <div className="flex items-center justify-between">
                     <div className="flex-1">
-                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Tu código</p>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{t('yourCode')}</p>
                         <p className="font-mono text-sm font-bold text-brand">{organization.referral_code}</p>
                     </div>
                     <button
                         onClick={handleCopy}
                         className="p-2 hover:bg-muted rounded-lg transition-colors active:scale-95"
-                        title="Copiar enlace"
+                        title={t('copyLink')}
                     >
                         {copied ? (
                             <Check className="w-4 h-4 text-success" />
@@ -81,7 +87,7 @@ export function ReferralWidget() {
                 className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-brand/10 hover:bg-brand/20 text-brand rounded-lg transition-all active:scale-95 text-sm font-medium"
             >
                 <MessageCircle className="w-4 h-4" />
-                Compartir vía WhatsApp
+                {t('shareWhatsApp')}
             </a>
         </div>
     );
