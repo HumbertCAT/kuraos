@@ -41,6 +41,19 @@ interface DashboardData {
             message: string;
         };
     } | null;
+    // Wired data for widgets
+    pipelineStages: Array<{ key: string; labelKey: 'new' | 'contacted' | 'closing'; count: number; color: string; icon: React.ReactNode | null }>;
+    activeJourneys: Array<{
+        id: string;
+        patientId: string;
+        patientName: string;
+        journeyName: string;
+        journeyType: 'psychedelic' | 'coaching' | 'integration' | 'microdosing';
+        status: 'ACTIVE' | 'BLOCKED' | 'PAYMENT_PENDING' | 'AWAITING_INTAKE';
+        priority: 'high' | 'medium' | 'normal';
+    }>;
+    occupancyRate: number;
+    thisMonthSessions: number;
 }
 
 export default function DashboardPage() {
@@ -64,7 +77,7 @@ export default function DashboardPage() {
         async function loadDashboard() {
             try {
                 const [patientsResult, bookingsResult, leadsResult] = await Promise.allSettled([
-                    api.patients.list(),
+                    api.patients.list(1),
                     api.bookings.list({
                         start_date: new Date().toISOString().split('T')[0], // API takes YYYY-MM-DD
                         sort_by: 'start_time',
@@ -78,7 +91,8 @@ export default function DashboardPage() {
                 const bookingsRes = bookingsResult.status === 'fulfilled' ? bookingsResult.value : { data: [] };
                 const leadsRes = leadsResult.status === 'fulfilled' ? leadsResult.value : { data: [], leads: [] };
 
-                const totalPatients = patientsRes.meta?.total || (patientsRes.data || []).length;
+                const patients = patientsRes.data || [];
+                const totalPatients = patientsRes.meta?.total || patients.length;
                 const bookings = (bookingsRes.data || []) as BookingSummary[];
 
                 // Calculate revenue
@@ -88,17 +102,40 @@ export default function DashboardPage() {
                     .filter(b => b.status === 'PENDING')
                     .reduce((sum, b) => sum + (b.service_price || 450), 0);
 
-                // Leads this week
+                // ------ WIRING: Pipeline Velocity (Leads by Status) ------
+                const leads = Array.isArray(leadsRes.data) ? leadsRes.data : (leadsRes.leads || []);
                 const oneWeekAgo = new Date();
                 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-                const leads = Array.isArray(leadsRes.data) ? leadsRes.data : (leadsRes.leads || []);
                 const newLeadsThisWeek = leads.filter((l: any) => new Date(l.created_at) > oneWeekAgo).length;
 
-                // Find next upcoming session (within next 24 hours)
-                const now = new Date();
-                const tomorrow = new Date(now);
-                tomorrow.setDate(tomorrow.getDate() + 1);
+                // Calculate pipeline stages from leads
+                const pipelineStages = [
+                    { key: 'new', labelKey: 'new' as const, count: leads.filter((l: any) => l.status === 'NEW').length, color: 'bg-success', icon: null },
+                    { key: 'contacted', labelKey: 'contacted' as const, count: leads.filter((l: any) => l.status === 'CONTACTED' || l.status === 'QUALIFIED').length, color: 'bg-warning', icon: null },
+                    { key: 'closing', labelKey: 'closing' as const, count: leads.filter((l: any) => l.status === 'CONVERTED' || l.status === 'NEGOTIATING').length, color: 'bg-brand', icon: null },
+                ];
 
+                // ------ WIRING: Active Journeys (Patients with journey_status) ------
+                const activeJourneys = patients
+                    .filter((p: any) => p.journey_status && p.journey_status !== 'INACTIVE')
+                    .slice(0, 5)
+                    .map((p: any) => ({
+                        id: p.id,
+                        patientId: p.id,
+                        patientName: `${p.first_name} ${p.last_name}`,
+                        journeyName: p.journey_name || 'Treatment Journey',
+                        journeyType: (p.journey_type || 'coaching') as 'psychedelic' | 'coaching' | 'integration' | 'microdosing',
+                        status: (p.journey_status || 'ACTIVE') as 'ACTIVE' | 'BLOCKED' | 'PAYMENT_PENDING' | 'AWAITING_INTAKE',
+                        priority: p.journey_status === 'BLOCKED' || p.journey_status === 'PAYMENT_PENDING' ? 'high' as const : 'normal' as const,
+                    }));
+
+                // ------ WIRING: Monthly Sessions (Occupancy) ------
+                const thisMonthSessions = confirmedBookings.length;
+                const targetMonthlySlots = 40; // Benchmark: 40 sessions/month
+                const occupancyRate = Math.min(100, Math.round((thisMonthSessions / targetMonthlySlots) * 100));
+
+                // Find next upcoming session
+                const now = new Date();
                 const upcomingBookings = bookings
                     .filter(b => {
                         const bookingDate = new Date(b.start_time);
@@ -123,7 +160,6 @@ export default function DashboardPage() {
                         patientInitials: initials,
                         serviceName: next.service_title,
                         startTime: new Date(next.start_time),
-                        // Mock Aletheia insight for demonstration
                         aletheiaInsight: {
                             type: 'warning',
                             message: 'Último reporte: Sueño irregular',
@@ -137,6 +173,11 @@ export default function DashboardPage() {
                     pendingPayments,
                     newLeadsThisWeek,
                     nextSession,
+                    // New wired data
+                    pipelineStages,
+                    activeJourneys,
+                    occupancyRate,
+                    thisMonthSessions,
                 });
             } catch (error) {
                 console.error('[Dashboard] Failed to load:', error);
@@ -190,7 +231,7 @@ export default function DashboardPage() {
 
                 {/* RIGHT: Urgent Journeys (span-4) */}
                 <div className="col-span-12 lg:col-span-4">
-                    <ActiveJourneysWidget />
+                    <ActiveJourneysWidget journeys={data.activeJourneys} />
                 </div>
             </div>
 
@@ -219,10 +260,12 @@ export default function DashboardPage() {
                 />
                 <VitalSignCard
                     label={t('vitalSigns.occupancyRate')}
-                    value="85%"
+                    value={`${data.occupancyRate}%`}
+                    badge={`${data.thisMonthSessions} ${t('vitalSigns.sessions')}`}
+                    badgeType="success"
                     trend={{
-                        direction: 'up',
-                        label: t('vitalSigns.highDemand'),
+                        direction: data.occupancyRate > 50 ? 'up' : 'neutral',
+                        label: data.occupancyRate > 70 ? t('vitalSigns.highDemand') : t('vitalSigns.sameAsLastWeek'),
                         isPositive: true,
                     }}
                     icon={<Activity className="w-5 h-5" />}
@@ -234,7 +277,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-12 gap-6">
                 {/* LEFT: Pipeline (span-8) */}
                 <div className="col-span-12 lg:col-span-8">
-                    <PipelineVelocity />
+                    <PipelineVelocity stages={data.pipelineStages} />
                 </div>
 
                 {/* RIGHT: Quick Note (span-4) */}

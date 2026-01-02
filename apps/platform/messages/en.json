@@ -79,7 +79,8 @@
       "occupancyRate": "OCCUPANCY RATE",
       "vsLastMonth": "vs last month",
       "sameAsLastWeek": "Same as last week",
-      "highDemand": "High demand"
+      "highDemand": "High demand",
+      "sessions": "sessions"
     },
     "pipeline": {
       "title": "PATIENT FLOW",

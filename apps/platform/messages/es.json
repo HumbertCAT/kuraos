@@ -79,7 +79,8 @@
       "occupancyRate": "TASA DE OCUPACIÓN",
       "vsLastMonth": "vs mes pasado",
       "sameAsLastWeek": "Igual que semana pasada",
-      "highDemand": "Alta demanda"
+      "highDemand": "Alta demanda",
+      "sessions": "sesiones"
     },
     "pipeline": {
       "title": "FLUJO DE PACIENTES",
