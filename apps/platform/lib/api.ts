@@ -648,4 +648,13 @@ export const api = {
       return handleResponse<any>(res);
     },
   },
+
+  growth: {
+    getStats: async () => {
+      const res = await fetch(`${API_URL}/growth/stats`, {
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+  },
 };

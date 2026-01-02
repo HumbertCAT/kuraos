@@ -47,7 +47,7 @@ export default function ReferralsPage() {
     const loadStats = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/growth/stats');
+            const response = await api.growth.getStats();
             setStats(response);
         } catch (err: any) {
             console.error('Error loading referral stats:', err);
