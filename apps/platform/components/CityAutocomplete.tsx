@@ -124,24 +124,24 @@ export default function CityAutocomplete({
                     onFocus={() => search.length > 0 && cities.length > 0 && setIsOpen(true)}
                     placeholder={placeholder}
                     disabled={!countryCode}
-                    className={`w-full p-3 pl-10 border rounded-lg outline-none text-foreground transition-colors
+                    className={`w-full p-3 pl-10 border border-border rounded-lg outline-none text-foreground transition-colors
             ${countryCode
-                            ? 'bg-card focus:ring-2 focus:ring-violet-500 focus:border-violet-500'
-                            : 'bg-slate-50 cursor-not-allowed text-slate-400'
+                            ? 'bg-background focus:ring-2 focus:ring-brand/50 focus:border-brand'
+                            : 'bg-muted cursor-not-allowed text-muted-foreground'
                         }`}
                 />
                 <div className="absolute left-3 top-1/2 -translate-y-1/2">
                     {loading ? (
                         <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
                     ) : (
-                        <MapPin className="w-4 h-4 text-slate-400" />
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
                     )}
                 </div>
             </div>
 
             {/* Hint when no country selected */}
             {!countryCode && (
-                <p className="text-xs text-slate-400 mt-1">Selecciona primero un país</p>
+                <p className="text-xs text-muted-foreground mt-1">Selecciona primero un país</p>
             )}
 
             {/* Suggestions dropdown */}
@@ -151,12 +151,12 @@ export default function CityAutocomplete({
                         <div
                             key={`${city.name}-${index}`}
                             onClick={() => handleSelect(city)}
-                            className="p-3 cursor-pointer hover:bg-violet-50 transition-colors flex items-center gap-2"
+                            className="p-3 cursor-pointer hover:bg-brand/10 transition-colors flex items-center gap-2"
                         >
-                            <MapPin className="w-4 h-4 text-violet-400" />
+                            <MapPin className="w-4 h-4 text-brand" />
                             <span className="text-foreground">{city.name}</span>
                             {city.region && (
-                                <span className="text-xs text-slate-400">({city.region})</span>
+                                <span className="text-xs text-muted-foreground">({city.region})</span>
                             )}
                         </div>
                     ))}

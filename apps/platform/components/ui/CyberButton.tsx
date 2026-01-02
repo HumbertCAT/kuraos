@@ -12,10 +12,10 @@ import { cn } from '@/lib/utils';
  */
 
 const buttonVariants = {
-    // PRIMARY: The Tactical Click - WHITE/BLACK/UPPERCASE
+    // PRIMARY: Outline style in dark mode (no flashbang)
     primary: cn(
         "bg-white text-black hover:bg-zinc-200",
-        "dark:bg-white dark:text-black dark:hover:bg-zinc-200",
+        "dark:bg-transparent dark:border dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white",
         "uppercase font-bold tracking-wider font-mono"
     ),
 

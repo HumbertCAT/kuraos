@@ -87,18 +87,18 @@ export default function CountrySelect({
                     setIsOpen(true);
                     setTimeout(() => inputRef.current?.focus(), 0);
                 }}
-                className="w-full p-3 border rounded-lg bg-card cursor-pointer flex items-center justify-between hover:border-violet-300 focus-within:ring-2 focus-within:ring-violet-500 focus-within:border-violet-500 transition-colors"
+                className="w-full p-3 border border-border rounded-lg bg-background cursor-pointer flex items-center justify-between hover:border-brand/50 focus-within:ring-2 focus-within:ring-brand/50 focus-within:border-brand transition-colors"
             >
                 {isOpen ? (
                     <div className="flex items-center gap-2 flex-1">
-                        <Search className="w-4 h-4 text-slate-400" />
+                        <Search className="w-4 h-4 text-muted-foreground" />
                         <input
                             ref={inputRef}
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Buscar país..."
-                            className="flex-1 outline-none text-foreground placeholder:text-slate-400"
+                            className="flex-1 outline-none bg-transparent text-foreground placeholder:text-muted-foreground"
                             onClick={(e) => e.stopPropagation()}
                         />
                     </div>
@@ -108,7 +108,7 @@ export default function CountrySelect({
                         {selectedCountry.name}
                     </span>
                 ) : (
-                    <span className="text-slate-400">{placeholder}</span>
+                    <span className="text-muted-foreground">{placeholder}</span>
                 )}
 
                 <div className="flex items-center gap-1">
@@ -116,12 +116,12 @@ export default function CountrySelect({
                         <button
                             type="button"
                             onClick={handleClear}
-                            className="p-1 hover:bg-slate-100 rounded"
+                            className="p-1 hover:bg-muted rounded"
                         >
-                            <X className="w-4 h-4 text-slate-400" />
+                            <X className="w-4 h-4 text-muted-foreground" />
                         </button>
                     )}
-                    <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </div>
             </div>
 
@@ -137,16 +137,16 @@ export default function CountrySelect({
                             <div
                                 key={country.code}
                                 onClick={() => handleSelect(country)}
-                                className={`p-3 cursor-pointer flex items-center justify-between hover:bg-violet-50 transition-colors ${selectedCountry?.code === country.code ? 'bg-violet-100' : ''
+                                className={`p-3 cursor-pointer flex items-center justify-between hover:bg-brand/10 transition-colors ${selectedCountry?.code === country.code ? 'bg-brand/20' : ''
                                     }`}
                             >
                                 <span className="flex items-center gap-2">
                                     <span className="text-lg">{country.flag}</span>
                                     <span className="text-foreground">{country.name}</span>
-                                    <span className="text-xs text-slate-400">{country.code}</span>
+                                    <span className="text-xs text-muted-foreground">{country.code}</span>
                                 </span>
                                 {selectedCountry?.code === country.code && (
-                                    <Check className="w-4 h-4 text-violet-600" />
+                                    <Check className="w-4 h-4 text-brand" />
                                 )}
                             </div>
                         ))

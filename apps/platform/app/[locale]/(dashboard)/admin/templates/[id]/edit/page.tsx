@@ -236,17 +236,17 @@ export default function TemplateBuilderPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-muted flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-muted">
+        <div className="min-h-screen bg-background">
             {/* Header - Simplified */}
             <div className="bg-card border-b border-border px-6 py-4">
-                <div className="max-w-6xl mx-auto flex justify-between items-center">
+                <div className="flex justify-between items-center">
                     <div>
                         <Link href={`/${locale}/admin?tab=templates`} className="text-foreground/60 hover:text-foreground text-sm">
                             ← Volver a formularios
@@ -313,15 +313,15 @@ export default function TemplateBuilderPage() {
             </div>
 
             {/* Content */}
-            <div className="max-w-6xl mx-auto py-6 px-6">
+            <div className="px-6 py-6">
                 {/* Builder Mode */}
                 {activeTab === 'builder' && (
                     <div className="space-y-6">
                         {/* Publicación Section - First! Only for org templates */}
                         {!isNew && template.organization_id && template.risk_level !== 'CRITICAL' && (
                             <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-                                <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
-                                    <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                                <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+                                    <h3 className="text-base font-semibold text-white flex items-center gap-2">
                                         <span>🌐</span> Publicación del formulario
                                     </h3>
                                 </div>
@@ -395,8 +395,8 @@ export default function TemplateBuilderPage() {
 
                         {/* Config Section */}
                         <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-                            <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
-                                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                            <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+                                <h3 className="text-base font-semibold text-white flex items-center gap-2">
                                     <span>⚙️</span> Configuración del formulario
                                 </h3>
                             </div>
@@ -469,8 +469,8 @@ export default function TemplateBuilderPage() {
 
                         {/* Fields Section */}
                         <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-                            <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border flex justify-between items-center">
-                                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                            <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4 flex justify-between items-center">
+                                <h3 className="text-base font-semibold text-white flex items-center gap-2">
                                     <span>📝</span> Campos del formulario
                                 </h3>
                                 <span className="text-sm text-foreground/60">{template.schema.fields.length} campos</span>
@@ -630,8 +630,8 @@ export default function TemplateBuilderPage() {
                 {/* Preview Mode */}
                 {activeTab === 'preview' && (
                     <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-                        <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
-                            <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                        <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+                            <h3 className="text-base font-semibold text-white flex items-center gap-2">
                                 <span>👁</span> Vista previa del formulario
                             </h3>
                         </div>

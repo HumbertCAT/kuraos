@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { Settings, CreditCard, HelpCircle, Palette, Sparkles } from 'lucide-react';
+import { Settings, CreditCard, Palette, Sparkles } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 
 const TABS = [
@@ -11,7 +11,6 @@ const TABS = [
     { href: '/settings/referrals', labelKey: 'tabReferrals', icon: Sparkles },
     { href: '/settings/appearance', labelKey: 'tabAppearance', icon: Palette },
     { href: '/settings/plan', labelKey: 'tabPlan', icon: CreditCard },
-    { href: '/settings/help', labelKey: 'tabHelp', icon: HelpCircle },
 ];
 
 export default function SettingsLayout({
@@ -27,7 +26,6 @@ export default function SettingsLayout({
         if (pathname.includes('/settings/referrals')) return '/settings/referrals';
         if (pathname.includes('/settings/appearance')) return '/settings/appearance';
         if (pathname.includes('/settings/plan') || pathname.includes('/settings/billing')) return '/settings/plan';
-        if (pathname.includes('/settings/help')) return '/settings/help';
         return '/settings/general';
     };
 

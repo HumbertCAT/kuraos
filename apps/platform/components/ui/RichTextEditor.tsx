@@ -55,12 +55,12 @@ export default function RichTextEditor({
             Link.configure({
                 openOnClick: false,
                 HTMLAttributes: {
-                    class: 'text-slate-700 underline decoration-slate-400 underline-offset-2 hover:text-foreground',
+                    class: 'text-brand underline decoration-brand/50 underline-offset-2 hover:text-foreground',
                 },
             }),
             Placeholder.configure({
                 placeholder,
-                emptyEditorClass: 'before:content-[attr(data-placeholder)] before:text-slate-400 before:float-left before:h-0 before:pointer-events-none',
+                emptyEditorClass: 'before:content-[attr(data-placeholder)] before:text-muted-foreground before:float-left before:h-0 before:pointer-events-none',
             }),
             Markdown.configure({
                 html: false,
@@ -103,19 +103,19 @@ export default function RichTextEditor({
     if (!editor) {
         return (
             <div
-                className={`w-full border border-border rounded-xl bg-slate-50 p-4 animate-pulse ${className}`}
+                className={`w-full border border-border rounded-xl bg-muted p-4 animate-pulse ${className}`}
                 style={{ minHeight }}
             >
-                <div className="h-4 bg-slate-200 rounded w-3/4 mb-2" />
-                <div className="h-4 bg-slate-200 rounded w-1/2" />
+                <div className="h-4 bg-muted-foreground/20 rounded w-3/4 mb-2" />
+                <div className="h-4 bg-muted-foreground/20 rounded w-1/2" />
             </div>
         );
     }
 
     return (
-        <div className={`relative w-full border border-border rounded-xl bg-card transition-all 
-            ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:border-slate-300'}
-            focus-within:ring-2 focus-within:ring-slate-500/20 focus-within:border-slate-400 ${className}`}
+        <div className={`relative w-full border border-border rounded-xl bg-input transition-all 
+            ${disabled ? 'opacity-60 cursor-not-allowed' : 'hover:border-border'}
+            focus-within:ring-2 focus-within:ring-brand/20 focus-within:border-brand ${className}`}
         >
             {/* Bubble Menu - appears on text selection */}
             {editor && !disabled && (
@@ -148,7 +148,7 @@ export default function RichTextEditor({
                         <Italic className="w-4 h-4" />
                     </BubbleButton>
 
-                    <div className="w-px h-4 bg-slate-200 mx-1" />
+                    <div className="w-px h-4 bg-border mx-1" />
 
                     <BubbleButton
                         onClick={() => {
@@ -193,18 +193,18 @@ export default function RichTextEditor({
                         prose-ol:text-foreground prose-ol:mb-3 prose-ol:pl-4
                         prose-li:my-0.5
                         prose-strong:text-foreground prose-strong:font-bold
-                        prose-blockquote:border-l-2 prose-blockquote:border-slate-300 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-foreground/70
+                        prose-blockquote:border-l-2 prose-blockquote:border-border prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-foreground/70
                         [&_.ProseMirror]:text-foreground
                         [&_.ProseMirror_p]:text-foreground
                         [&_.ProseMirror-selectednode]:bg-blue-100
-                        selection:bg-blue-200 selection:text-foreground"
+                        selection:bg-brand/20 selection:text-foreground"
                 />
             </div>
 
             {/* Markdown hint */}
-            <div className="absolute right-3 bottom-2 text-[10px] text-slate-300 pointer-events-none select-none flex items-center gap-2">
+            <div className="absolute right-3 bottom-2 text-[10px] text-muted-foreground pointer-events-none select-none flex items-center gap-2">
                 <span className="hidden sm:inline">**bold** | # heading | - list</span>
-                <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-400">Markdown</span>
+                <span className="bg-muted px-1.5 py-0.5 rounded text-muted-foreground">Markdown</span>
             </div>
         </div>
     );
@@ -228,8 +228,8 @@ function BubbleButton({
             onClick={onClick}
             title={title}
             className={`p-1.5 rounded transition-colors ${isActive
-                ? 'text-foreground bg-slate-100'
-                : 'text-foreground/60 hover:text-slate-700 hover:bg-slate-50'
+                ? 'text-foreground bg-muted'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
         >
             {children}

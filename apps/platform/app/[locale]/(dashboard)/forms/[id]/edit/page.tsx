@@ -286,17 +286,17 @@ export default function EditFormPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-muted flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-muted">
+        <div className="min-h-screen bg-background">
             {/* Header */}
             <div className="bg-card border-b border-border px-6 py-4">
-                <div className="max-w-6xl mx-auto flex justify-between items-center">
+                <div className="flex justify-between items-center">
                     <div>
                         <Link href="/forms" className="text-foreground/60 hover:text-foreground text-sm">
                             ← Volver a formularios
@@ -372,7 +372,7 @@ export default function EditFormPage() {
             </div>
 
             {/* Tier Badge */}
-            <div className="max-w-6xl mx-auto px-6 pt-4">
+            <div className="px-6 pt-4">
                 <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${tier === 'CENTER' ? 'bg-purple-100 text-purple-700' :
                     tier === 'PRO' ? 'bg-blue-100 text-blue-700' :
                         'bg-muted text-foreground/70'
@@ -385,15 +385,15 @@ export default function EditFormPage() {
             </div>
 
             {/* Content */}
-            <div className="max-w-6xl mx-auto py-6 px-6">
+            <div className="px-6 py-6">
                 {/* Builder Mode */}
                 {activeTab === 'builder' && (
                     <div className="space-y-6">
                         {/* Publicación Section - ALL TIERS */}
                         {template.organization_id && template.risk_level !== 'CRITICAL' && (
                             <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-                                <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
-                                    <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                                <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+                                    <h3 className="text-base font-semibold text-white flex items-center gap-2">
                                         <span>🌐</span> Publicación del formulario
                                     </h3>
                                 </div>
@@ -468,8 +468,8 @@ export default function EditFormPage() {
                         {/* Config Section - PRO/CENTER */}
                         <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden relative">
                             {!canEditConfig(tier) && <LockOverlay requiredTier="PRO" />}
-                            <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
-                                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                            <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+                                <h3 className="text-base font-semibold text-white flex items-center gap-2">
                                     <span>⚙️</span> Configuración del formulario
                                     {!canEditConfig(tier) && <span className="text-xs font-normal text-muted-foreground ml-2">PRO</span>}
                                 </h3>
@@ -482,7 +482,7 @@ export default function EditFormPage() {
                                         value={template.title}
                                         onChange={(e) => setTemplate({ ...template, title: e.target.value })}
                                         disabled={!canEditConfig(tier)}
-                                        className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring focus:border-transparent transition-all disabled:bg-muted disabled:cursor-not-allowed"
+                                        className="w-full px-4 py-2.5 bg-input border border-border rounded-xl text-sm text-foreground focus:ring-2 focus:ring-brand/50 focus:border-brand transition-all disabled:bg-muted disabled:cursor-not-allowed"
                                         placeholder="Nombre del formulario"
                                     />
                                 </div>
@@ -509,7 +509,7 @@ export default function EditFormPage() {
                                             value={template.risk_level}
                                             onChange={(e) => setTemplate({ ...template, risk_level: e.target.value })}
                                             disabled={!canEditConfig(tier)}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring disabled:bg-muted disabled:cursor-not-allowed"
+                                            className="w-full px-4 py-2.5 bg-input border border-border rounded-xl text-sm text-foreground focus:ring-2 focus:ring-brand/50 disabled:bg-muted disabled:cursor-not-allowed"
                                         >
                                             {RISK_LEVELS.map((level) => (
                                                 <option key={level} value={level}>{level}</option>
@@ -522,7 +522,7 @@ export default function EditFormPage() {
                                             value={template.therapy_type}
                                             onChange={(e) => setTemplate({ ...template, therapy_type: e.target.value })}
                                             disabled={!canEditConfig(tier)}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring disabled:bg-muted disabled:cursor-not-allowed"
+                                            className="w-full px-4 py-2.5 bg-input border border-border rounded-xl text-sm text-foreground focus:ring-2 focus:ring-brand/50 disabled:bg-muted disabled:cursor-not-allowed"
                                         >
                                             {THERAPY_TYPES.map((type) => (
                                                 <option key={type} value={type}>{type}</option>
@@ -535,7 +535,7 @@ export default function EditFormPage() {
                                             value={template.form_type}
                                             onChange={(e) => setTemplate({ ...template, form_type: e.target.value })}
                                             disabled={!canEditConfig(tier)}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring disabled:bg-muted disabled:cursor-not-allowed"
+                                            className="w-full px-4 py-2.5 bg-input border border-border rounded-xl text-sm text-foreground focus:ring-2 focus:ring-brand/50 disabled:bg-muted disabled:cursor-not-allowed"
                                         >
                                             {FORM_TYPES.map((type) => (
                                                 <option key={type} value={type}>{type}</option>
@@ -548,7 +548,7 @@ export default function EditFormPage() {
                                             value={template.target_entity}
                                             onChange={(e) => setTemplate({ ...template, target_entity: e.target.value })}
                                             disabled={!canEditConfig(tier)}
-                                            className="w-full px-4 py-2.5 border border-border rounded-xl text-sm text-foreground/70 focus:ring-2 focus:ring-ring disabled:bg-muted disabled:cursor-not-allowed"
+                                            className="w-full px-4 py-2.5 bg-input border border-border rounded-xl text-sm text-foreground focus:ring-2 focus:ring-brand/50 disabled:bg-muted disabled:cursor-not-allowed"
                                         >
                                             {TARGET_ENTITIES.map((entity) => (
                                                 <option key={entity.value} value={entity.value}>{entity.label}</option>
@@ -567,8 +567,8 @@ export default function EditFormPage() {
                         {/* Fields Section - CENTER only */}
                         <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden relative">
                             {!canEditFields(tier) && <LockOverlay requiredTier="CENTER" />}
-                            <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
-                                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                            <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+                                <h3 className="text-base font-semibold text-white flex items-center gap-2">
                                     <span>📝</span> Campos del formulario
                                     {!canEditFields(tier) && <span className="text-xs font-normal text-muted-foreground ml-2">CENTER</span>}
                                 </h3>
@@ -589,7 +589,7 @@ export default function EditFormPage() {
                                                         value={field.label}
                                                         onChange={(e) => updateField(index, { label: e.target.value })}
                                                         disabled={!canEditFields(tier)}
-                                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm disabled:bg-card disabled:cursor-not-allowed"
+                                                        className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground disabled:bg-card disabled:cursor-not-allowed"
                                                     />
                                                 </div>
                                                 <div>
@@ -598,7 +598,7 @@ export default function EditFormPage() {
                                                         value={field.type}
                                                         onChange={(e) => updateField(index, { type: e.target.value })}
                                                         disabled={!canEditFields(tier)}
-                                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm disabled:bg-card disabled:cursor-not-allowed"
+                                                        className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground disabled:bg-card disabled:cursor-not-allowed"
                                                     >
                                                         {FIELD_TYPES.map((ft) => (
                                                             <option key={ft.value} value={ft.value}>{ft.label}</option>
@@ -645,8 +645,8 @@ export default function EditFormPage() {
                 {/* Preview Mode */}
                 {activeTab === 'preview' && (
                     <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-                        <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4 border-b border-border">
-                            <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                        <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4">
+                            <h3 className="text-base font-semibold text-white flex items-center gap-2">
                                 <span>👁</span> Vista Previa
                             </h3>
                         </div>

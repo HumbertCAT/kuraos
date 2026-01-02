@@ -152,7 +152,7 @@
   --secondary-foreground: #FAFAFA;
   
   --muted: #27272A;            /* Zinc 800 */
-  --muted-foreground: #A1A1AA; /* Zinc 400 */
+  --muted-foreground: #D4D4D8; /* Zinc 300 - Boosted contrast */
   
   --accent: #27272A;
   --accent-foreground: #FAFAFA;
@@ -425,7 +425,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 .ProseMirror {
   outline: none;
   min-height: 100px;
-  color: #1e293b; /* slate-800 */
+  color: var(--foreground);
   font-size: 0.875rem;
   line-height: 1.625;
 }
@@ -433,7 +433,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 /* Placeholder styling */
 .ProseMirror p.is-empty::before {
   content: attr(data-placeholder);
-  color: #94a3b8; /* slate-400 */
+  color: var(--muted-foreground);
   float: left;
   height: 0;
   pointer-events: none;
@@ -443,7 +443,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 .ProseMirror h1 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a; /* slate-900 */
+  color: var(--foreground);
   margin-bottom: 0.75rem;
   margin-top: 1rem;
   line-height: 1.3;
@@ -452,7 +452,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 .ProseMirror h2 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #0f172a; /* slate-900 */
+  color: var(--foreground);
   margin-bottom: 0.5rem;
   margin-top: 0.75rem;
   line-height: 1.4;
@@ -461,7 +461,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 .ProseMirror h3 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1e293b; /* slate-800 */
+  color: var(--foreground);
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
   line-height: 1.4;
@@ -469,7 +469,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 
 /* Paragraphs */
 .ProseMirror p {
-  color: #1e293b; /* slate-800 */
+  color: var(--foreground);
   margin-bottom: 0.75rem;
   line-height: 1.7;
 }
@@ -477,7 +477,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 /* Bold and Italic */
 .ProseMirror strong {
   font-weight: 700;
-  color: #0f172a; /* slate-900 */
+  color: var(--foreground);
 }
 
 .ProseMirror em {
@@ -489,14 +489,14 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   list-style-type: disc;
   padding-left: 1.5rem;
   margin-bottom: 0.75rem;
-  color: #1e293b;
+  color: var(--foreground);
 }
 
 .ProseMirror ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
   margin-bottom: 0.75rem;
-  color: #1e293b;
+  color: var(--foreground);
 }
 
 .ProseMirror li {
@@ -509,17 +509,17 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 
 /* Blockquotes */
 .ProseMirror blockquote {
-  border-left: 3px solid #cbd5e1; /* slate-300 */
+  border-left: 3px solid var(--border);
   padding-left: 1rem;
   margin-left: 0;
   margin-bottom: 0.75rem;
   font-style: italic;
-  color: #64748b; /* slate-500 */
+  color: var(--muted-foreground);
 }
 
 /* Code */
 .ProseMirror code {
-  background-color: #f1f5f9; /* slate-100 */
+  background-color: var(--muted);
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
@@ -528,19 +528,20 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 
 /* Links */
 .ProseMirror a {
-  color: #3b82f6; /* blue-500 */
+  color: var(--brand);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .ProseMirror a:hover {
-  color: #1d4ed8; /* blue-700 */
+  color: var(--brand);
+  opacity: 0.8;
 }
 
 /* Text selection */
 .ProseMirror ::selection {
-  background-color: #bfdbfe; /* blue-200 */
-  color: #0f172a;
+  background-color: hsl(var(--brand) / 0.3);
+  color: var(--foreground);
 }
 
 /* Focus state */
@@ -550,6 +551,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 
 /* ================================================
    React Big Calendar Custom Styles
+   Uses semantic tokens for automatic dark mode support
    ================================================ */
 
 /* Container */
@@ -566,34 +568,35 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 }
 
 .rbc-toolbar button {
-  color: #475569; /* slate-600 */
-  border: 1px solid #e2e8f0; /* slate-200 */
+  color: var(--foreground);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   font-weight: 500;
   font-size: 0.875rem;
-  background: white;
+  background: var(--card);
   transition: all 0.15s ease;
 }
 
 .rbc-toolbar button:hover {
-  background: #f1f5f9; /* slate-100 */
-  border-color: #cbd5e1; /* slate-300 */
+  background: var(--muted);
+  border-color: var(--border);
 }
 
 .rbc-toolbar button.rbc-active {
-  background: #6366f1; /* indigo-500 */
-  color: white;
-  border-color: #6366f1;
+  background: var(--brand);
+  color: var(--background);
+  border-color: var(--brand);
 }
 
 .rbc-toolbar button.rbc-active:hover {
-  background: #4f46e5; /* indigo-600 */
+  background: var(--brand);
+  opacity: 0.9;
 }
 
 .rbc-toolbar-label {
   font-weight: 600;
-  color: #1e293b; /* slate-800 */
+  color: var(--foreground);
   font-size: 1.125rem;
 }
 
@@ -604,30 +607,30 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #64748b; /* slate-500 */
-  background: #f8fafc; /* slate-50 */
-  border-bottom: 1px solid #e2e8f0 !important;
+  color: var(--muted-foreground);
+  background: var(--background);
+  border-bottom: 1px solid var(--border) !important;
 }
 
 .rbc-header + .rbc-header {
-  border-left: 1px solid #e2e8f0 !important;
+  border-left: 1px solid var(--border) !important;
 }
 
 /* Day cells */
 .rbc-day-bg {
-  background: white;
+  background: var(--card);
 }
 
 .rbc-day-bg + .rbc-day-bg {
-  border-left: 1px solid #f1f5f9 !important; /* slate-100 */
+  border-left: 1px solid var(--border) !important;
 }
 
 .rbc-off-range-bg {
-  background: #fafafa;
+  background: var(--background);
 }
 
 .rbc-today {
-  background: #eef2ff !important; /* indigo-50 */
+  background: hsl(var(--brand) / 0.1) !important;
 }
 
 /* Date numbers */
@@ -635,44 +638,45 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   padding: 0.5rem;
   text-align: right;
   font-size: 0.875rem;
-  color: #475569; /* slate-600 */
+  color: var(--foreground);
 }
 
 .rbc-date-cell.rbc-now {
   font-weight: 700;
-  color: #6366f1; /* indigo-500 */
+  color: var(--brand);
 }
 
 .rbc-off-range {
-  color: #cbd5e1; /* slate-300 */
+  color: var(--muted-foreground);
 }
 
 /* Time view */
 .rbc-time-view {
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid var(--border) !important;
   border-radius: 0.75rem;
   overflow: hidden;
 }
 
 .rbc-time-header {
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .rbc-time-content {
   border-top: none;
+  background: var(--card);
 }
 
 .rbc-timeslot-group {
-  border-bottom: 1px solid #f1f5f9 !important;
+  border-bottom: 1px solid var(--border) !important;
 }
 
 .rbc-time-slot {
-  color: #94a3b8; /* slate-400 */
+  color: var(--muted-foreground);
   font-size: 0.75rem;
 }
 
 .rbc-current-time-indicator {
-  background-color: #ef4444; /* red-500 */
+  background-color: var(--risk);
   height: 2px;
 }
 
@@ -683,7 +687,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   top: -4px;
   width: 10px;
   height: 10px;
-  background: #ef4444;
+  background: var(--risk);
   border-radius: 50%;
 }
 
@@ -698,7 +702,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 }
 
 .rbc-event:focus {
-  outline: 2px solid #6366f1;
+  outline: 2px solid var(--brand);
   outline-offset: 1px;
 }
 
@@ -717,7 +721,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 }
 
 .rbc-show-more {
-  color: #6366f1;
+  color: var(--brand);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.25rem;
@@ -737,24 +741,24 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 .rbc-agenda-time-cell {
   padding: 0.75rem;
   font-size: 0.875rem;
-  color: #475569;
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border);
 }
 
 .rbc-agenda-event-cell {
   padding: 0.75rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 
 /* Month view border tweaks */
 .rbc-month-view {
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid var(--border) !important;
   border-radius: 0.75rem;
   overflow: hidden;
 }
 
 .rbc-month-row + .rbc-month-row {
-  border-top: 1px solid #f1f5f9 !important;
+  border-top: 1px solid var(--border) !important;
 }
 
 /* ================================================

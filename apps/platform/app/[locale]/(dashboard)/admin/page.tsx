@@ -452,7 +452,7 @@ export default function AdminPage() {
                             <p className="text-sm text-foreground/60">Manage system form templates</p>
                         </div>
                         <Link
-                            href={`/${locale}/admin/templates/new/edit`}
+                            href="/admin/templates/new/edit"
                             className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 flex items-center gap-2 text-sm"
                         >
                             + New Template
@@ -524,7 +524,7 @@ export default function AdminPage() {
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex justify-end gap-1">
                                                 <Link
-                                                    href={`/${locale}/admin/templates/${template.id}/edit`}
+                                                    href={`/admin/templates/${template.id}/edit`}
                                                     className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
                                                     title="Edit"
                                                 >

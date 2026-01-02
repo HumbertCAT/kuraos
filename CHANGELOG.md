@@ -14,11 +14,11 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.19] - 2026-01-02 🔮 THE ORACLE (Intelligent Focus)
+## [1.1.19] - 2026-01-02 🔮 THE ORACLE + 🎨 THE POLISH AUDIT
 
-> **Theme:** "The server thinks so you don't have to."
+> **Theme:** "The server thinks so you don't have to." + "Dark mode, finally done right."
 
-### 🧠 Dedicated Focus Endpoint
+### 🧠 Dedicated Focus Endpoint (The Oracle)
 - **New Endpoint:** `GET /api/v1/dashboard/focus` - Pre-computed next session data
 - **Patient Insight:** Real AletheIA insights from `Patient.last_insight_json`
 - **Efficient Query:** Single JOIN (Booking→Patient) instead of bulk fetch + filter
@@ -30,12 +30,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **FocusSessionCard:** Now displays real patient insights
 - **Empty State:** "Sin análisis previos" when patient has no insights
 
+### 🎨 The Polish Audit (Dark Mode Consistency)
+- **ProseMirror/TipTap:** All CSS variables for dark mode (foreground, muted-foreground, border, brand)
+- **RichTextEditor:** Semantic tokens throughout (bg-input, focus:ring-brand)
+- **Settings/General:** AI Preferences (brand), Admin Tools (warning), Save button (primary + shadow)
+- **Forms Editor:** Slate-800 gradient headers, bg-background page, bg-input fields
+- **Admin Templates:** Same treatment as user forms editor
+- **Layout:** Full-width containers matching settings/general pattern
+
 ### 🔧 Technical
 - New file: `backend/app/api/v1/dashboard.py` (170 lines)
 - Helper functions: `_format_time_ago()`, `_calculate_insight_type()`
 - Response schema: `FocusResponse` with `BookingSummary`, `PatientSummary`, `InsightData`
+- Fixed: Double-locale bug in admin template links
 
 ---
+
 
 ## [1.1.18] - 2026-01-02 🍄 THE MYCELIUM (Viral Growth Engine)
 

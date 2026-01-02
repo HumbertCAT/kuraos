@@ -260,7 +260,7 @@ export default function SettingsPage() {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all"
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground transition-all"
                     placeholder="Tu nombre"
                   />
                 </div>
@@ -292,7 +292,7 @@ export default function SettingsPage() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all"
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground transition-all"
                     placeholder="+34 600 000 000"
                   />
                 </div>
@@ -311,7 +311,7 @@ export default function SettingsPage() {
                     type="url"
                     value={website}
                     onChange={(e) => setWebsite(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all"
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground transition-all"
                     placeholder="https://tupaigina.com"
                   />
                 </div>
@@ -374,7 +374,7 @@ export default function SettingsPage() {
                   <select
                     value={locale}
                     onChange={(e) => setLocale(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all appearance-none bg-card cursor-pointer"
+                    className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground transition-all appearance-none cursor-pointer"
                   >
                     {LOCALE_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -411,12 +411,12 @@ export default function SettingsPage() {
 
         {/* AI Preferences Card */}
         <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4">
+          <div className="bg-gradient-to-r from-brand to-brand/80 px-6 py-4">
             <div className="flex items-center gap-3">
               <span className="text-2xl">🤖</span>
               <div>
-                <h2 className="text-lg font-semibold text-white">{t('aiPreferences') || 'Preferencias IA'}</h2>
-                <p className="text-emerald-200 text-sm">Personaliza como genera contenido la IA</p>
+                <h2 className="text-lg font-semibold text-black">{t('aiPreferences') || 'Preferencias IA'}</h2>
+                <p className="text-black/70 text-sm">Personaliza como genera contenido la IA</p>
               </div>
             </div>
           </div>
@@ -432,8 +432,8 @@ export default function SettingsPage() {
                     <label
                       key={opt.value}
                       className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${aiOutputPreference === opt.value
-                        ? 'border-emerald-500 bg-emerald-50'
-                        : 'border-border hover:border-border'
+                        ? 'border-brand bg-brand/10 dark:bg-brand/20'
+                        : 'border-border hover:border-brand/50'
                         }`}
                     >
                       <input
@@ -447,7 +447,7 @@ export default function SettingsPage() {
                       <span className="text-xl">{opt.icon}</span>
                       <span className="font-medium text-foreground">{opt.label}</span>
                       {aiOutputPreference === opt.value && (
-                        <span className="ml-auto text-emerald-600">✓</span>
+                        <span className="ml-auto text-brand">✓</span>
                       )}
                     </label>
                   ))}
@@ -538,28 +538,28 @@ export default function SettingsPage() {
 
         {/* Admin Tools (superuser only) */}
         {user?.is_superuser && (
-          <div className="bg-card rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
+          <div className="bg-card rounded-2xl border border-warning/30 shadow-sm overflow-hidden">
+            <div className="bg-gradient-to-r from-warning to-warning/80 px-6 py-4">
               <div className="flex items-center gap-3">
-                <Shield className="w-6 h-6 text-white" />
+                <Shield className="w-6 h-6 text-black" />
                 <div>
-                  <h2 className="text-lg font-semibold text-white">Admin Tools</h2>
-                  <p className="text-amber-100 text-sm">Herramientas de administración del sistema</p>
+                  <h2 className="text-lg font-semibold text-black">Admin Tools</h2>
+                  <p className="text-black/70 text-sm">Herramientas de administración del sistema</p>
                 </div>
               </div>
             </div>
 
             <div className="p-6 space-y-4">
               {/* Force Conversation Analysis */}
-              <div className="p-5 bg-amber-50 rounded-xl border border-amber-100">
+              <div className="p-5 bg-muted rounded-xl border border-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-card shadow-sm flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-amber-600" />
+                    <div className="w-12 h-12 rounded-xl bg-warning/20 shadow-sm flex items-center justify-center">
+                      <Zap className="w-6 h-6 text-warning" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">Forzar Análisis AletheIA</h3>
-                      <p className="text-sm text-foreground/60">
+                      <p className="text-sm text-muted-foreground">
                         Ejecuta el análisis de conversaciones WhatsApp inmediatamente para todas las fichas con mensajes nuevos.
                       </p>
                     </div>
@@ -585,7 +585,7 @@ export default function SettingsPage() {
                       }
                     }}
                     disabled={loading}
-                    className="px-5 py-2.5 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors flex items-center gap-2 font-medium disabled:opacity-50 shadow-sm"
+                    className="px-5 py-2.5 bg-warning text-black rounded-xl hover:bg-warning/90 transition-colors flex items-center gap-2 font-medium disabled:opacity-50 shadow-sm"
                   >
                     {loading ? (
                       <span className="animate-spin">⏳</span>
@@ -605,7 +605,7 @@ export default function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={loading}
-            className="px-8 py-4 bg-gradient-to-r from-slate-800 to-slate-700 text-white rounded-xl font-semibold hover:from-slate-700 hover:to-slate-600 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-slate-300 flex items-center gap-2"
+            className="px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-black/20 dark:shadow-black/40 flex items-center gap-2"
           >
             {loading ? (
               <>
@@ -621,6 +621,6 @@ export default function SettingsPage() {
           </button>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

@@ -366,8 +366,8 @@ export default function AutomationDetailPage() {
 
                     {/* The Circuit Board */}
                     <div className="relative pl-6">
-                        {/* Vertical connector line */}
-                        <div className="absolute left-[23px] top-6 bottom-6 w-0.5 border-l-2 border-dashed border-border"></div>
+                        {/* Vertical connector line - visible in dark mode */}
+                        <div className="absolute left-[23px] top-6 bottom-6 w-0.5 border-l-2 border-dashed border-white/20"></div>
 
                         {/* Trigger Node */}
                         <div className="relative flex items-start gap-4 mb-6">
