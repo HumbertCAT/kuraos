@@ -393,5 +393,10 @@
     "installed": "Activo",
     "protocol": "Protocolo",
     "skills": "Habilidades"
+  },
+  "Public": {
+    "securePayment": "Pago seguro procesado por Stripe.",
+    "poweredBy": "Powered by KURA OS",
+    "poweredByAriaLabel": "Visitar KURA OS - Sistema Operativo para Terapeutas"
   }
 }

@@ -389,5 +389,10 @@
     "subtitle": "Intelligent automation protocols",
     "myAutomations": "My Automations",
     "library": "Automation Library"
+  },
+  "Public": {
+    "securePayment": "Secure payment processed by Stripe.",
+    "poweredBy": "Powered by KURA OS",
+    "poweredByAriaLabel": "Visit KURA OS - Operating System for Therapists"
   }
 }

@@ -251,5 +251,10 @@
     "subtitle": "Attiva playbook che automatizzano promemoria, follow-up e comunicazioni con i tuoi pazienti.",
     "myAutomations": "Le Mie Automazioni",
     "library": "Libreria Automazioni"
+  },
+  "Public": {
+    "securePayment": "Pagamento sicuro elaborato da Stripe.",
+    "poweredBy": "Creato con KURA OS",
+    "poweredByAriaLabel": "Visita KURA OS - Sistema Operativo per Terapeuti"
   }
 }

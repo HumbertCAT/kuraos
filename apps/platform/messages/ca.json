@@ -252,5 +252,10 @@
     "subtitle": "Activa playbooks que automatitzen recordatoris, seguiments i comunicacions amb els teus pacients.",
     "myAutomations": "Les Meves Automatitzacions",
     "library": "Biblioteca d'Automatitzacions"
+  },
+  "Public": {
+    "securePayment": "Pagament segur processat per Stripe.",
+    "poweredBy": "Desenvolupat amb KURA OS",
+    "poweredByAriaLabel": "Visitar KURA OS - Sistema Operatiu per a Terapeutes"
   }
 }

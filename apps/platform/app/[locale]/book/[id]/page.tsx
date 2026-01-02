@@ -8,6 +8,7 @@
 
 import { useParams } from 'next/navigation';
 import { BookingWizard } from '@/components/booking';
+import { PoweredByKuraFooter } from '@/components/public/PoweredByKuraFooter';
 
 export default function PublicBookingPage() {
     const params = useParams();
@@ -33,21 +34,8 @@ export default function PublicBookingPage() {
                     locale={locale}
                 />
 
-                {/* Footer */}
-                <div className="mt-12 text-center text-xs text-muted-foreground">
-                    <p>
-                        Pago seguro procesado por Stripe.
-                        {' '}
-                        <a
-                            href="https://kuraos.ai"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-foreground transition-colors"
-                        >
-                            Powered by KURA OS
-                        </a>
-                    </p>
-                </div>
+                {/* The Viral Loop Footer */}
+                <PoweredByKuraFooter />
             </div>
         </div>
     );
