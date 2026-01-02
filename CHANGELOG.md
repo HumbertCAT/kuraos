@@ -14,7 +14,7 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.16] - 2026-01-02 🛡️ THE EFFICIENCY SWEEP (Part 1-2)
+## [1.1.16] - 2026-01-02 🛡️ THE EFFICIENCY SWEEP
 
 ### 🛡️ Part 1: The Shield (Security & Stability)
 - **API Centralization**: Replaced raw `fetch` calls in `bookings/page.tsx` and `leads/page.tsx` with centralized `api` client methods.
@@ -30,6 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `services/page.tsx` (standardized hover states to `hover:bg-muted`)
 - **Lucide Icons**: Standardized to `Pencil`, `Trash2`, `Eye`, `Download`, `RotateCcw`.
 - **Destructive Hover**: All delete buttons now use `hover:text-destructive hover:bg-destructive/10`.
+
+### ⚡ Part 3: The Wiring (Dashboard Data)
+- **PipelineVelocity**: Now displays real lead counts by status (NEW, CONTACTED, CLOSING) instead of hardcoded mock.
+- **ActiveJourneysWidget**: Displays patients with `journey_status` != INACTIVE, prioritizing BLOCKED and PAYMENT_PENDING.
+- **VitalSignCard (Occupancy)**: Shows calculated occupancy rate (confirmed sessions / 40 target) with real session count badge.
+- **i18n**: Added `vitalSigns.sessions` translation key.
 
 ### 🐛 Bugfixes
 - **Locale Duplication**: Fixed `/${locale}/...` in Links when using `@/i18n/navigation` (caused 404s in forms subpages).
