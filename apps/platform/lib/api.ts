@@ -13,6 +13,19 @@ interface ApiError {
   detail: string;
 }
 
+export interface ListMetadata {
+  total: number;
+  filtered: number;
+  page: number;
+  page_size: number;
+  extra: Record<string, any>;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: ListMetadata;
+}
+
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     // Auto-redirect to login on authentication failure
@@ -93,7 +106,7 @@ export const api = {
       const res = await fetch(`${API_URL}/patients/?${params}`, {
         credentials: 'include',
       });
-      return handleResponse<any>(res);
+      return handleResponse<PaginatedResponse<any>>(res);
     },
 
     create: async (data: any) => {
@@ -125,6 +138,58 @@ export const api = {
 
     delete: async (id: string) => {
       const res = await fetch(`${API_URL}/patients/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || 'Delete failed');
+      }
+    },
+  },
+  
+  services: {
+    list: async (page = 1, perPage = 100, activeOnly = false) => {
+      const params = new URLSearchParams({ 
+        page: String(page),
+        per_page: String(perPage),
+        active_only: String(activeOnly)
+      });
+      const res = await fetch(`${API_URL}/services/?${params}`, {
+        credentials: 'include',
+      });
+      return handleResponse<PaginatedResponse<any>>(res);
+    },
+    
+    get: async (id: string) => {
+      const res = await fetch(`${API_URL}/services/${id}`, {
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+
+    create: async (data: any) => {
+      const res = await fetch(`${API_URL}/services/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+
+    update: async (id: string, data: any) => {
+      const res = await fetch(`${API_URL}/services/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+
+    delete: async (id: string) => {
+      const res = await fetch(`${API_URL}/services/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -317,18 +382,28 @@ export const api = {
   },
 
   bookings: {
-    list: async (filters?: { service_id?: string; patient_id?: string; status?: string; start_date?: string; end_date?: string }) => {
+    list: async (filters?: { 
+      service_id?: string; 
+      patient_id?: string; 
+      status?: string; 
+      start_date?: string; 
+      end_date?: string;
+      page?: number;
+      per_page?: number;
+    }) => {
       const params = new URLSearchParams();
       if (filters?.service_id) params.append('service_id', filters.service_id);
       if (filters?.patient_id) params.append('patient_id', filters.patient_id);
       if (filters?.status) params.append('status', filters.status);
       if (filters?.start_date) params.append('start_date', filters.start_date);
       if (filters?.end_date) params.append('end_date', filters.end_date);
+      if (filters?.page) params.append('page', String(filters.page));
+      if (filters?.per_page) params.append('per_page', String(filters.per_page));
       
       const res = await fetch(`${API_URL}/booking/?${params}`, {
         credentials: 'include',
       });
-      return handleResponse<any[]>(res);
+      return handleResponse<PaginatedResponse<any>>(res);
     },
 
     updateStatus: async (bookingId: string, newStatus: string) => {
@@ -411,11 +486,15 @@ export const api = {
   },
 
   forms: {
-    listTemplates: async () => {
-      const res = await fetch(`${API_URL}/forms/templates`, {
+    listTemplates: async (page = 1, perPage = 20) => {
+      const params = new URLSearchParams({ 
+        page: String(page),
+        per_page: String(perPage)
+      });
+      const res = await fetch(`${API_URL}/forms/templates?${params}`, {
         credentials: 'include',
       });
-      return handleResponse<{ templates: any[] }>(res);
+      return handleResponse<PaginatedResponse<any>>(res);
     },
 
     createAssignment: async (data: { patient_id: string; template_id: string; valid_days?: number }) => {
@@ -473,7 +552,9 @@ export const api = {
   publicBooking: {
     listServices: async (therapistId: string) => {
       const res = await fetch(`${API_URL}/public/booking/services?therapist_id=${therapistId}`);
-      return handleResponse<any[]>(res);
+      // Note: Public endpoints might still return flat lists if not refactored yet,
+      // but let's assume Consistency for now if they are part of the target refactor.
+      return handleResponse<any[]>(res); 
     },
 
     listSlots: async (therapistId: string, serviceId: string, startDate: string, endDate: string) => {

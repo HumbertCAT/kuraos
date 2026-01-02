@@ -9,17 +9,19 @@ from sqlalchemy import select, func, or_
 from app.db.base import get_db
 from app.db.models import Patient
 from app.api.deps import CurrentUser
+from app.schemas.common import PaginatedResponse, ListMetadata
 from app.api.v1.patient_schemas import (
     PatientCreate,
     PatientUpdate,
     PatientResponse,
-    PatientListResponse,
 )
 
 router = APIRouter()
 
 
-@router.get("/", response_model=PatientListResponse, summary="List patients")
+@router.get(
+    "/", response_model=PaginatedResponse[PatientResponse], summary="List patients"
+)
 async def list_patients(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
@@ -60,12 +62,39 @@ async def list_patients(
         )
         query = query.where(status_condition)
 
-    # Get total count
-    count_query = select(func.count()).select_from(query.subquery())
-    total_result = await db.execute(count_query)
-    total = total_result.scalar() or 0
+    # Get absolute total count for organization (for the "Total" KPI in Header)
+    absolute_total_query = select(func.count()).where(
+        Patient.organization_id == current_user.organization_id
+    )
+    absolute_total_result = await db.execute(absolute_total_query)
+    total_count = absolute_total_result.scalar() or 0
 
-    # Apply pagination
+    # Get total count after search/filter (for pagination logic)
+    count_query = select(func.count()).select_from(query.subquery())
+    filtered_result = await db.execute(count_query)
+    filtered_count = filtered_result.scalar() or 0
+
+    # Calculate extra KPIs (Risk count and New this month)
+    # 1. Risk count (patients where last_insight_json -> risk_level is HIGH)
+    risk_count_query = select(func.count()).where(
+        Patient.organization_id == current_user.organization_id,
+        text("last_insight_json->>'risk_level' = 'high'"),
+    )
+    risk_count_result = await db.execute(risk_count_query)
+    risk_high_count = risk_count_result.scalar() or 0
+
+    # 2. New this month
+    from datetime import datetime, date
+
+    first_day_of_month = date.today().replace(day=1)
+    new_patients_query = select(func.count()).where(
+        Patient.organization_id == current_user.organization_id,
+        Patient.created_at >= first_day_of_month,
+    )
+    new_patients_result = await db.execute(new_patients_query)
+    new_this_month = new_patients_result.scalar() or 0
+
+    # Apply pagination and sorting to data query
     query = query.offset((page - 1) * per_page).limit(per_page)
     query = query.order_by(Patient.created_at.desc())
 
@@ -87,11 +116,18 @@ async def list_patients(
                 data["risk_reason"] = p.last_insight_json.get("summary", "")[:100]
         patient_responses.append(PatientResponse.model_validate(data))
 
-    return PatientListResponse(
-        patients=patient_responses,
-        total=total,
-        page=page,
-        per_page=per_page,
+    return PaginatedResponse(
+        data=patient_responses,
+        meta=ListMetadata(
+            total=total_count,
+            filtered=filtered_count,
+            page=page,
+            page_size=per_page,
+            extra={
+                "risk_high_count": risk_high_count,
+                "new_this_month_count": new_this_month,
+            },
+        ),
     )
 
 

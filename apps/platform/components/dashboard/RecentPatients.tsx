@@ -29,7 +29,7 @@ export function RecentPatients() {
                 if (recentIds.length > 0) {
                     // Fetch patient details for stored IDs
                     const result = await api.patients.list();
-                    const allPatients = result.patients || [];
+                    const allPatients = result.data || [];
 
                     // Filter and order by recent IDs
                     const recentPatients = recentIds
@@ -46,7 +46,7 @@ export function RecentPatients() {
 
                 // Fallback: get first 3 patients from API
                 const result = await api.patients.list();
-                const allPatients = result.patients || [];
+                const allPatients = result.data || [];
                 setPatients(allPatients.slice(0, 3));
             } catch (err) {
                 console.error('Failed to load recent patients:', err);

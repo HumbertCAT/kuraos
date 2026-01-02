@@ -5,13 +5,15 @@ import uuid
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from pydantic import BaseModel
 
 from app.db.base import get_db
-from app.db.models import FormTemplate, FormAssignment, Patient
+from app.db.models import FormTemplate, FormAssignment, Patient, RiskLevel
 from app.api.deps import CurrentUser
 from app.services.forms import clone_template, create_assignment
+from app.schemas.common import PaginatedResponse, ListMetadata
+from fastapi import Query
 
 
 router = APIRouter()
@@ -130,36 +132,69 @@ async def clone_system_template(
 # ============ Organization Templates ============
 
 
-@router.get("/templates", response_model=FormTemplateListResponse)
+@router.get("/templates", response_model=PaginatedResponse[FormTemplateResponse])
 async def list_org_templates(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=1, le=100),
 ):
     """List templates owned by the user's organization."""
-    result = await db.execute(
-        select(FormTemplate).where(
-            FormTemplate.organization_id == current_user.organization_id,
-            FormTemplate.is_active == True,
-        )
+    # Base query
+    query = select(FormTemplate).where(
+        FormTemplate.organization_id == current_user.organization_id,
+        FormTemplate.is_active == True,
     )
+
+    # Get absolute total count for organization
+    absolute_total_query = select(func.count()).where(
+        FormTemplate.organization_id == current_user.organization_id
+    )
+    total_count = (await db.execute(absolute_total_query)).scalar() or 0
+
+    # Get filtered count (in this case, active org templates)
+    count_query = select(func.count()).select_from(query.subquery())
+    filtered_count = (await db.execute(count_query)).scalar() or 0
+
+    # Calculate High Risk KPI
+    high_risk_query = select(func.count()).where(
+        FormTemplate.organization_id == current_user.organization_id,
+        FormTemplate.risk_level == RiskLevel.CRITICAL,
+    )
+    high_risk_count = (await db.execute(high_risk_query)).scalar() or 0
+
+    # Apply pagination and sorting
+    query = query.offset((page - 1) * per_page).limit(per_page)
+    query = query.order_by(FormTemplate.title.asc())
+
+    result = await db.execute(query)
     templates = result.scalars().all()
 
-    return FormTemplateListResponse(
-        templates=[
-            FormTemplateResponse(
-                id=t.id,
-                organization_id=t.organization_id,
-                title=t.title,
-                description=t.description,
-                risk_level=t.risk_level.value,
-                therapy_type=t.therapy_type.value,
-                form_type=t.form_type.value,
-                is_system=t.is_system,
-                is_active=t.is_active,
-                public_token=t.public_token,
-            )
-            for t in templates
-        ]
+    data = [
+        FormTemplateResponse(
+            id=t.id,
+            organization_id=t.organization_id,
+            title=t.title,
+            description=t.description,
+            risk_level=t.risk_level.value,
+            therapy_type=t.therapy_type.value,
+            form_type=t.form_type.value,
+            is_system=t.is_system,
+            is_active=t.is_active,
+            public_token=t.public_token,
+        )
+        for t in templates
+    ]
+
+    return PaginatedResponse(
+        data=data,
+        meta=ListMetadata(
+            total=total_count,
+            filtered=filtered_count,
+            page=page,
+            page_size=per_page,
+            extra={"high_risk_count": high_risk_count},
+        ),
     )
 
 

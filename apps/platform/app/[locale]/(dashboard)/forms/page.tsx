@@ -8,8 +8,9 @@ import { FormCardSkeleton } from '@/components/ui/Skeleton';
 import EmptyState, { FormsEmptyIcon } from '@/components/ui/EmptyState';
 import { FileText, Plus, Link2, BarChart3, Settings, QrCode, Search, Copy, Check, MoreVertical, Trash2 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
+import PaginationToolbar from '@/components/ui/pagination-toolbar';
 
-import { API_URL } from '@/lib/api';
+import { api, API_URL, ListMetadata } from '@/lib/api';
 
 interface FormTemplate {
     id: string;
@@ -45,8 +46,10 @@ export default function FormsPage() {
 
     const [activeTab, setActiveTab] = useState<'my-forms' | 'library'>('my-forms');
     const [myForms, setMyForms] = useState<FormTemplate[]>([]);
+    const [meta, setMeta] = useState<ListMetadata | null>(null);
     const [systemTemplates, setSystemTemplates] = useState<FormTemplate[]>([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
     const [cloning, setCloning] = useState<string | null>(null);
     const [copied, setCopied] = useState<string | null>(null);
     const [qrModal, setQrModal] = useState<{ title: string; url: string } | null>(null);
@@ -60,15 +63,14 @@ export default function FormsPage() {
     async function loadForms() {
         setLoading(true);
         try {
-            const [myRes, sysRes] = await Promise.all([
-                fetch(`${API_URL}/forms/templates`, { credentials: 'include' }),
+            const [myFormsResp, sysRes] = await Promise.all([
+                api.forms.listTemplates(page, 20),
                 fetch(`${API_URL}/forms/templates/system`, { credentials: 'include' }),
             ]);
 
-            if (myRes.ok) {
-                const data = await myRes.json();
-                setMyForms(data.templates || []);
-            }
+            setMyForms(myFormsResp.data);
+            setMeta(myFormsResp.meta);
+
             if (sysRes.ok) {
                 const data = await sysRes.json();
                 setSystemTemplates(data.templates || []);
@@ -79,6 +81,10 @@ export default function FormsPage() {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        loadForms();
+    }, [page]);
 
     async function handleClone(templateId: string) {
         setCloning(templateId);
@@ -136,219 +142,228 @@ export default function FormsPage() {
 
     return (
         <div className="space-y-6">
+            {/* Page Header with Metrics */}
             <PageHeader
                 icon={FileText}
                 kicker="PRACTICE"
                 title={t('title')}
-                subtitle={t('subtitle')}
+                subtitle={
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <span className="text-muted-foreground">{t('subtitle')}</span>
+                        <div className="flex items-center gap-1.5 ml-1">
+                            <span className="badge badge-muted py-0.5 h-auto text-[10px] font-bold uppercase tracking-wider">
+                                Total: {meta?.total || 0}
+                            </span>
+                            <span className="badge badge-risk py-0.5 h-auto text-[10px] font-bold uppercase tracking-wider">
+                                Alto Riesgo: {meta?.extra?.high_risk_count || 0}
+                            </span>
+                        </div>
+                    </div>
+                }
             />
 
-            {/* Tabs */}
-            <div className="flex gap-1 mb-6 bg-muted p-1 rounded-lg w-fit">
-                <button
-                    onClick={() => setActiveTab('my-forms')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'my-forms'
-                        ? 'bg-card text-foreground  shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                >
-                    {t('myForms')} ({myForms.length})
-                </button>
-                <button
-                    onClick={() => setActiveTab('library')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'library'
-                        ? 'bg-card text-foreground  shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                >
-                    {t('templateLibrary')} ({systemTemplates.length})
-                </button>
-            </div>
 
-            {/* Tab Content */}
-            {activeTab === 'my-forms' && (
-                <div>
-                    {myForms.length === 0 ? (
-                        <EmptyState
-                            icon={<FormsEmptyIcon />}
-                            title={t('noForms')}
-                            description={t('noFormsDescription')}
-                            action={
-                                <button
-                                    onClick={() => setActiveTab('library')}
-                                    className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                                >
-                                    {t('browseLibrary')} →
-                                </button>
-                            }
-                        />
-                    ) : (
-                        <div className="card overflow-hidden">
-                            <table className="w-full">
-                                <thead className="bg-muted/50">
-                                    <tr className="border-b border-border">
-                                        <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">{t('title')}</th>
-                                        <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">TIPO</th>
-                                        <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">RIESGO</th>
-                                        <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider uppercase">ACCIONES</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y-0">
-                                    {myForms.map((form) => (
-                                        <tr key={form.id} className="border-b border-border hover:bg-muted/40 transition-colors group">
-                                            {/* Form Info */}
-                                            <td className="px-4 py-3">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center text-xl">
-                                                        {THERAPY_ICONS[form.therapy_type] || '📋'}
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        <p className="type-ui font-medium text-foreground truncate">{form.title}</p>
-                                                        <p className="text-xs text-muted-foreground truncate max-w-[200px]">
-                                                            {form.description || 'Sin descripción'}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            {/* Type */}
-                                            <td className="px-4 py-3 hidden md:table-cell">
-                                                <span className="type-ui text-xs text-muted-foreground font-mono uppercase">
-                                                    {form.therapy_type}
-                                                </span>
-                                            </td>
-                                            {/* Risk Level */}
-                                            <td className="px-4 py-3">
-                                                <span className={RISK_BADGES[form.risk_level] || 'badge badge-secondary'}>
-                                                    {form.risk_level}
-                                                </span>
-                                            </td>
-                                            {/* Actions */}
-                                            <td className="px-4 py-3">
-                                                <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                                                    {form.public_token && (
-                                                        <button
-                                                            onClick={() => copyPublicLink(form.public_token!)}
-                                                            className="btn btn-sm btn-ghost p-2 text-muted-foreground hover:text-brand"
-                                                            title={copied === form.public_token ? 'Copiado' : 'Copiar Link'}
-                                                        >
-                                                            {copied === form.public_token ? <Check className="w-4 h-4 text-brand" /> : <Link2 className="w-4 h-4" />}
-                                                        </button>
-                                                    )}
-                                                    <Link
-                                                        href={`/${locale}/forms/${form.id}/edit`}
-                                                        className="btn btn-sm btn-ghost p-2 text-muted-foreground hover:text-foreground"
-                                                        title="Editar Formulario"
-                                                    >
-                                                        <Settings className="w-4 h-4" />
-                                                    </Link>
-                                                    <div className="relative inline-block">
-                                                        <button
-                                                            onClick={() => setOpenMenu(openMenu === form.id ? null : form.id)}
-                                                            className="btn btn-sm btn-ghost p-2"
-                                                        >
-                                                            <MoreVertical className="w-4 h-4 text-muted-foreground" />
-                                                        </button>
-                                                        {openMenu === form.id && (
-                                                            <div className="absolute right-0 mt-1 w-48 bg-card border rounded-xl shadow-lg z-10 overflow-hidden text-left">
-                                                                <button
-                                                                    onClick={() => {
-                                                                        showQRCode(form);
-                                                                        setOpenMenu(null);
-                                                                    }}
-                                                                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-muted transition-colors"
-                                                                >
-                                                                    <QrCode className="w-4 h-4" /> Ver Código QR
-                                                                </button>
-                                                                <Link
-                                                                    href={`/${locale}/forms/${form.id}/submissions`}
-                                                                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-muted transition-colors"
-                                                                    onClick={() => setOpenMenu(null)}
-                                                                >
-                                                                    <BarChart3 className="w-4 h-4" /> Ver Estadísticas
-                                                                </Link>
-                                                                <button
-                                                                    onClick={() => {
-                                                                        // handleDelete(form.id);
-                                                                        setOpenMenu(null);
-                                                                    }}
-                                                                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-border/50 transition-colors"
-                                                                >
-                                                                    <Trash2 className="w-4 h-4" /> Eliminar
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+            {/* Control Deck Toolbar & Unified Card */}
+            <div className="card overflow-hidden mt-6 shadow-sm">
+                {/* Control Deck Toolbar */}
+                <div className="border-b border-border bg-muted/20 p-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+                    {/* Segmented Control Tabs */}
+                    <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
+                        <button
+                            onClick={() => setActiveTab('my-forms')}
+                            className={`px-4 py-1.5 rounded-md font-medium transition-all ${activeTab === 'my-forms'
+                                ? 'bg-background text-foreground shadow-sm'
+                                : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                        >
+                            {t('myForms')} ({myForms.length})
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('library')}
+                            className={`px-4 py-1.5 rounded-md font-medium transition-all ${activeTab === 'library'
+                                ? 'bg-background text-foreground shadow-sm'
+                                : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                        >
+                            {t('templateLibrary')} ({systemTemplates.length})
+                        </button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <p className="font-mono text-muted-foreground uppercase tracking-wider">
+                            {activeTab === 'my-forms' ? 'Explorando Colección Privada' : 'Explorando Biblioteca Pública'}
+                        </p>
+                    </div>
                 </div>
-            )}
 
-            {activeTab === 'library' && (
-                <div>
-                    {systemTemplates.length === 0 ? (
-                        <div className="text-center py-16 bg-card rounded-xl shadow-sm">
+                {/* Tab Content */}
+                {activeTab === 'my-forms' ? (
+                    myForms.length === 0 ? (
+                        <div className="p-12 text-center">
+                            <FormsEmptyIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4 opacity-20" />
+                            <h3 className="text-lg font-semibold text-foreground">{t('noForms')}</h3>
+                            <p className="text-muted-foreground mb-6">{t('noFormsDescription')}</p>
+                            <button
+                                onClick={() => setActiveTab('library')}
+                                className="inline-flex items-center px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand/90 transition-all font-medium active:scale-95"
+                            >
+                                {t('browseLibrary')} →
+                            </button>
+                        </div>
+                    ) : (
+                        <table className="w-full">
+                            <thead className="bg-muted/50">
+                                <tr className="border-b border-border">
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">{t('title')}</th>
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">TIPO</th>
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">RIESGO</th>
+                                    <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider uppercase">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y-0">
+                                {myForms.map((form) => (
+                                    <tr key={form.id} className="border-b border-border hover:bg-muted/40 transition-colors group">
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center text-xl">
+                                                    {THERAPY_ICONS[form.therapy_type] || '📋'}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="type-ui font-medium text-foreground truncate">{form.title}</p>
+                                                    <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+                                                        {form.description || 'Sin descripción'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 hidden md:table-cell">
+                                            <span className="type-ui text-xs text-muted-foreground font-mono uppercase">
+                                                {form.therapy_type}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className={RISK_BADGES[form.risk_level] || 'badge badge-secondary'}>
+                                                {form.risk_level}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                                                {form.public_token && (
+                                                    <button
+                                                        onClick={() => copyPublicLink(form.public_token!)}
+                                                        className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all group"
+                                                        title={copied === form.public_token ? 'Copiado' : 'Copiar Link'}
+                                                    >
+                                                        {copied === form.public_token ? <Check className="w-4 h-4 text-brand" /> : <Link2 className="w-4 h-4" />}
+                                                    </button>
+                                                )}
+                                                <Link
+                                                    href={`/${locale}/forms/${form.id}/edit`}
+                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all"
+                                                    title="Configuración"
+                                                >
+                                                    <Settings className="w-4 h-4" />
+                                                </Link>
+                                                <div className="relative inline-block">
+                                                    <button
+                                                        onClick={() => setOpenMenu(openMenu === form.id ? null : form.id)}
+                                                        className="p-2 hover:bg-white/5 rounded-lg transition-colors group"
+                                                    >
+                                                        <MoreVertical className="w-4 h-4 text-muted-foreground group-hover:text-brand" />
+                                                    </button>
+                                                    {openMenu === form.id && (
+                                                        <div className="absolute right-0 mt-1 w-48 bg-card border rounded-xl shadow-lg z-10 overflow-hidden text-left">
+                                                            <button
+                                                                onClick={() => {
+                                                                    showQRCode(form);
+                                                                    setOpenMenu(null);
+                                                                }}
+                                                                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-muted transition-colors"
+                                                            >
+                                                                <QrCode className="w-4 h-4" /> Ver Código QR
+                                                            </button>
+                                                            <Link
+                                                                href={`/${locale}/forms/${form.id}/submissions`}
+                                                                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground/70 hover:bg-muted transition-colors"
+                                                                onClick={() => setOpenMenu(null)}
+                                                            >
+                                                                <BarChart3 className="w-4 h-4" /> Ver Estadísticas
+                                                            </Link>
+                                                            <button
+                                                                onClick={() => {
+                                                                    setOpenMenu(null);
+                                                                }}
+                                                                className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-border/50 transition-colors"
+                                                            >
+                                                                <Trash2 className="w-4 h-4" /> Eliminar
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )
+                ) : (
+                    systemTemplates.length === 0 ? (
+                        <div className="p-12 text-center">
                             <p className="text-foreground/60">No hay plantillas del sistema disponibles</p>
                         </div>
                     ) : (
-                        <div className="card overflow-hidden">
-                            <table className="w-full">
-                                <thead className="bg-muted/50">
-                                    <tr className="border-b border-border">
-                                        <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">PLANTILLA</th>
-                                        <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">TIPO</th>
-                                        <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">RIESGO</th>
-                                        <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider uppercase">ACCIONES</th>
+                        <table className="w-full">
+                            <thead className="bg-muted/50">
+                                <tr className="border-b border-border">
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">PLANTILLA</th>
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">TIPO</th>
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">RIESGO</th>
+                                    <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider uppercase">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y-0">
+                                {systemTemplates.map((template) => (
+                                    <tr key={template.id} className="border-b border-border hover:bg-muted/40 transition-colors group">
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center text-xl">
+                                                    {THERAPY_ICONS[template.therapy_type] || '📋'}
+                                                </div>
+                                                <div>
+                                                    <p className="type-ui font-medium text-foreground">{template.title}</p>
+                                                    <p className="text-xs text-muted-foreground line-clamp-1">{template.description || 'Plantilla del sistema'}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 hidden md:table-cell">
+                                            <span className="type-ui text-xs text-muted-foreground font-mono uppercase">
+                                                {template.form_type}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className={RISK_BADGES[template.risk_level] || 'badge badge-secondary'}>
+                                                {template.risk_level}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex justify-end">
+                                                <button
+                                                    onClick={() => handleClone(template.id)}
+                                                    disabled={cloning === template.id}
+                                                    className="btn btn-sm btn-primary py-1 px-4 h-9 active:scale-95 transition-all text-sm font-medium"
+                                                >
+                                                    {cloning === template.id ? 'Añadiendo...' : '+ Añadir'}
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody className="divide-y-0">
-                                    {systemTemplates.map((template) => (
-                                        <tr key={template.id} className="border-b border-border hover:bg-muted/40 transition-colors group">
-                                            <td className="px-4 py-3">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center text-xl">
-                                                        {THERAPY_ICONS[template.therapy_type] || '📋'}
-                                                    </div>
-                                                    <div>
-                                                        <p className="type-ui font-medium text-foreground">{template.title}</p>
-                                                        <p className="text-xs text-muted-foreground line-clamp-1">{template.description || 'Plantilla del sistema'}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-3 hidden md:table-cell">
-                                                <span className="type-ui text-xs text-muted-foreground font-mono uppercase">
-                                                    {template.form_type}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span className={RISK_BADGES[template.risk_level] || 'badge badge-secondary'}>
-                                                    {template.risk_level}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <div className="flex justify-end">
-                                                    <button
-                                                        onClick={() => handleClone(template.id)}
-                                                        disabled={cloning === template.id}
-                                                        className="btn btn-sm btn-primary py-1 px-4 h-9 active:scale-95 transition-all text-sm font-medium"
-                                                    >
-                                                        {cloning === template.id ? 'Añadiendo...' : '+ Añadir'}
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-            )}
+                                ))}
+                            </tbody>
+                        </table>
+                    )
+                )}
+            </div>
 
             {/* QR Code Modal */}
             {qrModal && (
@@ -390,6 +405,16 @@ export default function FormsPage() {
                             {copied === 'qr' ? '✓ Copied!' : 'Copy Link'}
                         </button>
                     </div>
+                </div>
+            )}
+
+            {/* Pagination */}
+            {activeTab === 'my-forms' && meta && meta.filtered > 0 && (
+                <div className="mt-8">
+                    <PaginationToolbar
+                        meta={meta}
+                        onPageChange={(p) => setPage(p)}
+                    />
                 </div>
             )}
         </div>

@@ -103,8 +103,8 @@ export default function PatientDetailPage() {
       ]);
       setPatient(patientData);
       setEntries(entriesData.entries);
-      setAllPatientIds(patientsData.patients.map((p: Patient) => p.id));
-      setPatientBookings(bookingsData || []);
+      setAllPatientIds((patientsData.data || []).map((p: Patient) => p.id));
+      setPatientBookings(bookingsData.data || []);
     } catch (error) {
       console.error('Failed to load patient data', error);
     } finally {

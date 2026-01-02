@@ -104,12 +104,3 @@ class PatientResponse(BaseModel):
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
-
-
-class PatientListResponse(BaseModel):
-    """Schema for paginated patient list."""
-
-    patients: list[PatientResponse]
-    total: int
-    page: int
-    per_page: int

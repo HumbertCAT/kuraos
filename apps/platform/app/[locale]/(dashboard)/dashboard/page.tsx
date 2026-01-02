@@ -69,12 +69,12 @@ export default function DashboardPage() {
                     fetch(`${API_URL}/leads/?limit=100`, { credentials: 'include' }).then(r => r.ok ? r.json() : { leads: [] }),
                 ]);
 
-                const patientsRes = patientsResult.status === 'fulfilled' ? patientsResult.value : { patients: [], total: 0 };
-                const bookingsRes = bookingsResult.status === 'fulfilled' ? bookingsResult.value : [];
+                const patientsRes = patientsResult.status === 'fulfilled' ? patientsResult.value : { data: [], meta: { total: 0 } } as any;
+                const bookingsRes = bookingsResult.status === 'fulfilled' ? bookingsResult.value : { data: [] };
                 const leadsRes = leadsResult.status === 'fulfilled' ? leadsResult.value : { leads: [] };
 
-                const totalPatients = patientsRes.total || (patientsRes.patients || []).length;
-                const bookings = (bookingsRes || []) as BookingSummary[];
+                const totalPatients = patientsRes.meta?.total || (patientsRes.data || []).length;
+                const bookings = (bookingsRes.data || []) as BookingSummary[];
 
                 // Calculate revenue
                 const confirmedBookings = bookings.filter(b => b.status === 'CONFIRMED' || b.status === 'COMPLETED');

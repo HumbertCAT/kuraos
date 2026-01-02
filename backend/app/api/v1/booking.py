@@ -6,11 +6,12 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from app.db.base import get_db
 from app.db.models import Booking, BookingStatus, Patient, ServiceType
 from app.api.deps import CurrentUser
+from app.schemas.common import PaginatedResponse, ListMetadata
 
 router = APIRouter()
 
@@ -42,12 +43,14 @@ class BookingListResponse(BaseModel):
 
 @router.get(
     "/",
-    response_model=list[BookingListResponse],
+    response_model=PaginatedResponse[BookingListResponse],
     summary="List bookings",
 )
 async def list_bookings(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=1, le=100),
     service_id: Optional[uuid.UUID] = Query(None, description="Filter by service"),
     patient_id: Optional[uuid.UUID] = Query(None, description="Filter by patient"),
     status_filter: Optional[str] = Query(
@@ -101,13 +104,39 @@ async def list_bookings(
         end_dt = datetime.combine(end_date, datetime.max.time())
         query = query.where(Booking.start_time <= end_dt)
 
-    # Order by most recent first
+    # Get absolute total count for therapist
+    absolute_total_query = select(func.count(Booking.id)).where(
+        Booking.therapist_id == current_user.id
+    )
+    absolute_total_result = await db.execute(absolute_total_query)
+    total_count = int(absolute_total_result.scalar() or 0)
+
+    # Get total count after filtering
+    count_query = select(func.count(Booking.id)).select_from(query.subquery())
+    filtered_result = await db.execute(count_query)
+    filtered_count = int(filtered_result.scalar() or 0)
+
+    # Calculate extra KPIs (e.g. Total Revenue from confirmed bookings)
+    revenue_query = (
+        select(func.sum(ServiceType.price))
+        .select_from(Booking)
+        .join(ServiceType, Booking.service_type_id == ServiceType.id)
+        .where(
+            Booking.therapist_id == current_user.id,
+            Booking.status == BookingStatus.CONFIRMED,
+        )
+    )
+    revenue_result = await db.execute(revenue_query)
+    total_confirmed_revenue = float(revenue_result.scalar() or 0.0)
+
+    # Apply pagination and sorting
     query = query.order_by(Booking.start_time.desc())
+    query = query.offset((page - 1) * per_page).limit(per_page)
 
     result = await db.execute(query)
     rows = result.all()
 
-    return [
+    data = [
         BookingListResponse(
             id=row.Booking.id,
             patient_id=row.Booking.patient_id,
@@ -124,6 +153,19 @@ async def list_bookings(
         )
         for row in rows
     ]
+
+    return PaginatedResponse(
+        data=data,
+        meta=ListMetadata(
+            total=total_count,
+            filtered=filtered_count,
+            page=page,
+            page_size=per_page,
+            extra={
+                "total_confirmed_revenue": total_confirmed_revenue,
+            },
+        ),
+    )
 
 
 @router.patch(

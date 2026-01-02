@@ -5,8 +5,8 @@ import { useParams } from 'next/navigation';
 import { Plus, Edit, Trash2, Clock, Users, Euro, FileText, CalendarPlus, List, X, Package } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import PageHeader from '@/components/PageHeader';
-
-import { API_URL } from '@/lib/api';
+import { api, API_URL, ListMetadata } from '@/lib/api';
+import PaginationToolbar from '@/components/ui/pagination-toolbar';
 
 interface ServiceType {
     id: string;
@@ -41,11 +41,13 @@ export default function ServicesPage() {
     const { user: currentUser } = useAuth();
 
     const [services, setServices] = useState<ServiceType[]>([]);
+    const [meta, setMeta] = useState<ListMetadata | null>(null);
     const [forms, setForms] = useState<FormTemplate[]>([]);
     const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [googleConnected, setGoogleConnected] = useState(false);
     const [googleCalendars, setGoogleCalendars] = useState<{ id: string; name: string; primary: boolean }[]>([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [editingService, setEditingService] = useState<ServiceType | null>(null);
     const [saving, setSaving] = useState(false);
@@ -79,23 +81,18 @@ export default function ServicesPage() {
     async function loadData() {
         setLoading(true);
         try {
-            const [servicesRes, formsRes, schedulesRes] = await Promise.all([
-                fetch(`${API_URL}/services/?active_only=false`, { credentials: 'include' }),
-                fetch(`${API_URL}/forms/templates`, { credentials: 'include' }),
+            const [resp, formsResp, schedulesRes] = await Promise.all([
+                api.services.list(page, 100, false),
+                api.forms.listTemplates(1, 100),
                 fetch(`${API_URL}/schedules/`, { credentials: 'include' }),
             ]);
 
-            if (servicesRes.ok) {
-                const data = await servicesRes.json();
-                setServices(data.services || []);
-            }
-            if (formsRes.ok) {
-                const data = await formsRes.json();
-                setForms(data.templates || []);
-            }
+            setServices(resp.data);
+            setMeta(resp.meta);
+            setForms(formsResp.data || []);
             if (schedulesRes.ok) {
-                const data = await schedulesRes.json();
-                setSchedules(data);
+                const schedulesData = await schedulesRes.json();
+                setSchedules(schedulesData);
             }
 
             // Load Google Calendar data
@@ -123,6 +120,16 @@ export default function ServicesPage() {
         }
     }
 
+    useEffect(() => {
+        loadData();
+    }, [page]);
+
+
+    const metrics = {
+        total: services.length,
+        active: services.filter(s => s.is_active).length,
+        oneOnOne: services.filter(s => s.kind === 'ONE_ON_ONE').length,
+    };
 
     function openCreateModal() {
         setEditingService(null);
@@ -339,7 +346,22 @@ export default function ServicesPage() {
                     icon={Package}
                     kicker="PRACTICE"
                     title={t.title}
-                    subtitle={t.subtitle}
+                    subtitle={
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                            <span className="text-muted-foreground">Define tus sesiones y programas. Sincroniza con tu calendario y habilita reservas automáticas.</span>
+                            <div className="flex items-center gap-1.5 ml-1">
+                                <span className="badge badge-muted py-0.5 h-auto text-[10px] font-bold uppercase tracking-wider">
+                                    Total: {meta?.total || 0}
+                                </span>
+                                <span className="badge badge-success py-0.5 h-auto text-[10px] font-bold uppercase tracking-wider">
+                                    Activos: {services.filter(s => s.is_active).length}
+                                </span>
+                                <span className="badge badge-brand py-0.5 h-auto text-[10px] font-bold uppercase tracking-wider">
+                                    Ticket Medio: {meta?.extra?.avg_ticket || 0}€
+                                </span>
+                            </div>
+                        </div>
+                    }
                     action={{
                         label: t.addService,
                         onClick: openCreateModal,
@@ -356,6 +378,23 @@ export default function ServicesPage() {
                     </div>
                 ) : (
                     <div className="card overflow-hidden mt-6 shadow-sm">
+                        {/* Control Deck Toolbar */}
+                        <div className="border-b border-border bg-muted/20 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <div className="relative w-full sm:w-64">
+                                <List className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    placeholder={t.searchPlaceholder}
+                                    className="w-full pl-9 pr-4 py-1.5 bg-background border border-border rounded-lg text-xs focus:ring-2 focus:ring-brand/50 outline-none transition-all"
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
+                                    Catálogo de {services.length} servicios
+                                </p>
+                            </div>
+                        </div>
                         <table className="w-full">
                             <thead className="bg-muted/50 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                                 <tr className="border-b border-border">
@@ -408,28 +447,28 @@ export default function ServicesPage() {
                                                 <a
                                                     href={`/${locale}/book/${currentUser?.id}`}
                                                     target="_blank"
-                                                    className="btn btn-sm btn-ghost p-2"
+                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all"
                                                     title="Preview booking"
                                                 >
                                                     <CalendarPlus size={16} />
                                                 </a>
                                                 <button
                                                     onClick={() => openBookingsModal(service)}
-                                                    className="btn btn-sm btn-ghost p-2 text-amber-500"
+                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-amber-500 transition-all"
                                                     title="View bookings"
                                                 >
                                                     <List size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => openEditModal(service)}
-                                                    className="btn btn-sm btn-ghost p-2 text-brand"
+                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all"
                                                     title="Edit"
                                                 >
                                                     <Edit size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(service.id)}
-                                                    className="btn btn-sm btn-ghost p-2 text-risk"
+                                                    className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-risk transition-all"
                                                     title="Delete"
                                                 >
                                                     <Trash2 size={16} />
@@ -736,6 +775,15 @@ export default function ServicesPage() {
                     )
                 }
             </div >
+            {/* Pagination */}
+            {meta && meta.filtered > 0 && (
+                <div className="mt-4 border-t bg-card rounded-b-xl overflow-hidden">
+                    <PaginationToolbar
+                        meta={meta}
+                        onPageChange={(p) => setPage(p)}
+                    />
+                </div>
+            )}
         </div >
     );
 }

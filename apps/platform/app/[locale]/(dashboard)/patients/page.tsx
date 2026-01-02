@@ -1,14 +1,15 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
-import { api } from '@/lib/api';
-import { Patient, PatientListResponse } from '@/types/auth';
+import { api, ListMetadata } from '@/lib/api';
+import { Patient } from '@/types/auth';
 import EmptyState, { PatientsEmptyIcon } from '@/components/ui/EmptyState';
 import { Users, Search, MessageCircle, ChevronRight, UserPlus } from 'lucide-react';
 import { useTerminology } from '@/hooks/use-terminology';
 import PageHeader from '@/components/PageHeader';
+import PaginationToolbar from '@/components/ui/pagination-toolbar';
 
 /**
  * The Clinical Roster - v1.0.9
@@ -127,31 +128,38 @@ export default function PatientsPage() {
   const pathname = usePathname();
   const router = useRouter();
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [total, setTotal] = useState(0);
+  const [meta, setMeta] = useState<ListMetadata | null>(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  const loadPatients = useCallback(async (searchTerm = '', status = '') => {
+  const metrics = useMemo(() => {
+    return {
+      total: meta?.total || 0,
+      risk: meta?.extra?.risk_high_count || 0,
+      new: meta?.extra?.new_this_month_count || 0
+    };
+  }, [meta]);
+
+  const loadPatients = useCallback(async (searchTerm = search, status = statusFilter, p = page) => {
     setLoading(true);
     try {
-      const data: PatientListResponse = await api.patients.list(1, searchTerm, status);
-      setPatients(data.patients);
-      setTotal(data.total);
+      const resp = await api.patients.list(p, searchTerm, status);
+      setPatients(resp.data);
+      setMeta(resp.meta);
     } catch (error) {
       console.error('Failed to load patients', error);
       setPatients([]);
-      setTotal(0);
+      setMeta(null);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [search, statusFilter, page]);
 
   useEffect(() => {
-    loadPatients('', '');
-    setSearch('');
-    setStatusFilter('');
-  }, [pathname, loadPatients]);
+    loadPatients();
+  }, [loadPatients]);
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -192,50 +200,23 @@ export default function PatientsPage() {
         icon={Users}
         kicker="PRACTICE"
         title={terminology.plural}
-        subtitle={`Gestiona tu cartera de ${terminology.plural.toLowerCase()}`}
+        subtitle={
+          <div className="flex flex-col gap-1">
+            <p>{`Gestiona tu cartera de ${terminology.plural.toLowerCase()}`}</p>
+            <div className="flex gap-4 text-xs font-mono text-muted-foreground items-center mt-2">
+              <span><span className="text-foreground font-medium">{metrics.total}</span> Total</span>
+              {metrics.risk > 0 && <span><span className="text-risk font-medium">{metrics.risk}</span> Riesgo</span>}
+              <span><span className="text-brand font-medium">{metrics.new}</span> Nuevos</span>
+            </div>
+          </div>
+        }
         action={{
           label: t('addPatient') || `+ Nuevo ${terminology.singular}`,
           href: '/patients/new',
           icon: UserPlus
         }}
-      >
-        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
-          {/* Search Input */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder={t('searchPlaceholder')}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl text-foreground placeholder-muted-foreground"
-            />
-          </div>
+      />
 
-          {/* Status Filter */}
-          <select
-            value={statusFilter}
-            onChange={handleStatusChange}
-            className="px-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl text-foreground min-w-[180px] focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none"
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-
-          {/* Search Button */}
-          <button type="submit" className="btn btn-md btn-primary">
-            Buscar
-          </button>
-        </form>
-      </PageHeader>
-
-      {/* ========== RESULTS COUNT ========== */}
-      {!loading && patients.length > 0 && (
-        <p className="type-body text-muted-foreground">
-          {total} {terminology.plural.toLowerCase()} encontrados
-        </p>
-      )}
 
       {/* ========== DATA TABLE ========== */}
       {loading ? (
@@ -270,6 +251,40 @@ export default function PatientsPage() {
         />
       ) : (
         <div className="card overflow-hidden">
+          {/* Control Deck Toolbar */}
+          <div className="border-b border-border bg-muted/20 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <form onSubmit={handleSearch} className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder={t('searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-1.5 bg-background border border-border rounded-lg text-xs focus:ring-2 focus:ring-brand/50 outline-none transition-all"
+                />
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setStatusFilter(val);
+                  loadPatients(search, val);
+                }}
+                className="px-3 py-1.5 bg-background border border-border rounded-lg text-xs text-muted-foreground focus:ring-2 focus:ring-brand/50 outline-none transition-all"
+              >
+                {STATUS_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </form>
+
+            <div className="flex items-center gap-2">
+              <p className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
+                Mostrando {patients.length} de {metrics.total}
+              </p>
+            </div>
+          </div>
           <table className="w-full">
             <thead className="bg-muted/50">
               <tr className="border-b border-border">
@@ -342,12 +357,15 @@ export default function PatientsPage() {
                       <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                         <Link
                           href={`/patients/${patient.id}`}
-                          className="btn btn-sm btn-ghost"
+                          className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all group"
+                          title="Ver Perfil"
                         >
-                          Ver
-                          <ChevronRight className="w-3 h-3" />
+                          <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                         </Link>
-                        <button className="btn btn-sm btn-ghost p-2">
+                        <button
+                          className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all"
+                          title="Chat"
+                        >
                           <MessageCircle className="w-4 h-4" />
                         </button>
                       </div>
@@ -358,6 +376,13 @@ export default function PatientsPage() {
             </tbody>
           </table>
         </div>
+      )}
+      {/* Pagination Footer */}
+      {meta && meta.filtered > 0 && (
+        <PaginationToolbar
+          meta={meta}
+          onPageChange={(p) => setPage(p)}
+        />
       )}
     </div>
   );

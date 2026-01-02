@@ -9,8 +9,9 @@ import { es, enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Calendar, Clock, User, Search, CheckCircle, XCircle, AlertCircle, MoreVertical, Edit, Trash2, Check, X, CalendarCheck } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
+import PaginationToolbar from '@/components/ui/pagination-toolbar';
 
-import { API_URL } from '@/lib/api';
+import { api, API_URL, ListMetadata } from '@/lib/api';
 const locales = { es, en: enUS };
 
 interface Booking {
@@ -38,7 +39,9 @@ export default function BookingsPage() {
     }), []);
 
     const [bookings, setBookings] = useState<Booking[]>([]);
+    const [meta, setMeta] = useState<ListMetadata | null>(null);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
     const [activeTab, setActiveTab] = useState<'future' | 'past'>('future');
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -46,7 +49,7 @@ export default function BookingsPage() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [currentView, setCurrentView] = useState<typeof Views[keyof typeof Views]>(Views.WEEK);
 
-    const t = {
+    const translations = {
         es: {
             title: 'Reservas',
             subtitle: 'Consulta, confirma y gestiona las reservas de tus pacientes. Filtra por estado y visualiza en calendario.',
@@ -60,7 +63,7 @@ export default function BookingsPage() {
             completed: 'Completada',
             noBookings: 'No hay reservas',
             noBookingsDesc: 'Las reservas aparecerán aquí cuando tus clientes agenden citas.',
-            patient: 'Cliente',
+            patient: 'Paciente',
             service: 'Servicio',
             dateTime: 'Fecha y hora',
             status: 'Estado',
@@ -119,13 +122,15 @@ export default function BookingsPage() {
             delete: 'Eliminar',
             calendarView: 'Vista de Calendari',
         },
-    }[locale] || {
-        title: 'Bookings', subtitle: 'View and manage patient bookings', future: 'Upcoming', past: 'Past', search: 'Search...', allStatus: 'All',
-        confirmed: 'Confirmed', pending: 'Pending', cancelled: 'Cancelled', completed: 'Completed',
-        noBookings: 'No bookings', noBookingsDesc: 'No bookings yet.',
-        patient: 'Patient', service: 'Service', dateTime: 'Date & Time', status: 'Status',
-        actions: 'Actions', confirm: 'Confirm', cancel: 'Cancel', complete: 'Complete', delete: 'Delete',
-        calendarView: 'Calendar View',
+    };
+
+    const t = translations[locale as 'es' | 'en' | 'ca'] || translations.en;
+
+    const statusConfig: Record<string, { label: string; className: string }> = {
+        CONFIRMED: { label: t.confirmed, className: 'badge badge-success' },
+        PENDING: { label: t.pending, className: 'badge badge-warning' },
+        CANCELLED: { label: t.cancelled, className: 'badge badge-risk' },
+        COMPLETED: { label: t.completed, className: 'badge badge-secondary' },
     };
 
     useEffect(() => {
@@ -135,17 +140,23 @@ export default function BookingsPage() {
     async function loadBookings() {
         setLoading(true);
         try {
-            const res = await fetch(`${API_URL}/booking/`, { credentials: 'include' });
-            if (res.ok) {
-                const data = await res.json();
-                setBookings(data);
-            }
-        } catch (err) {
-            console.error('Error loading bookings', err);
+            const resp = await api.bookings.list({
+                status: statusFilter === 'all' ? undefined : statusFilter,
+                page,
+                per_page: 20
+            });
+            setBookings(resp.data);
+            setMeta(resp.meta);
+        } catch (error) {
+            console.error('Error loading bookings:', error);
         } finally {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        loadBookings();
+    }, [page, statusFilter]);
 
     async function updateBookingStatus(bookingId: string, newStatus: string) {
         try {
@@ -256,12 +267,14 @@ export default function BookingsPage() {
         return { style: { backgroundColor: statusColors[event.status] || '#6366f1', borderRadius: '6px', color: 'white', border: 'none' } };
     };
 
-    const statusConfig: Record<string, { className: string; icon: React.ReactNode; label: string }> = {
-        CONFIRMED: { className: 'badge badge-success', icon: <CheckCircle className="w-3.5 h-4" />, label: t.confirmed },
-        PENDING: { className: 'badge badge-warning', icon: <AlertCircle className="w-3.5 h-4" />, label: t.pending },
-        CANCELLED: { className: 'badge badge-risk', icon: <XCircle className="w-3.5 h-4" />, label: t.cancelled },
-        COMPLETED: { className: 'badge badge-secondary', icon: <CheckCircle className="w-3.5 h-4" />, label: t.completed },
-    };
+    const metrics = useMemo(() => {
+        return {
+            total: meta?.total || 0,
+            upcoming: bookings.filter(b => new Date(b.start_time) >= now).length,
+            pending: bookings.filter(b => b.status === 'PENDING').length,
+            revenue: meta?.extra?.total_confirmed_revenue || 0
+        };
+    }, [bookings, now, meta]);
 
     if (loading) return <div className="p-6 text-center text-foreground/60">Loading...</div>;
 
@@ -271,54 +284,18 @@ export default function BookingsPage() {
                 icon={CalendarCheck}
                 kicker="CONNECT"
                 title={t.title}
-                subtitle={t.subtitle}
-            >
-                {/* Tabs + Filters Row */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    {/* Tabs */}
-                    <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
-                        <button
-                            onClick={() => setActiveTab('future')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'future' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
-                        >
-                            <Calendar className="w-4 h-4" />
-                            {t.future}
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('past')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'past' ? 'bg-card text-foreground shadow-sm' : 'text-foreground/70 hover:text-foreground'}`}
-                        >
-                            <Clock className="w-4 h-4" />
-                            {t.past}
-                        </button>
-                    </div>
-
-                    {/* Filters */}
-                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                        <div className="relative w-full sm:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                            <input
-                                type="text"
-                                placeholder={t.search}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-brand outline-none transition-all"
-                            />
+                subtitle={
+                    <div className="flex flex-col gap-1">
+                        <p>{t.subtitle}</p>
+                        <div className="flex gap-4 text-xs font-mono text-muted-foreground items-center mt-2">
+                            <span><span className="text-foreground font-medium">{metrics.total}</span> Total</span>
+                            <span><span className="text-brand font-medium">{metrics.upcoming}</span> {t.future}</span>
+                            <span><span className="text-amber-500 font-medium">{metrics.pending}</span> {t.pending}</span>
+                            <span><span className="text-emerald-500 font-medium">{metrics.revenue}€</span> Ingresos</span>
                         </div>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="w-full sm:w-auto px-4 py-2 bg-muted/50 border border-border rounded-xl focus:ring-2 focus:ring-brand outline-none transition-all"
-                        >
-                            <option value="all">{t.allStatus}</option>
-                            <option value="CONFIRMED">{t.confirmed}</option>
-                            <option value="PENDING">{t.pending}</option>
-                            <option value="CANCELLED">{t.cancelled}</option>
-                            <option value="COMPLETED">{t.completed}</option>
-                        </select>
                     </div>
-                </div>
-            </PageHeader>
+                }
+            />
 
             {/* Bookings List */}
             {filteredBookings.length === 0 ? (
@@ -329,6 +306,49 @@ export default function BookingsPage() {
                 </div>
             ) : (
                 <div className="card overflow-hidden">
+                    {/* Control Deck Toolbar */}
+                    <div className="border-b border-border bg-muted/20 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        {/* Tabs (Segmented Control) */}
+                        <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit order-2 sm:order-1">
+                            <button
+                                onClick={() => setActiveTab('future')}
+                                className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-medium transition-all ${activeTab === 'future' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                            >
+                                {t.future}
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('past')}
+                                className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-medium transition-all ${activeTab === 'past' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                            >
+                                {t.past}
+                            </button>
+                        </div>
+
+                        {/* Search & Filters */}
+                        <div className="flex items-center gap-3 w-full sm:w-auto order-1 sm:order-2">
+                            <div className="relative flex-1 sm:w-64">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    placeholder={t.search}
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full pl-9 pr-4 py-1.5 bg-background border border-border rounded-lg text-xs focus:ring-2 focus:ring-brand/50 outline-none transition-all"
+                                />
+                            </div>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className="px-3 py-1.5 bg-background border border-border rounded-lg text-xs text-muted-foreground focus:ring-2 focus:ring-brand/50 outline-none transition-all"
+                            >
+                                <option value="all">{t.allStatus}</option>
+                                <option value="CONFIRMED">{t.confirmed}</option>
+                                <option value="PENDING">{t.pending}</option>
+                                <option value="CANCELLED">{t.cancelled}</option>
+                                <option value="COMPLETED">{t.completed}</option>
+                            </select>
+                        </div>
+                    </div>
                     <table className="w-full">
                         <thead className="bg-muted/50">
                             <tr className="border-b border-border">
@@ -392,9 +412,9 @@ export default function BookingsPage() {
                                             <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
                                                 <button
                                                     onClick={() => setOpenMenu(openMenu === booking.id ? null : booking.id)}
-                                                    className="btn btn-sm btn-ghost p-2"
+                                                    className="p-2 hover:bg-white/5 rounded-lg transition-colors group"
                                                 >
-                                                    <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                                                    <MoreVertical className="w-4 h-4 text-muted-foreground group-hover:text-brand" />
                                                 </button>
                                                 {openMenu === booking.id && (
                                                     <div className="absolute right-0 mt-1 w-40 bg-card border rounded-xl shadow-lg z-10 overflow-hidden">
@@ -448,6 +468,15 @@ export default function BookingsPage() {
                     max={new Date(2000, 0, 1, 21, 0, 0)}
                 />
             </div>
+            {/* Pagination */}
+            {meta && meta.filtered > 0 && (
+                <div className="mt-4 border-t bg-card rounded-b-xl overflow-hidden">
+                    <PaginationToolbar
+                        meta={meta}
+                        onPageChange={(p) => setPage(p)}
+                    />
+                </div>
+            )}
         </div>
     );
 }

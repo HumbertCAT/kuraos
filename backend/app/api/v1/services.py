@@ -10,6 +10,7 @@ from sqlalchemy import select, func
 from app.db.base import get_db
 from app.db.models import ServiceType, ServiceMode, FormTemplate, Booking, BookingStatus
 from app.api.deps import CurrentUser
+from app.schemas.common import PaginatedResponse, ListMetadata
 
 router = APIRouter()
 
@@ -83,33 +84,52 @@ class ServiceTypeListResponse(BaseModel):
 # ============ ENDPOINTS ============
 
 
-@router.get("/", response_model=ServiceTypeListResponse, summary="List service types")
+@router.get(
+    "/",
+    response_model=PaginatedResponse[ServiceTypeResponse],
+    summary="List service types",
+)
 async def list_services(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
     page: int = Query(1, ge=1),
-    per_page: int = Query(20, ge=1, le=100),
+    per_page: int = Query(100, ge=1, le=500),  # Architect: Default 100 for services
     active_only: bool = Query(True, description="Filter to active services only"),
 ):
     """
     List all service types for the current user's organization.
     Supports pagination and active filtering.
     """
+    # Base query
     query = select(ServiceType).where(
         ServiceType.organization_id == current_user.organization_id
     )
-
     if active_only:
         query = query.where(ServiceType.is_active == True)
 
-    # Get total count
+    # Get absolute total count for organization
+    absolute_total_query = select(func.count()).where(
+        ServiceType.organization_id == current_user.organization_id
+    )
+    total_count_result = await db.execute(absolute_total_query)
+    total_count = total_count_result.scalar() or 0
+
+    # Get filtered count
     count_query = select(func.count()).select_from(query.subquery())
-    total_result = await db.execute(count_query)
-    total = total_result.scalar() or 0
+    filtered_result = await db.execute(count_query)
+    filtered_count = filtered_result.scalar() or 0
+
+    # Calculate Average Ticket KPI (for active services)
+    avg_ticket_query = select(func.avg(ServiceType.price)).where(
+        ServiceType.organization_id == current_user.organization_id,
+        ServiceType.is_active == True,
+    )
+    avg_ticket_result = await db.execute(avg_ticket_query)
+    avg_ticket = avg_ticket_result.scalar() or 0.0
 
     # Apply pagination
     query = query.offset((page - 1) * per_page).limit(per_page)
-    query = query.order_by(ServiceType.created_at.desc())
+    query = query.order_by(ServiceType.title.asc())
 
     result = await db.execute(query)
     services = result.scalars().all()
@@ -117,7 +137,8 @@ async def list_services(
     # Build response with intake form titles
     response_services = []
     for service in services:
-        service_dict = ServiceTypeResponse.model_validate(service)
+        service_data = service.__dict__.copy()
+        service_resp = ServiceTypeResponse.model_validate(service_data)
         if service.intake_form_id:
             form_result = await db.execute(
                 select(FormTemplate.title).where(
@@ -125,14 +146,18 @@ async def list_services(
                 )
             )
             form_title = form_result.scalar_one_or_none()
-            service_dict.intake_form_title = form_title
-        response_services.append(service_dict)
+            service_resp.intake_form_title = form_title
+        response_services.append(service_resp)
 
-    return ServiceTypeListResponse(
-        services=response_services,
-        total=total,
-        page=page,
-        per_page=per_page,
+    return PaginatedResponse(
+        data=response_services,
+        meta=ListMetadata(
+            total=total_count,
+            filtered=filtered_count,
+            page=page,
+            page_size=per_page,
+            extra={"avg_ticket": float(avg_ticket)},
+        ),
     )
 
 

@@ -50,7 +50,7 @@ export default function SendFormModal({
         setLoading(true);
         try {
             const data = await api.forms.listTemplates();
-            setTemplates(data.templates || []);
+            setTemplates(data.data || []);
         } catch (err) {
             console.error('Error loading templates', err);
         } finally {

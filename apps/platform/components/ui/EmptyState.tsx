@@ -66,9 +66,9 @@ export default function EmptyState({
 }
 
 // Pre-built icons for common empty states
-export function PatientsEmptyIcon() {
+export function PatientsEmptyIcon({ className = 'mx-auto' }: { className?: string }) {
     return (
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
             <circle cx="32" cy="24" r="12" stroke="currentColor" strokeWidth="2" fill="none" />
             <path d="M12 56c0-11.05 8.95-20 20-20s20 8.95 20 20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
             <line x1="44" y1="44" x2="56" y2="56" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -76,9 +76,9 @@ export function PatientsEmptyIcon() {
     );
 }
 
-export function FormsEmptyIcon() {
+export function FormsEmptyIcon({ className = 'mx-auto' }: { className?: string }) {
     return (
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
             <rect x="12" y="8" width="40" height="48" rx="4" stroke="currentColor" strokeWidth="2" fill="none" />
             <line x1="20" y1="20" x2="44" y2="20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             <line x1="20" y1="28" x2="44" y2="28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />

@@ -14,6 +14,45 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.15] - 2026-01-02 🕹️ THE CONTROL DECK & CLINICAL PRECISION
+
+### 🕹️ Control Deck UI Evolution
+Third generation of the dashboard UI, focusing on high-density information and clinical focus.
+- **Improved Monitoring Widgets**: Refined AletheIA HUD and Sentiment Pulse with direct access to patient context.
+- **Proactive Intelligence**: Standardized risk indicators (HealthDot) across all rosters.
+
+### 🏗️ Data Infrastructure & Performance
+Major refactor of the API communication layer to support professional-grade scaling.
+- **The Metadata Envelope**: Universal API response structure `{ data, meta }` supporting server-side pagination and real-time KPIs.
+- **Unified Pagination**: Standardized `<PaginationToolbar />` across Patients, Bookings, Services, and Forms.
+- **Performance Optimization**: Restored trailing slash consistency across all frontend-backend communication to eliminate 307 redirects.
+
+### 🛡️ System Integrity & Security
+- **The Drift Check**: Integrated Alembic synchronization protocol for safer deployments.
+- **Design System Reinforcement**: Audited and fixed structural regressions in the translation engine and global components.
+- **Type-Safe Foundations**: Fully verified production builds in a monorepo context.
+
+#### 🕹️ Unified Toolbar ("Control Deck")
+- **High-Density Toolbars**: Consolidated search, filters, and tabs into a single unified toolbar inside the main content `Card`.
+- **Segmented Control Tabs**: Replaced classic tabs with a sleeker, more tactile Segmented Control design (`bg-muted/20`).
+- **Recessed Search**: Styled search and filter inputs with `bg-background` for a premium, integrated look.
+
+#### 📊 Peripheral Clinical Insight
+- **Metric Badge Injection**: Injected high-level metrics directly into the `PageHeader` subtitle using rich React components.
+- **Visual Hierarchy**: Reduced global spacing between headers and content (from `mb-8` to `mb-6`) for a more connected feel.
+
+#### 👻 Ghost Actions (Secondary Interactivity)
+- **Ghost Action Standard**: Standardized table row actions (Edit, Preview, etc.) to use `text-muted-foreground` by default, reacting only on hover to maintain clinical focus.
+- **Risk Actions**: Destructive actions now consistently use `hover:text-risk` instead of plain red.
+
+#### 🛡️ Stability & Regressions
+- **Forms Navigation**: Unified the Forms toolbar into a persistent component, solving the "navigation trap" where tabs would disappear in empty states.
+- **ReferenceError Fixes**: 
+    - Resolved missing `useMemo` in `patients/page.tsx`.
+    - Restored missing `statusConfig` in `bookings/page.tsx`.
+
+---
+
 ## [1.1.14] - 2026-01-01 🧼 CLEAN SLATE & CLINICAL ROSTER
 
 ### 🎉 Platform-Wide Standardization & Saneamiento

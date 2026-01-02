@@ -47,9 +47,10 @@
 | **Message Templates** | Transactional templates for booking/reminders | 🔴 HIGH |
 | **Instagram DM Lead Capture** | Unified inbox for IG leads | 🟡 MEDIUM |
 
-### 🔌 Dashboard Data Wiring
-| Component | API Integration | Priority |
-|-----------|-----------------|----------|
+### 🔌 Dashboard Data Wiring (ADR-011)
+| Component | API Integration | Status |
+|-----------|-----------------|--------|
+| **Pagination & KPIs** | Shift logic to server-side via `PaginatedResponse` | ✅ **Implemented (v1.1.15)** |
 | **PipelineVelocity** | `/leads?group_by=nurture_status` | 🟡 MEDIUM |
 | **ActiveJourneysWidget** | `/journeys/active` endpoint | 🟡 MEDIUM |
 | **VitalSignCard Trends** | Booking aggregations by week | 🟢 LOW |
@@ -155,4 +156,4 @@ apps/platform/app/[locale]/portal/
 
 ---
 
-*Last updated: January 01, 2026 (v1.1.14 CLEAN SLATE)*
+*Last updated: January 02, 2026 (v1.1.15 THE CONTROL DECK)*

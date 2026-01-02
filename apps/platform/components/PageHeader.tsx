@@ -9,7 +9,7 @@ interface PageHeaderProps {
     icon: LucideIcon;
     kicker?: string; // "PRACTICE", "CONNECT", "GROW" (Trinity Context)
     title: string;
-    subtitle?: string;
+    subtitle?: React.ReactNode;
 
     // Interaction
     action?: {
@@ -86,7 +86,7 @@ export default function PageHeader({
     };
 
     return (
-        <div className={`space-y-6 mb-8 ${className}`}>
+        <div className={`space-y-6 mb-6 ${className}`}>
             {/* Top Row: Meta, Title & Action */}
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
@@ -105,9 +105,9 @@ export default function PageHeader({
                             {title}
                         </h1>
                         {subtitle && (
-                            <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
+                            <div className="text-sm text-muted-foreground mt-1">
                                 {subtitle}
-                            </p>
+                            </div>
                         )}
                     </div>
                 </div>
