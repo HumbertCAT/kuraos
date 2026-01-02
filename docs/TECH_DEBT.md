@@ -25,6 +25,15 @@ While the rosters are wired, some core dashboard widgets are still awaiting inte
 | **VitalSignCard** (Ocupación) | UI Mock | 🟡 MEDIUM | Implement availability vs bookings ratio in backend. |
 | **FocusSessionCard** | UI Mock | 🟡 MEDIUM | Link to real AletheIA insights from clinical records. |
 
+### 3. ⚖️ Architectural Contract: The Metadata Envelope
+
+> [!IMPORTANT]
+> **v1.1.15.2 Mandate:** Any backend endpoint returning a list MUST use the `PaginatedResponse<T>` envelope:
+> ```json
+> { "data": [...], "meta": { "total", "filtered", "page", "page_size", "extra" } }
+> ```
+> **No exceptions.** Frontend consumers MUST access `.data` for the array. Violating this contract will cause production crashes.
+
 ---
 
 ## 🚨 Critical Architecture & Safety
