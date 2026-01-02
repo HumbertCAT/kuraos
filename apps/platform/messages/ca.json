@@ -34,7 +34,15 @@
     "financialSummary": "Resum Financer",
     "confirmedRevenue": "Ingressos Confirmats",
     "pendingPayments": "Pagaments Pendents",
-    "totalPotential": "Total Potencial"
+    "totalPotential": "Total Potencial",
+    "referralWidget": {
+      "title": "El Miceli",
+      "tagline": "Convida un col·lega. Guanya Karma. Construïm la xarxa.",
+      "yourCode": "El teu codi",
+      "copyLink": "Copiar enllaç",
+      "shareWhatsApp": "Compartir via WhatsApp",
+      "whatsappMessage": "🚀 Descobreix KURA OS - La plataforma que faig servir per gestionar la meva pràctica terapèutica.\n\nUtilitza'l amb el meu codi: {code}\n{url}"
+    }
   },
   "Navigation": {
     "dashboard": "Tauler",

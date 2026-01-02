@@ -82,6 +82,14 @@
       "highDemand": "High demand",
       "sessions": "sessions"
     },
+    "referralWidget": {
+      "title": "The Mycelium",
+      "tagline": "Invite a colleague. Earn Karma. Let's build the network.",
+      "yourCode": "Your code",
+      "copyLink": "Copy link",
+      "shareWhatsApp": "Share via WhatsApp",
+      "whatsappMessage": "🚀 Discover KURA OS - The platform I use to manage my therapeutic practice.\n\nUse it with my code: {code}\n{url}"
+    },
     "pipeline": {
       "title": "PATIENT FLOW",
       "new": "New",

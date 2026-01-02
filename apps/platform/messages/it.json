@@ -34,7 +34,15 @@
     "financialSummary": "Riepilogo Finanziario",
     "confirmedRevenue": "Entrate Confermate",
     "pendingPayments": "Pagamenti in Attesa",
-    "totalPotential": "Totale Potenziale"
+    "totalPotential": "Totale Potenziale",
+    "referralWidget": {
+      "title": "Il Micelio",
+      "tagline": "Invita un collega. Guadagna Karma. Costruiamo la rete.",
+      "yourCode": "Il tuo codice",
+      "copyLink": "Copia link",
+      "shareWhatsApp": "Condividi via WhatsApp",
+      "whatsappMessage": "🚀 Scopri KURA OS - La piattaforma che uso per gestire la mia pratica terapeutica.\n\nUsala con il mio codice: {code}\n{url}"
+    }
   },
   "Navigation": {
     "dashboard": "Dashboard",
