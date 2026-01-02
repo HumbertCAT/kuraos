@@ -9,9 +9,9 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.db.database import get_db
-from backend.app.db.models import Organization, User
-from backend.app.api.v1.auth import get_current_user
+from app.db.base import get_db
+from app.db.models import Organization, User
+from app.api.deps import get_current_user
 
 router = APIRouter()
 
