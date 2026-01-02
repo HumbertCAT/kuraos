@@ -1,125 +1,89 @@
-# Technical Debt Report (v1.1.0)
+# Technical Debt Report (v1.1.15) 🕹️ THE CONTROL DECK
 
-This document tracks known technical debt and incomplete implementations.
-
----
-
-## 🎭 v1.1.0 Dashboard - Mock/Fake Data
-
-> [!IMPORTANT]
-> The Dashboard 2.0/3.0 components use hardcoded mock data for demonstration. These need to be wired to real APIs.
-
-| Component | Fake Data | Required API |
-|-----------|-----------|--------------|
-| **VitalSignCard** (Ingresos) | `+15% vs mes pasado` hardcoded | Calculate actual month-over-month from bookings |
-| **VitalSignCard** (Ocupación) | `85%` hardcoded | Calculate from availability vs bookings ratio |
-| **PipelineVelocity** | `[2, 5, 1]` hardcoded stages | Real lead counts by `nurture_status` |
-| **ActiveJourneysWidget** | 3 mock patients | Fetch from `/journeys/active` with real status |
-| **FocusSessionCard** | Mock `aletheiaInsight` | Fetch real Aletheia data for next patient |
-
-### Fix Priority
-1. **High**: PipelineVelocity - CRM data exists, just needs wiring
-2. **High**: ActiveJourneysWidget - Journeys API exists
-3. **Medium**: VitalSignCard trends - Requires aggregation query
-4. **Medium**: FocusSessionCard insight - Requires Aletheia patient lookup
+This document tracks known technical debt, architectural shortcuts, and clinical implementation gaps.
 
 ---
 
-## 🚨 Critical (Safety/Data Integrity)
+## 🕹️ v1.1.15 Infrastructure Evolution (The Metadata Envelope)
 
-1. **Service Deletion Safety** (`backend/app/api/v1/services.py`)
-   - **Issue**: `DELETE /services/{id}` does not check for existing future bookings.
-   - **Risk**: Deleting a service could orphan or break active bookings.
-   - **Fix**: Add check: `if bookings.count() > 0: raise HTTPException(400, "Cannot delete service with active bookings")`.
+> [!NOTE]
+> v1.1.15 successfully cleared the "Clean Slate" data debt by standardizing all major rosters (Patients, Bookings, Services, Forms) to a unified API response pattern.
 
-2. **Booking Notifications** (`backend/app/api/v1/booking.py`)
-   - **Issue**: TODOs exist for sending emails on cancellation and rescheduling.
-   - **Risk**: Patients are not notified when appointments are changed/cancelled by therapist.
-   - **Status**: Logic missing in `cancel_booking` and `public_booking_manage`.
+### 1. Resolved Wiring & Standardization ✅
+- **Server-Side Pagination**: (✅ v1.1.15) Migrated logic from frontend counting to backend-driven `{ data, meta }` envelope.
+- **Header KPIs**: (✅ v1.1.15) Page headers now consume real-time business metrics from `meta.extra`.
+- **Trailing Slash Consistency**: (✅ v1.1.15) Standardized all API fetch calls to use trailing slashes, eliminating 307 redirect overhead.
+- **Serialization Safety**: (✅ v1.1.15) Backend decimals are now explicitly cast to floats in metadata to prevent JSON serialization 500 errors.
+
+### 2. Remaining Dashboard Wiring (Mock Data)
+While the rosters are wired, some core dashboard widgets are still awaiting integration with the new Metadata Envelope.
+
+| Component | Debt Type | Status | Required Action |
+|-----------|-----------|--------|-----------------|
+| **PipelineVelocity** | UI Mock | 🔴 HIGH | Wire to `/leads?group_by=nurture_status`. |
+| **ActiveJourneysWidget** | UI Mock | 🔴 HIGH | Wire to `/journeys/active`. |
+| **VitalSignCard** (Ocupación) | UI Mock | 🟡 MEDIUM | Implement availability vs bookings ratio in backend. |
+| **FocusSessionCard** | UI Mock | 🟡 MEDIUM | Link to real AletheIA insights from clinical records. |
+
+---
+
+## 🚨 Critical Architecture & Safety
+
+1. **The "Bypassed Component" Trap**
+   - **Issue**: Some components (like `Dashboard/page.tsx`) still use raw `fetch` strings instead of the typed `api` library.
+   - **Risk**: These bypasses lead to silent build failures or data mismatches during infrastructure refactors.
+   - **Fix**: Migrate ALL dashboard data fetching to the centralized `lib/api.ts` client.
+
+2. **Recursive Refactor Fragility**
+   - **Issue**: Standardizing a list response (e.g., `Patients`) often breaks secondary consumers (`RecentPatients.tsx`, `patient-store.ts`) that are not caught by narrow audits.
+   - **Fix**: Enforce full-codebase audits (grep for legacy keys like `.patients`, `.bookings`) after ANY structural API change.
+
+3. **Service Deletion Safety** (✅ IMPLEMENTED v1.1.14)
+   - **Status**: Deletion is blocked if active/pending bookings exist. ✅
+
+4. **Booking Notifications** (`backend/app/api/v1/booking.py`)
+   - **Issue**: Missing email/SMS trigger logic for cancellations and rescheduling.
+   - **Risk**: Patients are not notified when appointments are changed.
+
+---
 
 ## 🛠 Backend & Infrastructure
 
-3. **Stripe Dynamic Rates** (`backend/app/services/stripe_service.py`)
+5. **Stripe Dynamic Rates** (`backend/app/services/stripe_service.py`)
    - **Issue**: Application fee rates are hardcoded.
-   - **Fix**: Read rates from `system_settings` table to allow runtime adjustment without deployment.
+   - **Fix**: Read from `system_settings` table.
 
-4. **Marketing App Structure** (`apps/marketing`)
-   - **Issue**: `grep` reported missing files in `apps/marketing/app/landing/components/`.
-   - **Action**: Verify file structure and clean up unused references.
+6. **Decimal Precision vs Serialization**
+   - **Issue**: SQLAlchemy results for financial KPIs return `Decimal`.
+   - **Debt**: We are casting to `float` in the API layer, which is fine for UI but could lose precision for accounting.
+   - **Solution**: Consider returning strings or scaled integers for pure financial endpoints.
 
-## 🎨 Frontend & UI
+---
 
-5. **MDX Rendering** (`apps/platform/.../settings/help/[chapter]/page.tsx`)
-   - **Issue**: Help center uses basic text rendering.
-   - **Fix**: Implement proper MDX compilation to support rich formatting and components in help docs.
+## 🎨 Frontend & Design System
 
-6. **Terminology Preference Wiring** (`apps/platform/.../settings/general/page.tsx`)
-   - **Issue**: TODO comment indicates terminology preference UI might not be fully wired to organization settings.
+7. **Roster Action Inconsistency**
+   - **Issue**: Some pages (Settings, Help) still use standard Buttons/Links instead of the "Tactile Ghost Action" pattern used in Patients.
+   - **Fix**: Standardize all table actions following the Zinc Protocol.
+
+8. **Translation Mapping Structural Debt**
+   - **Issue**: Manually creating translation objects in pages (e.g., `bookings/page.tsx`) leads to build crashes if any key/locale (e.g., 'ca') is missing.
+   - **Fix**: Use `useTranslations` hook predominantly or enforce strict mapping types.
+
+9. **Terminology Preference Wiring**
+   - **Issue**: UI for terminology settings (Patient vs Client) is not fully wired to active context stores.
+
+---
 
 ## 🤖 AI & Automation
-
-7. **AI Tone Enforcement** (`backend/app/services/automation_engine.py`)
-   - **Issue**: Code checks for "Tone" configuration but lacks the LLM call to rewrite the message content.
-
-## � Security & Access Control
-
-8. **Admin UI Co-location** (`apps/platform/app/[locale]/(dashboard)/admin`)
-   - **Issue**: SuperAdmin pages are part of the main client bundle.
-   - **Risk**: While protected by RBAC (server-side 403), the route structure and UI code are visible to curious users inspecting source maps.
-   - **Mitigation**: Move admin panel to a separate internal tool (e.g., Retool or separate Next.js app) or use aggressive code splitting/middleware blocking.
-
-## �💻 Developer Experience (DevEx)
-
-8. **Ephemeral Webhook URLs** (`scripts/start-dev.sh`)
-   - **Issue**: `ngrok` generates a new random URL (e.g., `https://a1b2c3d4.ngrok-free.app`) every time the dev environment restarts.
-   - **Friction**: Developer must manually copy-paste this new URL into the Twilio Console (Sandbox settings) on every startup.
-   - **Solution**: Use static ngrok domains (requires paid plan) or automate Twilio configuration via API.
-
-9. **Stripe CLI Dependency** ✅ RESOLVED
-   - **Status**: Fixed in start-dev.sh - auto-starts `stripe listen` with proper warning if CLI not installed.
+(No changes in v1.1.15)
 
 ---
 
-## 🚀 Sandbox → Production Migration
+## 🚀 Releases & Ops
 
-> [!IMPORTANT]
-> Both Stripe and Twilio are currently in **TEST/SANDBOX** mode. Follow these steps to go live.
+10. **Standardizing script names**
+    - **Issue**: `backup_db.sh` looks for specific DB names.
+    - **Fix**: Standardize on `POSTGRES_DB` env variable across all release scripts.
 
-### Stripe (Payments)
-
-| Item | Current (Sandbox) | Production | Action |
-|------|-------------------|------------|--------|
-| API Keys | `sk_test_*` / `pk_test_*` | `sk_live_*` / `pk_live_*` | Generate in [Stripe Dashboard](https://dashboard.stripe.com/apikeys) |
-| Webhook Secret | `whsec_*` (test) | New `whsec_*` (live) | Create webhook in Live mode |
-| Connect | Test accounts | Real bank accounts | Therapists re-onboard in live mode |
-
-**Steps to activate Stripe Live:**
-1. Complete Stripe account verification (identity, business details)
-2. Go to Dashboard → toggle "Test mode" OFF
-3. Generate Live API keys
-4. Update secrets in GCP: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
-5. Create Live webhook at `https://api.kuraos.ai/api/v1/payments/webhook`
-6. Update `STRIPE_PRICE_ID_PRO` and `STRIPE_PRICE_ID_CENTER` with Live price IDs
-7. Deploy with `./scripts/deploy.sh`
-
----
-
-### Twilio WhatsApp (Messaging)
-
-| Item | Current (Sandbox) | Production | Action |
-|------|-------------------|------------|--------|
-| Phone Number | `+14155238886` (shared) | Dedicated number | Purchase via Twilio |
-| Approval | None needed | Meta Business Verification | Submit Business Profile |
-| Message Templates | Any message | Pre-approved only | Create in Twilio Console |
-
-**Steps to activate Twilio Production:**
-1. **Meta Business Verification**: Submit business documents
-2. **WhatsApp Business Profile**: Create and submit for approval
-3. **Purchase Number**: Buy a dedicated phone number for WhatsApp
-4. **Message Templates**: Create and submit templates for approval (required for outbound)
-5. **Update secrets in GCP**: `TWILIO_WHATSAPP_NUMBER` with new number
-6. **Configure Webhook**: Update to production URL in Twilio Console
-7. Deploy with `./scripts/deploy.sh`
-
-> [!WARNING]
-> WhatsApp Business API requires Meta approval which can take 1-2 weeks. Plan ahead.
+*Last updated: January 02, 2026 (v1.1.15 THE CONTROL DECK)*
