@@ -14,6 +14,32 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.16] - 2026-01-02 🛡️ THE EFFICIENCY SWEEP (Part 1-2)
+
+### 🛡️ Part 1: The Shield (Security & Stability)
+- **API Centralization**: Replaced raw `fetch` calls in `bookings/page.tsx` and `leads/page.tsx` with centralized `api` client methods.
+- **New API Methods**: Added `api.bookings.delete()`, `api.bookings.cancel()`, and `api.leads.create()` to `lib/api.ts`.
+- **Backend**: Confirmed decimal serialization safety (`float()` casts) already in place for financial KPIs.
+
+### 🎨 Part 2 & 2.5: The Uniform (Visual Consistency)
+- **Ghost Actions Standard**: Replaced all dropdown menus (`MoreVertical`) and emoji buttons with inline Ghost Action icons across:
+  - `admin/page.tsx` (System Settings, Templates, Backups)
+  - `forms/page.tsx` (Settings, QR, Stats, Delete)
+  - `bookings/page.tsx` (Confirm, Complete, Cancel, Delete - conditional by status)
+  - `patients/page.tsx` (Eye, Pencil, Chat - replaced ChevronRight)
+  - `services/page.tsx` (standardized hover states to `hover:bg-muted`)
+- **Lucide Icons**: Standardized to `Pencil`, `Trash2`, `Eye`, `Download`, `RotateCcw`.
+- **Destructive Hover**: All delete buttons now use `hover:text-destructive hover:bg-destructive/10`.
+
+### 🐛 Bugfixes
+- **Locale Duplication**: Fixed `/${locale}/...` in Links when using `@/i18n/navigation` (caused 404s in forms subpages).
+- **Delete Handler**: Added `handleDeleteForm()` with confirmation to forms roster.
+
+### 📝 Known Issues
+- **QR Modal**: Forms QR button only works for forms with `public_token` (deferred to future fix).
+
+---
+
 ### [1.1.15.2] - 2026-01-02
 - **Fix**: Resolved `TypeError` in Dashboard and Services Modal by correctly handling `PaginatedResponse` shape ({data, meta}).
 - **Fix**: Standardized Agenda logic to show future-only bookings, sorted ascending by start time.

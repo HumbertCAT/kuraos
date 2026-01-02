@@ -54,6 +54,11 @@ While the rosters are wired, some core dashboard widgets are still awaiting inte
    - **Issue**: Missing email/SMS trigger logic for cancellations and rescheduling.
    - **Risk**: Patients are not notified when appointments are changed.
 
+5. **Forms QR Modal** (`forms/page.tsx`)
+   - **Issue**: QR button does nothing if form has no `public_token`.
+   - **Risk**: Confusing UX - button appears clickable but has no effect.
+   - **Fix**: Either disable button when no token, or auto-generate token on first QR click.
+
 ---
 
 ## 🛠 Backend & Infrastructure
