@@ -160,15 +160,8 @@ export default function BookingsPage() {
 
     async function updateBookingStatus(bookingId: string, newStatus: string) {
         try {
-            const res = await fetch(`${API_URL}/booking/${bookingId}/status?new_status=${newStatus}`, {
-                method: 'PATCH',
-                credentials: 'include',
-            });
-            if (res.ok) {
-                setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: newStatus as Booking['status'] } : b));
-            } else {
-                console.error('Error updating status:', await res.text());
-            }
+            await api.bookings.updateStatus(bookingId, newStatus);
+            setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: newStatus as Booking['status'] } : b));
         } catch (err) {
             console.error('Error updating booking status', err);
         }
@@ -178,13 +171,8 @@ export default function BookingsPage() {
     async function deleteBooking(bookingId: string) {
         if (!confirm('¿Seguro que quieres eliminar esta reserva?')) return;
         try {
-            const res = await fetch(`${API_URL}/booking/${bookingId}`, {
-                method: 'DELETE',
-                credentials: 'include',
-            });
-            if (res.ok) {
-                setBookings(prev => prev.filter(b => b.id !== bookingId));
-            }
+            await api.bookings.delete(bookingId);
+            setBookings(prev => prev.filter(b => b.id !== bookingId));
         } catch (err) {
             console.error('Error deleting booking', err);
         }
@@ -208,21 +196,12 @@ export default function BookingsPage() {
     async function cancelBookingWithReason(bookingId: string) {
         const reason = prompt('Motivo de cancelación (opcional):');
         try {
-            const res = await fetch(`${API_URL}/booking/${bookingId}/cancel`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ reason: reason || null }),
-            });
-            if (res.ok) {
-                setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'CANCELLED' } : b));
-                alert('Reserva cancelada correctamente');
-            } else {
-                const error = await res.json();
-                alert(`Error: ${error.detail || 'No se pudo cancelar'}`);
-            }
-        } catch (err) {
+            await api.bookings.cancel(bookingId, reason || undefined);
+            setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'CANCELLED' } : b));
+            alert('Reserva cancelada correctamente');
+        } catch (err: any) {
             console.error('Error cancelling booking', err);
+            alert(`Error: ${err.message || 'No se pudo cancelar'}`);
         }
         setOpenMenu(null);
     }

@@ -215,18 +215,9 @@ export default function LeadsPage() {
     // Create new lead
     const handleCreateLead = async (data: { first_name: string; last_name: string; email?: string; phone?: string; notes?: string }) => {
         try {
-            const response = await fetch(`${API_URL}/leads`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ ...data, source: 'Manual' }),
-            });
-
-            if (response.ok) {
-                const newLead = await response.json();
-                setLeads(prev => [newLead, ...prev]);
-                setShowCreateModal(false);
-            }
+            const newLead = await api.leads.create({ ...data, source: 'Manual' });
+            setLeads(prev => [newLead, ...prev]);
+            setShowCreateModal(false);
         } catch (err) {
             console.error('Error creating lead:', err);
         }

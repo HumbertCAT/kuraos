@@ -417,6 +417,27 @@ export const api = {
       });
       return handleResponse<any>(res);
     },
+
+    delete: async (bookingId: string) => {
+      const res = await fetch(`${API_URL}/booking/${bookingId}/`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.detail || 'Delete failed');
+      }
+    },
+
+    cancel: async (bookingId: string, reason?: string) => {
+      const res = await fetch(`${API_URL}/booking/${bookingId}/cancel/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ reason: reason || null }),
+      });
+      return handleResponse<any>(res);
+    },
   },
 
   schedules: {
@@ -587,6 +608,16 @@ export const api = {
       if (filters?.include_archived) params.append('include_archived', String(filters.include_archived));
       
       const res = await fetch(`${API_URL}/leads/?${params}`, {
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+
+    create: async (data: { first_name: string; last_name: string; email?: string; phone?: string; notes?: string; source?: string }) => {
+      const res = await fetch(`${API_URL}/leads/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
         credentials: 'include',
       });
       return handleResponse<any>(res);
