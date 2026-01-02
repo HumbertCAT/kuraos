@@ -1,17 +1,27 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useRouter, Link } from '@/i18n/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Mail, Lock, User, Building2, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function RegisterPage() {
   const t = useTranslations('Auth');
   const { register } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      setReferralCode(ref);
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,6 +34,7 @@ export default function RegisterPage() {
       password: formData.get('password') as string,
       full_name: formData.get('full_name') as string,
       org_name: formData.get('org_name') as string,
+      ...(referralCode && { referral_code: referralCode }),
     };
 
     try {
