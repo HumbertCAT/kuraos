@@ -7,7 +7,7 @@ import { Calendar as BigCalendar, dateFnsLocalizer, Views } from 'react-big-cale
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Calendar, Clock, User, Search, CheckCircle, XCircle, AlertCircle, MoreVertical, Edit, Trash2, Check, X, CalendarCheck } from 'lucide-react';
+import { Calendar, Clock, User, Search, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Check, X, CalendarCheck } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import PaginationToolbar from '@/components/ui/pagination-toolbar';
 

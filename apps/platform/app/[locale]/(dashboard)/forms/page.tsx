@@ -6,7 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { FormCardSkeleton } from '@/components/ui/Skeleton';
 import EmptyState, { FormsEmptyIcon } from '@/components/ui/EmptyState';
-import { FileText, Plus, Link2, BarChart3, Settings, QrCode, Search, Copy, Check, MoreVertical, Trash2 } from 'lucide-react';
+import { FileText, Plus, Link2, BarChart3, Settings, QrCode, Search, Copy, Check, Trash2 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import PaginationToolbar from '@/components/ui/pagination-toolbar';
 

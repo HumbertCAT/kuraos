@@ -37,6 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **VitalSignCard (Occupancy)**: Shows calculated occupancy rate (confirmed sessions / 40 target) with real session count badge.
 - **i18n**: Added `vitalSigns.sessions` translation key.
 
+### 🧹 Part 4: The Broom (Dead Code Cleanup)
+- **MOCK_JOURNEYS**: Removed ~40 lines of hardcoded demo data from `ActiveJourneysWidget.tsx`.
+- **defaultStages**: Removed ~5 lines of mock pipeline data from `PipelineVelocity.tsx`.
+- **Unused Imports**: Removed `MoreVertical` from `bookings/page.tsx` and `forms/page.tsx`.
+- **Widget Contracts**: Both widgets now require real data via props (no mock fallbacks).
+
 ### 🐛 Bugfixes
 - **Locale Duplication**: Fixed `/${locale}/...` in Links when using `@/i18n/navigation` (caused 404s in forms subpages).
 - **Delete Handler**: Added `handleDeleteForm()` with confirmation to forms roster.

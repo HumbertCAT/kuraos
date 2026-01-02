@@ -21,17 +21,14 @@ interface PipelineVelocityProps {
  * 
  * Shows the flow of leads through the sales pipeline.
  * Philosophy: Quick visibility into what's coming.
+ * 
+ * @requires Dashboard must pass `stages` prop with real lead data.
+ * @since v1.1.16 - Wired to real data, no more mock fallback.
  */
-export function PipelineVelocity({ stages }: PipelineVelocityProps) {
+export function PipelineVelocity({ stages = [] }: PipelineVelocityProps) {
     const t = useTranslations('Dashboard.pipeline');
 
-    const defaultStages: PipelineStage[] = [
-        { key: 'new', labelKey: 'new', count: 2, color: 'bg-success', icon: <UserPlus className="w-4 h-4" /> },
-        { key: 'contacted', labelKey: 'contacted', count: 5, color: 'bg-warning', icon: <MessageCircle className="w-4 h-4" /> },
-        { key: 'closing', labelKey: 'closing', count: 1, color: 'bg-brand', icon: <Handshake className="w-4 h-4" /> },
-    ];
-
-    const pipelineStages = stages || defaultStages;
+    const pipelineStages = stages;
     const totalLeads = pipelineStages.reduce((sum, s) => sum + s.count, 0);
 
     return (

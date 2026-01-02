@@ -27,56 +27,17 @@ const journeyTypeColors: Record<string, string> = {
     microdosing: 'border-l-amber-500',
 };
 
-// Premium Demo Data - matches Golden Seed Protocol archetypes
-// Priority order: Action required first (Ghost, Red Flag), then Active (Whale, Success)
-// STATIC UUIDs aligned with backend reboot_local_universe_PREMIUM.py
-const MOCK_JOURNEYS: ActiveJourney[] = [
-    {
-        id: '1',
-        patientId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', // Julian
-        patientName: 'Julian Soler',
-        journeyName: 'Neuro-Repatterning Strategy',
-        journeyType: 'coaching',
-        status: 'PAYMENT_PENDING',
-        priority: 'high',
-    },
-    {
-        id: '2',
-        patientId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', // Elena
-        patientName: 'Elena Velázquez',
-        journeyName: 'The Sovereign Mind Protocol',
-        journeyType: 'psychedelic',
-        status: 'BLOCKED',
-        priority: 'high',
-    },
-    {
-        id: '3',
-        patientId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', // Marcus
-        patientName: 'Marcus Thorne',
-        journeyName: 'The Sovereign Mind Protocol',
-        journeyType: 'psychedelic',
-        status: 'ACTIVE',
-        priority: 'medium',
-    },
-    {
-        id: '4',
-        patientId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', // Sarah
-        patientName: 'Sarah Jenkins',
-        journeyName: "Architects' Circle Membership",
-        journeyType: 'integration',
-        status: 'ACTIVE',
-        priority: 'normal',
-    },
-];
-
 /**
  * ActiveJourneysWidget - "The Priority Queue"
  * 
  * Shows ongoing patient journeys that need attention.
  * Mini-Boarding Pass style for quick action.
+ * 
+ * @requires Dashboard must pass `journeys` prop with real patient data.
+ * @since v1.1.16 - Wired to real data, no more mock fallback.
  */
 export function ActiveJourneysWidget({
-    journeys = MOCK_JOURNEYS,
+    journeys = [],
     maxItems = 4
 }: ActiveJourneysWidgetProps) {
     const t = useTranslations('Dashboard.activeJourneys');
