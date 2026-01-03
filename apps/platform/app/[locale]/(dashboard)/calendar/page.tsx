@@ -395,7 +395,7 @@ export default function CalendarPage() {
 
       {/* Schedule Selector - Centered between header and content */}
       {activeTab === 'availability' && (
-        <div className="mt-6 mb-8 bg-surface border border-border-subtle rounded-xl p-6">
+        <div className="mt-6 mb-8 bg-card border border-border rounded-xl p-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Left: Title and description */}
             <div>
@@ -490,8 +490,8 @@ export default function CalendarPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
             {/* Recurring Card */}
-            <div className="bg-card border rounded-xl overflow-hidden">
-              <div className="bg-brand/5 border-b border-brand/30 p-4">
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="bg-brand/5 border-b border-border p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-foreground">
                     <Clock size={20} />
@@ -528,8 +528,8 @@ export default function CalendarPage() {
             </div>
 
             {/* Specific Card */}
-            <div className="bg-card border rounded-xl overflow-hidden">
-              <div className="bg-brand/5 border-b border-brand/30 p-4">
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="bg-brand/5 border-b border-border p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-foreground">
                     <CalendarDays size={20} />
@@ -570,7 +570,7 @@ export default function CalendarPage() {
             </div>
 
             {/* Blocks Card */}
-            <div className="bg-card border rounded-xl overflow-hidden">
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
               <div className="bg-gradient-to-r from-red-500 to-rose-600 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-foreground">
@@ -610,7 +610,7 @@ export default function CalendarPage() {
             </div>
 
             {/* Google Calendar Card */}
-            <div className="bg-card border rounded-xl overflow-hidden">
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
               <div className="bg-gradient-to-r from-red-500 to-rose-600 p-4">
                 <div className="flex items-center gap-2 text-foreground">
                   <Link2 size={20} />
@@ -628,8 +628,8 @@ export default function CalendarPage() {
                       automáticamente tu disponibilidad cuando tengas eventos.
                     </p>
                     <a
-                      href="/es/settings"
-                      className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm"
+                      href="/es/settings/general#calendar"
+                      className="inline-flex items-center gap-2 text-brand hover:text-brand/80 font-medium text-sm"
                     >
                       Ir a Configuración →
                     </a>
@@ -671,7 +671,7 @@ export default function CalendarPage() {
           </div>
 
           {/* Calendar Preview */}
-          <div className="bg-surface rounded-xl border border-border-subtle p-4">
+          <div className="bg-card rounded-xl border border-border p-4">
             <Calendar
               localizer={localizer}
               events={events}

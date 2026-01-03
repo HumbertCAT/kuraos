@@ -597,10 +597,57 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
    Borders made subtle for dark mode
    ==================================== */
 
-/* Subtle border for calendar grid - 50% opacity */
+/* Subtle border for calendar grid - 40% opacity */
 .rbc-calendar,
 .rbc-calendar * {
   --rbc-border: color-mix(in srgb, var(--border) 40%, transparent);
+}
+
+/* CRITICAL: Reset ALL default RBC borders to use our subtle variable */
+.rbc-time-view,
+.rbc-time-header,
+.rbc-time-header-content,
+.rbc-time-header-gutter,
+.rbc-time-gutter,
+.rbc-time-column,
+.rbc-day-slot,
+.rbc-events-container,
+.rbc-timeslot-group,
+.rbc-time-slot,
+.rbc-day-bg,
+.rbc-month-view,
+.rbc-month-row,
+.rbc-row-bg,
+.rbc-row-content,
+.rbc-row-segment,
+.rbc-header,
+.rbc-allday-cell {
+  border-color: var(--rbc-border) !important;
+}
+
+/* Time gutter (left column with hours) - this is the culprit */
+.rbc-time-gutter {
+  background: var(--background);
+  border-right: 1px solid var(--rbc-border) !important;
+}
+
+.rbc-time-gutter .rbc-timeslot-group {
+  border-bottom: 1px solid var(--rbc-border) !important;
+}
+
+/* Time header gutter (top-left corner) */
+.rbc-time-header-gutter {
+  background: var(--background);
+  border-bottom: 1px solid var(--rbc-border) !important;
+}
+
+/* Day columns in week view */
+.rbc-day-slot {
+  border-left: 1px solid var(--rbc-border) !important;
+}
+
+.rbc-day-slot .rbc-timeslot-group {
+  border-bottom: 1px solid var(--rbc-border) !important;
 }
 
 /* Toolbar */

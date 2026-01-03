@@ -475,7 +475,7 @@ export default function SettingsPage() {
 
           <div className="p-6">
             {/* Google Calendar */}
-            <div className="p-5 bg-muted rounded-xl border border-border">
+            <div id="calendar" className="p-5 bg-muted rounded-xl border border-border scroll-mt-24">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-xl bg-card shadow-sm flex items-center justify-center">
