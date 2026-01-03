@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAuth } from '@/context/auth-context';
 import { Sparkles, Copy, MessageCircle, Check } from 'lucide-react';
+import { getButtonClasses } from '@/components/ui/CyberButton';
 
 /**
  * ReferralWidget - The Mycelium Protocol
@@ -84,7 +85,7 @@ export function ReferralWidget() {
                 href={`https://wa.me/?text=${whatsappText}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-brand/10 hover:bg-brand/20 text-brand rounded-lg transition-all active:scale-95 text-sm font-medium"
+                className={getButtonClasses({ variant: 'highlight', className: 'w-full' })}
             >
                 <MessageCircle className="w-4 h-4" />
                 {t('shareWhatsApp')}

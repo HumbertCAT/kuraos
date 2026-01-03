@@ -5,6 +5,7 @@ import {
     Activity, AlertTriangle, TrendingDown, TrendingUp, Minus,
     MessageCircle, Phone, Mic, RefreshCw, Sparkles, Clock, AlertCircle
 } from 'lucide-react';
+import { CyberButton } from '@/components/ui/CyberButton';
 
 // Priority levels for HUD display
 type HUDPriority = 'CRISIS' | 'STAGNATION' | 'ALERT' | 'INSIGHT' | 'EMPTY';
@@ -351,20 +352,20 @@ export default function AletheiaHUD({
 
                     {/* RIGHT: Actions */}
                     <div className="col-span-3 flex flex-col justify-center gap-3 border-l border-border pl-6">
-                        <button
+                        <CyberButton
+                            variant="surface"
                             onClick={onViewChat}
-                            className="w-full px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-medium transition-colors border border-border text-foreground hover:bg-card"
                         >
                             <MessageCircle className="w-5 h-5" />
                             Ver Chat Original
-                        </button>
-                        <button
+                        </CyberButton>
+                        <CyberButton
+                            variant="highlight"
                             onClick={onContact}
-                            className="w-full px-4 py-3 rounded-xl flex items-center justify-center gap-2 font-medium shadow-lg transition-colors bg-brand text-white hover:opacity-90"
                         >
                             <Phone className="w-5 h-5" />
                             Contactar
-                        </button>
+                        </CyberButton>
                     </div>
 
                 </div>

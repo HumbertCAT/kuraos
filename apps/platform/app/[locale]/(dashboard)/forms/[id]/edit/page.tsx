@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import FormRenderer from '@/components/FormRenderer';
 import RichTextEditor from '@/components/ui/RichTextEditor';
+import { CyberButton } from '@/components/ui/CyberButton';
 
 import { API_URL } from '@/lib/api';
 
@@ -344,29 +345,29 @@ export default function EditFormPage() {
 
                         {/* Preview Toggle */}
                         {activeTab === 'preview' ? (
-                            <button
+                            <CyberButton
+                                variant="surface"
                                 onClick={() => setActiveTab('builder')}
-                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-muted text-foreground hover:bg-muted transition-colors"
                             >
                                 ← Volver al editor
-                            </button>
+                            </CyberButton>
                         ) : (
-                            <button
+                            <CyberButton
+                                variant="surface"
                                 onClick={() => setActiveTab('preview')}
-                                className="px-5 py-2.5 rounded-lg text-sm font-medium bg-muted text-foreground hover:bg-muted transition-colors"
                             >
                                 👁 Vista Previa
-                            </button>
+                            </CyberButton>
                         )}
 
                         {/* Save Button */}
-                        <button
+                        <CyberButton
+                            variant="default"
                             onClick={handleSave}
                             disabled={saving}
-                            className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg hover:bg-primary/90 disabled:opacity-50 text-sm font-medium transition-colors"
                         >
                             {saving ? 'Guardando...' : 'Guardar'}
-                        </button>
+                        </CyberButton>
                     </div>
                 </div>
             </div>

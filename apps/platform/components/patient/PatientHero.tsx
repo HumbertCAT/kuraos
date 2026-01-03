@@ -2,6 +2,7 @@
 
 import { Link } from '@/i18n/navigation';
 import { Mail, Phone, MessageCircle, Edit, Calendar, Activity, TrendingUp } from 'lucide-react';
+import { getButtonClasses } from '@/components/ui/CyberButton';
 
 /**
  * PatientHero v1.0 - "The Clinical Canvas"
@@ -104,7 +105,7 @@ export default function PatientHero({ patient, stats, onContact, onSendForm }: P
                 <div className="flex flex-wrap gap-2 sm:flex-col lg:flex-row">
                     <Link
                         href={`/patients/${patient.id}/edit`}
-                        className="btn btn-sm btn-ghost active:scale-95 transition-transform"
+                        className={getButtonClasses({ variant: 'outline', size: 'sm' })}
                     >
                         <Edit className="w-4 h-4" />
                         Editar
@@ -112,7 +113,7 @@ export default function PatientHero({ patient, stats, onContact, onSendForm }: P
                     {patient.email && (
                         <a
                             href={`mailto:${patient.email}`}
-                            className="btn btn-sm btn-ghost active:scale-95 transition-transform"
+                            className={getButtonClasses({ variant: 'ghost', size: 'sm' })}
                         >
                             <Mail className="w-4 h-4" />
                             Email
@@ -123,7 +124,7 @@ export default function PatientHero({ patient, stats, onContact, onSendForm }: P
                             href={`https://wa.me/${patient.phone.replace(/[^0-9]/g, '')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn btn-sm btn-brand active:scale-95 transition-transform"
+                            className={getButtonClasses({ variant: 'highlight', size: 'sm' })}
                             onClick={onContact}
                         >
                             <MessageCircle className="w-4 h-4" />

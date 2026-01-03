@@ -100,51 +100,74 @@ function ColorPaletteSection() {
 }
 
 // ============ BUTTONS SECTION ============
+import { CyberButton } from '@/components/ui/CyberButton';
+import { Sparkles } from 'lucide-react';
+
 function ButtonsSection() {
     return (
         <section className="space-y-6">
             <h2 className="type-h2 text-foreground border-b border-border pb-2">
-                🔘 Buttons (Tactile UI)
+                🔘 Buttons - CRYSTAL & STEEL
             </h2>
 
             <div className="bg-card rounded-lg p-6 space-y-6">
-                {/* Row 1: Core Buttons with NEW .btn classes */}
+                {/* Material Metaphors */}
                 <div>
-                    <h3 className="type-ui text-muted-foreground tracking-widest mb-3">USING .btn CLASSES (CLICKY!)</h3>
-                    <div className="flex flex-wrap gap-4 items-center">
-                        <button className="btn btn-md btn-primary">Primary</button>
-                        <button className="btn btn-md btn-secondary">Secondary</button>
-                        <button className="btn btn-md btn-ghost">Ghost</button>
-                        <button className="btn btn-md btn-destructive">Destructive</button>
-                        <button className="btn btn-md btn-outline">Outline</button>
+                    <h3 className="type-ui text-muted-foreground tracking-widest mb-1">MATERIAL METAPHORS</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Premium feel through material design language.</p>
+                    <div className="flex flex-wrap gap-6 items-start">
+                        <div className="text-center space-y-2">
+                            <CyberButton variant="default" size="lg">Guardar</CyberButton>
+                            <p className="text-[10px] text-muted-foreground font-medium">⚙️ STEEL</p>
+                            <p className="text-[9px] text-muted-foreground">#004F53 • Solid, Matte</p>
+                        </div>
+                        <div className="text-center space-y-2">
+                            <CyberButton variant="highlight" size="lg">Start Session</CyberButton>
+                            <p className="text-[10px] text-muted-foreground font-medium">🔮 CRYSTAL</p>
+                            <p className="text-[9px] text-muted-foreground">#247C7D • ring-inset</p>
+                        </div>
+                        <div className="text-center space-y-2">
+                            <CyberButton variant="surface" size="lg">Configurar</CyberButton>
+                            <p className="text-[10px] text-muted-foreground font-medium">🪟 GLASS</p>
+                            <p className="text-[9px] text-muted-foreground">zinc-700 • Visible</p>
+                        </div>
                     </div>
                 </div>
 
-                {/* Row 2: Brand & Success */}
+                {/* Action Mapping */}
                 <div className="pt-4 border-t border-border">
-                    <h3 className="type-ui text-muted-foreground tracking-widest mb-3">BRAND BUTTONS (WITH GLOW)</h3>
+                    <h3 className="type-ui text-muted-foreground tracking-widest mb-3">ACTION MAPPING</h3>
                     <div className="flex flex-wrap gap-4 items-center">
-                        <button className="btn btn-md btn-brand">✨ Brand CTA</button>
-                        <button className="btn btn-md btn-brand-soft">Brand Soft</button>
-                        <button className="btn btn-md btn-success">Success</button>
+                        <CyberButton variant="default">Guardar</CyberButton>
+                        <CyberButton variant="highlight">Iniciar Sesión</CyberButton>
+                        <CyberButton variant="secondary">Editar</CyberButton>
+                        <CyberButton variant="ghost">Cancelar</CyberButton>
+                        <CyberButton variant="danger">Eliminar</CyberButton>
+                        <CyberButton variant="ai"><Sparkles className="w-4 h-4 text-yellow-300" />Analizar</CyberButton>
                     </div>
                 </div>
 
-                {/* Row 3: Size Variants */}
+                {/* Size Variants */}
                 <div className="pt-4 border-t border-border">
                     <h3 className="type-ui text-muted-foreground tracking-widest mb-3">SIZE VARIANTS</h3>
                     <div className="flex flex-wrap gap-4 items-center">
-                        <button className="btn btn-sm btn-primary">Small</button>
-                        <button className="btn btn-md btn-primary">Medium</button>
-                        <button className="btn btn-lg btn-primary">Large</button>
+                        <CyberButton variant="highlight" size="sm">Small</CyberButton>
+                        <CyberButton variant="highlight" size="md">Medium</CyberButton>
+                        <CyberButton variant="highlight" size="lg">Large</CyberButton>
                     </div>
                 </div>
 
-                {/* Instruction */}
-                <p className="type-body text-muted-foreground pt-2">
-                    ☝️ Click the buttons! You should feel the <code className="text-brand">active:scale-95</code> effect.
-                    Brand button has <code className="text-brand">shadow-brand/25</code> glow.
-                </p>
+                {/* Usage Guide */}
+                <div className="pt-4 border-t border-border bg-[#004F53]/10 rounded-lg p-4">
+                    <h3 className="type-ui text-[#247C7D] tracking-widest mb-2">HIERARCHY GUIDE</h3>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                        <li><code className="text-[#004F53] font-semibold">default</code> → STEEL: Guardar, Crear, Confirmar (commitment actions)</li>
+                        <li><code className="text-[#247C7D] font-semibold">highlight</code> → CRYSTAL: Start Session, Book Now (Hero CTAs)</li>
+                        <li><code className="text-zinc-400 font-semibold">surface</code> → GLASS: Vista Previa, Configurar (support actions)</li>
+                        <li><code className="text-zinc-500 font-semibold">ghost</code> → Cancelar, Cerrar (dismissive actions)</li>
+                        <li><code className="text-rose-500 font-semibold">danger</code> → Eliminar (destructive actions)</li>
+                    </ul>
+                </div>
             </div>
         </section>
     );

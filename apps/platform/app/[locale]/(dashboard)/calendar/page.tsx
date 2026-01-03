@@ -8,6 +8,7 @@ import { format, parse, startOfWeek, getDay, addDays } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Plus, Clock, X, CalendarDays, CalendarCheck, Trash2, Ban, Settings2, ChevronDown, Link2 } from 'lucide-react';
+import { CyberButton } from '@/components/ui/CyberButton';
 import PageHeader from '@/components/PageHeader';
 
 import { API_URL } from '@/lib/api';
@@ -736,12 +737,12 @@ export default function CalendarPage() {
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setShowRecurringModal(false)} className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-lg">
+                <CyberButton variant="ghost" type="button" onClick={() => setShowRecurringModal(false)}>
                   {t('cancel')}
-                </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-brand text-foreground rounded-lg hover:opacity-90 disabled:opacity-50">
+                </CyberButton>
+                <CyberButton variant="default" type="submit" disabled={saving}>
                   {saving ? '...' : t('save')}
-                </button>
+                </CyberButton>
               </div>
             </form>
           </div>
@@ -780,12 +781,12 @@ export default function CalendarPage() {
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setShowSpecificModal(false)} className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-lg">
+                <CyberButton variant="ghost" type="button" onClick={() => setShowSpecificModal(false)}>
                   {t('cancel')}
-                </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-purple-600 text-foreground rounded-lg hover:bg-purple-700 disabled:opacity-50">
+                </CyberButton>
+                <CyberButton variant="default" type="submit" disabled={saving}>
                   {saving ? '...' : t('save')}
-                </button>
+                </CyberButton>
               </div>
             </form>
           </div>
@@ -834,12 +835,12 @@ export default function CalendarPage() {
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setShowBlockModal(false)} className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-lg">
+                <CyberButton variant="ghost" type="button" onClick={() => setShowBlockModal(false)}>
                   {t('cancel')}
-                </button>
-                <button type="submit" disabled={saving} className="px-4 py-2 bg-risk text-foreground rounded-lg hover:opacity-90 disabled:opacity-50">
+                </CyberButton>
+                <CyberButton variant="danger" type="submit" disabled={saving}>
                   {saving ? '...' : t('save')}
-                </button>
+                </CyberButton>
               </div>
             </form>
           </div>

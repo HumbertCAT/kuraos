@@ -47,6 +47,14 @@ const THEME_SECTIONS = [
             { name: "--warning", label: "Warning (Amber)" },
             { name: "--destructive", label: "Destructive (Red)" },
         ]
+    },
+    {
+        id: "gradients",
+        title: "Texture & Gradients",
+        tokens: [
+            { name: "--gradient-start", label: "Gradient Start (Left)" },
+            { name: "--gradient-end", label: "Gradient End (Right)" },
+        ]
     }
 ];
 
@@ -66,6 +74,8 @@ const DEFAULT_LIGHT: Record<string, string> = {
     "--success": "#059669",
     "--warning": "#D97706",
     "--destructive": "#EF4444",
+    "--gradient-start": "#247C7D",
+    "--gradient-end": "#004F53",
 };
 
 const DEFAULT_DARK: Record<string, string> = {
@@ -83,6 +93,8 @@ const DEFAULT_DARK: Record<string, string> = {
     "--success": "#34D399",
     "--warning": "#FBBF24",
     "--destructive": "#7F1D1D",
+    "--gradient-start": "#247C7D",
+    "--gradient-end": "#004F53",
 };
 
 type ThemeMode = 'dark' | 'light';
@@ -310,6 +322,30 @@ export function ThemeEditor() {
                     </CyberCard>
                 ))}
             </div>
+
+            {/* Gradient Preview */}
+            <CyberCard className="p-5">
+                <h3 className="text-xs font-mono uppercase tracking-widest text-muted-foreground border-b border-border pb-2 mb-4">
+                    Gradient Preview
+                </h3>
+                <div className="space-y-3">
+                    <div
+                        className="h-12 rounded-xl border border-border overflow-hidden"
+                        style={{
+                            background: `linear-gradient(to right, ${colors["--gradient-start"] || "#247C7D"}, ${colors["--gradient-end"] || "#004F53"})`
+                        }}
+                    />
+                    <div
+                        className="h-8 rounded-xl border border-border overflow-hidden"
+                        style={{
+                            background: `linear-gradient(to right, ${colors["--gradient-start"] || "#247C7D"}1A, transparent)`
+                        }}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                        Arriba: Degradado completo • Abajo: Sutil (10%) usado en headers de tabla y sidebar
+                    </p>
+                </div>
+            </CyberCard>
 
             {/* Info Banner */}
             <div className="bg-ai/10 border border-ai/30 rounded-lg p-4 flex items-start gap-3">

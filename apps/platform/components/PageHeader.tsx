@@ -3,6 +3,7 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
+import { getButtonClasses } from '@/components/ui/CyberButton';
 
 interface PageHeaderProps {
     // Identification
@@ -30,8 +31,9 @@ interface PageHeaderProps {
 }
 
 /**
- * ARCHITECT-CERTIFIED PAGE HEADER (v1.1.14)
+ * ARCHITECT-CERTIFIED PAGE HEADER (v1.1.20)
  * The definitive header for Kura OS dashboard modules.
+ * Now using Crystal & Steel button system.
  */
 export default function PageHeader({
     icon: Icon,
@@ -46,11 +48,20 @@ export default function PageHeader({
         if (!action) return null;
 
         const ActionIcon = action.icon;
-        const variantClass = action.variant === 'outline'
-            ? 'btn-outline'
-            : action.variant === 'ghost'
-                ? 'btn-ghost'
-                : 'btn-brand';
+
+        // Map legacy variants to CyberButton variants
+        const variantMap: Record<string, 'default' | 'outline' | 'ghost' | 'highlight'> = {
+            brand: 'default',
+            primary: 'default',
+            outline: 'outline',
+            ghost: 'ghost',
+        };
+        const cyberVariant = variantMap[action.variant || 'brand'] || 'default';
+
+        const buttonClasses = getButtonClasses({
+            variant: cyberVariant,
+            className: `whitespace-nowrap ${action.disabled ? 'pointer-events-none opacity-50' : ''}`
+        });
 
         const content = (
             <>
@@ -67,7 +78,7 @@ export default function PageHeader({
             return (
                 <Link
                     href={action.href}
-                    className={`btn btn-md ${variantClass} ${action.disabled ? 'pointer-events-none opacity-50' : ''}`}
+                    className={buttonClasses}
                 >
                     {content}
                 </Link>
@@ -78,7 +89,7 @@ export default function PageHeader({
             <button
                 onClick={action.onClick}
                 disabled={action.disabled || action.loading}
-                className={`btn btn-md ${variantClass}`}
+                className={buttonClasses}
             >
                 {content}
             </button>
@@ -132,3 +143,4 @@ export default function PageHeader({
         </div>
     );
 }
+

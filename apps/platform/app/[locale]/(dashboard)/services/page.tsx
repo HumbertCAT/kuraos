@@ -6,6 +6,7 @@ import { Plus, Edit, Trash2, Clock, Users, Euro, FileText, CalendarPlus, List, X
 import { useAuth } from '@/context/auth-context';
 import PageHeader from '@/components/PageHeader';
 import { api, API_URL, ListMetadata } from '@/lib/api';
+import { CyberButton } from '@/components/ui/CyberButton';
 import PaginationToolbar from '@/components/ui/pagination-toolbar';
 
 interface ServiceType {
@@ -357,7 +358,7 @@ export default function ServicesPage() {
                                     Activos: {services.filter(s => s.is_active).length}
                                 </span>
                                 <span className="badge badge-brand py-0.5 h-auto text-[10px] font-bold uppercase tracking-wider">
-                                    Ticket Medio: {meta?.extra?.avg_ticket || 0}€
+                                    Ticket Medio: {Math.round(meta?.extra?.avg_ticket || 0)}€
                                 </span>
                             </div>
                         </div>
@@ -396,7 +397,7 @@ export default function ServicesPage() {
                             </div>
                         </div>
                         <table className="w-full">
-                            <thead className="bg-muted/50 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                            <thead className="bg-gradient-to-r from-brand/15 to-transparent text-xs text-muted-foreground uppercase tracking-wider font-semibold">
                                 <tr className="border-b border-border">
                                     <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">{t.title.toUpperCase()}</th>
                                     <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">{t.duration.toUpperCase()}</th>
@@ -683,19 +684,19 @@ export default function ServicesPage() {
                             </div>
 
                             <div className="p-6 border-t flex justify-end gap-3">
-                                <button
+                                <CyberButton
+                                    variant="ghost"
                                     onClick={() => setShowModal(false)}
-                                    className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-lg transition-colors"
                                 >
                                     {t.cancel}
-                                </button>
-                                <button
+                                </CyberButton>
+                                <CyberButton
+                                    variant="default"
                                     onClick={handleSave}
                                     disabled={saving || !formData.title}
-                                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                                 >
                                     {saving ? '...' : t.save}
-                                </button>
+                                </CyberButton>
                             </div>
                         </div>
                     </div>

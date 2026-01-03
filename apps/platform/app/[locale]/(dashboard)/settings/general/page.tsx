@@ -6,6 +6,7 @@ import { useSearchParams, useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
 import { api } from '@/lib/api';
 import { User, Globe, Link2, ExternalLink, Unlink, MapPin, Phone, MessageCircle, Zap, Shield } from 'lucide-react';
+import { CyberButton } from '@/components/ui/CyberButton';
 import CountrySelect from '@/components/CountrySelect';
 import CityAutocomplete from '@/components/CityAutocomplete';
 
@@ -602,10 +603,11 @@ export default function SettingsPage() {
 
         {/* Save Button */}
         <div className="flex justify-end pt-4">
-          <button
+          <CyberButton
+            variant="default"
+            size="lg"
             onClick={handleSave}
             disabled={loading}
-            className="px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-black/20 dark:shadow-black/40 flex items-center gap-2"
           >
             {loading ? (
               <>
@@ -618,7 +620,7 @@ export default function SettingsPage() {
                 {t('savePreferences') || 'Guardar Ajustes'}
               </>
             )}
-          </button>
+          </CyberButton>
         </div>
       </div>
     </div >

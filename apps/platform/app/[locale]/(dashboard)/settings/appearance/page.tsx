@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { CyberCard } from '@/components/ui/CyberCard';
-import { Sun, Moon, Waves, Sunset } from 'lucide-react';
+import { Sun, Moon, Waves, Sunset, Palette } from 'lucide-react';
 
 type ColorTheme = 'DEFAULT' | 'OCEAN' | 'SUNSET';
 
@@ -33,11 +33,21 @@ export default function AppearancePage() {
     const [colorTheme, setColorTheme] = useState<ColorTheme>('DEFAULT');
     const [mounted, setMounted] = useState(false);
 
+    // Gradient texture state
+    const [gradientStart, setGradientStart] = useState('#247C7D');
+    const [gradientEnd, setGradientEnd] = useState('#004F53');
+
     useEffect(() => {
         setMounted(true);
         // Load color theme from localStorage or API
         const saved = localStorage.getItem('kura-color-theme') as ColorTheme;
         if (saved) setColorTheme(saved);
+
+        // Load gradient settings
+        const savedGradientStart = localStorage.getItem('kura-gradient-start');
+        const savedGradientEnd = localStorage.getItem('kura-gradient-end');
+        if (savedGradientStart) setGradientStart(savedGradientStart);
+        if (savedGradientEnd) setGradientEnd(savedGradientEnd);
     }, []);
 
     const handleColorThemeChange = (newTheme: ColorTheme) => {
@@ -50,6 +60,18 @@ export default function AppearancePage() {
 
     const handleModeChange = (mode: 'light' | 'dark') => {
         setTheme(mode);
+    };
+
+    const handleGradientChange = (type: 'start' | 'end', value: string) => {
+        if (type === 'start') {
+            setGradientStart(value);
+            localStorage.setItem('kura-gradient-start', value);
+            document.documentElement.style.setProperty('--gradient-start', value);
+        } else {
+            setGradientEnd(value);
+            localStorage.setItem('kura-gradient-end', value);
+            document.documentElement.style.setProperty('--gradient-end', value);
+        }
     };
 
     if (!mounted) return null;
@@ -138,6 +160,102 @@ export default function AppearancePage() {
                     </button>
                 </div>
             </CyberCard>
+
+            {/* Texture & Gradients Section */}
+            <CyberCard className="p-6">
+                <div className="flex items-center gap-3 mb-2">
+                    <Palette className="w-5 h-5 text-brand" />
+                    <h2 className="type-h2 text-foreground">Texturas & Degradados</h2>
+                </div>
+                <p className="type-body text-muted-foreground mb-6">
+                    Personaliza los degradados sutiles que dan profundidad a la interfaz.
+                </p>
+
+                <div className="space-y-6">
+                    {/* Color Inputs Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Gradient Start */}
+                        <div className="space-y-2">
+                            <label className="type-ui font-medium text-foreground">
+                                Gradient Start
+                            </label>
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="color"
+                                    value={gradientStart}
+                                    onChange={(e) => handleGradientChange('start', e.target.value)}
+                                    className="w-12 h-10 rounded-lg cursor-pointer border border-border"
+                                />
+                                <input
+                                    type="text"
+                                    value={gradientStart}
+                                    onChange={(e) => handleGradientChange('start', e.target.value)}
+                                    className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm font-mono text-foreground focus:ring-2 focus:ring-brand/50 outline-none"
+                                    placeholder="#247C7D"
+                                />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Color inicial del degradado (izquierda)</p>
+                        </div>
+
+                        {/* Gradient End */}
+                        <div className="space-y-2">
+                            <label className="type-ui font-medium text-foreground">
+                                Gradient End
+                            </label>
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="color"
+                                    value={gradientEnd}
+                                    onChange={(e) => handleGradientChange('end', e.target.value)}
+                                    className="w-12 h-10 rounded-lg cursor-pointer border border-border"
+                                />
+                                <input
+                                    type="text"
+                                    value={gradientEnd}
+                                    onChange={(e) => handleGradientChange('end', e.target.value)}
+                                    className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm font-mono text-foreground focus:ring-2 focus:ring-brand/50 outline-none"
+                                    placeholder="#004F53"
+                                />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Color final del degradado (derecha)</p>
+                        </div>
+                    </div>
+
+                    {/* Live Preview */}
+                    <div className="space-y-2">
+                        <label className="type-ui font-medium text-foreground">
+                            Vista Previa
+                        </label>
+                        <div
+                            className="h-16 rounded-xl border border-border overflow-hidden"
+                            style={{
+                                background: `linear-gradient(to right, ${gradientStart}, ${gradientEnd})`
+                            }}
+                        />
+                        <div
+                            className="h-12 rounded-xl border border-border overflow-hidden"
+                            style={{
+                                background: `linear-gradient(to right, ${gradientStart}1A, transparent)`
+                            }}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            Arriba: Degradado completo • Abajo: Degradado sutil (10% opacidad) usado en headers
+                        </p>
+                    </div>
+
+                    {/* Reset Button */}
+                    <button
+                        onClick={() => {
+                            handleGradientChange('start', '#247C7D');
+                            handleGradientChange('end', '#004F53');
+                        }}
+                        className="text-sm text-muted-foreground hover:text-brand transition-colors"
+                    >
+                        ↺ Restaurar valores por defecto
+                    </button>
+                </div>
+            </CyberCard>
         </div>
     );
 }
+

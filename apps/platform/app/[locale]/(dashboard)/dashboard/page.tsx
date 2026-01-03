@@ -193,81 +193,76 @@ export default function DashboardPage() {
 
     return (
         <div className="p-6 space-y-6">
-            {/* ========== GHOST HEADER: THE BRIEFING ========== */}
+            {/* ========== HEADER: Greeting ========== */}
             <header className="pb-2">
                 <h1 className="type-h1 text-foreground">{getGreeting()}</h1>
                 <p className="type-body text-muted-foreground mt-1">{tGreeting('subtitle')}</p>
-                <div className="mt-3">
-                    <BriefingPlayer compact />
-                </div>
             </header>
 
             {/* ========== ONBOARDING PROTOCOL (v1.1.8 - Temporarily disabled) ========== */}
             {/* <ActivationWidget /> */}
 
-            {/* ========== ROW 1: CLINICAL COCKPIT (Top Priority) ========== */}
+            {/* ========== MAIN LAYOUT: 2/3 + 1/3 ========== */}
             <div className="grid grid-cols-12 gap-6">
-                {/* LEFT: Focus Area - "The Present" (span-8) */}
-                <div className="col-span-12 lg:col-span-8">
+                {/* LEFT COLUMN (2/3): Oracle + Focus stacked */}
+                <div className="col-span-12 lg:col-span-8 space-y-6">
+                    {/* The Oracle - Briefing Player */}
+                    <BriefingPlayer />
+
+                    {/* Focus Session - "The Present" */}
                     <FocusSessionCard
                         nextSession={data.nextSession}
                         onViewFullAgenda={() => router.push('/calendar')}
                     />
-                </div>
 
-                {/* RIGHT: Urgent Journeys (span-4) */}
-                <div className="col-span-12 lg:col-span-4">
-                    <ActiveJourneysWidget journeys={data.activeJourneys} />
-                </div>
-            </div>
-
-            {/* ========== ROW 2: BUSINESS PULSE (Secondary) ========== */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <VitalSignCard
-                    label={t('vitalSigns.monthlyIncome')}
-                    value={`€${data.monthlyRevenue.toFixed(0)}`}
-                    trend={{
-                        direction: data.monthlyRevenue > 0 ? 'up' : 'neutral',
-                        label: `+15% ${t('vitalSigns.vsLastMonth')}`,
-                        isPositive: true,
-                    }}
-                    icon={<Wallet className="w-5 h-5" />}
-                    iconColor="text-success"
-                />
-                <VitalSignCard
-                    label={t('vitalSigns.newLeads')}
-                    value={data.newLeadsThisWeek}
-                    trend={{
-                        direction: 'neutral',
-                        label: t('vitalSigns.sameAsLastWeek'),
-                    }}
-                    icon={<Target className="w-5 h-5" />}
-                    iconColor="text-brand"
-                />
-                <VitalSignCard
-                    label={t('vitalSigns.occupancyRate')}
-                    value={`${data.occupancyRate}%`}
-                    badge={`${data.thisMonthSessions} ${t('vitalSigns.sessions')}`}
-                    badgeType="success"
-                    trend={{
-                        direction: data.occupancyRate > 50 ? 'up' : 'neutral',
-                        label: data.occupancyRate > 70 ? t('vitalSigns.highDemand') : t('vitalSigns.sameAsLastWeek'),
-                        isPositive: true,
-                    }}
-                    icon={<Activity className="w-5 h-5" />}
-                    iconColor="text-ai"
-                />
-            </div>
-
-            {/* ========== ROW 3: GROWTH & TOOLS (Tertiary) ========== */}
-            <div className="grid grid-cols-12 gap-6">
-                {/* LEFT: Pipeline (span-8) */}
-                <div className="col-span-12 lg:col-span-8">
+                    {/* Pipeline Velocity */}
                     <PipelineVelocity stages={data.pipelineStages} />
                 </div>
 
-                {/* RIGHT: The Mycelium (span-4) */}
-                <div className="col-span-12 lg:col-span-4">
+                {/* RIGHT COLUMN (1/3): Journeys + VitalSigns + Referral stacked */}
+                <div className="col-span-12 lg:col-span-4 space-y-6">
+                    {/* Active Journeys */}
+                    <ActiveJourneysWidget journeys={data.activeJourneys} />
+
+                    {/* Vital Signs */}
+                    <div className="space-y-4">
+                        <VitalSignCard
+                            label={t('vitalSigns.monthlyIncome')}
+                            value={`€${data.monthlyRevenue.toFixed(0)}`}
+                            trend={{
+                                direction: data.monthlyRevenue > 0 ? 'up' : 'neutral',
+                                label: `+15% ${t('vitalSigns.vsLastMonth')}`,
+                                isPositive: true,
+                            }}
+                            icon={<Wallet className="w-5 h-5" />}
+                            iconColor="text-success"
+                        />
+                        <VitalSignCard
+                            label={t('vitalSigns.newLeads')}
+                            value={data.newLeadsThisWeek}
+                            trend={{
+                                direction: 'neutral',
+                                label: t('vitalSigns.sameAsLastWeek'),
+                            }}
+                            icon={<Target className="w-5 h-5" />}
+                            iconColor="text-brand"
+                        />
+                        <VitalSignCard
+                            label={t('vitalSigns.occupancyRate')}
+                            value={`${data.occupancyRate}%`}
+                            badge={`${data.thisMonthSessions} ${t('vitalSigns.sessions')}`}
+                            badgeType="success"
+                            trend={{
+                                direction: data.occupancyRate > 50 ? 'up' : 'neutral',
+                                label: data.occupancyRate > 70 ? t('vitalSigns.highDemand') : t('vitalSigns.sameAsLastWeek'),
+                                isPositive: true,
+                            }}
+                            icon={<Activity className="w-5 h-5" />}
+                            iconColor="text-ai"
+                        />
+                    </div>
+
+                    {/* The Mycelium - Referral Widget */}
                     <ReferralWidget />
                 </div>
             </div>

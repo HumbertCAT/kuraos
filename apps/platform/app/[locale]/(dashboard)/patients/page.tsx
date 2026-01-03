@@ -286,7 +286,7 @@ export default function PatientsPage() {
             </div>
           </div>
           <table className="w-full">
-            <thead className="bg-muted/50">
+            <thead className="bg-gradient-to-r from-brand/15 to-transparent">
               <tr className="border-b border-border">
                 <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">{terminology.singular.toUpperCase()}</th>
                 <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">ESTADO</th>

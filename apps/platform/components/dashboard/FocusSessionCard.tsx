@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Link } from '@/i18n/navigation';
 import { Clock, Coffee, AlertTriangle, ChevronRight, Calendar, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { getButtonClasses, CyberButton } from '@/components/ui/CyberButton';
 
 interface NextSession {
     id: string;
@@ -159,26 +160,27 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                         </div>
                     )}
 
-                    {/* Action Button */}
+                    {/* Action Button - Smaller */}
                     <Link
                         href={`/patients/${nextSession.id}`}
-                        className="btn btn-brand shadow-lg shadow-brand/20"
+                        className={getButtonClasses({ variant: 'highlight', size: 'sm' })}
                     >
                         {t('prepareSession')}
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-3.5 h-3.5" />
                     </Link>
                 </div>
             </div>
 
             {/* Bottom bar: Quick actions */}
             <div className="relative mt-4 pt-4 border-t border-border/50 flex items-center justify-between">
-                <button
+                <CyberButton
+                    variant="ghost"
+                    size="sm"
                     onClick={onViewFullAgenda}
-                    className="btn btn-ghost btn-sm text-muted-foreground"
                 >
                     <Calendar className="w-4 h-4" />
                     {t('viewFullAgenda')}
-                </button>
+                </CyberButton>
 
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <User className="w-3 h-3" />

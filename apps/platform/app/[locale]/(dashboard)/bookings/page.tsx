@@ -329,7 +329,7 @@ export default function BookingsPage() {
                         </div>
                     </div>
                     <table className="w-full">
-                        <thead className="bg-muted/50">
+                        <thead className="bg-gradient-to-r from-brand/15 to-transparent">
                             <tr className="border-b border-border">
                                 <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">{t.patient}</th>
                                 <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">{t.service}</th>

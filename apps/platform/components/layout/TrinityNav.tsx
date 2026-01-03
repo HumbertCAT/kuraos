@@ -161,7 +161,7 @@ export function TrinityNav() {
                     href="/dashboard"
                     className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
                         } ${pathname.includes('/dashboard')
-                            ? 'bg-brand/10 text-brand'
+                            ? 'bg-gradient-to-r from-brand/10 to-transparent text-brand border-l-2 border-brand'
                             : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
                         }`}
                     title={isCollapsed ? 'Dashboard' : undefined}
@@ -224,7 +224,7 @@ export function TrinityNav() {
                                                 href={item.href}
                                                 className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
                                                     } ${isActive(item.href)
-                                                        ? 'bg-card text-foreground shadow-sm'
+                                                        ? 'bg-gradient-to-r from-brand/10 to-transparent text-foreground border-l-2 border-brand shadow-sm'
                                                         : 'text-sidebar-foreground hover:bg-card/50 hover:text-foreground'
                                                     }`}
                                                 title={isCollapsed ? item.label : undefined}
@@ -246,7 +246,7 @@ export function TrinityNav() {
                     href="/automations"
                     className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-lg transition-all ${isCollapsed ? 'justify-center' : ''
                         } ${isActive('/automations')
-                            ? 'bg-ai/10 text-ai'
+                            ? 'bg-gradient-to-r from-ai/10 to-transparent text-ai border-l-2 border-ai'
                             : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
                         }`}
                     title={isCollapsed ? 'Agentes' : undefined}
@@ -263,7 +263,7 @@ export function TrinityNav() {
                     href="/help"
                     className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-lg transition-all mb-2 ${isCollapsed ? 'justify-center' : ''
                         } ${isActive('/help')
-                            ? 'bg-brand/10 text-brand'
+                            ? 'bg-gradient-to-r from-brand/10 to-transparent text-brand border-l-2 border-brand'
                             : 'text-sidebar-foreground hover:bg-accent hover:text-foreground'
                         }`}
                     title={isCollapsed ? 'Ayuda' : undefined}

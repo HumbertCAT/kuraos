@@ -216,21 +216,21 @@ export default function BriefingPlayer({ compact = false }: BriefingPlayerProps)
             {/* Main Player Section */}
             <div className="p-6">
                 <div className="flex items-center gap-4">
-                    {/* Play Button */}
+                    {/* Play Button - XXL */}
                     {hasAudio ? (
                         <button
                             onClick={handlePlayPause}
-                            className="w-14 h-14 rounded-xl bg-card flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                            className="w-20 h-20 rounded-2xl bg-brand/10 flex items-center justify-center shadow-lg hover:scale-105 hover:bg-brand/20 transition-all border border-brand/20"
                         >
                             {isPlaying ? (
-                                <Pause className="w-7 h-7 text-brand" />
+                                <Pause className="w-10 h-10 text-brand" />
                             ) : (
-                                <Play className="w-7 h-7 text-brand ml-1" />
+                                <Play className="w-10 h-10 text-brand ml-1" />
                             )}
                         </button>
                     ) : (
-                        <div className="w-14 h-14 rounded-xl bg-card/20 flex items-center justify-center">
-                            <Volume2 className="w-7 h-7 text-foreground/60" />
+                        <div className="w-20 h-20 rounded-2xl bg-card/20 flex items-center justify-center">
+                            <Volume2 className="w-10 h-10 text-foreground/60" />
                         </div>
                     )}
 

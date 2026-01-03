@@ -59,6 +59,8 @@
 
   /* BRAND & STATUS (Semantic) */
   --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-hover: var(--brand-hover);
   --color-risk: var(--risk);
   --color-success: var(--success);
   --color-warning: var(--warning);
@@ -116,12 +118,18 @@
   --input-border: #E4E4E7;
   --ring: #18181B;
 
-  /* Brand Palette (Day) */
-  --brand: #0D9488;    /* Teal 600 - Readable on White */
-  --risk: #E11D48;     /* Rose 600 */
-  --success: #059669;  /* Emerald 600 */
-  --warning: #D97706;  /* Amber 600 */
-  --ai: #7C3AED;       /* Violet 600 */
+  /* Brand Palette (Day) - Official KURA OS Colors */
+  --brand: #247C7D;            /* Official Teal - Standard */
+  --brand-foreground: #FFFFFF; /* White text for contrast */
+  --brand-hover: #0D6769;      /* Darker for hover states */
+  --risk: #E11D48;             /* Rose 600 */
+  --success: #059669;          /* Emerald 600 */
+  --warning: #D97706;          /* Amber 600 */
+  --ai: #7C3AED;               /* Violet 600 */
+
+  /* Gradient Textures (Light Lateral Effect) */
+  --gradient-start: #247C7D;   /* Teal Medium */
+  --gradient-end: #004F53;     /* Teal Deep */
 }
 
 .dark {
@@ -145,7 +153,7 @@
   --popover-foreground: #FAFAFA;
   
   /* Controls & Inputs */
-  --primary: #FAFAFA;          /* White Button (Tactical High Contrast) */
+  --primary: #E4E4E7;          /* Zinc 200 - Softer White (no retina burn) */
   --primary-foreground: #18181B; /* Black Text */
   
   --secondary: #27272A;        /* Zinc 800 - Dark Button */
@@ -165,12 +173,18 @@
   --input-border: #27272A;
   --ring: #D4D4D8;
 
-  /* Brand Palette (Night - Brighter/Neon) */
-  --brand: #2DD4BF;    /* Teal 400 - Neon Teal */
-  --risk: #FB7185;     /* Rose 400 - Neon Pink/Red */
-  --success: #34D399;  /* Emerald 400 */
-  --warning: #FBBF24;  /* Amber 400 */
-  --ai: #A78BFA;       /* Violet 400 */
+  /* Brand Palette (Night) - Official KURA OS Colors */
+  --brand: #247C7D;            /* Official Teal - Same as Day for consistency */
+  --brand-foreground: #FFFFFF; /* White text for contrast */
+  --brand-hover: #0D6769;      /* Darker for hover states */
+  --risk: #FB7185;             /* Rose 400 */
+  --success: #34D399;          /* Emerald 400 */
+  --warning: #FBBF24;          /* Amber 400 */
+  --ai: #A78BFA;               /* Violet 400 */
+
+  /* Gradient Textures (Light Lateral Effect) */
+  --gradient-start: #247C7D;   /* Teal Medium */
+  --gradient-end: #004F53;     /* Teal Deep */
 }
 
 /* -------------------------------------------------------------------------- */
@@ -560,6 +574,17 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   background: transparent;
 }
 
+/* ====================================
+   REACT BIG CALENDAR OVERRIDES
+   Borders made subtle for dark mode
+   ==================================== */
+
+/* Subtle border for calendar grid - 50% opacity */
+.rbc-calendar,
+.rbc-calendar * {
+  --rbc-border: color-mix(in srgb, var(--border) 40%, transparent);
+}
+
 /* Toolbar */
 .rbc-toolbar {
   margin-bottom: 1rem;
@@ -609,11 +634,11 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   letter-spacing: 0.05em;
   color: var(--muted-foreground);
   background: var(--background);
-  border-bottom: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--rbc-border) !important;
 }
 
 .rbc-header + .rbc-header {
-  border-left: 1px solid var(--border) !important;
+  border-left: 1px solid var(--rbc-border) !important;
 }
 
 /* Day cells */
@@ -622,7 +647,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 }
 
 .rbc-day-bg + .rbc-day-bg {
-  border-left: 1px solid var(--border) !important;
+  border-left: 1px solid var(--rbc-border) !important;
 }
 
 .rbc-off-range-bg {
@@ -652,13 +677,13 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 
 /* Time view */
 .rbc-time-view {
-  border: 1px solid var(--border) !important;
+  border: 1px solid var(--rbc-border) !important;
   border-radius: 0.75rem;
   overflow: hidden;
 }
 
 .rbc-time-header {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--rbc-border);
 }
 
 .rbc-time-content {
@@ -667,7 +692,7 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 }
 
 .rbc-timeslot-group {
-  border-bottom: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--rbc-border) !important;
 }
 
 .rbc-time-slot {
@@ -752,13 +777,13 @@ h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 
 /* Month view border tweaks */
 .rbc-month-view {
-  border: 1px solid var(--border) !important;
+  border: 1px solid var(--rbc-border) !important;
   border-radius: 0.75rem;
   overflow: hidden;
 }
 
 .rbc-month-row + .rbc-month-row {
-  border-top: 1px solid var(--border) !important;
+  border-top: 1px solid var(--rbc-border) !important;
 }
 
 /* ================================================

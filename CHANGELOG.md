@@ -14,6 +14,54 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.20] - 2026-01-03 ✨ THE COHERENCE UPDATE
+
+> **Theme:** "Material depth meets authoritative typography — Crystal & Steel + The Texture Protocol"
+
+### 🎛️ Crystal & Steel Button System
+- **CyberButton Hierarchy:** 6 semantic variants with consistent visual weight
+  - `default` (Teal Profundo): CTAs y acciones principales
+  - `highlight` (Glow Teal): Hero buttons, urgencia suave
+  - `outline` (Cristal): Acciones secundarias
+  - `ghost` (Invisible): Terciarias, sin ruido visual
+  - `destructive` (Rojo): Acciones irreversibles
+  - `secondary` (Neutral): Botones low-priority
+- **getButtonClasses():** Utility exportada para usar estilos en componentes no-Button (Link, etc.)
+- **PageHeader Migration:** Migrado de `.btn-*` legacy a `getButtonClasses()` completo
+- **Button Sizing:** `sm`, `md`, `lg` con proporciones coherentes
+
+### 🌊 The Texture Protocol (Gradient System)
+- **CSS Variables:** `--gradient-start: #247C7D`, `--gradient-end: #004F53`
+- **Table Headers:** `bg-gradient-to-r from-brand/15 to-transparent` en Services, Bookings, Patients
+- **Admin Theme Editor:** Nueva sección "Texture & Gradients" con:
+  - Color pickers para gradient-start/end
+  - Live preview (degradado completo + versión sutil 10%)
+  - Defaults en light y dark mode
+- **globals.css:** React Big Calendar borders ahora usan `--rbc-border` (40% opacity) para dark mode sutil
+
+### 🏠 Dashboard Restructure
+- **Layout 2/3 + 1/3:** Columnas unificadas en lugar de filas separadas
+- **Left Column (2/3):** BriefingPlayer → FocusSessionCard → PipelineVelocity (apilados)
+- **Right Column (1/3):** ActiveJourneys → VitalSigns → ReferralWidget (mismo ancho)
+- **Play Button XXL:** `w-20 h-20` con icon `w-10 h-10`, tint `bg-brand/10`
+- **Preparar Sesión:** Reducido a `size: 'sm'` para menor prominencia
+
+### 🧹 UI Polish
+- **Ticket Medio:** Ahora usa `Math.round()` para eliminar decimales largos
+- **Button Wrap:** `whitespace-nowrap` en PageHeader actions
+- **Services Page:** Botón "Añadir Servicio" en una sola línea
+- **Calendar Page:** Bordes del grid más sutiles en dark mode
+
+### 🔧 Technical
+- `components/ui/CyberButton.tsx`: 6 variants + exported `getButtonClasses()`
+- `components/PageHeader.tsx`: Fully migrated to Crystal & Steel
+- `components/admin/ThemeEditor.tsx`: Gradient tokens + preview section
+- `components/BriefingPlayer.tsx`: Play button XXL sizing
+- `components/dashboard/FocusSessionCard.tsx`: Smaller action button
+- `app/globals.css`: `--rbc-border` variable for calendar borders
+
+---
+
 ## [1.1.19] - 2026-01-02 🔮 THE ORACLE + 🎨 THE POLISH AUDIT
 
 > **Theme:** "The server thinks so you don't have to." + "Dark mode, finally done right."
