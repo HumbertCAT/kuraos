@@ -1,162 +1,205 @@
-# KURA OS - Strategic Roadmap
+# Product Roadmap
 
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [README.md](README.md) | Project overview & quick start |
-| [CHANGELOG.md](CHANGELOG.md) | Complete release history |
+> **Status**: Living Document (v1.1.20+)  
+> **Scope**: Strategic Feature Planning 2026  
+> **Last Updated**: 2026-01-03
 
 ---
 
-## � Architecture Decision Records (ADRs)
+## 📋 Resumen Ejecutivo
 
-> Formal design decisions that govern the evolution of KURA OS.
-
-| ADR | Title | Domain | Status |
-|-----|-------|--------|--------|
-| [ADR-001](./docs/adr/ADR-001-database-v2-proposal.md) | Database v2.0 | Infrastructure | 🟡 Deferred |
-| [ADR-002](./docs/adr/ADR-002-design-system-proposal.md) | Design System "Zinc Protocol" | Frontend | ✅ **Implemented (v1.0.3-v1.0.8)** |
-| [ADR-003](./docs/adr/ADR-003-marketing-growth-engine.md) | Marketing Growth Engine | Growth | 🟢 Q1 2026 |
-| [ADR-004](./docs/adr/ADR-004-meta-cloud-api-integration.md) | Meta Cloud API (WhatsApp/IG) | Infrastructure | 🟢 Q1 2026 |
-| [ADR-005](./docs/adr/ADR-005-membership-builder.md) | Membership Builder (Netflix Model) | Retention | 🟢 Q2 2026 |
-| [ADR-006](./docs/adr/ADR-006-smart-prescriptions.md) | Smart Prescriptions | Clinical | 🟢 Q2 2026 |
-| [ADR-007](./docs/adr/ADR-007-the-mirror.md) | The Mirror (Progress Visualization) | Retention | 🟢 Q3 2026 |
-| [ADR-008](./docs/adr/ADR-008-time-capsule.md) | Time Capsule (Delayed Messaging) | Clinical | 🟢 Q3 2026 |
-| [ADR-009](./docs/adr/ADR-009-trinity-navigation.md) | Trinity Navigation | UX | ✅ **Implemented (v1.0.3)** |
-| ADR-010 | The Clean Room (Data Retention) | Compliance | ✅ **Implemented (v1.0.7)** |
-| ADR-011 | Multi-Model Intelligence Engine | AI | ✅ **Implemented (v1.1.1)** |
+Features prioritizadas por:
+1. **Impacto en Revenue** (€ directo)
+2. **Esfuerzo de Desarrollo** (semanas)
+3. **Dependencias Técnicas**
 
 ---
 
-## 📅 Q1 2026: Growth & Polish
+## 🚀 Priorización
 
+### TIER 1: Q1 2026 (INMEDIATO)
 
-### 🍄 The Mycelium Protocol (Viral Growth) ✅ v1.1.18
-| Feature | Description | Status |
-|---------|-------------|--------|
-| **Referral Engine** | `referral_code` + `referred_by` in Organization | ✅ **Implemented** |
-| **Karma Credits** | Reward referrers with karma points (+100/+50) | ✅ **Implemented** |
-| **"Powered By" Attribution** | Footer links on public pages with `?ref=PUBLIC` | ✅ **Implemented** |
-| **Referral Dashboard** | Share stats, WhatsApp/LinkedIn buttons | ✅ **Implemented** |
-| **Reward Redemption** | Automated karma-to-benefits exchange | 🟡 **Pending (v1.1.19+)** |
-| **Redemption History** | Track karma spending | 🟡 **Pending (v1.1.19+)** |
+#### 1.1 Meta Cloud API - WhatsApp Migration
+**ADR:** [ADR-004](./docs/architecture/decisions/ADR-004-meta-cloud-api-integration.md)  
+**Esfuerzo:** 3 semanas  
+**Impacto:** Reducción 30-50% costos operativos  
 
+**Implementación:**
+- Facebook Business verification
+- WhatsApp Business API approval
+- Unified webhook `/webhooks/meta`
+- Migrar de Twilio (keep as fallback)
 
-### 🔗 Meta Cloud API Migration (ADR-004)
-| Feature | Description | Priority |
-|---------|-------------|----------|
-| **WhatsApp Business API** | Replace Twilio sandbox | 🔴 HIGH |
-| **Message Templates** | Transactional templates for booking/reminders | 🔴 HIGH |
-| **Instagram DM Lead Capture** | Unified inbox for IG leads | 🟡 MEDIUM |
-
-### 🔌 Dashboard Data Wiring (ADR-011)
-| Component | API Integration | Status |
-|-----------|-----------------|--------|
-| **Pagination & KPIs** | Shift logic to server-side via `PaginatedResponse` | ✅ **Implemented (v1.1.15)** |
-| **PipelineVelocity** | `/leads?group_by=nurture_status` | 🟡 MEDIUM |
-| **ActiveJourneysWidget** | `/journeys/active` endpoint | 🟡 MEDIUM |
-| **VitalSignCard Trends** | Booking aggregations by week | 🟢 LOW |
-
-### ✨ v1.1.14 - CLEAN SLATE & CLINICAL ROSTER
-Estandarización masiva de tablas y saneamiento del entorno de desarrollo.
-
-| Feature | Description | Status |
-|---------|-------------|--------|
-| **Clinical Roster** | Estandarización de Bookings, Patients y Services | ✅ Completado |
-| **Agent Rebrand** | "Automatizaciones" → "Agentes · Asistentes" + i18n | ✅ Completado |
-| **Clean Slate** | Protocolo de limpieza de caches, media y docker | ✅ Completado |
-| **UX Hardening** | Fix Humbertix, avatars flex-shrink y vertical stacking | ✅ Completado |
-
-### ✨ v1.1.15 - THE ACTIVATION PROTOCOL (Prioridad 1)
-Onboarding de lujo para enseñar al terapeuta a usar el sistema.
-
-| Feature | Description | Status |
-|---------|-------------|--------|
-| **Truth-Based Onboarding** | Estado derivado de `COUNT(*)` real, no flags | 📋 Planificado |
-| **ActivationWidget** | Progress tracker gamificado en Dashboard | 📋 Planificado |
-| **driver.js Tours** | Spotlights interactivos para guiar acciones | 📋 Planificado |
-| **canvas-confetti** | Celebraciones al completar misiones | 📋 Planificado |
-
-**Misiones**:
-1. Crear primer paciente (33%)
-2. Crear servicio (66%)
-3. Recibir primera reserva (100%)
+**Prioridad:** 🔴 CRITICAL (Cost Reduction)
 
 ---
 
-### 🚪 v1.2.0 - THE PATIENT PORTAL (Prioridad 2)
-Portal token-based para pacientes. Referencia: `_legacy_recovery/`
+### TIER 2: Q2 2026 (Foundation)
 
-| Feature | Description | Legacy Reference |
-|---------|-------------|------------------|
-| **Form Viewer** | `/portal/forms/[token]` - Formularios de ingesta | `forms/form_page_legacy.tsx` |
-| **Booking Manager** | `/portal/booking/[token]` - Ver/cancelar/reagendar | `booking/manage_page_legacy.tsx` |
-| **Progress View** | `/portal/progress` - The Mirror (ADR-007) | Nuevo |
+#### 2.1 Membership Builder (El Netflix)
+**ADR:** [ADR-005](./docs/architecture/decisions/ADR-005-membership-builder.md)  
+**Esfuerzo:** 6 semanas  
+**Impacto:** MRR, Retention  
 
-**Arquitectura**:
+**Modelos:**
+- MembershipPlan
+- ContentLibrary
+- PatientSubscription
+- PlanContentAccess (M2M)
+
+**Features:**
+- Stripe subscriptions (mode=subscription)
+- Creator Studio UI (drag & drop)
+- Patient Library (Netflix view)
+- MRR Dashboard card
+
+**Prioridad:** 🟠 HIGH (Revenue Foundation)
+
+---
+
+#### 2.2 Smart Prescriptions (La Farmacia)
+**ADR:** [ADR-006](./docs/architecture/decisions/ADR-006-smart-prescriptions.md)  
+**Esfuerzo:** 4 semanas  
+**Impacto:** Clinical Value, Daily Usage  
+
+**Modelos:**
+- Prescription (estados: SENT, OPENED, COMPLETED)
+- ContentPrescription (acceso temporal)
+
+**Features:**
+- AI Matchmaker (tags → contenido sugerido)
+- Magic Link (`kura.bio/p/rx/{token}`)
+- Adherence tracking (progress %)
+- Timeline integration
+- WhatsApp/Email delivery
+
+**Prioridad:** 🟠 HIGH (Fastest Daily Value)
+
+---
+
+#### 2.3 Instagram Growth Module
+**ADR:** [ADR-004](./docs/architecture/decisions/ADR-004-meta-cloud-api-integration.md)  
+**Esfuerzo:** 4 semanas  
+**Impacto:** Lead Acquisition  
+
+**Features:**
+- Instagram DM ingestion
+- Unified Lead Inbox
+- Auto-Responder integration
+- 24h window indicator
+
+**Dependencia:** WhatsApp Migration primero
+
+**Prioridad:** 🟡 MEDIUM (After WhatsApp)
+
+---
+
+### TIER 3: Q3-Q4 2026 (Polish & Retention)
+
+#### 3.1 The Mirror (El Espejo)
+**ADR:** [ADR-007](./docs/architecture/decisions/ADR-007-the-mirror.md)  
+**Esfuerzo:** 6 semanas  
+**Impacto:** Churn Prevention  
+
+**Features:**
+- ProgressEngine service
+- SoulReport model
+- Sentiment trend chart
+- Semantic shift (word clouds)
+- "Spotify Wrapped" animated view
+- PDF download
+
+**Prioridad:** 🟡 MEDIUM (Quarterly feature)
+
+---
+
+#### 3.2 Time Capsule (La Esperanza)
+**ADR:** [ADR-008](./docs/architecture/decisions/ADR-008-time-capsule.md)  
+**Esfuerzo:** 4 semanas  
+**Impacto:** Emotional Retention  
+
+**Features:**
+- TimeCapsule model
+- Audio/image upload
+- Scheduled delivery (cron)
+- "Time Travelled" reveal page
+- Seal animation
+
+**Prioridad:** 🟢 NICE-TO-HAVE (Cherry on top)
+
+---
+
+### TIER 4: 2027+ (Deferred)
+
+#### 4.1 Database v2.0
+**ADR:** [ADR-001](./docs/architecture/decisions/ADR-001-database-v2-proposal.md)  
+**Decisión:** DEFERRED  
+**Razón:** Sin demanda de mercado inmediata  
+
+---
+
+## 📊 Timeline
+
 ```
-apps/platform/app/[locale]/portal/
-├── booking/[token]/page.tsx   # Gestión de reserva
-├── forms/[token]/page.tsx     # Formularios públicos
-└── progress/page.tsx          # Visualización de progreso
+2026
+├── Q1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+│   └── [3w] WhatsApp Business Migration
+│
+├── Q2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+│   ├── [6w] Membership Builder
+│   ├── [4w] Smart Prescriptions
+│   └── [4w] Instagram Growth
+│
+├── Q3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+│   └── [6w] The Mirror (Progress Reports)
+│
+└── Q4 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    └── [4w] Time Capsule
 ```
 
 ---
 
-### 🧪 Product Polish (Ongoing)
-- [ ] Self-service onboarding wizard
-- [ ] Demo Mode button for investors
-- [ ] Form analytics (completion rates)
-- [ ] Live Components in MDX (dynamic help documentation)
+## 💰 Impacto Proyectado
+
+| Feature | Revenue Impact | Cost Impact |
+|---------|---------------|-------------|
+| WhatsApp Migration | - | -30% messaging costs |
+| Membership Builder | +MRR | - |
+| Smart Prescriptions | +Retention | - |
+| Instagram Growth | +Leads | - |
+| The Mirror | -Churn | - |
 
 ---
 
-## 🚀 Q2 2026: The Fidelization Stack
+## 🔧 Consideraciones Técnicas
 
-**Goal:** Reduce churn to <5% monthly
+**Dependencias Críticas:**
+1. **Meta Cloud API** → Bloquea Instagram y mejora WhatsApp
+2. **ContentLibrary** → Bloquea Smart Prescriptions
+3. **MembershipPlan** → Bloquea Netflix features
 
-### 📺 Membership Builder (ADR-005)
-| Feature | Description |
-|---------|-------------|
-| **Netflix-Style Content Library** | Meditations, exercises, guides |
-| **Subscription Tiers** | BASIC, PRO, CENTER with feature gates |
-| **Content Delivery** | Drip-fed materials post-session |
-
-### 💊 Smart Prescriptions (ADR-006)
-| Feature | Description |
-|---------|-------------|
-| **AI-Suggested Content** | Based on session themes |
-| **Adherence Tracking** | Did they watch/complete? |
-| **Therapeutic Homework** | Auto-assigned between sessions |
+**Riesgos:**
+- Meta App Review puede tardar 2-4 semanas
+- Stripe subscriptions requiere testing exhaustivo
 
 ---
 
-## 🔮 Q3-Q4 2026: Loyalty & Scale
+## 📎 ADRs Relacionados
 
-**Goal:** 500 active organizations
-
-### 🪞 The Mirror (ADR-007)
-| Feature | Description |
-|---------|-------------|
-| **Progress Visualization** | "Spotify Wrapped" for therapy |
-| **Before/After Comparisons** | Visual journey evolution |
-| **Patient Portal Access** | Self-service progress view |
-
-### ⏳ Time Capsule (ADR-008)
-| Feature | Description |
-|---------|-------------|
-| **Delayed Messaging** | Letters to future self |
-| **Milestone Triggers** | Send on 90-day anniversary |
-| **Therapeutic Hope** | Emotional anchoring technique |
-
-### 📱 Mobile App
-| Feature | Description |
-|---------|-------------|
-| **React Native** | iOS + Android |
-| **Push Notifications** | Risk alerts, booking reminders |
-| **Offline Mode** | View patient data without internet |
+| ADR | Status | Target |
+|:----|:-------|:-------|
+| [ADR-001: Database v2.0](./docs/architecture/decisions/ADR-001-database-v2-proposal.md) | DEFERRED | 2027+ |
+| [ADR-004: Meta Cloud API](./docs/architecture/decisions/ADR-004-meta-cloud-api-integration.md) | PLANNED | Q1-Q2 |
+| [ADR-005: Membership Builder](./docs/architecture/decisions/ADR-005-membership-builder.md) | PLANNED | Q2 |
+| [ADR-006: Smart Prescriptions](./docs/architecture/decisions/ADR-006-smart-prescriptions.md) | PLANNED | Q2 |
+| [ADR-007: The Mirror](./docs/architecture/decisions/ADR-007-the-mirror.md) | PLANNED | Q3 |
+| [ADR-008: Time Capsule](./docs/architecture/decisions/ADR-008-time-capsule.md) | PLANNED | Q4 |
 
 ---
 
-*Last updated: January 03, 2026 (v1.1.21 THE ORGANIC ATMOSPHERE)*
+## Guiding Principles
+
+1. **Prosperity is Clinical** — Financial health fuels clinical impact
+2. **Agents, Not Tools** — AI is a teammate, not a feature
+3. **Institutional Trust** — Hospital-grade security
+4. **Radical Simplicity** — If it needs a manual, it's broken
