@@ -14,6 +14,26 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.21] - 2026-01-03 🌿 THE ORGANIC ATMOSPHERE
+> **Theme:** "Soft therapeutic tones, tab persistence, and tactile consistency."
+
+### 🎨 Organic Atmosphere (v1.1.22 legacy - Refined)
+- **"No-White" Light Mode**: Replaced absolute white with `#FAF9F6` (Parchment) and `#FFFEFB` (Bone) to reduce clinical eye strain.
+- **Layered Teal Dark Mode**: Enhanced structural contrast with deep teal tones (`#040F10`) and moss accents.
+- **Logo Optimization**: Increased brand presence by resizing the main logo to `h-16`.
+
+### 🧭 Admin Panel & Navigation
+- **Tab URL Persistence**: Clicking Admin tabs now updates the URL query parameter (`?tab=...`), allowing F5 persistence and shareable links.
+- **Tab Compaction**: Renamed "Organizations" → "**Orgs**" and "AI Gov" → "**AIGov**" to optimize horizontal navigation space.
+- **Search Shortcut**: Doubled the visibility of the `⌘K` command palette indicator in the sidebar.
+
+### 🖱️ Global UX & Polish
+- **Sovereign Card Depth**: Centralized elevation system in `globals.css` with intensified diffuse shadows and defined borders for a more premium, structured feel.
+- **Hand Cursor Standard**: Enforced `cursor: pointer` globally via `globals.css` for all buttons, selects, and interactive roles.
+- **Theme Editor Polish**: "Reset" and "Save Both" buttons resized to medium with tactile `active:scale-95` feedback.
+
+---
+
 ## [1.1.20] - 2026-01-03 ✨ THE COHERENCE UPDATE
 
 > **Theme:** "Material depth meets authoritative typography — Crystal & Steel + The Texture Protocol"

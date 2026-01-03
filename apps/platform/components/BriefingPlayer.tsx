@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Volume2, ChevronDown, ChevronUp, Sparkles, RefreshCw } from 'lucide-react';
+import { Play, Pause, Volume2, Sparkles, RefreshCw, X } from 'lucide-react';
+import { useUIStore } from '@/stores/useUIStore';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
@@ -19,18 +20,24 @@ interface BriefingPlayerProps {
 export default function BriefingPlayer({ compact = false }: BriefingPlayerProps) {
     const [briefing, setBriefing] = useState<BriefingData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isRegenerating, setIsRegenerating] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [showTranscript, setShowTranscript] = useState(false);
+    const [isDismissing, setIsDismissing] = useState(false);
     const [progress, setProgress] = useState(0);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
+    const { dismissCard, isCardDismissed, _checkAndClearDaily } = useUIStore();
+    const CARD_ID = 'dashboard_briefing';
+
     useEffect(() => {
+        _checkAndClearDaily();
         loadBriefing();
     }, []);
 
     async function loadBriefing() {
-        setLoading(true);
+        if (!briefing) setLoading(true);
+        else setIsRegenerating(true);
         setError(null);
         try {
             const res = await fetch(`${API_URL}/insights/daily-briefing`, {
@@ -40,7 +47,6 @@ export default function BriefingPlayer({ compact = false }: BriefingPlayerProps)
                 const data = await res.json();
                 setBriefing(data);
             } else if (res.status === 401) {
-                // Not logged in - hide component
                 setBriefing(null);
             } else {
                 setError('No se pudo cargar el briefing');
@@ -50,10 +56,11 @@ export default function BriefingPlayer({ compact = false }: BriefingPlayerProps)
             setError('Error de conexión');
         } finally {
             setLoading(false);
+            setIsRegenerating(false);
         }
     }
 
-    function handlePlayPause() {
+    const handlePlayPause = () => {
         if (!audioRef.current) return;
 
         if (isPlaying) {
@@ -62,278 +69,135 @@ export default function BriefingPlayer({ compact = false }: BriefingPlayerProps)
             audioRef.current.play();
         }
         setIsPlaying(!isPlaying);
-    }
+    };
 
-    function handleTimeUpdate() {
+    const handleTimeUpdate = () => {
         if (!audioRef.current) return;
         const pct = (audioRef.current.currentTime / audioRef.current.duration) * 100;
         setProgress(pct || 0);
-    }
+    };
 
-    function handleEnded() {
+    const handleEnded = () => {
         setIsPlaying(false);
         setProgress(0);
-    }
+    };
 
-    // Loading state
-    if (loading) {
-        return (
-            <div className="bg-card border border-brand/30 rounded-2xl p-6 text-foreground">
-                <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-card/20 flex items-center justify-center animate-pulse">
-                        <Sparkles className="w-7 h-7" />
-                    </div>
-                    <div className="flex-1">
-                        <div className="h-5 bg-card/30 rounded w-48 mb-2 animate-pulse"></div>
-                        <div className="h-4 bg-card/20 rounded w-32 animate-pulse"></div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    const handleDismiss = () => {
+        setIsDismissing(true);
+        setTimeout(() => {
+            dismissCard(CARD_ID, 'daily');
+        }, 500);
+    };
 
-    // Error or no briefing - show error for debugging
-    if (error || !briefing) {
-        return (
-            <div className="bg-card border border-brand/30 rounded-2xl p-6 text-foreground">
-                <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-xl bg-card/20 flex items-center justify-center">
-                        <Sparkles className="w-7 h-7" />
-                    </div>
-                    <div className="flex-1">
-                        <h3 className="text-lg font-semibold">Tu Resumen Diario</h3>
-                        <p className="text-sm text-foreground/80">
-                            {error || 'Cargando...'}
-                        </p>
-                    </div>
-                    <button
-                        onClick={loadBriefing}
-                        className="p-2 rounded-lg bg-card/10 hover:bg-card/20 transition-colors"
-                        title="Reintentar"
-                    >
-                        <RefreshCw className="w-4 h-4 text-foreground" />
-                    </button>
-                </div>
-            </div>
-        );
-    }
+    if (isCardDismissed(CARD_ID)) return null;
 
-    const hasAudio = briefing.audio_url && briefing.audio_url !== 'null' && briefing.audio_url.length > 0;
-
-    // ============ COMPACT MODE (Sidebar) ============
-    if (compact) {
-        return (
-            <div className="bg-card p-3">
-                <div className="flex items-center gap-3">
-                    {/* Compact Play Button */}
-                    {hasAudio ? (
-                        <button
-                            onClick={handlePlayPause}
-                            className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center hover:bg-brand/20 transition-colors flex-shrink-0"
-                        >
-                            {isPlaying ? (
-                                <Pause className="w-4 h-4 text-brand" />
-                            ) : (
-                                <Play className="w-4 h-4 text-brand ml-0.5" />
-                            )}
-                        </button>
-                    ) : (
-                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
-                            <Volume2 className="w-4 h-4 text-muted-foreground" />
-                        </div>
-                    )}
-
-                    {/* Title & Status */}
-                    <div className="flex-1 min-w-0">
-                        <h3 className="text-[11px] font-semibold text-foreground flex items-center gap-1">
-                            <Sparkles className="w-3 h-3" />
-                            Tu Resumen Diario
-                        </h3>
-                        <p className="text-[10px] text-muted-foreground truncate">
-                            {hasAudio ? (
-                                isPlaying ? '🎙️ Reproduciendo...' : '▶️ Escucha tu briefing'
-                            ) : (
-                                '📝 Solo texto'
-                            )}
-                        </p>
-                    </div>
-
-                    {/* Refresh */}
-                    <button
-                        onClick={loadBriefing}
-                        className="p-1.5 rounded hover:bg-muted transition-colors flex-shrink-0"
-                        title="Regenerar"
-                    >
-                        <RefreshCw className="w-3 h-3 text-muted-foreground" />
-                    </button>
-                </div>
-
-                {/* Compact Progress Bar */}
-                {hasAudio && (
-                    <div className="mt-2">
-                        <div className="h-1 bg-muted rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-brand rounded-full transition-all duration-200"
-                                style={{ width: `${progress}%` }}
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {/* Compact Transcript Toggle */}
-                <button
-                    onClick={() => setShowTranscript(!showTranscript)}
-                    className="w-full mt-2 flex items-center justify-between text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                    <span>{showTranscript ? 'Ocultar' : 'Ver transcripción'}</span>
-                    {showTranscript ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                </button>
-
-                {showTranscript && (
-                    <div className="mt-2 p-2 bg-muted rounded text-[10px] text-foreground leading-relaxed max-h-32 overflow-y-auto">
-                        {briefing.text_script}
-                    </div>
-                )}
-
-                {/* Hidden Audio Element */}
-                {hasAudio && (
-                    <audio
-                        ref={audioRef}
-                        src={`${API_URL.replace('/api/v1', '')}${briefing.audio_url}`}
-                        onTimeUpdate={handleTimeUpdate}
-                        onEnded={handleEnded}
-                        onPlay={() => setIsPlaying(true)}
-                        onPause={() => setIsPlaying(false)}
-                    />
-                )}
-            </div>
-        );
-    }
+    const hasAudio = !!briefing?.audio_url && briefing?.audio_url !== 'null';
+    const showCard = !!briefing && !loading && !isDismissing;
 
     // ============ FULL MODE (Dashboard) ============
     return (
-        <div className="bg-card border border-brand/30 rounded-2xl overflow-hidden shadow-lg">
-            {/* Main Player Section */}
-            <div className="p-6">
-                <div className="flex items-center gap-4">
-                    {/* Play Button - XXL */}
-                    {hasAudio ? (
-                        <button
-                            onClick={handlePlayPause}
-                            className="w-20 h-20 rounded-2xl bg-brand/10 flex items-center justify-center shadow-lg hover:scale-105 hover:bg-brand/20 transition-all border border-brand/20"
-                        >
-                            {isPlaying ? (
-                                <Pause className="w-10 h-10 text-brand" />
-                            ) : (
-                                <Play className="w-10 h-10 text-brand ml-1" />
-                            )}
-                        </button>
-                    ) : (
-                        <div className="w-20 h-20 rounded-2xl bg-card/20 flex items-center justify-center">
-                            <Volume2 className="w-10 h-10 text-foreground/60" />
-                        </div>
-                    )}
+        <div
+            className={`
+                grid transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]
+                ${!showCard ? 'grid-rows-[0fr] opacity-0 mb-0 mt-0 pointer-events-none' : 'grid-rows-[1fr] opacity-100 mb-4 mt-2'}
+            `}
+        >
+            <div className="overflow-hidden">
+                <div className="group relative bg-card border border-brand/30 rounded-2xl overflow-hidden shadow-lg">
+                    {/* Dismiss Button - "The Flow" Hidden until hover */}
+                    <button
+                        onClick={handleDismiss}
+                        className="absolute top-3 right-3 p-2 rounded-full bg-foreground/5 hover:bg-destructive/10 text-foreground/20 hover:text-destructive opacity-0 group-hover:opacity-100 transition-all z-10"
+                        title="Cerrar resumen"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
 
-                    {/* Title & Status */}
-                    <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                            <Sparkles className="w-5 h-5" />
-                            Tu Resumen Diario
-                        </h3>
-                        <p className="text-sm text-foreground/80">
+                    {/* Main Content Section */}
+                    <div className="p-4">
+                        <div className="flex items-center gap-4">
+                            {/* Compact Play Button - slightly XXL but balanced */}
                             {hasAudio ? (
-                                isPlaying ? '🎙️ Reproduciendo...' : '▶️ Escucha tu briefing'
+                                <button
+                                    onClick={handlePlayPause}
+                                    className="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center shadow-lg hover:scale-105 hover:bg-brand/20 transition-all border border-brand/20 shrink-0"
+                                >
+                                    {isPlaying ? (
+                                        <Pause className="w-8 h-8 text-brand" />
+                                    ) : (
+                                        <Play className="w-8 h-8 text-brand ml-1" />
+                                    )}
+                                </button>
                             ) : (
-                                '📝 Solo texto disponible'
+                                <div className="w-16 h-16 rounded-2xl bg-card/20 flex items-center justify-center shrink-0">
+                                    <Volume2 className="w-8 h-8 text-foreground/60" />
+                                </div>
                             )}
-                        </p>
-                    </div>
 
-                    {/* Time/Refresh */}
-                    <div className="flex items-center gap-2">
-                        {briefing.cached && (
-                            <span className="text-xs text-foreground/60 bg-card/10 px-2 py-1 rounded">
-                                En caché
-                            </span>
+                            {/* Title & Stats */}
+                            <div className="flex-1 min-w-0">
+                                <h3 className="text-base font-semibold text-foreground flex items-center gap-2 truncate">
+                                    <Sparkles className="w-4 h-4 text-ai" />
+                                    Tu Resumen Diario
+                                </h3>
+
+                                <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-[10px] text-brand/50 uppercase font-medium tracking-widest bg-brand/5 px-1.5 rounded">
+                                        Intelligence
+                                    </span>
+                                    <button
+                                        onClick={loadBriefing}
+                                        disabled={isRegenerating}
+                                        className="p-1 rounded-md hover:bg-card/20 transition-colors disabled:opacity-50"
+                                        title="Regenerar"
+                                    >
+                                        <RefreshCw className={`w-3 h-3 text-muted-foreground ${isRegenerating ? 'animate-spin' : ''}`} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Audio Progress Bar - Pure CSS transition */}
+                        {hasAudio && (
+                            <div className="mt-3">
+                                <div className="h-1 bg-brand/10 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-brand rounded-full transition-all duration-200"
+                                        style={{ width: `${progress}%` }}
+                                    />
+                                </div>
+                            </div>
                         )}
-                        <button
-                            onClick={loadBriefing}
-                            className="p-2 rounded-lg bg-card/10 hover:bg-card/20 transition-colors"
-                            title="Regenerar"
-                        >
-                            <RefreshCw className="w-4 h-4 text-foreground" />
-                        </button>
                     </div>
-                </div>
 
-                {/* Audio Progress Bar */}
-                {hasAudio && (
-                    <div className="mt-4">
-                        <div className="h-1.5 bg-card/20 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-card rounded-full transition-all duration-200"
-                                style={{ width: `${progress}%` }}
-                            />
+                    {/* Transcript - Integrated & Tight */}
+                    <div className="border-t border-border/40 px-4 py-3 bg-muted/20">
+                        {briefing && (
+                            <div className="text-foreground/90 text-[13px] leading-relaxed italic line-clamp-3 hover:line-clamp-none transition-all cursor-default selection:bg-brand/20">
+                                "{briefing.text_script}"
+                            </div>
+                        )}
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/20">
+                            <p className="text-[9px] text-muted-foreground uppercase tracking-widest">
+                                AletheIA Intelligence • {briefing ? new Date(briefing.generated_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : '...'}
+                            </p>
+                            <span className="text-[9px] text-brand/60 uppercase font-bold tracking-widest">
+                                Daily Protocol
+                            </span>
                         </div>
                     </div>
-                )}
 
-                {/* Waveform Visualization (Fake animated bars) */}
-                {isPlaying && (
-                    <div className="flex items-center justify-center gap-1 mt-4 h-8">
-                        {[...Array(20)].map((_, i) => (
-                            <div
-                                key={i}
-                                className="w-1 bg-card/60 rounded-full animate-pulse"
-                                style={{
-                                    height: `${Math.random() * 100}%`,
-                                    animationDelay: `${i * 50}ms`,
-                                }}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Transcript Accordion */}
-            <div className="border-t border-white/10">
-                <button
-                    onClick={() => setShowTranscript(!showTranscript)}
-                    className="w-full px-6 py-3 flex items-center justify-between text-foreground/80 hover:bg-card/5 transition-colors"
-                >
-                    <span className="text-sm font-medium">
-                        {showTranscript ? 'Ocultar transcripción' : 'Ver transcripción'}
-                    </span>
-                    {showTranscript ? (
-                        <ChevronUp className="w-4 h-4" />
-                    ) : (
-                        <ChevronDown className="w-4 h-4" />
+                    {/* Hidden Audio Element */}
+                    {hasAudio && (
+                        <audio
+                            ref={audioRef}
+                            src={`${API_URL.replace('/api/v1', '')}${briefing.audio_url}`}
+                            onTimeUpdate={handleTimeUpdate}
+                            onEnded={handleEnded}
+                        />
                     )}
-                </button>
-
-                {showTranscript && (
-                    <div className="px-6 pb-6">
-                        <div className="p-4 bg-card/10 rounded-xl text-foreground/90 text-sm leading-relaxed">
-                            {briefing.text_script}
-                        </div>
-                        <p className="text-xs text-foreground/50 mt-2">
-                            Generado: {new Date(briefing.generated_at).toLocaleString('es-ES')}
-                        </p>
-                    </div>
-                )}
+                </div>
             </div>
-
-            {/* Hidden Audio Element */}
-            {hasAudio && (
-                <audio
-                    ref={audioRef}
-                    src={`${API_URL.replace('/api/v1', '')}${briefing.audio_url}`}
-                    onTimeUpdate={handleTimeUpdate}
-                    onEnded={handleEnded}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                />
-            )}
         </div>
     );
 }

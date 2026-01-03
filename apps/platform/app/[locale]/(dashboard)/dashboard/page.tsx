@@ -196,7 +196,6 @@ export default function DashboardPage() {
             {/* ========== HEADER: Greeting ========== */}
             <header className="pb-2">
                 <h1 className="type-h1 text-foreground">{getGreeting()}</h1>
-                <p className="type-body text-muted-foreground mt-1">{tGreeting('subtitle')}</p>
             </header>
 
             {/* ========== ONBOARDING PROTOCOL (v1.1.8 - Temporarily disabled) ========== */}

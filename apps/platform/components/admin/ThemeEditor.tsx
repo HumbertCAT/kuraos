@@ -60,15 +60,15 @@ const THEME_SECTIONS = [
 
 // DEFAULT VALUES (Architect's Constitución Visual)
 const DEFAULT_LIGHT: Record<string, string> = {
-    "--background": "#FAFAFA",
-    "--foreground": "#09090B",
-    "--card": "#FFFFFF",
-    "--border": "#E4E4E7",
-    "--sidebar": "#FFFFFF",
-    "--sidebar-foreground": "#52525B",
-    "--sidebar-border": "#E4E4E7",
-    "--brand": "#0D9488",
-    "--primary": "#18181B",
+    "--background": "#FAF9F6",
+    "--foreground": "#1A1A14",
+    "--card": "#FFFEFB",
+    "--border": "#E5E4DB",
+    "--sidebar": "#F2F1EC",
+    "--sidebar-foreground": "#57534E",
+    "--sidebar-border": "#E5E4DB",
+    "--brand": "#247C7D",
+    "--primary": "#292524",
     "--risk": "#E11D48",
     "--ai": "#7C3AED",
     "--success": "#059669",
@@ -79,15 +79,15 @@ const DEFAULT_LIGHT: Record<string, string> = {
 };
 
 const DEFAULT_DARK: Record<string, string> = {
-    "--background": "#09090B",
-    "--foreground": "#FAFAFA",
-    "--card": "#121212",
-    "--border": "#27272A",
-    "--sidebar": "#09090B",
-    "--sidebar-foreground": "#A1A1AA",
-    "--sidebar-border": "#27272A",
-    "--brand": "#2DD4BF",
-    "--primary": "#FAFAFA",
+    "--background": "#040F10",
+    "--foreground": "#F2F2EB",
+    "--card": "#0C1414",
+    "--border": "#142020",
+    "--sidebar": "#020606",
+    "--sidebar-foreground": "#94A3B8",
+    "--sidebar-border": "#142020",
+    "--brand": "#247C7D",
+    "--primary": "#F2F2EB",
     "--risk": "#FB7185",
     "--ai": "#A78BFA",
     "--success": "#34D399",
@@ -233,16 +233,16 @@ export function ThemeEditor() {
                 <div className="flex gap-2">
                     <button
                         onClick={handleReset}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-foreground hover:bg-accent transition-colors"
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-lg border border-border bg-card text-foreground hover:bg-accent active:scale-95 transition-all"
                     >
-                        <RotateCcw size={14} /> Reset
+                        <RotateCcw size={16} /> Reset
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all disabled:opacity-50"
                     >
-                        {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                        {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                         {saving ? 'Saving...' : 'Save Both'}
                     </button>
                 </div>

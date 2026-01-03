@@ -7,6 +7,24 @@
 @import "tailwindcss";
 
 /* -------------------------------------------------------------------------- */
+/* GLOBAL INTERACTIVE STANDARDS                 */
+/* -------------------------------------------------------------------------- */
+button, 
+select, 
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
+button:disabled,
+select:disabled,
+[role="button"]:disabled {
+  cursor: not-allowed;
+}
+
+/* -------------------------------------------------------------------------- */
 /* THEME ENGINE                               */
 /* -------------------------------------------------------------------------- */
 /* PHILOSOPHY: 
@@ -81,42 +99,42 @@
   /* ☀️ LIGHT MODE (Zinc Scale) */
   
   /* Base Layer */
-  --background: #FAFAFA;       /* Zinc 50 - Clinical Canvas */
-  --foreground: #09090B;       /* Zinc 950 - Sharp Ink */
+  --background: #FAF9F6;       /* Soft Parchment - No-White Canvas */
+  --foreground: #1A1A14;       /* Matted Earth */
   
   /* Layout Areas */
-  --sidebar: #FFFFFF;          /* White Sidebar */
-  --sidebar-foreground: #52525B; /* Zinc 600 - Muted Text */
-  --sidebar-border: #E4E4E7;   /* Zinc 200 - Subtle Divider */
-  --header: #FFFFFF;           /* Glass header base */
+  --sidebar: #F2F1EC;          /* Structured Sidebar (Framing) */
+  --sidebar-foreground: #57534E; 
+  --sidebar-border: #E5E4DB;   
+  --header: #FAF9F6;
 
   /* Surfaces (Cards) */
-  --card: #FFFFFF;             /* Pure White Cards */
-  --card-foreground: #09090B;
+  --card: #FFFEFB;             /* Bone White - Soft contrast */
+  --card-foreground: #1A1A14;
   
-  --popover: #FFFFFF;
-  --popover-foreground: #09090B;
+  --popover: #FFFEFB;
+  --popover-foreground: #1A1A14;
   
   /* Controls & Inputs */
-  --primary: #18181B;          /* Zinc 900 - Black Button */
-  --primary-foreground: #FAFAFA; /* White Text */
+  --primary: #292524;
+  --primary-foreground: #FAF9F6;
+
+  --secondary: #F2F1EC;
+  --secondary-foreground: #292524;
   
-  --secondary: #F4F4F5;        /* Zinc 100 - Light Gray Button */
-  --secondary-foreground: #18181B;
+  --muted: #F2F1EC;
+  --muted-foreground: #78716C;
   
-  --muted: #F4F4F5;            /* Zinc 100 - Backgrounds */
-  --muted-foreground: #71717A; /* Zinc 500 - Metadata text */
+  --accent: #F2F1EC;
+  --accent-foreground: #1A1A14;
   
-  --accent: #F4F4F5;           /* Hover states */
-  --accent-foreground: #18181B;
+  --destructive: #E11D48;
+  --destructive-foreground: #FAF9F6;
   
-  --destructive: #EF4444;
-  --destructive-foreground: #FAFAFA;
-  
-  --border: #E4E4E7;           /* Zinc 200 - Borders */
-  --input: #FFFFFF;            /* White Input */
-  --input-border: #E4E4E7;
-  --ring: #18181B;
+  --border: #E5E4DB;           /* Soft Earth border */
+  --input: #FFFEFB;
+  --input-border: #E5E4DB;
+  --ring: #247C7D;
 
   /* Brand Palette (Day) - Official KURA OS Colors */
   --brand: #247C7D;            /* Official Teal - Standard */
@@ -136,42 +154,42 @@
   /* 🌑 DARK MODE (The Void) */
   
   /* Base Layer */
-  --background: #09090B;       /* Zinc 950 - The Void */
-  --foreground: #FAFAFA;       /* Zinc 50 - Light Text */
+  --background: #040F10;       /* Central Void */
+  --foreground: #F2F2EB;       
   
   /* Layout Areas */
-  --sidebar: #09090B;          /* Match BG for seamless look */
-  --sidebar-foreground: #A1A1AA; /* Zinc 400 */
-  --sidebar-border: #27272A;   /* Zinc 800 - The Structural Line */
-  --header: #09090B;
+  --sidebar: #020606;          /* Deep Root Sidebar (Framing) */
+  --sidebar-foreground: #94A3B8; 
+  --sidebar-border: #142020;   
+  --header: #020606;
 
   /* Surfaces (Cards) */
-  --card: #121212;             /* Zinc 925 - Depth Layer (Not pitch black) */
-  --card-foreground: #FAFAFA;
+  --card: #0C1414;             /* Teal-Lifted Cards */
+  --card-foreground: #F2F2EB;
   
-  --popover: #0C0C0E;          /* Deep Black for menus */
-  --popover-foreground: #FAFAFA;
+  --popover: #081010;
+  --popover-foreground: #F2F2EB;
   
   /* Controls & Inputs */
-  --primary: #E4E4E7;          /* Zinc 200 - Softer White (no retina burn) */
-  --primary-foreground: #18181B; /* Black Text */
+  --primary: #F2F2EB;
+  --primary-foreground: #020606;
   
-  --secondary: #27272A;        /* Zinc 800 - Dark Button */
-  --secondary-foreground: #FAFAFA;
+  --secondary: #111C1C;        
+  --secondary-foreground: #F2F2EB;
   
-  --muted: #27272A;            /* Zinc 800 */
-  --muted-foreground: #D4D4D8; /* Zinc 300 - Boosted contrast */
+  --muted: #111C1C;
+  --muted-foreground: #94A3B8;
   
-  --accent: #27272A;
-  --accent-foreground: #FAFAFA;
+  --accent: #111C1C;
+  --accent-foreground: #F2F2EB;
   
-  --destructive: #7F1D1D;
-  --destructive-foreground: #FAFAFA;
+  --destructive: #991B1B;
+  --destructive-foreground: #F2F2EB;
   
-  --border: #27272A;           /* Zinc 800 - Visible on OLED */
-  --input: #18181B;            /* Zinc 900 - Input Field */
-  --input-border: #27272A;
-  --ring: #D4D4D8;
+  --border: #142020;
+  --input: #081010;
+  --input-border: #142020;
+  --ring: #247C7D;
 
   /* Brand Palette (Night) - Official KURA OS Colors */
   --brand: #247C7D;            /* Official Teal - Same as Day for consistency */
@@ -915,20 +933,22 @@ textarea::placeholder {
     @apply hover:bg-success/90 hover:shadow-md hover:shadow-success/25;
   }
   
-  /* ---- GLASS CARDS ---- */
+  /* ---- GLASS CARDS (v1.1.21 Depth Update) ---- */
   .card {
     @apply bg-card rounded-xl border border-border;
-    @apply transition-all duration-200;
+    @apply transition-all duration-300 ease-out;
   }
   
-  /* Light mode: subtle shadow */
+  /* Light mode: Prominent diffuse shadow (No direction) */
   :root .card {
-    @apply shadow-sm;
+    box-shadow: 0 0 60px -15px rgba(0, 0, 0, 0.15),
+                0 0 25px -5px rgba(0, 0, 0, 0.05);
   }
   
-  /* Dark mode: no shadow, subtle border */
+  /* Dark mode: Subtle elevation glow */
   .dark .card {
-    @apply shadow-none border-border/50;
+    @apply shadow-none border-border/40;
+    box-shadow: 0 0 50px -20px rgba(0, 0, 0, 0.6);
   }
   
   /* Interactive Card (for clickable items) */

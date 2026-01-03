@@ -71,7 +71,7 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
     // ============ STATE B: FREE TIME ============
     if (!nextSession) {
         return (
-            <div className="card bg-card/80 backdrop-blur-sm border-border/50 p-6">
+            <div className="card p-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         {/* Coffee Icon */}
@@ -116,7 +116,7 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
 
     // ============ STATE A: ACTIVE SESSION ============
     return (
-        <div className="card bg-card/80 backdrop-blur-sm border-border/50 p-6 relative overflow-hidden">
+        <div className="card p-6 relative overflow-hidden">
             {/* Subtle gradient overlay for urgency */}
             {isUrgent && (
                 <div className="absolute inset-0 bg-gradient-to-r from-brand/5 to-transparent pointer-events-none" />

@@ -58,7 +58,7 @@ export function RecentPatients() {
     }, []);
 
     return (
-        <div className="bg-card border border-border rounded-xl p-4">
+        <div className="card p-4">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                     <FolderOpen className="w-4 h-4 text-blue-500" />

@@ -32,7 +32,7 @@ export function PipelineVelocity({ stages = [] }: PipelineVelocityProps) {
     const totalLeads = pipelineStages.reduce((sum, s) => sum + s.count, 0);
 
     return (
-        <div className="card bg-card/80 backdrop-blur-sm border-border/50 p-5">
+        <div className="card p-5">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">

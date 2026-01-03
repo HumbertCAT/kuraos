@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.1.20-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.21-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 [![License](https://img.shields.io/badge/license-Proprietary-blue.svg)]()
 
@@ -278,6 +278,8 @@ kuraos/
 See [ROADMAP.md](ROADMAP.md) for the full strategic roadmap.
 
 ### Completed
+- [x] **v1.1.21** - THE ORGANIC ATMOSPHERE: No-white palette + Tab Persistence (January 2026)
+- [x] **v1.1.20** - THE COHERENCE UPDATE: Button Hierarchy + Gradient Evolution (January 2026)
 - [x] **v1.1.18** - THE MYCELIUM: Viral Growth Engine + The Growth Station (January 2026)
 - [x] **v1.1.17** - THE OMNI-SEARCH: God Mode Command Palette (January 2026)
 - [x] **v1.1.15** - THE CONTROL DECK: Server-side pagination + KPIs (January 2026)
@@ -328,6 +330,6 @@ KURA OS is crafted with the same care and intentionality that you bring to your 
 
 ---
 
-*Last updated: January 02, 2026 (v1.1.18 THE MYCELIUM)*
+*Last updated: January 03, 2026 (v1.1.21 THE ORGANIC ATMOSPHERE)*
 
 *© 2025-2026 KURA OS. All rights reserved.*

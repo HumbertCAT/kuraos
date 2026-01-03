@@ -41,7 +41,7 @@ export function ReferralWidget() {
     };
 
     return (
-        <div className="bg-card border border-brand/20 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+        <div className="card p-5">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">

@@ -133,8 +133,8 @@ export function TrinityNav() {
                         </div>
                     ) : (
                         <>
-                            <img src="/kura-logo-light.png" alt="KURA OS" className="h-10 w-auto dark:hidden" />
-                            <img src="/kura-logo-dark.png" alt="KURA OS" className="h-10 w-auto hidden dark:block" />
+                            <img src="/kura-logo-light.png" alt="KURA OS" className="h-16 w-auto dark:hidden" />
+                            <img src="/kura-logo-dark.png" alt="KURA OS" className="h-16 w-auto hidden dark:block" />
                         </>
                     )}
                 </Link>
@@ -149,7 +149,7 @@ export function TrinityNav() {
                     >
                         <Search className="w-4 h-4" />
                         <span className="flex-1 text-left">{t('search')}</span>
-                        <span className="text-[10px] text-muted-foreground/70 font-mono">⌘K</span>
+                        <span className="text-sm text-foreground/80 font-mono bg-sidebar-border/50 px-1.5 py-0.5 rounded border border-sidebar-border">⌘K</span>
                     </button>
                 </div>
             )}

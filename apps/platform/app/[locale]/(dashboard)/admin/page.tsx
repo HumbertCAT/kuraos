@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 
 import { API_URL } from '@/lib/api';
 import { useTranslations } from 'next-intl';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { api } from '@/lib/api';
 import { ThemeEditor } from '@/components/admin/ThemeEditor';
@@ -92,7 +92,7 @@ const THERAPY_ICONS: Record<string, string> = {
     INTEGRATION: '🔄',
 };
 
-type TabType = 'settings' | 'organizations' | 'templates' | 'automations' | 'backups' | 'theme' | 'ai';
+type TabType = 'settings' | 'orgs' | 'templates' | 'automations' | 'backups' | 'theme' | 'aigov';
 
 const TRIGGER_LABELS: Record<string, string> = {
     FORM_SUBMISSION_COMPLETED: '📋 Form Submitted',
@@ -105,6 +105,7 @@ const TRIGGER_LABELS: Record<string, string> = {
 
 export default function AdminPage() {
     const t = useTranslations('Admin');
+    const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
     const locale = params.locale as string || 'en';
@@ -112,6 +113,14 @@ export default function AdminPage() {
     // Read tab from URL query param
     const tabFromUrl = searchParams.get('tab') as TabType | null;
     const [activeTab, setActiveTab] = useState<TabType>(tabFromUrl || 'settings');
+
+    // Handle tab change with URL sync
+    const handleTabChange = (tab: TabType) => {
+        setActiveTab(tab);
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', tab);
+        router.push(url.pathname + url.search);
+    };
     const [settings, setSettings] = useState<SystemSetting[]>([]);
     const [organizations, setOrganizations] = useState<AdminOrganization[]>([]);
     const [templates, setTemplates] = useState<FormTemplate[]>([]);
@@ -165,9 +174,10 @@ export default function AdminPage() {
         return '🟢';                      // <10% - healthy
     };
 
-    // Sync tab from URL
+    // Sync tab from URL (initial load and back/forward navigation)
     useEffect(() => {
-        if (tabFromUrl && ['settings', 'organizations', 'templates', 'automations'].includes(tabFromUrl)) {
+        const validTabs: TabType[] = ['settings', 'orgs', 'templates', 'automations', 'backups', 'theme', 'aigov'];
+        if (tabFromUrl && validTabs.includes(tabFromUrl)) {
             setActiveTab(tabFromUrl);
         }
     }, [tabFromUrl]);
@@ -283,12 +293,12 @@ export default function AdminPage() {
 
     const tabs: { key: TabType; label: string; icon: string }[] = [
         { key: 'settings', label: 'Settings', icon: '⚙️' },
-        { key: 'organizations', label: 'Organizations', icon: '🏢' },
+        { key: 'orgs', label: 'Orgs', icon: '🏢' },
         { key: 'templates', label: 'Forms', icon: '📋' },
         { key: 'automations', label: 'Agents', icon: '🤖' },
         { key: 'backups', label: 'Backups', icon: '🛡️' },
         { key: 'theme', label: 'Themes', icon: '🎨' },
-        { key: 'ai', label: 'AI Gov', icon: '🧠' },
+        { key: 'aigov', label: 'AIGov', icon: '🧠' },
     ];
 
     return (
@@ -304,7 +314,7 @@ export default function AdminPage() {
                 {tabs.map((tab) => (
                     <button
                         key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
+                        onClick={() => handleTabChange(tab.key)}
                         className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === tab.key
                             ? 'bg-card text-foreground shadow-sm'
                             : 'text-foreground/70 hover:text-foreground'
@@ -388,7 +398,7 @@ export default function AdminPage() {
             )}
 
             {/* Organizations Tab */}
-            {activeTab === 'organizations' && (
+            {activeTab === 'orgs' && (
                 <section className="bg-card rounded-xl border border-border overflow-hidden">
                     <div className="px-6 py-4 border-b border-border bg-muted">
                         <h2 className="text-lg font-semibold text-foreground">Organizations</h2>
@@ -678,7 +688,7 @@ export default function AdminPage() {
             )}
 
             {/* AI Governance Tab */}
-            {activeTab === 'ai' && (
+            {activeTab === 'aigov' && (
                 <section className="bg-card rounded-xl border border-border p-6">
                     <AiGovernance />
                 </section>

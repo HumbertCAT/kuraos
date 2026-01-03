@@ -55,7 +55,7 @@ export function VitalSignCard({
             : Minus;
 
     return (
-        <div className="card bg-card/80 backdrop-blur-sm border-border/50 p-5 flex flex-col justify-between h-32 transition-all hover:shadow-sm">
+        <div className="card p-5 flex flex-col justify-between h-32">
             <div className="flex items-center justify-between">
                 <span className="type-ui text-muted-foreground tracking-wider">{label.toUpperCase()}</span>
                 <span className={iconColor}>{icon}</span>
