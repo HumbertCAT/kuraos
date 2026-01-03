@@ -1,0 +1,32 @@
+# Antigravity Search Shield
+# Este archivo optimiza las búsquedas del agente evitando carpetas pesadas.
+
+# Dependencias y Builds
+node_modules/
+.next/
+dist/
+build/
+out/
+.vercel/
+
+# Datos y Binarios
+.git/
+*.sql
+*.sql.gz
+backups/
+docker/backup/
+
+# Entorno
+.env*
+
+# Cachés
+__pycache__/
+*.pyc
+.cache/
+.pytest_cache/
+.nyc_output/
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store

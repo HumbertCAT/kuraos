@@ -35,7 +35,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --allow-unauthenticated \
   --add-cloudsql-instances=kura-os:europe-southwest1:kura-primary \
   --set-secrets=DATABASE_URL=DATABASE_URL:latest,SECRET_KEY=SECRET_KEY:latest,STRIPE_SECRET_KEY=STRIPE_SECRET_KEY:latest,STRIPE_WEBHOOK_SECRET=STRIPE_WEBHOOK_SECRET:latest,TWILIO_ACCOUNT_SID=TWILIO_ACCOUNT_SID:latest,TWILIO_AUTH_TOKEN=TWILIO_AUTH_TOKEN:latest,TWILIO_WHATSAPP_NUMBER=TWILIO_WHATSAPP_NUMBER:latest,OPENAI_API_KEY=OPENAI_API_KEY:latest,GOOGLE_API_KEY=GOOGLE_API_KEY:latest,GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID:latest,GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET:latest,BREVO_API_KEY=BREVO_API_KEY:latest \
-  --env-vars-file=scripts/env-vars.yaml \
+  --env-vars-file=scripts/config/env-vars.yaml \
   --no-traffic  # Deploy without routing traffic yet
 
 echo "✅ Image built and staged (no traffic yet)"

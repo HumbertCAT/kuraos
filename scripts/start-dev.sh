@@ -8,6 +8,13 @@
 
 echo "🚀 Starting KuraOS Development Environment..."
 
+# Change to repo root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}/.."
+
+# Create logs directory if it doesn't exist
+mkdir -p logs
+
 # Parse arguments
 CLEAN_START=false
 for arg in "$@"; do
@@ -71,11 +78,11 @@ if ! command -v stripe &> /dev/null; then
     echo "   Install it from: https://stripe.com/docs/stripe-cli"
 else
     # Start Stripe webhook listener in background
-    echo "🎧 Starting Stripe webhook listener..."
-    stripe listen --forward-to localhost:8001/api/v1/payments/webhook > stripe-webhook.log 2>&1 &
+    echo "🎧 Starting Stripe webhook listener (logs in logs/stripe-webhook.log)..."
+    stripe listen --forward-to localhost:8001/api/v1/payments/webhook > logs/stripe-webhook.log 2>&1 &
     STRIPE_PID=$!
     echo "   Stripe webhook PID: $STRIPE_PID"
-    echo $STRIPE_PID > .stripe-webhook.pid
+    echo $STRIPE_PID > logs/.stripe-webhook.pid
 fi
 
 # Check if ngrok is installed
@@ -84,11 +91,11 @@ if ! command -v ngrok &> /dev/null; then
     echo "   Install it from: https://ngrok.com/download"
 else
     # Start ngrok tunnel for Twilio webhooks in background
-    echo "🌐 Starting ngrok tunnel for Twilio..."
-    ngrok http 8001 > ngrok.log 2>&1 &
+    echo "🌐 Starting ngrok tunnel for Twilio (logs in logs/ngrok.log)..."
+    ngrok http 8001 > logs/ngrok.log 2>&1 &
     NGROK_PID=$!
     echo "   ngrok PID: $NGROK_PID"
-    echo $NGROK_PID > .ngrok.pid
+    echo $NGROK_PID > logs/.ngrok.pid
     
     # Wait for ngrok to start and get URL
     sleep 3
@@ -137,10 +144,10 @@ if [ -d "apps/marketing" ]; then
         npm install --silent
     fi
     # Start on port 3002 in background
-    npm run dev > ../../marketing.log 2>&1 &
+    npm run dev > ../../logs/marketing.log 2>&1 &
     MARKETING_PID=$!
     echo "   Marketing PID: $MARKETING_PID"
-    echo $MARKETING_PID > ../../.marketing.pid
+    echo $MARKETING_PID > ../../logs/.marketing.pid
     cd ../..
 else
     echo "⚠️  apps/marketing not found. Skipping."
@@ -157,8 +164,9 @@ echo "   - Database:  localhost:5433 (PERSISTENT)"
 echo ""
 echo "📝 Logs:"
 echo "   - Docker:    docker-compose logs -f"
-echo "   - Stripe:    tail -f stripe-webhook.log"
-echo "   - Marketing: tail -f marketing.log"
+echo "   - Stripe:    tail -f logs/stripe-webhook.log"
+echo "   - Marketing: tail -f logs/marketing.log"
+echo "   - ngrok:     tail -f logs/ngrok.log"
 echo ""
 echo "🔄 Migrations run automatically on startup"
 echo "🗑️  To reset DB: ./scripts/start-dev.sh --clean"
