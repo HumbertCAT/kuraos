@@ -48,8 +48,9 @@ class Settings(BaseSettings):
     EMAIL_FROM_NAME: str = "TherapistOS"
 
     # Frontend URL (for links in emails)
-    # Dev: http://localhost:3001, Prod: https://therapistos.app
+    # Dev: http://localhost:3001, Prod: https://app.kuraos.ai
     FRONTEND_URL: str = "http://localhost:3001"
+    DEFAULT_LOCALE: str = "es"  # For localized frontend routes
 
     # OpenAI (Whisper audio transcription, TTS for Daily Briefing)
     OPENAI_API_KEY: Optional[str] = None
@@ -67,8 +68,8 @@ class Settings(BaseSettings):
 
     # Tier Commission Fees (static business constants)
     TIER_FEE_BUILDER: float = 0.05  # 5% platform fee for free tier
-    TIER_FEE_PRO: float = 0.02      # 2% platform fee for PRO
-    TIER_FEE_CENTER: float = 0.01   # 1% platform fee for CENTER
+    TIER_FEE_PRO: float = 0.02  # 2% platform fee for PRO
+    TIER_FEE_CENTER: float = 0.01  # 1% platform fee for CENTER
 
     # Note: env_file not needed - Docker injects envs via docker-compose.yml env_file directive
     # For local non-Docker development, set envs manually or use: export $(cat .env | xargs)
