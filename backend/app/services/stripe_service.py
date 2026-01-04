@@ -5,7 +5,7 @@ from typing import Optional
 import stripe
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from app.core.config import settings
 from app.db.models import Organization, OrgTier

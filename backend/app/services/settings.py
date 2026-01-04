@@ -46,6 +46,17 @@ async def get_setting_str(db: AsyncSession, key: str, default: str = "") -> str:
     return str(value) if value is not None else default
 
 
+async def get_setting_float(db: AsyncSession, key: str, default: float = 0.0) -> float:
+    """Get a setting as float."""
+    value = await get_setting(db, key, default)
+    if isinstance(value, (int, float)):
+        return float(value)
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return default
+
+
 async def set_setting(
     db: AsyncSession, key: str, value: Any, description: Optional[str] = None
 ) -> SystemSetting:
