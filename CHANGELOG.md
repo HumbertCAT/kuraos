@@ -14,6 +14,54 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-04 💰 THE MONETIZATION UPDATE
+
+> **Theme:** "Real SaaS metrics, dynamic routing, and pure USD spend controls."
+
+### 💸 AI Credits Deprecation (BREAKING CHANGE)
+Complete removal of the credit-based billing system in favor of USD spend limits.
+- **Database Migration**: Dropped `ai_credits_monthly_quota`, `ai_credits_purchased`, `ai_credits_used_this_month`, `credits_reset_at` from `organizations`
+- **New Endpoint**: `GET /auth/me/ai-spend` → Returns `{ spend_usd, limit_usd, usage_percent }`
+- **Removed Endpoints**: `/admin/organizations/{id}/add-credits`, `/auth/me/credits`
+- **Tier Limits**: Controlled via `TIER_AI_SPEND_LIMIT_{BUILDER|PRO|CENTER}`
+
+### 🧠 Dynamic AI Task Routing (Model Sovereignty)
+Task-based model selection for optimized cost and performance.
+- **ModelRegistry**: EU-only models from europe-west1 region
+- **AI_TASK_ROUTING**: System setting maps tasks to specific models
+- **Tasks**: transcription, analysis, chat, summary, translation
+- **Admin UI**: Per-task model dropdowns in AI Governance panel
+
+### 📊 Real SaaS Financial Metrics
+Replaced margin multiplier with actual revenue tracking.
+- **Subscription Revenue**: Count PRO orgs × €49 + CENTER orgs × €149
+- **Commission Revenue**: Sum of `platform_fee` from bookings
+- **Gross Profit**: Revenue - Provider Cost (color-coded green/red)
+- **Removed**: Margin Config card and `AI_MARGIN_MULTIPLIER`
+
+### 🇪🇸 EUR Localization
+Full Spanish localization for financial displays.
+- **Currency**: All amounts now display as EUR (€) with `es-ES` locale
+- **Neural Registry**: Headers updated from $/M to €/M
+
+### 📱 My Plan Page Redesign
+Upgrade-focused UI to drive conversion.
+- **Hero Section**: Current plan, platform fee, usage gauges (AI/Patients)
+- **Upgrade Grid**: 3-card layout with RECOMENDADO badge
+- **Fee Badges**: Color-coded (🔴5%, 🟡2%, 🟢1%)
+- **Pressure UI**: Warnings when usage >90%
+
+### 🐛 Bug Fixes
+- **Auth Response**: Added `tier` field to `OrganizationResponse` (was missing)
+- **Migration Chain**: Fixed Alembic down_revision for drop_ai_credits migration
+
+### 🔧 Technical
+- Migration: `drop_ai_credits_v120` (drops 4 columns from organizations)
+- Updated: `schemas.py`, `auth.py`, `admin_ai.py`, `stripe_service.py`, `clinical_entries.py`, `seed_tiers.py`
+- Frontend: `AiGovernance.tsx`, `settings/plan/page.tsx`
+
+---
+
 ## [1.1.21] - 2026-01-03 🌿 THE ORGANIC ATMOSPHERE
 > **Theme:** "Soft therapeutic tones, tab persistence, and tactile consistency."
 

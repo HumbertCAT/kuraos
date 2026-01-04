@@ -81,11 +81,11 @@ function getBarColor(percent: number): string {
 export default function PlanPage() {
     const { organization } = useAuth();
     const [aiSpend, setAiSpend] = useState<AiSpend | null>(null);
+    const [patientCount, setPatientCount] = useState(0);
     const [loading, setLoading] = useState(true);
 
     const currentTier = (organization?.tier as TierKey) || 'BUILDER';
     const currentPlan = PLANS[currentTier];
-    const patientCount = organization?.patient_count || 0;
 
     useEffect(() => {
         loadAiSpend();
@@ -94,15 +94,24 @@ export default function PlanPage() {
     async function loadAiSpend() {
         try {
             const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-            const res = await fetch(`${API_URL}/auth/me/ai-spend`, {
-                credentials: 'include',
-            });
-            if (res.ok) {
-                const data = await res.json();
+
+            // Load AI spend and patient count in parallel
+            const [spendRes, patientsRes] = await Promise.all([
+                fetch(`${API_URL}/auth/me/ai-spend`, { credentials: 'include' }),
+                fetch(`${API_URL}/patients?per_page=1`, { credentials: 'include' }),
+            ]);
+
+            if (spendRes.ok) {
+                const data = await spendRes.json();
                 setAiSpend(data);
             }
+
+            if (patientsRes.ok) {
+                const data = await patientsRes.json();
+                setPatientCount(data.meta?.total || data.total || 0);
+            }
         } catch (err) {
-            console.error('Failed to load AI spend:', err);
+            console.error('Failed to load plan data:', err);
         } finally {
             setLoading(false);
         }
