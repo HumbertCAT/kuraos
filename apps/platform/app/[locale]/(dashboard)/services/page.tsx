@@ -8,6 +8,7 @@ import PageHeader from '@/components/PageHeader';
 import { api, API_URL, ListMetadata } from '@/lib/api';
 import { CyberButton } from '@/components/ui/CyberButton';
 import PaginationToolbar from '@/components/ui/pagination-toolbar';
+import { Tooltip } from '@/components/ui/tooltip';
 
 interface ServiceType {
     id: string;
@@ -445,35 +446,39 @@ export default function ServicesPage() {
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                                                <a
-                                                    href={`/${locale}/book/${currentUser?.id}`}
-                                                    target="_blank"
-                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
-                                                    title="Preview booking"
-                                                >
-                                                    <CalendarPlus size={16} />
-                                                </a>
-                                                <button
-                                                    onClick={() => openBookingsModal(service)}
-                                                    className="p-2 text-muted-foreground hover:text-amber-600 hover:bg-amber-100 rounded-lg transition-all"
-                                                    title="View bookings"
-                                                >
-                                                    <List size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => openEditModal(service)}
-                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
-                                                    title="Edit"
-                                                >
-                                                    <Edit size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(service.id)}
-                                                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
-                                                    title="Delete"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
+                                                <Tooltip content="Vista previa de reserva">
+                                                    <a
+                                                        href={`/${locale}/book/${currentUser?.id}`}
+                                                        target="_blank"
+                                                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                                                    >
+                                                        <CalendarPlus size={16} />
+                                                    </a>
+                                                </Tooltip>
+                                                <Tooltip content="Ver reservas de este servicio">
+                                                    <button
+                                                        onClick={() => openBookingsModal(service)}
+                                                        className="p-2 text-muted-foreground hover:text-amber-600 hover:bg-amber-100 rounded-lg transition-all"
+                                                    >
+                                                        <List size={16} />
+                                                    </button>
+                                                </Tooltip>
+                                                <Tooltip content="Editar servicio">
+                                                    <button
+                                                        onClick={() => openEditModal(service)}
+                                                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                                                    >
+                                                        <Edit size={16} />
+                                                    </button>
+                                                </Tooltip>
+                                                <Tooltip content="Eliminar servicio">
+                                                    <button
+                                                        onClick={() => handleDelete(service.id)}
+                                                        className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </Tooltip>
                                             </div>
                                         </td>
                                     </tr>

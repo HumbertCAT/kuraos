@@ -6,6 +6,7 @@ import { Zap, Power, Trash2, Download, Sparkles, MessageSquarePlus, Bot, Setting
 import { useTranslations } from 'next-intl';
 import IconRenderer from '@/components/IconRenderer';
 import PageHeader from '@/components/PageHeader';
+import { Tooltip } from '@/components/ui/tooltip';
 
 import { API_URL } from '@/lib/api';
 
@@ -324,33 +325,38 @@ export default function AutomationsPage() {
                                     {/* Actions */}
                                     <div className="flex items-center gap-2 flex-shrink-0">
                                         {/* Configure */}
-                                        <button
-                                            onClick={() => setEditingAgent(rule)}
-                                            className="p-2 text-muted-foreground hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
-                                            title="Configurar personalidad"
-                                        >
-                                            <Settings className="w-5 h-5" />
-                                        </button>
+                                        <Tooltip content="Configurar personalidad">
+                                            <button
+                                                onClick={() => setEditingAgent(rule)}
+                                                className="p-2 text-muted-foreground hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                                            >
+                                                <Settings className="w-5 h-5" />
+                                            </button>
+                                        </Tooltip>
 
                                         {/* Toggle */}
-                                        <button
-                                            onClick={() => handleToggle(rule.id, rule.is_active)}
-                                            className={`relative w-14 h-8 rounded-full transition-colors flex-shrink-0 ${rule.is_active ? 'bg-emerald-500' : 'bg-muted'
-                                                }`}
-                                        >
-                                            <span
-                                                className={`absolute top-1 w-6 h-6 bg-card rounded-full shadow-sm transition-transform ${rule.is_active ? 'translate-x-7' : 'translate-x-1'
+                                        <Tooltip content={rule.is_active ? 'Desactivar agente' : 'Activar agente'}>
+                                            <button
+                                                onClick={() => handleToggle(rule.id, rule.is_active)}
+                                                className={`relative w-14 h-8 rounded-full transition-colors flex-shrink-0 ${rule.is_active ? 'bg-emerald-500' : 'bg-muted'
                                                     }`}
-                                            />
-                                        </button>
+                                            >
+                                                <span
+                                                    className={`absolute top-1 w-6 h-6 bg-card rounded-full shadow-sm transition-transform ${rule.is_active ? 'translate-x-7' : 'translate-x-1'
+                                                        }`}
+                                                />
+                                            </button>
+                                        </Tooltip>
 
                                         {/* Delete */}
-                                        <button
-                                            onClick={() => handleDelete(rule.id)}
-                                            className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                        >
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
+                                        <Tooltip content="Eliminar agente">
+                                            <button
+                                                onClick={() => handleDelete(rule.id)}
+                                                className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        </Tooltip>
                                     </div>
                                 </div>
                             </div>

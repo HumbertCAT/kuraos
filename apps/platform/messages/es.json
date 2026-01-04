@@ -434,5 +434,31 @@
     "securePayment": "Pago seguro procesado por Stripe.",
     "poweredBy": "Powered by KURA OS",
     "poweredByAriaLabel": "Visitar KURA OS - Sistema Operativo para Terapeutas"
+  },
+  "Tooltips": {
+    "viewProfile": "Ver perfil completo",
+    "editInfo": "Editar información",
+    "openChat": "Abrir chat",
+    "previewBooking": "Vista previa de reserva",
+    "viewServiceBookings": "Ver reservas de este servicio",
+    "editService": "Editar servicio",
+    "deleteService": "Eliminar servicio",
+    "copyPublicLink": "Copiar link público",
+    "copied": "¡Copiado!",
+    "formSettings": "Configuración del formulario",
+    "viewQRCode": "Ver código QR",
+    "viewStats": "Ver respuestas y estadísticas",
+    "deleteForm": "Eliminar formulario",
+    "sendWhatsApp": "Enviar WhatsApp",
+    "copyBookingLink": "Copiar link de reserva",
+    "configurePersonality": "Configurar personalidad",
+    "activateAgent": "Activar agente",
+    "deactivateAgent": "Desactivar agente",
+    "deleteAgent": "Eliminar agente",
+    "confirm": "Confirmar reserva",
+    "complete": "Marcar como completada",
+    "cancel": "Cancelar reserva",
+    "reschedule": "Reprogramar reserva",
+    "delete": "Eliminar"
   }
 }

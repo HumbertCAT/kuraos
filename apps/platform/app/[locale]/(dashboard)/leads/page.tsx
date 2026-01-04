@@ -11,6 +11,7 @@ import {
     Filter, ChevronDown, Ghost, Link, Copy
 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
+import { Tooltip } from '@/components/ui/tooltip';
 
 // Types
 interface Lead {
@@ -337,16 +338,17 @@ export default function LeadsPage() {
                                                                 <div className="flex items-center gap-1">
                                                                     {/* WhatsApp Button */}
                                                                     {lead.phone && (
-                                                                        <a
-                                                                            href={getWhatsAppUrl(lead)}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            onClick={(e) => e.stopPropagation()}
-                                                                            className="p-1.5 rounded-lg hover:bg-green-100 text-green-600 transition-colors"
-                                                                            title="Enviar WhatsApp"
-                                                                        >
-                                                                            <MessageCircle className="w-4 h-4" />
-                                                                        </a>
+                                                                        <Tooltip content="Enviar WhatsApp">
+                                                                            <a
+                                                                                href={getWhatsAppUrl(lead)}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                onClick={(e) => e.stopPropagation()}
+                                                                                className="p-1.5 rounded-lg hover:bg-green-100 text-green-600 transition-colors"
+                                                                            >
+                                                                                <MessageCircle className="w-4 h-4" />
+                                                                            </a>
+                                                                        </Tooltip>
                                                                     )}
                                                                     <div className={`p-1.5 rounded-lg ${column.bgColor}`}>
                                                                         {SOURCE_ICONS[lead.source] || <UserPlus className="w-3.5 h-3.5" />}
@@ -625,27 +627,29 @@ function LeadDetailSheet({
                         {/* Quick Actions */}
                         <div className="flex items-center gap-2">
                             {lead.phone && (
-                                <a
-                                    href={getWhatsAppUrl(lead)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="p-2 bg-card/10 hover:bg-card/20 rounded-lg transition-colors"
-                                    title="Enviar WhatsApp"
-                                >
-                                    <MessageCircle className="w-4 h-4" />
-                                </a>
+                                <Tooltip content="Enviar WhatsApp">
+                                    <a
+                                        href={getWhatsAppUrl(lead)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-2 bg-card/10 hover:bg-card/20 rounded-lg transition-colors"
+                                    >
+                                        <MessageCircle className="w-4 h-4" />
+                                    </a>
+                                </Tooltip>
                             )}
-                            <button
-                                onClick={() => {
-                                    const bookingUrl = `${window.location.origin}/book?email=${encodeURIComponent(lead.email || '')}&name=${encodeURIComponent(`${lead.first_name} ${lead.last_name}`)}`;
-                                    navigator.clipboard.writeText(bookingUrl);
-                                    alert('Link de reserva copiado al portapapeles');
-                                }}
-                                className="p-2 bg-card/10 hover:bg-card/20 rounded-lg transition-colors"
-                                title="Copiar link de reserva"
-                            >
-                                <Link className="w-4 h-4" />
-                            </button>
+                            <Tooltip content="Copiar link de reserva">
+                                <button
+                                    onClick={() => {
+                                        const bookingUrl = `${window.location.origin}/book?email=${encodeURIComponent(lead.email || '')}&name=${encodeURIComponent(`${lead.first_name} ${lead.last_name}`)}`;
+                                        navigator.clipboard.writeText(bookingUrl);
+                                        alert('Link de reserva copiado al portapapeles');
+                                    }}
+                                    className="p-2 bg-card/10 hover:bg-card/20 rounded-lg transition-colors"
+                                >
+                                    <Link className="w-4 h-4" />
+                                </button>
+                            </Tooltip>
                         </div>
                     </div>
                 </div>

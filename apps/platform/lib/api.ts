@@ -438,6 +438,19 @@ export const api = {
       });
       return handleResponse<any>(res);
     },
+
+    reschedule: async (bookingId: string, newStartTime: string, reason?: string) => {
+      const res = await fetch(`${API_URL}/booking/${bookingId}/reschedule/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          new_start_time: newStartTime,
+          reason: reason || null 
+        }),
+      });
+      return handleResponse<any>(res);
+    },
   },
 
   schedules: {

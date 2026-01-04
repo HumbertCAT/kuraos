@@ -10,6 +10,7 @@ import { Users, Search, MessageCircle, Eye, Pencil, UserPlus } from 'lucide-reac
 import { useTerminology } from '@/hooks/use-terminology';
 import PageHeader from '@/components/PageHeader';
 import PaginationToolbar from '@/components/ui/pagination-toolbar';
+import { Tooltip } from '@/components/ui/tooltip';
 
 /**
  * The Clinical Roster - v1.0.9
@@ -355,26 +356,29 @@ export default function PatientsPage() {
                     {/* Actions */}
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Link
-                          href={`/patients/${patient.id}`}
-                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
-                          title="Ver Perfil"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Link>
-                        <Link
-                          href={`/patients/${patient.id}/edit`}
-                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
-                          title="Editar"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Link>
-                        <button
-                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
-                          title="Chat"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                        </button>
+                        <Tooltip content="Ver perfil completo">
+                          <Link
+                            href={`/patients/${patient.id}`}
+                            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Tooltip>
+                        <Tooltip content="Editar información">
+                          <Link
+                            href={`/patients/${patient.id}/edit`}
+                            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                        </Tooltip>
+                        <Tooltip content="Abrir chat">
+                          <button
+                            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
+                        </Tooltip>
                       </div>
                     </td>
                   </tr>

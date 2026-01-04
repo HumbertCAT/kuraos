@@ -125,6 +125,213 @@ class EmailService:
             logger.error(f"Failed to send email: {e}")
             return False
 
+    async def send_booking_cancelled(
+        self,
+        to_email: str,
+        to_name: str,
+        booking_date: datetime,
+        booking_time: str,
+        service_title: str,
+        therapist_name: str,
+        reason: Optional[str] = None,
+    ) -> bool:
+        """
+        Send booking cancellation email to patient.
+
+        Returns True if email was sent successfully, False otherwise.
+        """
+        if not self.api_key:
+            logger.info(f"[DEMO MODE] Cancellation email would be sent to {to_email}")
+            return True
+
+        api_instance = self._get_api_instance()
+        if not api_instance:
+            return False
+
+        try:
+            import sib_api_v3_sdk
+
+            date_formatted = booking_date.strftime("%A, %d de %B de %Y")
+            reason_html = (
+                f"""
+                <p style="color: #64748b; font-size: 14px; font-style: italic; margin: 20px 0;">
+                    Motivo: {reason}
+                </p>
+            """
+                if reason
+                else ""
+            )
+
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">KURA</h1>
+                </div>
+                
+                <div style="padding: 30px; background: #f8fafc;">
+                    <h2 style="color: #dc2626; margin-top: 0;">Cita Cancelada</h2>
+                    <p style="color: #334155; font-size: 16px;">Hola {to_name},</p>
+                    <p style="color: #334155; font-size: 16px;">
+                        Lamentamos informarte que tu cita ha sido cancelada.
+                    </p>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 20px; margin: 20px 0; border: 1px solid #e2e8f0;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 10px 0; color: #64748b; font-size: 14px;">Servicio</td>
+                                <td style="padding: 10px 0; color: #1e293b; font-size: 14px; font-weight: 600; text-align: right;">{service_title}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px 0; color: #64748b; font-size: 14px;">Fecha</td>
+                                <td style="padding: 10px 0; color: #1e293b; font-size: 14px; text-align: right;">{date_formatted}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px 0; color: #64748b; font-size: 14px;">Hora</td>
+                                <td style="padding: 10px 0; color: #1e293b; font-size: 14px; text-align: right;">{booking_time}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    {reason_html}
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="{settings.FRONTEND_URL}" style="background: #10b981; color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                            Reservar nueva cita
+                        </a>
+                    </div>
+                    
+                    <p style="color: #64748b; font-size: 14px;">
+                        Atentamente,<br>
+                        <strong>{therapist_name}</strong>
+                    </p>
+                </div>
+                
+                <div style="padding: 20px; text-align: center; background: #1e293b;">
+                    <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+                        KURA OS - Sistema Operativo para Terapeutas
+                    </p>
+                </div>
+            </div>
+            """
+
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=[{"email": to_email, "name": to_name}],
+                sender={"email": self.from_email, "name": self.from_name},
+                subject=f"Cita Cancelada: {service_title}",
+                html_content=html_content,
+            )
+
+            api_instance.send_transac_email(send_smtp_email)
+            logger.info(f"Cancellation email sent to {to_email}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to send cancellation email: {e}")
+            return False
+
+    async def send_booking_rescheduled(
+        self,
+        to_email: str,
+        to_name: str,
+        old_date: datetime,
+        old_time: str,
+        new_date: datetime,
+        new_time: str,
+        service_title: str,
+        therapist_name: str,
+        reason: Optional[str] = None,
+    ) -> bool:
+        """
+        Send booking reschedule email to patient.
+
+        Returns True if email was sent successfully, False otherwise.
+        """
+        if not self.api_key:
+            logger.info(f"[DEMO MODE] Reschedule email would be sent to {to_email}")
+            return True
+
+        api_instance = self._get_api_instance()
+        if not api_instance:
+            return False
+
+        try:
+            import sib_api_v3_sdk
+
+            old_date_formatted = old_date.strftime("%A, %d de %B de %Y")
+            new_date_formatted = new_date.strftime("%A, %d de %B de %Y")
+            reason_html = (
+                f"""
+                <p style="color: #64748b; font-size: 14px; font-style: italic; margin: 20px 0;">
+                    Motivo: {reason}
+                </p>
+            """
+                if reason
+                else ""
+            )
+
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">KURA</h1>
+                </div>
+                
+                <div style="padding: 30px; background: #f8fafc;">
+                    <h2 style="color: #f59e0b; margin-top: 0;">📅 Cita Reprogramada</h2>
+                    <p style="color: #334155; font-size: 16px;">Hola {to_name},</p>
+                    <p style="color: #334155; font-size: 16px;">
+                        Tu cita ha sido movida a una nueva fecha.
+                    </p>
+                    
+                    <div style="background: white; border-radius: 12px; padding: 20px; margin: 20px 0; border: 1px solid #e2e8f0;">
+                        <p style="color: #dc2626; font-size: 14px; text-decoration: line-through; margin-bottom: 15px;">
+                            ❌ Antes: {old_date_formatted} a las {old_time}
+                        </p>
+                        <p style="color: #16a34a; font-size: 16px; font-weight: 600; margin: 0;">
+                            ✓ Ahora: {new_date_formatted} a las {new_time}
+                        </p>
+                    </div>
+                    
+                    <div style="background: #f0fdf4; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                        <p style="color: #1e293b; font-size: 14px; margin: 0;">
+                            <strong>Servicio:</strong> {service_title}
+                        </p>
+                    </div>
+                    
+                    {reason_html}
+                    
+                    <p style="color: #64748b; font-size: 14px;">
+                        Si la nueva fecha no te viene bien, por favor contáctanos para encontrar otra alternativa.
+                    </p>
+                    
+                    <p style="color: #64748b; font-size: 14px; margin-top: 30px;">
+                        Atentamente,<br>
+                        <strong>{therapist_name}</strong>
+                    </p>
+                </div>
+                
+                <div style="padding: 20px; text-align: center; background: #1e293b;">
+                    <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+                        KURA OS - Sistema Operativo para Terapeutas
+                    </p>
+                </div>
+            </div>
+            """
+
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=[{"email": to_email, "name": to_name}],
+                sender={"email": self.from_email, "name": self.from_name},
+                subject=f"Cita Reprogramada: {service_title}",
+                html_content=html_content,
+            )
+
+            api_instance.send_transac_email(send_smtp_email)
+            logger.info(f"Reschedule email sent to {to_email}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to send reschedule email: {e}")
+            return False
+
     async def send_automation_email(
         self,
         to_email: str,

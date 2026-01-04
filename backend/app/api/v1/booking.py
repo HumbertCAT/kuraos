@@ -246,22 +246,36 @@ async def delete_booking(
             detail="Booking not found",
         )
 
+    # Check if this booking has been rescheduled (has child bookings)
+    child_check = await db.execute(
+        select(Booking).where(Booking.rescheduled_from_id == booking_id)
+    )
+    if child_check.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No se puede eliminar: esta reserva fue reprogramada. Elimina primero la nueva reserva.",
+        )
+
     await db.delete(booking)
     await db.commit()
     return None
 
 
-# ============ THERAPIST CANCEL / RESCHEDULE ============
+# ============ CANCEL / RESCHEDULE ============
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-class TherapistCancelRequest(BaseModel):
-    """Request to cancel a booking as therapist."""
+class CancelBookingRequest(BaseModel):
+    """Request to cancel a booking."""
 
     reason: Optional[str] = None
 
 
-class TherapistRescheduleRequest(BaseModel):
-    """Request to reschedule a booking as therapist."""
+class RescheduleBookingRequest(BaseModel):
+    """Request to reschedule a booking."""
 
     new_start_time: datetime
     reason: Optional[str] = None
@@ -269,16 +283,17 @@ class TherapistRescheduleRequest(BaseModel):
 
 @router.post(
     "/{booking_id}/cancel",
-    summary="Cancel a booking (therapist)",
+    summary="Cancel a booking",
 )
-async def therapist_cancel_booking(
+async def cancel_booking(
     booking_id: uuid.UUID,
-    request: TherapistCancelRequest,
+    request: CancelBookingRequest,
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
 ):
-    """Cancel a booking as the therapist. Records cancellation details and notifies patient."""
+    """Cancel a booking. Notifies patient via email/SMS."""
     from app.services.booking_management import BookingManagementService
+    from app.services.notification_service import notification_service
 
     result = await db.execute(
         select(Booking).where(
@@ -294,26 +309,50 @@ async def therapist_cancel_booking(
             detail="Booking not found",
         )
 
+    # Get patient and service for notification
+    patient_result = await db.execute(
+        select(Patient).where(Patient.id == booking.patient_id)
+    )
+    patient = patient_result.scalar_one_or_none()
+
+    svc_result = await db.execute(
+        select(ServiceType).where(ServiceType.id == booking.service_type_id)
+    )
+    service_type = svc_result.scalar_one_or_none()
+
+    # Cancel the booking
     service = BookingManagementService(db)
     await service.cancel_booking(booking, request.reason, by="therapist")
 
-    # TODO: Send email to patient about cancellation
+    # Send notification (non-blocking - failure doesn't revert cancellation)
+    if patient and service_type:
+        try:
+            await notification_service.notify_booking_cancelled(
+                booking=booking,
+                patient=patient,
+                therapist=current_user,
+                service_title=service_type.title,
+                reason=request.reason,
+            )
+        except Exception as e:
+            logger.error(f"Failed to send cancellation notification: {e}")
 
     return {"message": "Reserva cancelada", "booking_id": str(booking.id)}
 
 
 @router.post(
     "/{booking_id}/reschedule",
-    summary="Reschedule a booking (therapist)",
+    summary="Reschedule a booking",
 )
-async def therapist_reschedule_booking(
+async def reschedule_booking(
     booking_id: uuid.UUID,
-    request: TherapistRescheduleRequest,
+    request: RescheduleBookingRequest,
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
 ):
-    """Reschedule a booking as the therapist. Creates new booking and notifies patient."""
+    """Reschedule a booking. Notifies patient via email/SMS."""
     from app.services.booking_management import BookingManagementService
+    from app.services.notification_service import notification_service
     from datetime import timedelta
 
     result = await db.execute(
@@ -329,6 +368,12 @@ async def therapist_reschedule_booking(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Booking not found",
         )
+
+    # Get patient for notification
+    patient_result = await db.execute(
+        select(Patient).where(Patient.id == booking.patient_id)
+    )
+    patient = patient_result.scalar_one_or_none()
 
     # Get service for duration
     svc_result = await db.execute(
@@ -355,7 +400,19 @@ async def therapist_reschedule_booking(
         by="therapist",
     )
 
-    # TODO: Send email to patient about reschedule
+    # Send notification (non-blocking - failure doesn't revert reschedule)
+    if patient and service_type:
+        try:
+            await notification_service.notify_booking_rescheduled(
+                old_booking=booking,
+                new_booking=new_booking,
+                patient=patient,
+                therapist=current_user,
+                service_title=service_type.title,
+                reason=request.reason,
+            )
+        except Exception as e:
+            logger.error(f"Failed to send reschedule notification: {e}")
 
     return {
         "message": "Reserva reprogramada",

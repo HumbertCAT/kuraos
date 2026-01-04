@@ -9,6 +9,7 @@ import EmptyState, { FormsEmptyIcon } from '@/components/ui/EmptyState';
 import { FileText, Plus, Link2, BarChart3, Settings, QrCode, Search, Copy, Check, Trash2 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import PaginationToolbar from '@/components/ui/pagination-toolbar';
+import { Tooltip } from '@/components/ui/tooltip';
 
 import { api, API_URL, ListMetadata } from '@/lib/api';
 
@@ -268,42 +269,47 @@ export default function FormsPage() {
                                         <td className="px-4 py-3">
                                             <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                                                 {form.public_token && (
-                                                    <button
-                                                        onClick={() => copyPublicLink(form.public_token!)}
-                                                        className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all group"
-                                                        title={copied === form.public_token ? 'Copiado' : 'Copiar Link'}
-                                                    >
-                                                        {copied === form.public_token ? <Check className="w-4 h-4 text-brand" /> : <Link2 className="w-4 h-4" />}
-                                                    </button>
+                                                    <Tooltip content={copied === form.public_token ? 'Copiado' : 'Copiar link público'}>
+                                                        <button
+                                                            onClick={() => copyPublicLink(form.public_token!)}
+                                                            className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all group"
+                                                        >
+                                                            {copied === form.public_token ? <Check className="w-4 h-4 text-brand" /> : <Link2 className="w-4 h-4" />}
+                                                        </button>
+                                                    </Tooltip>
                                                 )}
-                                                <Link
-                                                    href={`/forms/${form.id}/edit`}
-                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
-                                                    title="Configuración"
-                                                >
-                                                    <Settings className="w-4 h-4" />
-                                                </Link>
-                                                <button
-                                                    onClick={() => showQRCode(form)}
-                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
-                                                    title="Ver Código QR"
-                                                >
-                                                    <QrCode className="w-4 h-4" />
-                                                </button>
-                                                <Link
-                                                    href={`/forms/${form.id}/submissions`}
-                                                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
-                                                    title="Ver Estadísticas"
-                                                >
-                                                    <BarChart3 className="w-4 h-4" />
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDeleteForm(form.id)}
-                                                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
-                                                    title="Eliminar"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                <Tooltip content="Configuración del formulario">
+                                                    <Link
+                                                        href={`/forms/${form.id}/edit`}
+                                                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                                                    >
+                                                        <Settings className="w-4 h-4" />
+                                                    </Link>
+                                                </Tooltip>
+                                                <Tooltip content="Ver código QR">
+                                                    <button
+                                                        onClick={() => showQRCode(form)}
+                                                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                                                    >
+                                                        <QrCode className="w-4 h-4" />
+                                                    </button>
+                                                </Tooltip>
+                                                <Tooltip content="Ver respuestas y estadísticas">
+                                                    <Link
+                                                        href={`/forms/${form.id}/submissions`}
+                                                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
+                                                    >
+                                                        <BarChart3 className="w-4 h-4" />
+                                                    </Link>
+                                                </Tooltip>
+                                                <Tooltip content="Eliminar formulario">
+                                                    <button
+                                                        onClick={() => handleDeleteForm(form.id)}
+                                                        className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </Tooltip>
                                             </div>
                                         </td>
                                     </tr>

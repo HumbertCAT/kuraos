@@ -4,12 +4,13 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import { Calendar as BigCalendar, dateFnsLocalizer, Views } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { format, parse, startOfWeek, getDay, addDays } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Calendar, Clock, User, Search, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Check, X, CalendarCheck } from 'lucide-react';
+import { Calendar, Clock, User, Search, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Check, X, CalendarCheck, CalendarClock } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import PaginationToolbar from '@/components/ui/pagination-toolbar';
+import { Tooltip } from '@/components/ui/tooltip';
 
 import { api, API_URL, ListMetadata } from '@/lib/api';
 const locales = { es, en: enUS };
@@ -49,6 +50,13 @@ export default function BookingsPage() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [currentView, setCurrentView] = useState<typeof Views[keyof typeof Views]>(Views.WEEK);
 
+    // Modal states
+    const [cancelModal, setCancelModal] = useState<{ open: boolean; bookingId: string | null; patientName: string }>({ open: false, bookingId: null, patientName: '' });
+    const [cancelReason, setCancelReason] = useState('');
+    const [rescheduleModal, setRescheduleModal] = useState<{ open: boolean; booking: Booking | null }>({ open: false, booking: null });
+    const [newDateTime, setNewDateTime] = useState('');
+    const [rescheduleReason, setRescheduleReason] = useState('');
+
     const translations = {
         es: {
             title: 'Reservas',
@@ -73,6 +81,22 @@ export default function BookingsPage() {
             complete: 'Completar',
             delete: 'Eliminar',
             calendarView: 'Vista de Calendario',
+            cancelTitle: 'Cancelar Reserva',
+            cancelDescription: '¿Estás seguro de que quieres cancelar esta reserva? Se notificará al paciente.',
+            reasonPlaceholder: 'Motivo de la cancelación (opcional)',
+            confirmCancel: 'Sí, cancelar reserva',
+            rescheduleTitle: 'Reprogramar Reserva',
+            rescheduleDescription: 'Selecciona la nueva fecha y hora para la cita.',
+            newDateTime: 'Nueva fecha y hora',
+            confirmReschedule: 'Reprogramar',
+            reschedule: 'Reprogramar',
+            rescheduleReasonPlaceholder: 'Nota para el paciente (opcional)',
+            // Tooltips descriptivos
+            tooltipConfirm: 'Confirmar esta reserva y notificar al paciente',
+            tooltipComplete: 'Marcar como completada (cita ya realizada)',
+            tooltipCancel: 'Cancelar reserva y notificar al paciente',
+            tooltipReschedule: 'Cambiar fecha/hora y notificar al paciente',
+            tooltipDelete: 'Eliminar reserva permanentemente',
         },
         en: {
             title: 'Bookings',
@@ -97,6 +121,22 @@ export default function BookingsPage() {
             complete: 'Complete',
             delete: 'Delete',
             calendarView: 'Calendar View',
+            cancelTitle: 'Cancel Booking',
+            cancelDescription: 'Are you sure you want to cancel this booking? The patient will be notified.',
+            reasonPlaceholder: 'Reason for cancellation (optional)',
+            confirmCancel: 'Yes, cancel booking',
+            rescheduleTitle: 'Reschedule Booking',
+            rescheduleDescription: 'Select the new date and time for the appointment.',
+            newDateTime: 'New date and time',
+            confirmReschedule: 'Reschedule',
+            reschedule: 'Reschedule',
+            rescheduleReasonPlaceholder: 'Note for the patient (optional)',
+            // Descriptive tooltips
+            tooltipConfirm: 'Confirm this booking and notify the patient',
+            tooltipComplete: 'Mark as completed (appointment already done)',
+            tooltipCancel: 'Cancel booking and notify the patient',
+            tooltipReschedule: 'Change date/time and notify the patient',
+            tooltipDelete: 'Delete booking permanently',
         },
         ca: {
             title: 'Reserves',
@@ -121,6 +161,22 @@ export default function BookingsPage() {
             complete: 'Completar',
             delete: 'Eliminar',
             calendarView: 'Vista de Calendari',
+            cancelTitle: 'Cancel·lar Reserva',
+            cancelDescription: 'Estàs segur que vols cancel·lar aquesta reserva? Es notificarà al pacient.',
+            reasonPlaceholder: 'Motiu de la cancel·lació (opcional)',
+            confirmCancel: 'Sí, cancel·lar reserva',
+            rescheduleTitle: 'Reprogramar Reserva',
+            rescheduleDescription: 'Selecciona la nova data i hora per a la cita.',
+            newDateTime: 'Nova data i hora',
+            confirmReschedule: 'Reprogramar',
+            reschedule: 'Reprogramar',
+            rescheduleReasonPlaceholder: 'Nota per al pacient (opcional)',
+            // Tooltips descriptius
+            tooltipConfirm: 'Confirmar aquesta reserva i notificar al pacient',
+            tooltipComplete: 'Marcar com completada (cita ja realitzada)',
+            tooltipCancel: 'Cancel·lar reserva i notificar al pacient',
+            tooltipReschedule: 'Canviar data/hora i notificar al pacient',
+            tooltipDelete: 'Eliminar reserva permanentment',
         },
     };
 
@@ -193,17 +249,45 @@ export default function BookingsPage() {
         const colorIndex = (booking.patient_name?.charCodeAt(0) || 0) % colors.length;
         return { initials, gradient: colors[colorIndex] };
     }
-    async function cancelBookingWithReason(bookingId: string) {
-        const reason = prompt('Motivo de cancelación (opcional):');
+    async function handleCancelBooking() {
+        if (!cancelModal.bookingId) return;
         try {
-            await api.bookings.cancel(bookingId, reason || undefined);
-            setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'CANCELLED' } : b));
-            alert('Reserva cancelada correctamente');
+            await api.bookings.cancel(cancelModal.bookingId, cancelReason || undefined);
+            setBookings(prev => prev.map(b => b.id === cancelModal.bookingId ? { ...b, status: 'CANCELLED' } : b));
         } catch (err: any) {
             console.error('Error cancelling booking', err);
             alert(`Error: ${err.message || 'No se pudo cancelar'}`);
         }
-        setOpenMenu(null);
+        setCancelModal({ open: false, bookingId: null, patientName: '' });
+        setCancelReason('');
+    }
+
+    async function handleRescheduleBooking() {
+        if (!rescheduleModal.booking || !newDateTime) return;
+        try {
+            await api.bookings.reschedule(rescheduleModal.booking.id, newDateTime, rescheduleReason || undefined);
+            // Reload bookings to get the new one
+            loadBookings();
+        } catch (err: any) {
+            console.error('Error rescheduling booking', err);
+            alert(`Error: ${err.message || 'No se pudo reprogramar'}`);
+        }
+        setRescheduleModal({ open: false, booking: null });
+        setNewDateTime('');
+        setRescheduleReason('');
+    }
+
+    function openCancelModal(booking: Booking) {
+        setCancelModal({ open: true, bookingId: booking.id, patientName: booking.patient_name });
+    }
+
+    function openRescheduleModal(booking: Booking) {
+        // Default to tomorrow at the same time
+        const startTime = new Date(booking.start_time);
+        const tomorrow = addDays(startTime, 1);
+        const defaultDateTime = format(tomorrow, "yyyy-MM-dd'T'HH:mm");
+        setNewDateTime(defaultDateTime);
+        setRescheduleModal({ open: true, booking });
     }
 
     const now = new Date();
@@ -390,39 +474,53 @@ export default function BookingsPage() {
                                         <td className="px-4 py-3 text-right">
                                             <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                                                 {booking.status === 'PENDING' && (
-                                                    <button
-                                                        onClick={() => updateBookingStatus(booking.id, 'CONFIRMED')}
-                                                        className="p-2 text-muted-foreground hover:text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all"
-                                                        title={t.confirm}
-                                                    >
-                                                        <Check className="w-4 h-4" />
-                                                    </button>
+                                                    <Tooltip content={t.tooltipConfirm}>
+                                                        <button
+                                                            onClick={() => updateBookingStatus(booking.id, 'CONFIRMED')}
+                                                            className="p-2 text-muted-foreground hover:text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all active:scale-95"
+                                                        >
+                                                            <Check className="w-4 h-4" />
+                                                        </button>
+                                                    </Tooltip>
                                                 )}
                                                 {booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && (
-                                                    <button
-                                                        onClick={() => updateBookingStatus(booking.id, 'COMPLETED')}
-                                                        className="p-2 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-100 rounded-lg transition-all"
-                                                        title={t.complete}
-                                                    >
-                                                        <CheckCircle className="w-4 h-4" />
-                                                    </button>
+                                                    <Tooltip content={t.tooltipComplete}>
+                                                        <button
+                                                            onClick={() => updateBookingStatus(booking.id, 'COMPLETED')}
+                                                            className="p-2 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-100 rounded-lg transition-all active:scale-95"
+                                                        >
+                                                            <CheckCircle className="w-4 h-4" />
+                                                        </button>
+                                                    </Tooltip>
                                                 )}
                                                 {booking.status !== 'CANCELLED' && (
-                                                    <button
-                                                        onClick={() => cancelBookingWithReason(booking.id)}
-                                                        className="p-2 text-muted-foreground hover:text-amber-600 hover:bg-amber-100 rounded-lg transition-all"
-                                                        title={t.cancel}
-                                                    >
-                                                        <X className="w-4 h-4" />
-                                                    </button>
+                                                    <Tooltip content={t.tooltipCancel}>
+                                                        <button
+                                                            onClick={() => openCancelModal(booking)}
+                                                            className="p-2 text-muted-foreground hover:text-amber-600 hover:bg-amber-100 rounded-lg transition-all active:scale-95"
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    </Tooltip>
                                                 )}
-                                                <button
-                                                    onClick={() => deleteBooking(booking.id)}
-                                                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"
-                                                    title={t.delete}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                {booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED' && (
+                                                    <Tooltip content={t.tooltipReschedule}>
+                                                        <button
+                                                            onClick={() => openRescheduleModal(booking)}
+                                                            className="p-2 text-muted-foreground hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-all active:scale-95"
+                                                        >
+                                                            <CalendarClock className="w-4 h-4" />
+                                                        </button>
+                                                    </Tooltip>
+                                                )}
+                                                <Tooltip content={t.tooltipDelete}>
+                                                    <button
+                                                        onClick={() => deleteBooking(booking.id)}
+                                                        className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all active:scale-95"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </Tooltip>
                                             </div>
                                         </td>
                                     </tr>
@@ -460,6 +558,107 @@ export default function BookingsPage() {
                         meta={meta}
                         onPageChange={(p) => setPage(p)}
                     />
+                </div>
+            )}
+
+            {/* Cancel Modal */}
+            {cancelModal.open && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-card rounded-xl shadow-2xl max-w-md w-full border border-border animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                                    <AlertCircle className="w-5 h-5 text-amber-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-foreground">{t.cancelTitle}</h3>
+                                    <p className="text-sm text-muted-foreground">{cancelModal.patientName}</p>
+                                </div>
+                            </div>
+
+                            <p className="text-sm text-muted-foreground mb-4">{t.cancelDescription}</p>
+
+                            <textarea
+                                value={cancelReason}
+                                onChange={(e) => setCancelReason(e.target.value)}
+                                placeholder={t.reasonPlaceholder}
+                                className="w-full p-3 bg-background border border-border rounded-lg text-sm resize-none focus:ring-2 focus:ring-amber-500/50 outline-none"
+                                rows={3}
+                            />
+                        </div>
+
+                        <div className="flex gap-3 p-4 bg-muted/50 rounded-b-xl border-t border-border">
+                            <button
+                                onClick={() => setCancelModal({ open: false, bookingId: null, patientName: '' })}
+                                className="flex-1 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground bg-background border border-border rounded-lg transition-colors"
+                            >
+                                Volver
+                            </button>
+                            <button
+                                onClick={handleCancelBooking}
+                                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors active:scale-95"
+                            >
+                                {t.confirmCancel}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Reschedule Modal */}
+            {rescheduleModal.open && rescheduleModal.booking && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-card rounded-xl shadow-2xl max-w-md w-full border border-border animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <CalendarClock className="w-5 h-5 text-blue-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-semibold text-foreground">{t.rescheduleTitle}</h3>
+                                    <p className="text-sm text-muted-foreground">{rescheduleModal.booking.patient_name}</p>
+                                </div>
+                            </div>
+
+                            <p className="text-sm text-muted-foreground mb-4">{t.rescheduleDescription}</p>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-1">{t.newDateTime}</label>
+                                    <input
+                                        type="datetime-local"
+                                        value={newDateTime}
+                                        onChange={(e) => setNewDateTime(e.target.value)}
+                                        className="w-full p-3 bg-background border border-border rounded-lg text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                                    />
+                                </div>
+
+                                <textarea
+                                    value={rescheduleReason}
+                                    onChange={(e) => setRescheduleReason(e.target.value)}
+                                    placeholder={t.rescheduleReasonPlaceholder}
+                                    className="w-full p-3 bg-background border border-border rounded-lg text-sm resize-none focus:ring-2 focus:ring-teal-500/50 outline-none"
+                                    rows={2}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3 p-4 bg-muted/50 rounded-b-xl border-t border-border">
+                            <button
+                                onClick={() => setRescheduleModal({ open: false, booking: null })}
+                                className="flex-1 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground bg-background border border-border rounded-lg transition-colors"
+                            >
+                                Volver
+                            </button>
+                            <button
+                                onClick={handleRescheduleBooking}
+                                disabled={!newDateTime}
+                                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors active:scale-95"
+                            >
+                                {t.confirmReschedule}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

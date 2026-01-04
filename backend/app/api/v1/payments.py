@@ -270,6 +270,29 @@ async def stripe_webhook(
                             booking_id=str(booking.id),
                         )
 
+                    # Send copy to therapist
+                    therapist_result = await db.execute(
+                        select(User).where(User.id == booking.therapist_id)
+                    )
+                    therapist = therapist_result.scalar_one_or_none()
+
+                    if therapist and therapist.email and service:
+                        patient_name = (
+                            f"{patient.first_name} {patient.last_name}"
+                            if patient
+                            else "Cliente"
+                        )
+                        await email_service.send_booking_confirmation(
+                            to_email=therapist.email,
+                            to_name=therapist.full_name or "Terapeuta",
+                            service_title=f"Nueva reserva: {service.title}",
+                            booking_date=booking.start_time,
+                            booking_time=booking.start_time.strftime("%H:%M"),
+                            amount=booking.amount_paid,
+                            currency=booking.currency,
+                            booking_id=f"Paciente: {patient_name}",
+                        )
+
                     # Create Google Calendar event
                     try:
                         from app.services.google_calendar import GoogleCalendarService

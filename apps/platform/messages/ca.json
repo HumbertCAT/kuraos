@@ -293,5 +293,31 @@
     "securePayment": "Pagament segur processat per Stripe.",
     "poweredBy": "Desenvolupat amb KURA OS",
     "poweredByAriaLabel": "Visitar KURA OS - Sistema Operatiu per a Terapeutes"
+  },
+  "Tooltips": {
+    "viewProfile": "Veure perfil complet",
+    "editInfo": "Editar informació",
+    "openChat": "Obrir xat",
+    "previewBooking": "Vista prèvia de reserva",
+    "viewServiceBookings": "Veure reserves d'aquest servei",
+    "editService": "Editar servei",
+    "deleteService": "Eliminar servei",
+    "copyPublicLink": "Copiar enllaç públic",
+    "copied": "Copiat!",
+    "formSettings": "Configuració del formulari",
+    "viewQRCode": "Veure codi QR",
+    "viewStats": "Veure respostes i estadístiques",
+    "deleteForm": "Eliminar formulari",
+    "sendWhatsApp": "Enviar WhatsApp",
+    "copyBookingLink": "Copiar enllaç de reserva",
+    "configurePersonality": "Configurar personalitat",
+    "activateAgent": "Activar agent",
+    "deactivateAgent": "Desactivar agent",
+    "deleteAgent": "Eliminar agent",
+    "confirm": "Confirmar reserva",
+    "complete": "Marcar com a completada",
+    "cancel": "Cancel·lar reserva",
+    "reschedule": "Reprogramar reserva",
+    "delete": "Eliminar"
   }
 }

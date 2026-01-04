@@ -14,6 +14,34 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-01-04 🔔 CRITICAL NOTIFICATION SYSTEM + UI ACTION TOOLTIPS
+
+> **Theme:** "Transactional messaging infrastructure and professional action hints."
+
+### 📨 Notification Dispatcher
+Complete transactional email system for booking lifecycle events.
+- **Therapist Alerts**: Instant email when new booking is received
+- **Client Confirmations**: Professional booking confirmation with full details
+- **Cancellation Notices**: Templated cancellation emails to both parties
+- **Notification Preferences**: Per-user opt-in/opt-out in settings
+
+### 🎯 UI Action Tooltips (Professional UX)
+Custom React Portal tooltip component replacing native `title` attributes.
+- **Instant Visibility**: No delay, renders via Portal (no overflow clipping)
+- **Zero Dependencies**: Replaced @radix-ui/react-tooltip with custom implementation
+- **Consistent Styling**: Dark pill design matching application aesthetics
+- **6 Pages Updated**: patients, services, forms, leads, automations, bookings
+
+### 🌍 Internationalization
+- **Tooltips Section**: Added to all 4 language files (es, en, ca, it)
+- **26 Translation Keys**: All action button tooltips properly localized
+
+### 🛠️ Technical
+- **Delete Booking FK Fix**: Proper cascade deletion of related notifications
+- **Tooltip Component**: `components/ui/tooltip.tsx` with Portal architecture
+
+---
+
 ## [1.2.1] - 2026-01-04 🔧 STRIPE PRODUCTION HARDENING
 
 > **Theme:** "Complete Stripe webhook stabilization for production tier upgrades."
