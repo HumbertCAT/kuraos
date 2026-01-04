@@ -221,7 +221,16 @@ async def handle_checkout_completed(
         logger.warning(f"Checkout session missing metadata: {session.id}")
         return
 
-    result = await db.execute(select(Organization).where(Organization.id == org_id))
+    # Convert org_id string to UUID
+    import uuid
+
+    try:
+        org_uuid = uuid.UUID(org_id)
+    except ValueError:
+        logger.error(f"Invalid org_id in metadata: {org_id}")
+        return
+
+    result = await db.execute(select(Organization).where(Organization.id == org_uuid))
     org = result.scalar_one_or_none()
 
     if not org:
