@@ -101,11 +101,8 @@ const DEFAULT_MODELS: ModelInfo[] = [
     { id: 'whisper-1', provider: 'openai', name: 'Whisper (Transcription)', supports_audio: true, cost_input: 0.006, cost_output: 0, is_enabled: true },
 ];
 
-// Models that can be selected as primary AI engine
-const SELECTABLE_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
-
-// Companion models that are always active for specific tasks
-const COMPANION_MODELS = ['whisper-1'];
+// Companion models that are always active for specific tasks (not selectable as primary)
+const COMPANION_MODELS = ['whisper-1', 'whisper'];
 
 export default function AiGovernance() {
     const [stats, setStats] = useState<LedgerStats>(EMPTY_STATS);
@@ -177,7 +174,7 @@ export default function AiGovernance() {
     }
 
     async function changePrimaryModel(modelId: string) {
-        if (!SELECTABLE_MODELS.includes(modelId)) return;
+        if (COMPANION_MODELS.includes(modelId)) return;
 
         setIsChangingModel(true);
         try {
@@ -326,7 +323,7 @@ export default function AiGovernance() {
                         <tbody className="divide-y divide-border">
                             {models.map((model) => {
                                 const status = getModelStatus(model.id);
-                                const isSelectable = SELECTABLE_MODELS.includes(model.id);
+                                const isSelectable = !COMPANION_MODELS.includes(model.id);
                                 const isPrimary = model.id === primaryModel;
 
                                 return (
