@@ -14,6 +14,30 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-01-04 🔧 STRIPE PRODUCTION HARDENING
+
+> **Theme:** "Complete Stripe webhook stabilization for production tier upgrades."
+
+### 🔒 Webhook Signature Validation
+- **Production Webhook Secret**: Correctly configured for `https://api.kuraos.ai/...` endpoint
+- **Event Subscription**: Added `checkout.session.completed` to production webhook events
+- **UUID Handling**: Fixed org_id string-to-UUID conversion in webhook handler
+
+### 💳 Checkout Session Fixes
+- **Price ID Configuration**: Added `STRIPE_PRICE_ID_PRO` and `STRIPE_PRICE_ID_CENTER` to deploy script secrets
+- **Runtime Evaluation**: Price IDs evaluated at runtime, not import time (fixes cold start issues)
+- **Localized Redirects**: Success/cancel URLs use `DEFAULT_LOCALE` for consistent routing
+
+### 🛠️ Admin Tooling
+- **Reset Subscription Endpoint**: `POST /admin/organizations/{org_id}/reset-subscription` for testing
+- **Portal Fallback**: Existing subscribers redirected to Stripe Customer Portal
+
+### 📋 Configuration
+- **Sandbox/Live Isolation**: Version-pinned secrets (`:1` for sandbox, `:latest` for live)
+- **Deploy Script**: Complete secret mapping in `--set-secrets` flag
+
+---
+
 ## [1.2.0] - 2026-01-04 💰 THE MONETIZATION UPDATE
 
 > **Theme:** "Real SaaS metrics, dynamic routing, and pure EUR spend controls."
