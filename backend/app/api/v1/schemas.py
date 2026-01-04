@@ -63,6 +63,7 @@ class OrganizationResponse(BaseModel):
     id: uuid.UUID
     name: str
     type: str
+    tier: str = "BUILDER"  # v1.2.0: Expose tier for frontend Plan page
     referral_code: str
     karma_score: int = 0
     terminology_preference: str = "CLIENT"
