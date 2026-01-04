@@ -248,6 +248,25 @@ async def update_organization(
     )
 
 
+@router.post("/organizations/{org_id}/reset-subscription")
+async def reset_subscription(
+    org_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_superuser),
+):
+    """Reset subscription for testing. Clears stripe_subscription_id."""
+    result = await db.execute(select(Organization).where(Organization.id == org_id))
+    org = result.scalar_one_or_none()
+
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+
+    org.stripe_subscription_id = None
+    await db.commit()
+
+    return {"message": f"Subscription reset for {org.name}", "tier": org.tier.value}
+
+
 class ThemeConfigUpdate(BaseModel):
     """CSS theme variables to persist. Supports flat or nested {light, dark} structure."""
 
