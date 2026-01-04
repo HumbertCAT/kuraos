@@ -235,7 +235,7 @@ export default function AiGovernance() {
     }
 
     function formatCurrency(val: number) {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+        return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(val);
     }
 
     function formatTokens(val: number) {
@@ -399,8 +399,8 @@ export default function AiGovernance() {
                                 <th className="px-4 py-2 text-left font-medium text-muted-foreground">Provider</th>
                                 <th className="px-4 py-2 text-left font-medium text-muted-foreground">Model</th>
                                 <th className="px-4 py-2 text-center font-medium text-muted-foreground">Audio</th>
-                                <th className="px-4 py-2 text-right font-medium text-muted-foreground font-mono">In $/M</th>
-                                <th className="px-4 py-2 text-right font-medium text-muted-foreground font-mono">Out $/M</th>
+                                <th className="px-4 py-2 text-right font-medium text-muted-foreground font-mono">In €/M</th>
+                                <th className="px-4 py-2 text-right font-medium text-muted-foreground font-mono">Out €/M</th>
                                 <th className="px-4 py-2 text-center font-medium text-muted-foreground">Status</th>
                                 <th className="px-4 py-2 text-center font-medium text-muted-foreground">Action</th>
                             </tr>
