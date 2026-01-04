@@ -149,6 +149,7 @@ import { API_URL } from '@/lib/api';
 
 export default function LeadsPage() {
     const terminology = useTerminology();
+    const tt = useTranslations('Tooltips');
     const [leads, setLeads] = useState<Lead[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -338,7 +339,7 @@ export default function LeadsPage() {
                                                                 <div className="flex items-center gap-1">
                                                                     {/* WhatsApp Button */}
                                                                     {lead.phone && (
-                                                                        <Tooltip content="Enviar WhatsApp">
+                                                                        <Tooltip content={tt('sendWhatsApp')}>
                                                                             <a
                                                                                 href={getWhatsAppUrl(lead)}
                                                                                 target="_blank"
@@ -519,6 +520,7 @@ function LeadDetailSheet({
     onConvert: () => void;
     onUpdate: () => void;
 }) {
+    const tt = useTranslations('Tooltips');
     const [firstName, setFirstName] = useState(lead.first_name);
     const [lastName, setLastName] = useState(lead.last_name);
     const [email, setEmail] = useState(lead.email || '');
@@ -627,7 +629,7 @@ function LeadDetailSheet({
                         {/* Quick Actions */}
                         <div className="flex items-center gap-2">
                             {lead.phone && (
-                                <Tooltip content="Enviar WhatsApp">
+                                <Tooltip content={tt('sendWhatsApp')}>
                                     <a
                                         href={getWhatsAppUrl(lead)}
                                         target="_blank"
@@ -638,7 +640,7 @@ function LeadDetailSheet({
                                     </a>
                                 </Tooltip>
                             )}
-                            <Tooltip content="Copiar link de reserva">
+                            <Tooltip content={tt('copyBookingLink')}>
                                 <button
                                     onClick={() => {
                                         const bookingUrl = `${window.location.origin}/book?email=${encodeURIComponent(lead.email || '')}&name=${encodeURIComponent(`${lead.first_name} ${lead.last_name}`)}`;

@@ -1,4 +1,22 @@
 {
+  "terminology": {
+    "patient": {
+      "singular": "Pacient",
+      "plural": "Pacients"
+    },
+    "client": {
+      "singular": "Client",
+      "plural": "Clients"
+    },
+    "consultant": {
+      "singular": "Consultant",
+      "plural": "Consultants"
+    },
+    "participant": {
+      "singular": "Participant",
+      "plural": "Participants"
+    }
+  },
   "Index": {
     "title": "Benvingut a KURA OS",
     "subtitle": "Gestió de la Teva Pràctica amb IA"
@@ -46,12 +64,25 @@
   },
   "Navigation": {
     "dashboard": "Tauler",
-    "patients": "Pacients",
-    "bookings": "Reserves",
-    "forms": "Formularis",
-    "services": "Serveis",
-    "calendar": "Calendari",
-    "automations": "Automatitzacions",
+    "sections": {
+      "connect": "ATRAURE",
+      "practice": "SERVIR",
+      "grow": "CRÉIXER"
+    },
+    "links": {
+      "calendar": "Calendari",
+      "services": "Serveis",
+      "crm": "CRM",
+      "clients": "Clients",
+      "bookings": "Reserves",
+      "forms": "Formularis",
+      "campaigns": "Campanyes",
+      "agents": "Agents · Assistents"
+    },
+    "badges": {
+      "soon": "Aviat"
+    },
+    "search": "Cercar...",
     "observatory": "Observatori",
     "settings": "Configuració"
   },

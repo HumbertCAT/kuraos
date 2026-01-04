@@ -44,6 +44,7 @@ export default function FormsPage() {
     const params = useParams();
     const locale = params.locale as string || 'en';
     const t = useTranslations('Forms');
+    const tt = useTranslations('Tooltips');
 
     const [activeTab, setActiveTab] = useState<'my-forms' | 'library'>('my-forms');
     const [myForms, setMyForms] = useState<FormTemplate[]>([]);
@@ -269,7 +270,7 @@ export default function FormsPage() {
                                         <td className="px-4 py-3">
                                             <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                                                 {form.public_token && (
-                                                    <Tooltip content={copied === form.public_token ? 'Copiado' : 'Copiar link público'}>
+                                                    <Tooltip content={copied === form.public_token ? tt('copied') : tt('copyPublicLink')}>
                                                         <button
                                                             onClick={() => copyPublicLink(form.public_token!)}
                                                             className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-brand transition-all group"
@@ -278,7 +279,7 @@ export default function FormsPage() {
                                                         </button>
                                                     </Tooltip>
                                                 )}
-                                                <Tooltip content="Configuración del formulario">
+                                                <Tooltip content={tt('formSettings')}>
                                                     <Link
                                                         href={`/forms/${form.id}/edit`}
                                                         className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
@@ -286,7 +287,7 @@ export default function FormsPage() {
                                                         <Settings className="w-4 h-4" />
                                                     </Link>
                                                 </Tooltip>
-                                                <Tooltip content="Ver código QR">
+                                                <Tooltip content={tt('viewQRCode')}>
                                                     <button
                                                         onClick={() => showQRCode(form)}
                                                         className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
@@ -294,7 +295,7 @@ export default function FormsPage() {
                                                         <QrCode className="w-4 h-4" />
                                                     </button>
                                                 </Tooltip>
-                                                <Tooltip content="Ver respuestas y estadísticas">
+                                                <Tooltip content={tt('viewStats')}>
                                                     <Link
                                                         href={`/forms/${form.id}/submissions`}
                                                         className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
@@ -302,7 +303,7 @@ export default function FormsPage() {
                                                         <BarChart3 className="w-4 h-4" />
                                                     </Link>
                                                 </Tooltip>
-                                                <Tooltip content="Eliminar formulario">
+                                                <Tooltip content={tt('deleteForm')}>
                                                     <button
                                                         onClick={() => handleDeleteForm(form.id)}
                                                         className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"

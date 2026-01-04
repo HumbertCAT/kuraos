@@ -1,4 +1,22 @@
 {
+  "terminology": {
+    "patient": {
+      "singular": "Paziente",
+      "plural": "Pazienti"
+    },
+    "client": {
+      "singular": "Cliente",
+      "plural": "Clienti"
+    },
+    "consultant": {
+      "singular": "Consulente",
+      "plural": "Consulenti"
+    },
+    "participant": {
+      "singular": "Partecipante",
+      "plural": "Partecipanti"
+    }
+  },
   "Index": {
     "title": "Benvenuto su KURA OS",
     "subtitle": "Gestione Pratica Potenziata dall'IA"
@@ -46,12 +64,25 @@
   },
   "Navigation": {
     "dashboard": "Dashboard",
-    "patients": "Pazienti",
-    "bookings": "Prenotazioni",
-    "forms": "Moduli",
-    "services": "Servizi",
-    "calendar": "Calendario",
-    "automations": "Automazioni",
+    "sections": {
+      "connect": "ATTRARRE",
+      "practice": "SERVIRE",
+      "grow": "CRESCERE"
+    },
+    "links": {
+      "calendar": "Calendario",
+      "services": "Servizi",
+      "crm": "CRM",
+      "clients": "Clienti",
+      "bookings": "Prenotazioni",
+      "forms": "Moduli",
+      "campaigns": "Campagne",
+      "agents": "Agenti · Assistenti"
+    },
+    "badges": {
+      "soon": "Presto"
+    },
+    "search": "Cerca...",
     "observatory": "Osservatorio",
     "settings": "Impostazioni"
   },

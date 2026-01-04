@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Plus, Edit, Trash2, Clock, Users, Euro, FileText, CalendarPlus, List, X, Package } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
@@ -41,6 +42,7 @@ export default function ServicesPage() {
     const params = useParams();
     const locale = params.locale as string || 'en';
     const { user: currentUser } = useAuth();
+    const tt = useTranslations('Tooltips');
 
     const [services, setServices] = useState<ServiceType[]>([]);
     const [meta, setMeta] = useState<ListMetadata | null>(null);
@@ -446,7 +448,7 @@ export default function ServicesPage() {
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                                                <Tooltip content="Vista previa de reserva">
+                                                <Tooltip content={tt('previewBooking')}>
                                                     <a
                                                         href={`/${locale}/book/${currentUser?.id}`}
                                                         target="_blank"
@@ -455,7 +457,7 @@ export default function ServicesPage() {
                                                         <CalendarPlus size={16} />
                                                     </a>
                                                 </Tooltip>
-                                                <Tooltip content="Ver reservas de este servicio">
+                                                <Tooltip content={tt('viewServiceBookings')}>
                                                     <button
                                                         onClick={() => openBookingsModal(service)}
                                                         className="p-2 text-muted-foreground hover:text-amber-600 hover:bg-amber-100 rounded-lg transition-all"
@@ -463,7 +465,7 @@ export default function ServicesPage() {
                                                         <List size={16} />
                                                     </button>
                                                 </Tooltip>
-                                                <Tooltip content="Editar servicio">
+                                                <Tooltip content={tt('editService')}>
                                                     <button
                                                         onClick={() => openEditModal(service)}
                                                         className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
@@ -471,7 +473,7 @@ export default function ServicesPage() {
                                                         <Edit size={16} />
                                                     </button>
                                                 </Tooltip>
-                                                <Tooltip content="Eliminar servicio">
+                                                <Tooltip content={tt('deleteService')}>
                                                     <button
                                                         onClick={() => handleDelete(service.id)}
                                                         className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all"

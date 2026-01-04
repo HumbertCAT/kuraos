@@ -37,6 +37,7 @@ export default function AutomationsPage() {
     const params = useParams();
     const locale = params.locale as string || 'es';
     const t = useTranslations('Automations');
+    const tt = useTranslations('Tooltips');
     const [activeTab, setActiveTab] = useState<'my' | 'marketplace'>('my');
     const [myRules, setMyRules] = useState<AutomationRule[]>([]);
     const [templates, setTemplates] = useState<AutomationRule[]>([]);
@@ -325,7 +326,7 @@ export default function AutomationsPage() {
                                     {/* Actions */}
                                     <div className="flex items-center gap-2 flex-shrink-0">
                                         {/* Configure */}
-                                        <Tooltip content="Configurar personalidad">
+                                        <Tooltip content={tt('configurePersonality')}>
                                             <button
                                                 onClick={() => setEditingAgent(rule)}
                                                 className="p-2 text-muted-foreground hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
@@ -335,7 +336,7 @@ export default function AutomationsPage() {
                                         </Tooltip>
 
                                         {/* Toggle */}
-                                        <Tooltip content={rule.is_active ? 'Desactivar agente' : 'Activar agente'}>
+                                        <Tooltip content={rule.is_active ? tt('deactivateAgent') : tt('activateAgent')}>
                                             <button
                                                 onClick={() => handleToggle(rule.id, rule.is_active)}
                                                 className={`relative w-14 h-8 rounded-full transition-colors flex-shrink-0 ${rule.is_active ? 'bg-emerald-500' : 'bg-muted'
@@ -349,7 +350,7 @@ export default function AutomationsPage() {
                                         </Tooltip>
 
                                         {/* Delete */}
-                                        <Tooltip content="Eliminar agente">
+                                        <Tooltip content={tt('deleteAgent')}>
                                             <button
                                                 onClick={() => handleDelete(rule.id)}
                                                 className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"

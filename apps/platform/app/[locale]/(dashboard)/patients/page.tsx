@@ -125,6 +125,7 @@ function TableRowSkeleton() {
 
 export default function PatientsPage() {
   const t = useTranslations('Patients');
+  const tt = useTranslations('Tooltips');
   const terminology = useTerminology();
   const pathname = usePathname();
   const router = useRouter();
@@ -356,7 +357,7 @@ export default function PatientsPage() {
                     {/* Actions */}
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Tooltip content="Ver perfil completo">
+                        <Tooltip content={tt('viewProfile')}>
                           <Link
                             href={`/patients/${patient.id}`}
                             className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
@@ -364,7 +365,7 @@ export default function PatientsPage() {
                             <Eye className="w-4 h-4" />
                           </Link>
                         </Tooltip>
-                        <Tooltip content="Editar información">
+                        <Tooltip content={tt('editInfo')}>
                           <Link
                             href={`/patients/${patient.id}/edit`}
                             className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
@@ -372,7 +373,7 @@ export default function PatientsPage() {
                             <Pencil className="w-4 h-4" />
                           </Link>
                         </Tooltip>
-                        <Tooltip content="Abrir chat">
+                        <Tooltip content={tt('openChat')}>
                           <button
                             className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all"
                           >
