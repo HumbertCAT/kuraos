@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
-import { Bot, Zap, Power, Trash2, Download, Settings, BarChart3, Activity } from 'lucide-react';
+import { Bot, Zap, Power, Trash2, Download, Settings, BarChart3, Activity, ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import IconRenderer from '@/components/IconRenderer';
 import PageHeader from '@/components/PageHeader';
@@ -159,6 +159,21 @@ export default function AutomationsPage() {
         'LEAD_CONVERTED': 'Lead Convertido',
     };
 
+    const actionLabels: Record<string, string> = {
+        'send_email': 'Enviar Email',
+        'send_whatsapp': 'Enviar WhatsApp',
+        'update_journey_status': 'Actualizar Estado',
+        'create_task': 'Crear Tarea',
+        'block_patient': 'Bloquear Paciente',
+    };
+
+    function getMainAction(rule: AutomationRule): string {
+        if (rule.actions && rule.actions.length > 0) {
+            return actionLabels[rule.actions[0].type] || rule.actions[0].type;
+        }
+        return 'Ejecutar';
+    }
+
     const activeCount = myRules.filter(r => r.is_active).length;
 
     if (loading) {
@@ -266,7 +281,7 @@ export default function AutomationsPage() {
                             <thead className="bg-muted/50">
                                 <tr className="border-b border-border">
                                     <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">AGENTE</th>
-                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">DISPARADOR</th>
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">LÓGICA</th>
                                     <th className="px-4 py-3 text-center type-ui text-muted-foreground tracking-wider uppercase hidden lg:table-cell">EJECUCIONES</th>
                                     <th className="px-4 py-3 text-center type-ui text-muted-foreground tracking-wider uppercase">ESTADO</th>
                                     <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider uppercase">ACCIONES</th>
@@ -289,9 +304,15 @@ export default function AutomationsPage() {
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 hidden md:table-cell">
-                                            <span className="badge badge-muted font-mono text-xs">
-                                                {triggerLabels[rule.trigger_event] || rule.trigger_event}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">
+                                                    {triggerLabels[rule.trigger_event] || rule.trigger_event}
+                                                </span>
+                                                <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                                                <span className="text-xs bg-brand/10 text-brand px-2 py-0.5 rounded border border-brand/20">
+                                                    {getMainAction(rule)}
+                                                </span>
+                                            </div>
                                         </td>
                                         <td className="px-4 py-3 text-center hidden lg:table-cell">
                                             <span className="font-mono text-sm text-muted-foreground">
