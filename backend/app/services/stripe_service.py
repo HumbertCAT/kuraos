@@ -22,13 +22,6 @@ TIER_PRICE_MAP = {
     OrgTier.CENTER: settings.STRIPE_PRICE_ID_CENTER,
 }
 
-# Default commission rates (can be overridden by system_settings)
-DEFAULT_COMMISSION_RATES = {
-    OrgTier.BUILDER: 0.05,  # 5% for free tier
-    OrgTier.PRO: 0.03,  # 3% for PRO
-    OrgTier.CENTER: 0.02,  # 2% for CENTER
-}
-
 
 class StripeService:
     """Centralized Stripe operations for TherapistOS."""
@@ -177,12 +170,17 @@ class StripeService:
         return is_enabled
 
     def get_commission_rate(self, tier: OrgTier) -> float:
-        """Get commission rate for a tier.
+        """Get commission rate for a tier from environment config.
 
-        TODO: Read from system_settings table for dynamic rates.
-        For now, uses default rates.
+        Reads static business constants from settings (env vars).
+        Zero latency, no DB lookup required.
         """
-        return DEFAULT_COMMISSION_RATES.get(tier, 0.05)
+        fee_map = {
+            OrgTier.BUILDER: settings.TIER_FEE_BUILDER,
+            OrgTier.PRO: settings.TIER_FEE_PRO,
+            OrgTier.CENTER: settings.TIER_FEE_CENTER,
+        }
+        return fee_map.get(tier, 0.05)
 
     def calculate_application_fee(
         self,
