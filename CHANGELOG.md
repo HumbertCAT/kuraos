@@ -38,6 +38,22 @@ Monetary fields migrated from `DOUBLE PRECISION` to `NUMERIC` for exact decimal 
 - Alembic: `b7573685053a_refactor_monetary_fields_to_decimal.py`
 - **Data preserved**: Existing values converted automatically
 
+### 🎨 Agents UI Rebuild (Table View)
+Complete rebuild of `/automations` page to match `/forms` structure.
+
+**New structure:**
+- **PageHeader**: Kicker "CRECER", stats badges (Total, Activos)
+- **Data Table**: Professional columns (Agente, Disparador, Ejecuciones, Estado, Acciones)
+- **Control Deck**: Segmented tabs (Mis Agentes / Catálogo)
+- **Actions**: Settings, Logs, Power toggle, Delete
+
+| Old (Cards) | New (Table) |
+|-------------|-------------|
+| Grid layout | `<table>` rows |
+| Purple gradients | `badge badge-*` semantic |
+| Toggle switch inline | Power icon button |
+| No execution count | `execution_count` column |
+
 ---
 
 ## [1.2.2] - 2026-01-04 🔔 CRITICAL NOTIFICATION SYSTEM + UI ACTION TOOLTIPS
