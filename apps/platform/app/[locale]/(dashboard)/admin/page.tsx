@@ -92,7 +92,7 @@ const THERAPY_ICONS: Record<string, string> = {
     INTEGRATION: '🔄',
 };
 
-type TabType = 'settings' | 'tiers' | 'orgs' | 'templates' | 'automations' | 'backups' | 'theme' | 'aigov';
+type TabType = 'aigov' | 'tiers' | 'orgs' | 'templates' | 'automations' | 'backups' | 'theme';
 
 const TRIGGER_LABELS: Record<string, string> = {
     FORM_SUBMISSION_COMPLETED: '📋 Form Submitted',
@@ -112,7 +112,7 @@ export default function AdminPage() {
 
     // Read tab from URL query param
     const tabFromUrl = searchParams.get('tab') as TabType | null;
-    const [activeTab, setActiveTab] = useState<TabType>(tabFromUrl || 'settings');
+    const [activeTab, setActiveTab] = useState<TabType>(tabFromUrl || 'aigov');
 
     // Handle tab change with URL sync
     const handleTabChange = (tab: TabType) => {
@@ -176,7 +176,7 @@ export default function AdminPage() {
 
     // Sync tab from URL (initial load and back/forward navigation)
     useEffect(() => {
-        const validTabs: TabType[] = ['settings', 'tiers', 'orgs', 'templates', 'automations', 'backups', 'theme', 'aigov'];
+        const validTabs: TabType[] = ['aigov', 'tiers', 'orgs', 'templates', 'automations', 'backups', 'theme'];
         if (tabFromUrl && validTabs.includes(tabFromUrl)) {
             setActiveTab(tabFromUrl);
         }
@@ -292,14 +292,13 @@ export default function AdminPage() {
     }
 
     const tabs: { key: TabType; label: string; icon: string }[] = [
-        { key: 'settings', label: 'Settings', icon: '⚙️' },
+        { key: 'aigov', label: 'AIGov', icon: '🧠' },
         { key: 'tiers', label: 'Tiers', icon: '💎' },
         { key: 'orgs', label: 'Orgs', icon: '🏢' },
         { key: 'templates', label: 'Forms', icon: '📋' },
         { key: 'automations', label: 'Agents', icon: '🤖' },
         { key: 'backups', label: 'Backups', icon: '🛡️' },
         { key: 'theme', label: 'Themes', icon: '🎨' },
-        { key: 'aigov', label: 'AIGov', icon: '🧠' },
     ];
 
     return (
@@ -326,77 +325,6 @@ export default function AdminPage() {
                     </button>
                 ))}
             </div>
-
-            {/* Settings Tab */}
-            {activeTab === 'settings' && (
-                <section className="bg-card rounded-xl border border-border overflow-hidden">
-                    <div className="px-6 py-4 border-b border-border bg-muted">
-                        <h2 className="text-lg font-semibold text-foreground">System Settings</h2>
-                        <p className="text-sm text-foreground/60">Global configuration values stored in database</p>
-                    </div>
-                    <div className="divide-y divide-slate-100">
-                        {settings.map((setting) => (
-                            <div key={setting.key} className="px-6 py-4 flex items-center justify-between">
-                                <div className="flex-1">
-                                    <p className="font-mono text-sm font-medium text-foreground">{setting.key}</p>
-                                    <p className="text-xs text-foreground/60">{setting.description || 'No description'}</p>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    {editingKey === setting.key ? (
-                                        <>
-                                            {setting.key === 'AI_MODEL' ? (
-                                                <select
-                                                    value={editValue.replace(/"/g, '')}
-                                                    onChange={(e) => setEditValue(`"${e.target.value}"`)}
-                                                    className="w-48 text-sm border border-border rounded px-2 py-1 font-mono text-foreground bg-card"
-                                                >
-                                                    {AI_MODELS.map((model) => (
-                                                        <option key={model} value={model}>{model}</option>
-                                                    ))}
-                                                </select>
-                                            ) : (
-                                                <textarea
-                                                    value={editValue}
-                                                    onChange={(e) => setEditValue(e.target.value)}
-                                                    className="w-48 h-20 text-sm border border-border rounded px-2 py-1 font-mono text-foreground bg-card"
-                                                />
-                                            )}
-                                            <button
-                                                onClick={() => handleSaveSetting(setting.key)}
-                                                className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
-                                            >
-                                                Save
-                                            </button>
-                                            <button
-                                                onClick={() => setEditingKey(null)}
-                                                className="px-3 py-1 bg-muted text-foreground text-sm rounded hover:bg-accent"
-                                            >
-                                                Cancel
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <code className="text-sm bg-muted px-3 py-1 rounded text-foreground max-w-xs truncate">
-                                                {JSON.stringify(setting.value)}
-                                            </code>
-                                            <button
-                                                onClick={() => {
-                                                    setEditingKey(setting.key);
-                                                    setEditValue(JSON.stringify(setting.value));
-                                                }}
-                                                className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                                                title="Edit"
-                                            >
-                                                <Pencil className="h-4 w-4" />
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
 
             {/* Tiers Tab */}
             {activeTab === 'tiers' && (
@@ -1059,8 +987,8 @@ function TiersTab({ settings, onSettingsChange }: TiersTabProps) {
                             key={tier}
                             onClick={() => setActiveTier(tier)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${isActive
-                                    ? `bg-gradient-to-r ${info.gradient} text-white shadow-lg`
-                                    : 'bg-muted text-foreground/70 hover:text-foreground'
+                                ? `bg-gradient-to-r ${info.gradient} text-white shadow-lg`
+                                : 'bg-muted text-foreground/70 hover:text-foreground'
                                 }`}
                         >
                             <span>{info.icon}</span>
