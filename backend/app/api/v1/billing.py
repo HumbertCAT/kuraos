@@ -127,8 +127,12 @@ async def create_checkout_session(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        logger.error(f"Checkout session error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to create checkout session")
+        import traceback
+
+        logger.error(f"Checkout session error: {e}\n{traceback.format_exc()}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to create checkout session: {str(e)}"
+        )
 
 
 @router.post("/portal", response_model=PortalResponse)
