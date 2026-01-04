@@ -49,7 +49,6 @@ services:
       - STRIPE_API_KEY=${STRIPE_SECRET_KEY:-}
     depends_on:
       - backend
-    network_mode: "host"
 
   # ============================================================
   # THE BLACK BOX - Automated Backup Service
