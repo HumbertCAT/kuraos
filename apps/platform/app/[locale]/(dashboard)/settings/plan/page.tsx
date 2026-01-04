@@ -11,7 +11,7 @@ import {
     CheckCircle2,
     ArrowRight
 } from 'lucide-react';
-import { useOrganization } from '@/hooks/useOrganization';
+import { useAuth } from '@/context/auth-context';
 
 // Types
 interface AiSpend {
@@ -79,7 +79,7 @@ function getBarColor(percent: number): string {
 }
 
 export default function PlanPage() {
-    const { organization } = useOrganization();
+    const { organization } = useAuth();
     const [aiSpend, setAiSpend] = useState<AiSpend | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -253,10 +253,10 @@ export default function PlanPage() {
                             <div
                                 key={tierKey}
                                 className={`relative p-6 rounded-2xl border-2 transition-all duration-300 ${isCurrent
-                                        ? 'bg-brand/5 border-brand'
-                                        : isHighlighted
-                                            ? 'bg-card border-purple-500 shadow-lg shadow-purple-500/20 scale-[1.02]'
-                                            : 'bg-card border-border hover:border-muted-foreground/30'
+                                    ? 'bg-brand/5 border-brand'
+                                    : isHighlighted
+                                        ? 'bg-card border-purple-500 shadow-lg shadow-purple-500/20 scale-[1.02]'
+                                        : 'bg-card border-border hover:border-muted-foreground/30'
                                     }`}
                             >
                                 {/* Recommended badge */}
@@ -287,10 +287,10 @@ export default function PlanPage() {
 
                                 {/* Fee Badge */}
                                 <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium mb-4 ${plan.fee <= 1
-                                        ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-                                        : plan.fee <= 2
-                                            ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                                            : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                                    ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                    : plan.fee <= 2
+                                        ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                                        : 'bg-red-500/10 text-red-500 border border-red-500/20'
                                     }`}>
                                     Comisión: {plan.fee}%
                                 </div>
