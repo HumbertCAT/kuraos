@@ -125,12 +125,13 @@ export default function PlanPage() {
     const showAiWarning = aiUsagePercent >= 90;
     const showPatientWarning = patientUsagePercent >= 90;
 
-    // Handle upgrade to Stripe Checkout
+    // Handle upgrade to Stripe Checkout (or Portal if already subscribed)
     async function handleUpgrade(targetTier: TierKey) {
         if (upgrading) return;
         setUpgrading(targetTier);
 
         try {
+            // Try checkout first
             const res = await fetch(`${API_URL}/billing/checkout-session`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -138,14 +139,27 @@ export default function PlanPage() {
                 body: JSON.stringify({ target_tier: targetTier }),
             });
 
-            if (!res.ok) {
-                const error = await res.json();
-                alert(error.detail || 'Error al crear sesión de pago');
+            if (res.ok) {
+                const { url } = await res.json();
+                window.location.href = url;
                 return;
             }
 
-            const { url } = await res.json();
-            window.location.href = url;
+            // If 400 with "Already has subscription", redirect to portal
+            const error = await res.json();
+            if (res.status === 400 && error.detail?.includes('subscription')) {
+                const portalRes = await fetch(`${API_URL}/billing/portal`, {
+                    method: 'POST',
+                    credentials: 'include',
+                });
+                if (portalRes.ok) {
+                    const { url } = await portalRes.json();
+                    window.location.href = url;
+                    return;
+                }
+            }
+
+            alert(error.detail || 'Error al crear sesión de pago');
         } catch (err) {
             console.error('Upgrade error:', err);
             alert('Error al conectar con el sistema de pagos');
