@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Zap, Power, Trash2, Download, Sparkles, MessageSquarePlus, Bot, Settings, BarChart3 } from 'lucide-react';
+import { Zap, Power, Trash2, Download, Sparkles, MessageSquarePlus, Bot, Settings, BarChart3, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import IconRenderer from '@/components/IconRenderer';
 import PageHeader from '@/components/PageHeader';
 import { Tooltip } from '@/components/ui/tooltip';
+import { CyberButton } from '@/components/ui/CyberButton';
+import { CyberCard } from '@/components/ui/CyberCard';
 
 import { API_URL } from '@/lib/api';
 
@@ -186,7 +188,7 @@ export default function AutomationsPage() {
                         <span className="text-xs font-bold text-muted-foreground uppercase min-w-[40px]">Si</span>
                         <div className="flex flex-wrap gap-1">
                             {conditions.map((c, i) => (
-                                <span key={i} className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
+                                <span key={i} className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full font-mono">
                                     {conditionLabels[c.field] || c.field} = {c.value}
                                 </span>
                             ))}
@@ -199,7 +201,7 @@ export default function AutomationsPage() {
                         <span className="text-xs font-bold text-muted-foreground uppercase min-w-[40px]">→</span>
                         <div className="flex flex-wrap gap-1">
                             {actions.map((a, i) => (
-                                <span key={i} className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+                                <span key={i} className="text-xs bg-brand/10 text-brand px-2 py-0.5 rounded-full">
                                     {actionLabels[a.type] || a.type}
                                     {a.params?.to && ` → ${a.params.to}`}
                                     {a.params?.status && ` → ${a.params.status}`}
@@ -222,33 +224,33 @@ export default function AutomationsPage() {
 
             {/* Alerts */}
             {success && (
-                <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-3 animate-fade-in">
+                <div className="mb-6 p-4 bg-success/10 border border-success/20 rounded-xl flex items-center gap-3 animate-fade-in">
                     <span className="text-2xl">✅</span>
-                    <span className="text-emerald-700 font-medium">{success}</span>
+                    <span className="text-success font-medium">{success}</span>
                 </div>
             )}
 
             {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+                <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-xl flex items-center gap-3">
                     <span className="text-2xl">❌</span>
-                    <span className="text-red-700 font-medium">{error}</span>
-                    <button onClick={() => setError('')} className="ml-auto text-red-500 hover:text-red-700">✕</button>
+                    <span className="text-destructive font-medium">{error}</span>
+                    <button onClick={() => setError('')} className="ml-auto text-destructive/70 hover:text-destructive">✕</button>
                 </div>
             )}
 
-            {/* Tabs */}
-            <div className="flex gap-2 mb-6 p-1 bg-muted rounded-xl">
+            {/* Tabs - Standardized */}
+            <div className="flex gap-2 p-1 bg-muted rounded-xl">
                 <button
                     onClick={() => setActiveTab('my')}
                     className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${activeTab === 'my'
                         ? 'bg-card text-foreground shadow-sm'
-                        : 'text-foreground/60 hover:text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
                         }`}
                 >
                     <Sparkles className="w-4 h-4" />
                     Mis Agentes
                     {myRules.length > 0 && (
-                        <span className="px-2 py-0.5 bg-violet-100 text-violet-600 rounded-full text-xs font-bold">
+                        <span className="px-2 py-0.5 bg-brand/10 text-brand rounded-full text-xs font-bold">
                             {myRules.length}
                         </span>
                     )}
@@ -257,7 +259,7 @@ export default function AutomationsPage() {
                     onClick={() => setActiveTab('marketplace')}
                     className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${activeTab === 'marketplace'
                         ? 'bg-card text-foreground shadow-sm'
-                        : 'text-foreground/60 hover:text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
                         }`}
                 >
                     <Download className="w-4 h-4" />
@@ -268,40 +270,37 @@ export default function AutomationsPage() {
             {loading ? (
                 <div className="text-center py-16">
                     <div className="animate-spin text-4xl mb-4">⏳</div>
-                    <p className="text-foreground/60">Cargando agentes...</p>
+                    <p className="text-muted-foreground">Cargando agentes...</p>
                 </div>
             ) : activeTab === 'my' ? (
                 /* My Automations Tab */
                 <div className="space-y-4">
                     {myRules.length === 0 ? (
-                        <div className="text-center py-16 bg-muted rounded-2xl border-2 border-dashed border-border">
+                        <CyberCard className="text-center py-16 border-2 border-dashed">
                             <Bot className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                             <h3 className="text-lg font-semibold text-foreground/70 mb-2">
                                 No tienes agentes activos
                             </h3>
-                            <p className="text-foreground/60 mb-6">
+                            <p className="text-muted-foreground mb-6">
                                 Activa protocolos desde el Catálogo para automatizar tu práctica
                             </p>
-                            <button
+                            <CyberButton
+                                variant="highlight"
                                 onClick={() => setActiveTab('marketplace')}
-                                className="px-6 py-3 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-xl font-semibold hover:from-violet-600 hover:to-fuchsia-600 transition-all shadow-lg shadow-violet-200"
                             >
                                 Explorar Catálogo →
-                            </button>
-                        </div>
+                            </CyberButton>
+                        </CyberCard>
                     ) : (
                         myRules.map(rule => (
-                            <div
+                            <CyberCard
                                 key={rule.id}
-                                className={`py-5 pl-5 pr-6 bg-card rounded-xl border-2 transition-all ${rule.is_active
-                                    ? 'border-emerald-200 shadow-sm'
-                                    : 'border-border'
-                                    }`}
+                                className={`p-5 ${rule.is_active ? 'border-success/30' : ''}`}
                             >
                                 <div className="flex items-start gap-4">
                                     {/* Icon */}
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${rule.is_active
-                                        ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white'
+                                        ? 'bg-brand text-white'
                                         : 'bg-muted text-muted-foreground'
                                         }`}>
                                         <IconRenderer name={rule.icon} className="w-6 h-6" />
@@ -313,7 +312,7 @@ export default function AutomationsPage() {
                                         onClick={() => router.push(`/${locale}/automations/${rule.id}`)}
                                     >
                                         <div className="flex items-center gap-2">
-                                            <h3 className="type-ui font-semibold text-foreground text-lg group-hover:text-ai transition-colors">{rule.name}</h3>
+                                            <h3 className="type-ui font-semibold text-foreground text-lg group-hover:text-brand transition-colors">{rule.name}</h3>
                                             <BarChart3 className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                         <p className="type-body text-muted-foreground text-sm mt-1">{rule.description}</p>
@@ -329,7 +328,7 @@ export default function AutomationsPage() {
                                         <Tooltip content={tt('configurePersonality')}>
                                             <button
                                                 onClick={() => setEditingAgent(rule)}
-                                                className="p-2 text-muted-foreground hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                                                className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
                                             >
                                                 <Settings className="w-5 h-5" />
                                             </button>
@@ -339,7 +338,7 @@ export default function AutomationsPage() {
                                         <Tooltip content={rule.is_active ? tt('deactivateAgent') : tt('activateAgent')}>
                                             <button
                                                 onClick={() => handleToggle(rule.id, rule.is_active)}
-                                                className={`relative w-14 h-8 rounded-full transition-colors flex-shrink-0 ${rule.is_active ? 'bg-emerald-500' : 'bg-muted'
+                                                className={`relative w-14 h-8 rounded-full transition-colors flex-shrink-0 ${rule.is_active ? 'bg-success' : 'bg-muted'
                                                     }`}
                                             >
                                                 <span
@@ -353,14 +352,14 @@ export default function AutomationsPage() {
                                         <Tooltip content={tt('deleteAgent')}>
                                             <button
                                                 onClick={() => handleDelete(rule.id)}
-                                                className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                             >
                                                 <Trash2 className="w-5 h-5" />
                                             </button>
                                         </Tooltip>
                                     </div>
                                 </div>
-                            </div>
+                            </CyberCard>
                         ))
                     )}
                 </div>
@@ -370,18 +369,18 @@ export default function AutomationsPage() {
                     {templates.map(template => {
                         const installed = isInstalled(template.id);
                         return (
-                            <div
+                            <CyberCard
                                 key={template.id}
-                                className="p-5 bg-card rounded-xl border-2 border-border hover:border-violet-200 hover:shadow-md transition-all"
+                                className="p-5 hover:border-brand/30 transition-all"
                             >
                                 {/* Icon */}
-                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-violet-200">
+                                <div className="w-14 h-14 rounded-xl bg-brand flex items-center justify-center text-white mb-4">
                                     <IconRenderer name={template.icon} className="w-7 h-7" />
                                 </div>
 
                                 {/* Content */}
                                 <h3 className="font-semibold text-foreground text-lg mb-2">{template.name}</h3>
-                                <p className="text-foreground/60 text-sm mb-4 line-clamp-2">{template.description}</p>
+                                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{template.description}</p>
 
                                 {/* Trigger badge */}
                                 <div className="text-xs text-muted-foreground mb-2">
@@ -394,72 +393,78 @@ export default function AutomationsPage() {
                                 {renderWorkflowSteps(template)}
 
                                 {/* Install button */}
-                                {installed ? (
-                                    <div className="flex items-center gap-2 text-emerald-600 font-medium">
-                                        <Power className="w-4 h-4" />
-                                        Activo
-                                    </div>
-                                ) : (
-                                    <button
-                                        onClick={() => handleInstall(template.id)}
-                                        disabled={installing === template.id}
-                                        className="w-full py-3 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-xl font-semibold hover:from-violet-600 hover:to-fuchsia-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                                    >
-                                        {installing === template.id ? (
-                                            <>
-                                                <span className="animate-spin">⏳</span>
-                                                Activando...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Download className="w-4 h-4" />
-                                                Activar
-                                            </>
-                                        )}
-                                    </button>
-                                )}
-                            </div>
+                                <div className="mt-4">
+                                    {installed ? (
+                                        <div className="flex items-center gap-2 text-success font-medium">
+                                            <Power className="w-4 h-4" />
+                                            Activo
+                                        </div>
+                                    ) : (
+                                        <CyberButton
+                                            variant="surface"
+                                            size="md"
+                                            className="w-full"
+                                            onClick={() => handleInstall(template.id)}
+                                            disabled={installing === template.id}
+                                        >
+                                            {installing === template.id ? (
+                                                <>
+                                                    <span className="animate-spin">⏳</span>
+                                                    Activando...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Download className="w-4 h-4" />
+                                                    Activar
+                                                </>
+                                            )}
+                                        </CyberButton>
+                                    )}
+                                </div>
+                            </CyberCard>
                         );
                     })}
 
                     {/* Request Custom Card */}
-                    <div className="p-5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border-2 border-dashed border-border hover:border-violet-300 transition-all">
+                    <CyberCard className="p-5 border-2 border-dashed hover:border-brand/30 transition-all">
                         <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center text-muted-foreground mb-4">
-                            <MessageSquarePlus className="w-7 h-7" />
+                            <Plus className="w-7 h-7" />
                         </div>
                         <h3 className="font-semibold text-foreground/70 text-lg mb-2">
                             ¿No encuentras lo que buscas?
                         </h3>
-                        <p className="text-foreground/60 text-sm mb-4">
+                        <p className="text-muted-foreground text-sm mb-4">
                             Cuéntanos qué automatización necesitas y la crearemos para ti.
                         </p>
-                        <button
-                            onClick={() => window.open('mailto:support@therapistos.com?subject=Solicitud de Agente', '_blank')}
-                            className="w-full py-3 bg-card border-2 border-border text-foreground/70 rounded-xl font-semibold hover:border-violet-400 hover:text-violet-600 transition-all"
+                        <CyberButton
+                            variant="ghost"
+                            className="w-full"
+                            onClick={() => window.open('mailto:support@kuraos.ai?subject=Solicitud de Agente', '_blank')}
                         >
-                        </button>
-                    </div>
+                            Solicitar Agente
+                        </CyberButton>
+                    </CyberCard>
                 </div>
             )}
 
             {/* Agent Configuration Modal */}
             {editingAgent && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-card rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-                        <div className="bg-gradient-to-r from-violet-50 to-fuchsia-50 px-6 py-4 border-b sticky top-0">
+                    <CyberCard className="max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                        <div className="bg-muted px-6 py-4 border-b border-border sticky top-0 rounded-t-xl">
                             <div className="flex items-center justify-between">
                                 <h3 className="font-semibold text-foreground flex items-center gap-2">
-                                    <Bot className="w-5 h-5 text-violet-600" />
+                                    <Bot className="w-5 h-5 text-brand" />
                                     Personalidad del Agente
                                 </h3>
                                 <button
                                     onClick={() => setEditingAgent(null)}
-                                    className="p-1 hover:bg-card/50 rounded"
+                                    className="p-1 hover:bg-card rounded"
                                 >
                                     ✕
                                 </button>
                             </div>
-                            <p className="text-sm text-foreground/70 mt-1">{editingAgent.name}</p>
+                            <p className="text-sm text-muted-foreground mt-1">{editingAgent.name}</p>
                         </div>
 
                         <div className="p-6 space-y-6">
@@ -477,7 +482,7 @@ export default function AutomationsPage() {
                                             tone: e.target.value as 'CLINICAL' | 'EMPATHETIC' | 'DIRECT'
                                         }
                                     })}
-                                    className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-border rounded-xl bg-card focus:ring-2 focus:ring-brand focus:border-transparent"
                                 >
                                     <option value="EMPATHETIC">🤗 Empático - Cálido y comprensivo</option>
                                     <option value="CLINICAL">🩺 Clínico - Profesional y preciso</option>
@@ -492,7 +497,7 @@ export default function AutomationsPage() {
                                         <label className="block text-sm font-medium text-foreground mb-1">
                                             Requiere Aprobación Humana
                                         </label>
-                                        <p className="text-xs text-foreground/60">
+                                        <p className="text-xs text-muted-foreground">
                                             Si está activo, el agente preparará el borrador pero esperará tu confirmación antes de enviar.
                                         </p>
                                     </div>
@@ -505,7 +510,7 @@ export default function AutomationsPage() {
                                             }
                                         })}
                                         className={`ml-4 relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${editingAgent.agent_config?.mode === 'DRAFT_ONLY'
-                                            ? 'bg-violet-600'
+                                            ? 'bg-brand'
                                             : 'bg-muted'
                                             }`}
                                     >
@@ -535,19 +540,20 @@ export default function AutomationsPage() {
                                         }
                                     })}
                                     placeholder="Equipo Kura"
-                                    className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-border rounded-xl bg-card focus:ring-2 focus:ring-brand focus:border-transparent"
                                 />
                             </div>
                         </div>
 
-                        <div className="border-t px-6 py-4 flex justify-end gap-3 bg-muted">
-                            <button
+                        <div className="border-t border-border px-6 py-4 flex justify-end gap-3 bg-muted rounded-b-xl">
+                            <CyberButton
+                                variant="ghost"
                                 onClick={() => setEditingAgent(null)}
-                                className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-lg font-medium transition-colors"
                             >
                                 Cancelar
-                            </button>
-                            <button
+                            </CyberButton>
+                            <CyberButton
+                                variant="default"
                                 onClick={async () => {
                                     try {
                                         const res = await fetch(`${API_URL}/automations/rules/${editingAgent.id}`, {
@@ -569,12 +575,11 @@ export default function AutomationsPage() {
                                         setError('Error al guardar');
                                     }
                                 }}
-                                className="px-4 py-2 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white rounded-lg font-medium hover:from-violet-600 hover:to-fuchsia-600 transition-colors"
                             >
                                 Guardar
-                            </button>
+                            </CyberButton>
                         </div>
-                    </div>
+                    </CyberCard>
                 </div>
             )}
         </div>
