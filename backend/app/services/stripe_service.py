@@ -210,12 +210,30 @@ async def handle_checkout_completed(
     session: stripe.checkout.Session,
 ) -> None:
     """Handle successful checkout session completion."""
+    logger.info(f"handle_checkout_completed called for session: {session.id}")
+    logger.info(f"Session mode: {session.mode}")
+    logger.info(f"Session metadata type: {type(session.metadata)}")
+    logger.info(f"Session metadata: {session.metadata}")
+
     if session.mode != "subscription":
+        logger.info("Not a subscription mode, returning")
         return
 
-    org_id = session.metadata.get("org_id")
-    target_tier = session.metadata.get("target_tier")
+    # Handle metadata access - might be dict or StripeObject
+    metadata = session.metadata or {}
+    if hasattr(metadata, "get"):
+        org_id = metadata.get("org_id")
+        target_tier = metadata.get("target_tier")
+    else:
+        org_id = metadata.get("org_id") if isinstance(metadata, dict) else None
+        target_tier = (
+            metadata.get("target_tier") if isinstance(metadata, dict) else None
+        )
+
+    logger.info(f"Extracted org_id: {org_id}, target_tier: {target_tier}")
+
     subscription_id = session.subscription
+    logger.info(f"Subscription ID: {subscription_id}")
 
     if not org_id or not target_tier:
         logger.warning(f"Checkout session missing metadata: {session.id}")
@@ -226,6 +244,7 @@ async def handle_checkout_completed(
 
     try:
         org_uuid = uuid.UUID(org_id)
+        logger.info(f"Converted to UUID: {org_uuid}")
     except ValueError:
         logger.error(f"Invalid org_id in metadata: {org_id}")
         return
@@ -237,12 +256,15 @@ async def handle_checkout_completed(
         logger.error(f"Organization not found: {org_id}")
         return
 
+    logger.info(f"Found org: {org.name}, current tier: {org.tier}")
+
     # Upgrade tier
     org.tier = OrgTier(target_tier)
     org.stripe_subscription_id = subscription_id
     # AI spend limits are now controlled via TIER_AI_SPEND_LIMIT_* in system_settings
 
     await db.commit()
+    logger.info(f"SUCCESS: Upgraded {org.name} to {target_tier}")
     logger.info(f"Organization {org_id} upgraded to {target_tier}")
 
 
