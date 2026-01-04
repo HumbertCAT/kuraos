@@ -92,9 +92,20 @@ const EMPTY_STATS: LedgerStats = {
 };
 
 const DEFAULT_MODELS: ModelInfo[] = [
+    // Gemini models (selectable as primary)
     { id: 'gemini-2.5-flash', provider: 'vertex-google', name: 'Gemini 2.5 Flash', supports_audio: true, cost_input: 0.075, cost_output: 0.30, is_enabled: true },
     { id: 'gemini-2.5-pro', provider: 'vertex-google', name: 'Gemini 2.5 Pro', supports_audio: true, cost_input: 1.25, cost_output: 5.00, is_enabled: true },
+    { id: 'gemini-2.5-flash-lite', provider: 'vertex-google', name: 'Gemini 2.5 Flash Lite', supports_audio: false, cost_input: 0.02, cost_output: 0.10, is_enabled: true },
+    { id: 'gemini-2.0-flash', provider: 'vertex-google', name: 'Gemini 2.0 Flash', supports_audio: true, cost_input: 0.10, cost_output: 0.40, is_enabled: true },
+    // Companion models (always active for specific tasks)
+    { id: 'whisper-1', provider: 'openai', name: 'Whisper (Transcription)', supports_audio: true, cost_input: 0.006, cost_output: 0, is_enabled: true },
 ];
+
+// Models that can be selected as primary AI engine
+const SELECTABLE_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+
+// Companion models that are always active for specific tasks
+const COMPANION_MODELS = ['whisper-1'];
 
 export default function AiGovernance() {
     const [stats, setStats] = useState<LedgerStats>(EMPTY_STATS);
@@ -102,8 +113,10 @@ export default function AiGovernance() {
     const [models, setModels] = useState<ModelInfo[]>(DEFAULT_MODELS);
     const [logs, setLogs] = useState<UsageLog[]>([]);
     const [marginInput, setMarginInput] = useState('1.5');
+    const [primaryModel, setPrimaryModel] = useState<string>('gemini-2.5-flash');
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isChangingModel, setIsChangingModel] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     // Load data on mount
@@ -115,11 +128,12 @@ export default function AiGovernance() {
         setIsLoading(true);
         setError(null);
         try {
-            const [statsData, configData, modelsData, logsData] = await Promise.all([
+            const [statsData, configData, modelsData, logsData, settingsData] = await Promise.all([
                 fetchWithAuth('/admin/ai/ledger'),
                 fetchWithAuth('/admin/ai/config'),
                 fetchWithAuth('/admin/ai/models').catch(() => DEFAULT_MODELS),
                 fetchWithAuth('/admin/ai/logs?limit=10'),
+                fetchWithAuth('/admin/settings'),
             ]);
 
             setStats(statsData);
@@ -127,6 +141,12 @@ export default function AiGovernance() {
             setMarginInput(String(configData.cost_margin || 1.5));
             setModels(modelsData);
             setLogs(logsData.logs || []);
+
+            // Get AI_MODEL from settings
+            const aiModelSetting = settingsData.find((s: any) => s.key === 'AI_MODEL');
+            if (aiModelSetting?.value) {
+                setPrimaryModel(String(aiModelSetting.value).replace(/"/g, ''));
+            }
         } catch (err: any) {
             console.error('Failed to load AI governance data:', err);
             setError(err.message || 'Failed to load data');
@@ -154,6 +174,34 @@ export default function AiGovernance() {
         } finally {
             setIsSaving(false);
         }
+    }
+
+    async function changePrimaryModel(modelId: string) {
+        if (!SELECTABLE_MODELS.includes(modelId)) return;
+
+        setIsChangingModel(true);
+        try {
+            await fetchWithAuth(`/admin/settings/AI_MODEL`, {
+                method: 'PATCH',
+                body: JSON.stringify({ value: modelId }),
+            });
+            setPrimaryModel(modelId);
+        } catch (err) {
+            console.error('Failed to change primary model:', err);
+        } finally {
+            setIsChangingModel(false);
+        }
+    }
+
+    // Helper to determine model status
+    function getModelStatus(modelId: string): { label: string; style: string } {
+        if (modelId === primaryModel) {
+            return { label: '⚡ Primary', style: 'bg-brand/20 text-brand border border-brand/30' };
+        }
+        if (COMPANION_MODELS.includes(modelId)) {
+            return { label: '🔗 Companion', style: 'bg-purple-500/10 text-purple-400 border border-purple-500/20' };
+        }
+        return { label: 'Available', style: 'bg-muted text-muted-foreground' };
     }
 
     function formatCurrency(val: number) {
@@ -272,41 +320,59 @@ export default function AiGovernance() {
                                 <th className="px-4 py-2 text-right font-medium text-muted-foreground font-mono">In $/M</th>
                                 <th className="px-4 py-2 text-right font-medium text-muted-foreground font-mono">Out $/M</th>
                                 <th className="px-4 py-2 text-center font-medium text-muted-foreground">Status</th>
+                                <th className="px-4 py-2 text-center font-medium text-muted-foreground">Action</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
-                            {models.map((model) => (
-                                <tr key={model.id} className="hover:bg-muted/30 transition-colors">
-                                    <td className="px-4 py-3">
-                                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-muted rounded text-xs">
-                                            {model.provider === 'vertex-google' ? '🔷' : '🎤'}
-                                            {model.provider.replace('vertex-', '')}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-3 font-medium">{model.name}</td>
-                                    <td className="px-4 py-3 text-center">
-                                        {model.supports_audio ? (
-                                            <Check className="w-4 h-4 text-green-400 inline" />
-                                        ) : (
-                                            <X className="w-4 h-4 text-muted-foreground inline" />
-                                        )}
-                                    </td>
-                                    <td className="px-4 py-3 text-right font-mono text-muted-foreground">
-                                        ${model.cost_input.toFixed(3)}
-                                    </td>
-                                    <td className="px-4 py-3 text-right font-mono text-muted-foreground">
-                                        ${model.cost_output.toFixed(2)}
-                                    </td>
-                                    <td className="px-4 py-3 text-center">
-                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${model.is_enabled
-                                            ? 'bg-green-500/10 text-green-400'
-                                            : 'bg-muted text-muted-foreground'
-                                            }`}>
-                                            {model.is_enabled ? 'Active' : 'Disabled'}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
+                            {models.map((model) => {
+                                const status = getModelStatus(model.id);
+                                const isSelectable = SELECTABLE_MODELS.includes(model.id);
+                                const isPrimary = model.id === primaryModel;
+
+                                return (
+                                    <tr key={model.id} className={`transition-colors ${isPrimary ? 'bg-brand/5' : 'hover:bg-muted/30'}`}>
+                                        <td className="px-4 py-3">
+                                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-muted rounded text-xs">
+                                                {model.provider === 'vertex-google' ? '🔷' : model.provider === 'openai' ? '🟢' : '🎤'}
+                                                {model.provider.replace('vertex-', '')}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 font-medium">{model.name}</td>
+                                        <td className="px-4 py-3 text-center">
+                                            {model.supports_audio ? (
+                                                <Check className="w-4 h-4 text-green-400 inline" />
+                                            ) : (
+                                                <X className="w-4 h-4 text-muted-foreground inline" />
+                                            )}
+                                        </td>
+                                        <td className="px-4 py-3 text-right font-mono text-muted-foreground">
+                                            ${model.cost_input.toFixed(3)}
+                                        </td>
+                                        <td className="px-4 py-3 text-right font-mono text-muted-foreground">
+                                            ${model.cost_output.toFixed(2)}
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${status.style}`}>
+                                                {status.label}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-center">
+                                            {isSelectable && !isPrimary && (
+                                                <button
+                                                    onClick={() => changePrimaryModel(model.id)}
+                                                    disabled={isChangingModel}
+                                                    className="px-2 py-1 text-xs bg-muted hover:bg-brand hover:text-white rounded transition-colors disabled:opacity-50"
+                                                >
+                                                    Select
+                                                </button>
+                                            )}
+                                            {isPrimary && (
+                                                <span className="text-xs text-brand">✓ Active</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
