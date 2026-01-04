@@ -1,4 +1,4 @@
-"""TherapistOS FastAPI Application Entry Point."""
+"""Kura OS FastAPI Application Entry Point."""
 
 import logging
 from contextlib import asynccontextmanager
@@ -308,4 +308,4 @@ async def health_check():
 @app.get("/", tags=["System"])
 async def root():
     """Root endpoint."""
-    return {"message": "Welcome to TherapistOS API", "docs": "/docs"}
+    return {"message": "Welcome to Kura OS API", "docs": "/docs"}

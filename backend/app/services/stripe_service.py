@@ -16,15 +16,17 @@ logger = logging.getLogger(__name__)
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-# Tier to Price ID mapping
-TIER_PRICE_MAP = {
-    OrgTier.PRO: settings.STRIPE_PRICE_ID_PRO,
-    OrgTier.CENTER: settings.STRIPE_PRICE_ID_CENTER,
-}
+def get_price_for_tier(tier: OrgTier) -> str | None:
+    """Get Stripe price ID for tier at runtime (when secrets are loaded)."""
+    tier_price_map = {
+        OrgTier.PRO: settings.STRIPE_PRICE_ID_PRO,
+        OrgTier.CENTER: settings.STRIPE_PRICE_ID_CENTER,
+    }
+    return tier_price_map.get(tier)
 
 
 class StripeService:
-    """Centralized Stripe operations for TherapistOS."""
+    """Centralized Stripe operations for Kura OS."""
 
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -48,12 +50,17 @@ class StripeService:
             email=owner.email if owner else None,
             name=org.name,
             metadata={
-                "org_id": str(org.id),
-                "org_name": org.name,
+                "organization_id": str(org.id),
+                "tier": org.tier.value,
             },
         )
 
-        org.stripe_customer_id = customer.id
+        # Save customer ID
+        await self.db.execute(
+            update(Organization)
+            .where(Organization.id == org.id)
+            .values(stripe_customer_id=customer.id)
+        )
         await self.db.commit()
 
         return customer.id
@@ -69,7 +76,7 @@ class StripeService:
 
         Returns: Checkout session URL
         """
-        price_id = TIER_PRICE_MAP.get(target_tier)
+        price_id = get_price_for_tier(target_tier)
         if not price_id:
             raise ValueError(f"No price configured for tier: {target_tier}")
 

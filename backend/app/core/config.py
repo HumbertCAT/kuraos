@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "TherapistOS"
+    PROJECT_NAME: str = "Kura OS"
     API_V1_STR: str = "/api/v1"
 
     # Database - using str to support Cloud SQL Unix socket format
@@ -44,8 +44,8 @@ class Settings(BaseSettings):
 
     # Brevo Email (transactional emails)
     BREVO_API_KEY: Optional[str] = None
-    EMAIL_FROM_ADDRESS: str = "noreply@therapistos.com"
-    EMAIL_FROM_NAME: str = "TherapistOS"
+    EMAIL_FROM_ADDRESS: str = "noreply@kuraos.ai"
+    EMAIL_FROM_NAME: str = "Kura OS"
 
     # Frontend URL (for links in emails)
     # Dev: http://localhost:3001, Prod: https://app.kuraos.ai

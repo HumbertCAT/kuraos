@@ -1,4 +1,4 @@
-"""SQLAlchemy Models for TherapistOS."""
+"""SQLAlchemy Models for Kura OS."""
 
 import enum
 import secrets
