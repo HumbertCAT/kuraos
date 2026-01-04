@@ -16,12 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0] - 2026-01-04 💰 THE MONETIZATION UPDATE
 
-> **Theme:** "Real SaaS metrics, dynamic routing, and pure USD spend controls."
+> **Theme:** "Real SaaS metrics, dynamic routing, and pure EUR spend controls."
 
 ### 💸 AI Credits Deprecation (BREAKING CHANGE)
-Complete removal of the credit-based billing system in favor of USD spend limits.
+Complete removal of the credit-based billing system in favor of EUR spend limits.
 - **Database Migration**: Dropped `ai_credits_monthly_quota`, `ai_credits_purchased`, `ai_credits_used_this_month`, `credits_reset_at` from `organizations`
-- **New Endpoint**: `GET /auth/me/ai-spend` → Returns `{ spend_usd, limit_usd, usage_percent }`
+- **New Endpoint**: `GET /auth/me/ai-spend` → Returns `{ spend_eur, limit_eur, usage_percent }`
 - **Removed Endpoints**: `/admin/organizations/{id}/add-credits`, `/auth/me/credits`
 - **Tier Limits**: Controlled via `TIER_AI_SPEND_LIMIT_{BUILDER|PRO|CENTER}`
 
