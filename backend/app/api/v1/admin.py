@@ -47,9 +47,6 @@ class OrganizationAdminResponse(BaseModel):
     name: str
     tier: str
     terminology_preference: str = "CLIENT"
-    ai_credits_monthly_quota: int
-    ai_credits_purchased: int
-    ai_credits_used_this_month: int
     patient_count: int
     ai_usage_tokens: int  # v1.1.9: Real usage tracking
     ai_usage_cost_eur: float  # v1.1.9: Real cost with margin
@@ -61,11 +58,6 @@ class OrganizationAdminResponse(BaseModel):
 class OrganizationUpdate(BaseModel):
     tier: Optional[str] = None
     terminology_preference: Optional[str] = None
-    ai_credits_monthly_quota: Optional[int] = None
-
-
-class AddCreditsRequest(BaseModel):
-    credits: int
 
 
 # ============ Settings Endpoints ============
@@ -168,9 +160,6 @@ async def list_organizations(
                 terminology_preference=org.terminology_preference.value
                 if org.terminology_preference
                 else "CLIENT",
-                ai_credits_monthly_quota=org.ai_credits_monthly_quota,
-                ai_credits_purchased=org.ai_credits_purchased,
-                ai_credits_used_this_month=org.ai_credits_used_this_month,
                 patient_count=patient_counts.get(org.id, 0),
                 ai_usage_tokens=int(tokens),
                 ai_usage_cost_eur=float(cost),
@@ -222,9 +211,6 @@ async def update_organization(
                 detail=f"Invalid terminology. Must be one of: {[t.value for t in TerminologyPreference]}",
             )
 
-    if data.ai_credits_monthly_quota is not None:
-        org.ai_credits_monthly_quota = data.ai_credits_monthly_quota
-
     await db.commit()
     await db.refresh(org)
 
@@ -234,42 +220,32 @@ async def update_organization(
     )
     patient_count = patient_count_result.scalar() or 0
 
+    # Get AI usage stats
+    from app.db.models import AiUsageLog
+    from datetime import datetime, timedelta
+
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    usage_result = await db.execute(
+        select(
+            func.sum(AiUsageLog.tokens_input + AiUsageLog.tokens_output),
+            func.sum(AiUsageLog.cost_user_credits),
+        )
+        .where(AiUsageLog.organization_id == org.id)
+        .where(AiUsageLog.created_at >= thirty_days_ago)
+    )
+    usage_row = usage_result.one()
+    tokens = usage_row[0] or 0
+    cost = usage_row[1] or 0
+
     return OrganizationAdminResponse(
         id=org.id,
         name=org.name,
         tier=org.tier.value,
         terminology_preference=org.terminology_preference.value,
-        ai_credits_monthly_quota=org.ai_credits_monthly_quota,
-        ai_credits_purchased=org.ai_credits_purchased,
-        ai_credits_used_this_month=org.ai_credits_used_this_month,
         patient_count=patient_count,
+        ai_usage_tokens=int(tokens),
+        ai_usage_cost_eur=float(cost),
     )
-
-
-@router.post("/organizations/{org_id}/add-credits")
-async def add_credits(
-    org_id: uuid.UUID,
-    data: AddCreditsRequest,
-    db: AsyncSession = Depends(get_db),
-    _: User = Depends(require_superuser),
-):
-    """Add purchased credits to an organization. Requires superuser."""
-    result = await db.execute(select(Organization).where(Organization.id == org_id))
-    org = result.scalar_one_or_none()
-
-    if not org:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Organization not found",
-        )
-
-    org.ai_credits_purchased += data.credits
-    await db.commit()
-
-    return {
-        "message": f"Added {data.credits} credits",
-        "new_balance": org.ai_credits_purchased,
-    }
 
 
 class ThemeConfigUpdate(BaseModel):

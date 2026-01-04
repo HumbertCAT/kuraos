@@ -496,21 +496,8 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
             )
             db.add(usage_log)
 
-            # ============================================================
-            # QUOTA MANAGEMENT: Deduct based on real credits
-            # ============================================================
-            credit_cost = int(costs["cost_user_credits"] * 100)  # Convert to credits
-            remaining_monthly = (
-                org.ai_credits_monthly_quota - org.ai_credits_used_this_month
-            )
-
-            if remaining_monthly >= credit_cost:
-                org.ai_credits_used_this_month += credit_cost
-            else:
-                # Use remaining monthly + dip into purchased
-                shortfall = credit_cost - remaining_monthly
-                org.ai_credits_used_this_month = org.ai_credits_monthly_quota
-                org.ai_credits_purchased = max(0, org.ai_credits_purchased - shortfall)
+            # Cost tracking is now done via AiUsageLog.cost_provider_usd
+            # Spend limits are controlled via TIER_AI_SPEND_LIMIT_* in system_settings
 
             # ============================================================
             # SAVE RESULT

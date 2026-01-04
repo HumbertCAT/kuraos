@@ -14,11 +14,8 @@ TIER_SETTINGS = [
     ("TIER_USERS_LIMIT_BUILDER", 3, "Max active patients for BUILDER tier"),
     ("TIER_USERS_LIMIT_PRO", 50, "Max active patients for PRO tier"),
     ("TIER_USERS_LIMIT_CENTER", 150, "Max active patients for CENTER tier"),
-    # AI credits per tier (monthly allocation)
-    ("TIER_AI_CREDITS_BUILDER", 100, "Monthly AI credits for BUILDER tier"),
-    ("TIER_AI_CREDITS_PRO", 500, "Monthly AI credits for PRO tier"),
-    ("TIER_AI_CREDITS_CENTER", 2000, "Monthly AI credits for CENTER tier"),
     # AI USD spend limits per tier (monthly cap for cost control)
+    # v1.2.0: Replaced credit system with pure USD-based spend limits
     ("TIER_AI_SPEND_LIMIT_BUILDER", 10, "Monthly AI spend limit USD for BUILDER"),
     ("TIER_AI_SPEND_LIMIT_PRO", 50, "Monthly AI spend limit USD for PRO"),
     ("TIER_AI_SPEND_LIMIT_CENTER", 200, "Monthly AI spend limit USD for CENTER"),

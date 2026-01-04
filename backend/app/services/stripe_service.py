@@ -224,13 +224,7 @@ async def handle_checkout_completed(
     # Upgrade tier
     org.tier = OrgTier(target_tier)
     org.stripe_subscription_id = subscription_id
-
-    # Update AI credits based on tier
-    # TODO: Read from TIER_AI_CREDITS_{tier} in system_settings
-    if org.tier == OrgTier.PRO:
-        org.ai_credits_monthly_quota = 500
-    elif org.tier == OrgTier.CENTER:
-        org.ai_credits_monthly_quota = 2000
+    # AI spend limits are now controlled via TIER_AI_SPEND_LIMIT_* in system_settings
 
     await db.commit()
     logger.info(f"Organization {org_id} upgraded to {target_tier}")
@@ -262,7 +256,7 @@ async def handle_subscription_deleted(
     # Downgrade to BUILDER
     org.tier = OrgTier.BUILDER
     org.stripe_subscription_id = None
-    org.ai_credits_monthly_quota = 100  # Reset to free tier quota
+    # AI spend limits controlled via TIER_AI_SPEND_LIMIT_BUILDER in system_settings
 
     await db.commit()
     logger.info(f"Organization {org.id} downgraded to BUILDER")

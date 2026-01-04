@@ -259,13 +259,8 @@ class Organization(Base):
         Enum(TerminologyPreference), default=TerminologyPreference.CLIENT
     )
 
-    # AI Credits system
-    ai_credits_monthly_quota: Mapped[int] = mapped_column(Integer, default=100)
-    ai_credits_purchased: Mapped[int] = mapped_column(Integer, default=0)
-    ai_credits_used_this_month: Mapped[int] = mapped_column(Integer, default=0)
-    credits_reset_at: Mapped[Optional[datetime]] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    # AI Spend tracking is now done via AiUsageLog.cost_provider_usd
+    # Limits are controlled via TIER_AI_SPEND_LIMIT_* in system_settings
 
     # Org-specific settings (custom prompts, etc.)
     settings: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)

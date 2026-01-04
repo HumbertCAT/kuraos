@@ -531,15 +531,19 @@ async def update_me(
     return UserResponse.model_validate(current_user)
 
 
-@router.get("/me/credits", summary="Get current user's organization credits")
-async def get_my_credits(
+@router.get("/me/ai-spend", summary="Get current organization AI spend")
+async def get_my_ai_spend(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Get the credit balance for the current user's organization.
+    Get the AI spending for the current user's organization (30-day window).
+
+    Returns USD spent vs tier limit.
     """
-    from app.db.models import Organization
+    from app.db.models import Organization, AiUsageLog
+    from app.services.settings import get_setting_float
+    from datetime import datetime, timedelta
 
     result = await db.execute(
         select(Organization).where(Organization.id == current_user.organization_id)
@@ -549,18 +553,28 @@ async def get_my_credits(
     if not org:
         raise HTTPException(status_code=404, detail="Organization not found")
 
-    available = (
-        org.ai_credits_monthly_quota
-        - org.ai_credits_used_this_month
-        + org.ai_credits_purchased
+    # Get 30-day spend from AiUsageLog
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    spend_result = await db.execute(
+        select(func.sum(AiUsageLog.cost_provider_usd))
+        .where(AiUsageLog.organization_id == current_user.organization_id)
+        .where(AiUsageLog.created_at >= thirty_days_ago)
     )
+    spend_usd = float(spend_result.scalar() or 0)
+
+    # Get tier limit from system_settings
+    tier_limit_key = f"TIER_AI_SPEND_LIMIT_{org.tier.value}"
+    limit_usd = await get_setting_float(db, tier_limit_key, 50.0)
+
+    # Calculate percentage
+    usage_percent = round((spend_usd / limit_usd) * 100, 1) if limit_usd > 0 else 0
 
     return {
         "tier": org.tier.value,
-        "monthly_quota": org.ai_credits_monthly_quota,
-        "used_this_month": org.ai_credits_used_this_month,
-        "purchased": org.ai_credits_purchased,
-        "available": available,
+        "spend_usd": round(spend_usd, 2),
+        "limit_usd": round(limit_usd, 2),
+        "usage_percent": usage_percent,
+        "period_days": 30,
     }
 
 
