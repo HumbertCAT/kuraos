@@ -196,7 +196,7 @@ export default function AutomationsPage() {
             {/* Page Header with Metrics */}
             <PageHeader
                 icon={Bot}
-                kicker="CRECER"
+                kicker="ATRAER · SERVIR · CRECER"
                 title={t('title')}
                 subtitle={
                     <div className="flex flex-wrap items-center gap-2 mt-1">
