@@ -96,12 +96,12 @@ export default function DashboardPage() {
                 const totalPatients = patientsRes.meta?.total || patients.length;
                 const bookings = (bookingsRes.data || []) as BookingSummary[];
 
-                // Calculate revenue
+                // Calculate revenue (handle Decimal as string from backend)
                 const confirmedBookings = bookings.filter(b => b.status === 'CONFIRMED' || b.status === 'COMPLETED');
-                const monthlyRevenue = confirmedBookings.reduce((sum, b) => sum + (b.amount_paid || 0), 0);
+                const monthlyRevenue = confirmedBookings.reduce((sum, b) => sum + Number(b.amount_paid || 0), 0);
                 const pendingPayments = bookings
                     .filter(b => b.status === 'PENDING')
-                    .reduce((sum, b) => sum + (b.service_price || 450), 0);
+                    .reduce((sum, b) => sum + Number(b.service_price || 450), 0);
 
                 // ------ WIRING: Pipeline Velocity (Leads by Status) ------
                 const leads = Array.isArray(leadsRes.data) ? leadsRes.data : (leadsRes.leads || []);
