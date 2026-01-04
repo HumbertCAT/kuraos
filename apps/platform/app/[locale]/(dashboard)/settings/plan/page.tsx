@@ -83,9 +83,11 @@ export default function PlanPage() {
     const [aiSpend, setAiSpend] = useState<AiSpend | null>(null);
     const [patientCount, setPatientCount] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [upgrading, setUpgrading] = useState<string | null>(null);
 
     const currentTier = (organization?.tier as TierKey) || 'BUILDER';
     const currentPlan = PLANS[currentTier];
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
     useEffect(() => {
         loadAiSpend();
@@ -122,6 +124,35 @@ export default function PlanPage() {
     const patientUsagePercent = (patientCount / currentPlan.patients) * 100;
     const showAiWarning = aiUsagePercent >= 90;
     const showPatientWarning = patientUsagePercent >= 90;
+
+    // Handle upgrade to Stripe Checkout
+    async function handleUpgrade(targetTier: TierKey) {
+        if (upgrading) return;
+        setUpgrading(targetTier);
+
+        try {
+            const res = await fetch(`${API_URL}/billing/checkout-session`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ target_tier: targetTier }),
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                alert(error.detail || 'Error al crear sesión de pago');
+                return;
+            }
+
+            const { url } = await res.json();
+            window.location.href = url;
+        } catch (err) {
+            console.error('Upgrade error:', err);
+            alert('Error al conectar con el sistema de pagos');
+        } finally {
+            setUpgrading(null);
+        }
+    }
 
     if (loading) {
         return (
@@ -324,10 +355,12 @@ export default function PlanPage() {
                                     </button>
                                 ) : isUpgrade ? (
                                     <button
-                                        className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2"
+                                        onClick={() => handleUpgrade(tierKey)}
+                                        disabled={upgrading === tierKey}
+                                        className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        Mejorar Plan
-                                        <ArrowRight className="w-4 h-4" />
+                                        {upgrading === tierKey ? 'Procesando...' : 'Mejorar Plan'}
+                                        {upgrading !== tierKey && <ArrowRight className="w-4 h-4" />}
                                     </button>
                                 ) : (
                                     <button
@@ -347,6 +380,6 @@ export default function PlanPage() {
             <p className="text-xs text-muted-foreground text-center">
                 Todos los precios en EUR. IVA no incluido. Los límites se reinician mensualmente.
             </p>
-        </div>
+        </div >
     );
 }
