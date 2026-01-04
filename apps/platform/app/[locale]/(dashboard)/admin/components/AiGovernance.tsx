@@ -62,6 +62,25 @@ interface UsageLog {
     cost_user_credits: number;
 }
 
+interface TaskRoutingConfig {
+    routing: Record<string, string>;
+    available_tasks: string[];
+    region: string;
+}
+
+// Task type labels for UI display
+const TASK_LABELS: Record<string, { label: string; description: string; isFixed?: boolean }> = {
+    transcription: { label: 'Transcription', description: 'Audio to text (STT)', isFixed: true },
+    clinical_analysis: { label: 'Clinical Analysis', description: 'Therapy session notes' },
+    audio_synthesis: { label: 'Audio Synthesis', description: 'Voice note analysis' },
+    chat: { label: 'Chat Sentiment', description: 'WhatsApp monitoring' },
+    triage: { label: 'Triage', description: 'Risk screening (critical)' },
+    form_analysis: { label: 'Form Analysis', description: 'Intake form review' },
+    help_bot: { label: 'Help Bot', description: 'Platform support' },
+    document_analysis: { label: 'Document Analysis', description: 'PDFs and images' },
+    briefing: { label: 'Daily Briefing', description: 'Morning summary' },
+};
+
 // API helpers - use same pattern as other components
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
@@ -111,9 +130,12 @@ export default function AiGovernance() {
     const [logs, setLogs] = useState<UsageLog[]>([]);
     const [marginInput, setMarginInput] = useState('1.5');
     const [primaryModel, setPrimaryModel] = useState<string>('gemini-2.5-flash');
+    const [taskRouting, setTaskRouting] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isChangingModel, setIsChangingModel] = useState(false);
+    const [isSavingRouting, setIsSavingRouting] = useState(false);
+    const [pendingRoutingChanges, setPendingRoutingChanges] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
 
     // Load data on mount
@@ -125,12 +147,12 @@ export default function AiGovernance() {
         setIsLoading(true);
         setError(null);
         try {
-            const [statsData, configData, modelsData, logsData, settingsData] = await Promise.all([
+            const [statsData, configData, modelsData, logsData, routingData] = await Promise.all([
                 fetchWithAuth('/admin/ai/ledger'),
                 fetchWithAuth('/admin/ai/config'),
                 fetchWithAuth('/admin/ai/models').catch(() => DEFAULT_MODELS),
                 fetchWithAuth('/admin/ai/logs?limit=10'),
-                fetchWithAuth('/admin/settings'),
+                fetchWithAuth('/admin/ai/routing').catch(() => ({ routing: {}, available_tasks: [], region: 'europe-west1' })),
             ]);
 
             setStats(statsData);
@@ -138,12 +160,8 @@ export default function AiGovernance() {
             setMarginInput(String(configData.cost_margin || 1.5));
             setModels(modelsData);
             setLogs(logsData.logs || []);
-
-            // Get AI_MODEL from settings
-            const aiModelSetting = settingsData.find((s: any) => s.key === 'AI_MODEL');
-            if (aiModelSetting?.value) {
-                setPrimaryModel(String(aiModelSetting.value).replace(/"/g, ''));
-            }
+            setTaskRouting(routingData.routing || {});
+            setPendingRoutingChanges({});
         } catch (err: any) {
             console.error('Failed to load AI governance data:', err);
             setError(err.message || 'Failed to load data');
@@ -188,6 +206,41 @@ export default function AiGovernance() {
         } finally {
             setIsChangingModel(false);
         }
+    }
+
+    // Handle local routing change (before save)
+    function handleRoutingChange(taskType: string, modelId: string) {
+        setPendingRoutingChanges(prev => ({ ...prev, [taskType]: modelId }));
+    }
+
+    // Save all pending routing changes
+    async function saveRouting() {
+        if (Object.keys(pendingRoutingChanges).length === 0) return;
+
+        setIsSavingRouting(true);
+        try {
+            await fetchWithAuth('/admin/ai/routing', {
+                method: 'PATCH',
+                body: JSON.stringify({ routing: pendingRoutingChanges }),
+            });
+            // Merge changes into current routing
+            setTaskRouting(prev => ({ ...prev, ...pendingRoutingChanges }));
+            setPendingRoutingChanges({});
+        } catch (err) {
+            console.error('Failed to save routing:', err);
+        } finally {
+            setIsSavingRouting(false);
+        }
+    }
+
+    // Get effective model for a task (pending change or current)
+    function getEffectiveModel(taskType: string): string {
+        return pendingRoutingChanges[taskType] ?? taskRouting[taskType] ?? 'gemini-2.5-flash';
+    }
+
+    // Check if task has pending changes
+    function hasPendingChange(taskType: string): boolean {
+        return taskType in pendingRoutingChanges;
     }
 
     // Helper to determine model status
@@ -300,7 +353,76 @@ export default function AiGovernance() {
                 </div>
             </div>
 
-            {/* B. Neural Registry */}
+            {/* B. Task Routing */}
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Settings className="w-4 h-4 text-brand" />
+                        <h3 className="font-medium text-sm">Task Routing</h3>
+                        <span className="text-xs px-2 py-0.5 bg-muted rounded-full text-muted-foreground">europe-west1</span>
+                    </div>
+                    {Object.keys(pendingRoutingChanges).length > 0 && (
+                        <button
+                            onClick={saveRouting}
+                            disabled={isSavingRouting}
+                            className="px-3 py-1.5 bg-brand text-white text-sm rounded-lg hover:bg-brand/90 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                        >
+                            {isSavingRouting ? (
+                                <RefreshCw className="w-3 h-3 animate-spin" />
+                            ) : (
+                                <Check className="w-3 h-3" />
+                            )}
+                            Save Changes ({Object.keys(pendingRoutingChanges).length})
+                        </button>
+                    )}
+                </div>
+                <div className="divide-y divide-border">
+                    {Object.keys(TASK_LABELS).map((taskType) => {
+                        const taskInfo = TASK_LABELS[taskType];
+                        const currentModel = getEffectiveModel(taskType);
+                        const hasChange = hasPendingChange(taskType);
+                        const isFixed = taskInfo.isFixed;
+
+                        return (
+                            <div
+                                key={taskType}
+                                className={`px-4 py-3 flex items-center justify-between transition-colors ${hasChange ? 'bg-brand/5' : ''}`}
+                            >
+                                <div className="flex-1">
+                                    <p className="font-medium text-sm text-foreground">{taskInfo.label}</p>
+                                    <p className="text-xs text-muted-foreground">{taskInfo.description}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {isFixed ? (
+                                        <span className="px-3 py-1.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-lg text-sm font-medium">
+                                            🔗 {models.find(m => m.id === currentModel)?.name || currentModel}
+                                        </span>
+                                    ) : (
+                                        <select
+                                            value={currentModel}
+                                            onChange={(e) => handleRoutingChange(taskType, e.target.value)}
+                                            className="px-3 py-1.5 bg-muted border border-border rounded-lg text-sm text-foreground min-w-[200px]"
+                                        >
+                                            {models
+                                                .filter(m => !COMPANION_MODELS.includes(m.id))
+                                                .map((model) => (
+                                                    <option key={model.id} value={model.id}>
+                                                        {model.name} (${model.cost_input}/${model.cost_output})
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    )}
+                                    {hasChange && (
+                                        <span className="text-xs text-brand">• Modified</span>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* C. Neural Registry */}
             <div className="bg-card border border-border rounded-xl overflow-hidden">
                 <div className="px-4 py-3 border-b border-border flex items-center gap-2">
                     <Zap className="w-4 h-4 text-brand" />
