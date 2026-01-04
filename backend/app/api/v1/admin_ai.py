@@ -32,13 +32,23 @@ router = APIRouter(prefix="/admin/ai", tags=["AI Governance"])
 
 
 class LedgerStats(BaseModel):
-    """30-day AI usage statistics."""
+    """30-day AI usage and financial statistics."""
 
     period_days: int = 30
+    # Costs
     total_cost_usd: float = Field(..., description="Provider cost (Google bill)")
-    total_revenue_credits: float = Field(..., description="User-facing credits charged")
-    net_margin: float = Field(..., description="Revenue - Cost")
-    margin_percentage: float = Field(..., description="Margin as percentage")
+    # Revenue (SaaS model)
+    subscription_revenue: float = Field(
+        0, description="Est. revenue from subscriptions"
+    )
+    commission_revenue: float = Field(
+        0, description="Est. revenue from booking commissions"
+    )
+    total_revenue_usd: float = Field(0, description="Total estimated revenue")
+    # Profit
+    gross_profit: float = Field(0, description="Revenue - Cost = Gross Profit")
+    margin_percentage: float = Field(0, description="Gross margin as percentage")
+    # Usage metrics
     total_calls: int = 0
     total_tokens: int = 0
     usage_by_provider: dict = Field(default_factory=dict)
@@ -111,31 +121,75 @@ async def get_ledger_stats(
     current_user: User = Depends(require_super_admin),
 ):
     """
-    Get aggregated AI usage statistics for the last N days.
+    Get aggregated AI/financial statistics for the last N days.
 
-    Returns costs, revenue, margin, and usage breakdown by provider/model.
+    Returns:
+    - AI costs (provider bill)
+    - Revenue from subscriptions + commissions
+    - Gross profit (revenue - cost)
     """
+    from app.db.models import Organization, OrgTier, Booking
+
     start_date = datetime.utcnow() - timedelta(days=days)
 
-    # Aggregate totals
-    totals_query = select(
+    # ========================================
+    # 1. AI COSTS (Provider bill)
+    # ========================================
+    cost_query = select(
         func.sum(AiUsageLog.cost_provider_usd).label("total_cost"),
-        func.sum(AiUsageLog.cost_user_credits).label("total_revenue"),
         func.sum(AiUsageLog.tokens_input + AiUsageLog.tokens_output).label(
             "total_tokens"
         ),
         func.count(AiUsageLog.id).label("total_calls"),
     ).where(AiUsageLog.created_at >= start_date)
 
-    result = await db.execute(totals_query)
-    totals = result.one()
+    cost_result = await db.execute(cost_query)
+    cost_row = cost_result.one()
+    total_cost = float(cost_row.total_cost or 0)
+    total_tokens = int(cost_row.total_tokens or 0)
+    total_calls = int(cost_row.total_calls or 0)
 
-    total_cost = float(totals.total_cost or 0)
-    total_revenue = float(totals.total_revenue or 0)
-    net_margin = total_revenue - total_cost
-    margin_pct = ((total_revenue / total_cost) - 1) * 100 if total_cost > 0 else 0
+    # ========================================
+    # 2. SUBSCRIPTION REVENUE (monthly estimate)
+    # ========================================
+    # Prices: PRO = $49/mo, CENTER = $149/mo
+    pro_count_result = await db.execute(
+        select(func.count()).where(Organization.tier == OrgTier.PRO)
+    )
+    pro_count = pro_count_result.scalar() or 0
 
-    # Breakdown by provider
+    center_count_result = await db.execute(
+        select(func.count()).where(Organization.tier == OrgTier.CENTER)
+    )
+    center_count = center_count_result.scalar() or 0
+
+    subscription_revenue = (pro_count * 49.0) + (center_count * 149.0)
+
+    # ========================================
+    # 3. COMMISSION REVENUE (from bookings)
+    # ========================================
+    # Sum platform_fee from bookings in the period
+    try:
+        commission_query = select(func.sum(Booking.platform_fee)).where(
+            Booking.created_at >= start_date,
+            Booking.status.in_(["PAID", "CONFIRMED", "COMPLETED"]),
+        )
+        commission_result = await db.execute(commission_query)
+        commission_revenue = float(commission_result.scalar() or 0)
+    except Exception:
+        # Booking.platform_fee might not exist yet
+        commission_revenue = 0.0
+
+    # ========================================
+    # 4. CALCULATE TOTALS
+    # ========================================
+    total_revenue = subscription_revenue + commission_revenue
+    gross_profit = total_revenue - total_cost
+    margin_pct = (gross_profit / total_revenue * 100) if total_revenue > 0 else 0
+
+    # ========================================
+    # 5. BREAKDOWN BY PROVIDER/MODEL
+    # ========================================
     provider_query = (
         select(
             AiUsageLog.provider,
@@ -145,14 +199,12 @@ async def get_ledger_stats(
         .where(AiUsageLog.created_at >= start_date)
         .group_by(AiUsageLog.provider)
     )
-
     provider_result = await db.execute(provider_query)
     usage_by_provider = {
         row.provider: {"calls": row.calls, "cost": float(row.cost or 0)}
         for row in provider_result.all()
     }
 
-    # Breakdown by model
     model_query = (
         select(
             AiUsageLog.model_id,
@@ -164,7 +216,6 @@ async def get_ledger_stats(
         .where(AiUsageLog.created_at >= start_date)
         .group_by(AiUsageLog.model_id)
     )
-
     model_result = await db.execute(model_query)
     usage_by_model = {
         row.model_id: {"calls": row.calls, "tokens": int(row.tokens or 0)}
@@ -173,12 +224,14 @@ async def get_ledger_stats(
 
     return LedgerStats(
         period_days=days,
-        total_cost_usd=total_cost,
-        total_revenue_credits=total_revenue,
-        net_margin=net_margin,
+        total_cost_usd=round(total_cost, 2),
+        subscription_revenue=round(subscription_revenue, 2),
+        commission_revenue=round(commission_revenue, 2),
+        total_revenue_usd=round(total_revenue, 2),
+        gross_profit=round(gross_profit, 2),
         margin_percentage=round(margin_pct, 1),
-        total_calls=int(totals.total_calls or 0),
-        total_tokens=int(totals.total_tokens or 0),
+        total_calls=total_calls,
+        total_tokens=total_tokens,
         usage_by_provider=usage_by_provider,
         usage_by_model=usage_by_model,
     )

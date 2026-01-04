@@ -24,8 +24,10 @@ import {
 interface LedgerStats {
     period_days: number;
     total_cost_usd: number;
-    total_revenue_credits: number;
-    net_margin: number;
+    subscription_revenue: number;
+    commission_revenue: number;
+    total_revenue_usd: number;
+    gross_profit: number;
     margin_percentage: number;
     total_calls: number;
     total_tokens: number;
@@ -101,8 +103,10 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
 const EMPTY_STATS: LedgerStats = {
     period_days: 30,
     total_cost_usd: 0,
-    total_revenue_credits: 0,
-    net_margin: 0,
+    subscription_revenue: 0,
+    commission_revenue: 0,
+    total_revenue_usd: 0,
+    gross_profit: 0,
     margin_percentage: 0,
     total_calls: 0,
     total_tokens: 0,
@@ -128,11 +132,9 @@ export default function AiGovernance() {
     const [config, setConfig] = useState<AiConfig>({ cost_margin: 1.5, active_models: [], vertex_ai_enabled: true });
     const [models, setModels] = useState<ModelInfo[]>(DEFAULT_MODELS);
     const [logs, setLogs] = useState<UsageLog[]>([]);
-    const [marginInput, setMarginInput] = useState('1.5');
     const [primaryModel, setPrimaryModel] = useState<string>('gemini-2.5-flash');
     const [taskRouting, setTaskRouting] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
     const [isChangingModel, setIsChangingModel] = useState(false);
     const [isSavingRouting, setIsSavingRouting] = useState(false);
     const [pendingRoutingChanges, setPendingRoutingChanges] = useState<Record<string, string>>({});
@@ -157,7 +159,6 @@ export default function AiGovernance() {
 
             setStats(statsData);
             setConfig(configData);
-            setMarginInput(String(configData.cost_margin || 1.5));
             setModels(modelsData);
             setLogs(logsData.logs || []);
             setTaskRouting(routingData.routing || {});
@@ -167,27 +168,6 @@ export default function AiGovernance() {
             setError(err.message || 'Failed to load data');
         } finally {
             setIsLoading(false);
-        }
-    }
-
-    async function updateMargin() {
-        const newMargin = parseFloat(marginInput);
-        if (isNaN(newMargin) || newMargin < 1 || newMargin > 5) {
-            alert('Margin must be between 1.0 and 5.0');
-            return;
-        }
-
-        setIsSaving(true);
-        try {
-            await fetchWithAuth('/admin/ai/config', {
-                method: 'PATCH',
-                body: JSON.stringify({ cost_margin: newMargin }),
-            });
-            setConfig(prev => ({ ...prev, cost_margin: newMargin }));
-        } catch (err) {
-            console.error('Failed to update margin:', err);
-        } finally {
-            setIsSaving(false);
         }
     }
 
@@ -304,52 +284,35 @@ export default function AiGovernance() {
                     <p className="text-xs text-muted-foreground mt-1">{stats.period_days}d • {stats.total_calls.toLocaleString()} calls</p>
                 </div>
 
-                {/* Revenue */}
+                {/* Est. Revenue */}
                 <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl">
                     <div className="flex items-center gap-2 text-green-400 mb-2">
                         <TrendingUp className="w-4 h-4" />
-                        <span className="text-xs font-medium uppercase tracking-wider">Revenue</span>
+                        <span className="text-xs font-medium uppercase tracking-wider">Est. Revenue</span>
                     </div>
-                    <p className="text-2xl font-bold text-green-400">{formatCurrency(stats.total_revenue_credits)}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{formatTokens(stats.total_tokens)} tokens</p>
+                    <p className="text-2xl font-bold text-green-400">{formatCurrency(stats.total_revenue_usd)}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                        Subs: {formatCurrency(stats.subscription_revenue)} • Fees: {formatCurrency(stats.commission_revenue)}
+                    </p>
                 </div>
 
-                {/* Net Margin */}
-                <div className="p-4 bg-brand/10 border border-brand/20 rounded-xl">
-                    <div className="flex items-center gap-2 text-brand mb-2">
+                {/* Gross Profit */}
+                <div className={`p-4 rounded-xl border ${stats.gross_profit >= 0
+                    ? 'bg-emerald-500/10 border-emerald-500/20'
+                    : 'bg-red-500/10 border-red-500/20'
+                    }`}>
+                    <div className={`flex items-center gap-2 mb-2 ${stats.gross_profit >= 0 ? 'text-emerald-400' : 'text-red-400'
+                        }`}>
                         <Activity className="w-4 h-4" />
-                        <span className="text-xs font-medium uppercase tracking-wider">Net Margin</span>
+                        <span className="text-xs font-medium uppercase tracking-wider">Gross Profit</span>
                     </div>
-                    <p className="text-2xl font-bold text-brand">{formatCurrency(stats.net_margin)}</p>
-                    <p className="text-xs text-muted-foreground mt-1">+{stats.margin_percentage}%</p>
-                </div>
-
-                {/* Margin Controller */}
-                <div className="p-4 bg-muted/50 border border-border rounded-xl">
-                    <div className="flex items-center gap-2 text-foreground mb-2">
-                        <Settings className="w-4 h-4" />
-                        <span className="text-xs font-medium uppercase tracking-wider">Margin Config</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="number"
-                            value={marginInput}
-                            onChange={(e) => setMarginInput(e.target.value)}
-                            step="0.1"
-                            min="1"
-                            max="5"
-                            className="w-16 px-2 py-1 text-lg font-mono bg-background border border-border rounded text-center"
-                        />
-                        <span className="text-sm text-muted-foreground">×</span>
-                        <button
-                            onClick={updateMargin}
-                            disabled={isSaving}
-                            className="px-3 py-1 bg-brand text-white text-sm rounded hover:bg-brand/90 transition-colors disabled:opacity-50"
-                        >
-                            {isSaving ? '...' : 'Set'}
-                        </button>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground mt-2">Multiplier over provider costs</p>
+                    <p className={`text-2xl font-bold ${stats.gross_profit >= 0 ? 'text-emerald-400' : 'text-red-400'
+                        }`}>
+                        {formatCurrency(stats.gross_profit)}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                        {stats.margin_percentage > 0 ? '+' : ''}{stats.margin_percentage}% margin
+                    </p>
                 </div>
             </div>
 
