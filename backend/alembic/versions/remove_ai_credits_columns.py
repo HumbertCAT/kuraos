@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic
-revision = "remove_ai_credits_cols"
-down_revision = None  # Will be auto-filled by Alembic
+revision = "drop_ai_credits_v120"
+down_revision = "cd40ac38c48c"  # add_karma_score_to_organization (actual head)
 branch_labels = None
 depends_on = None
 
