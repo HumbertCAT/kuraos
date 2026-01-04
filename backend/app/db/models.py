@@ -15,6 +15,7 @@ from sqlalchemy import (
     Boolean,
     Text,
     Float,
+    Numeric,
     Index,
     Table,
     Column,
@@ -483,7 +484,7 @@ class Event(Base):
     start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     capacity: Mapped[int] = mapped_column(Integer)
-    price: Mapped[float] = mapped_column(Float, default=0.0)
+    price: Mapped[float] = mapped_column(Numeric(10, 2), default=0.0)
 
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"))
 
@@ -634,10 +635,10 @@ class AiUsageLog(Base):
 
     # Cost tracking (v1.1.1 - FinOps)
     cost_provider_usd: Mapped[float] = mapped_column(
-        Float, default=0.0
-    )  # Raw cost from Google
+        Numeric(10, 6), default=0.0
+    )  # Raw cost from Google (6 decimals for micropayments)
     cost_user_credits: Mapped[float] = mapped_column(
-        Float, default=0.0
+        Numeric(10, 4), default=0.0
     )  # User-facing cost (with margin)
 
     # Legacy field (kept for backwards compatibility, will be deprecated)
@@ -794,7 +795,7 @@ class ServiceType(Base):
     duration_minutes: Mapped[int] = mapped_column(Integer, default=60)
 
     # Pricing
-    price: Mapped[float] = mapped_column(Float, default=0.0)
+    price: Mapped[float] = mapped_column(Numeric(10, 2), default=0.0)
     currency: Mapped[str] = mapped_column(String(3), default="EUR")
 
     # Capacity for group events (ignored for 1:1)
@@ -1023,7 +1024,7 @@ class Booking(Base):
     stripe_payment_status: Mapped[Optional[str]] = mapped_column(
         String(50), nullable=True
     )  # "succeeded", "pending", "failed"
-    amount_paid: Mapped[float] = mapped_column(Float, default=0.0)
+    amount_paid: Mapped[float] = mapped_column(Numeric(10, 2), default=0.0)
     currency: Mapped[str] = mapped_column(String(3), default="EUR")
 
     # Notes from patient at booking time

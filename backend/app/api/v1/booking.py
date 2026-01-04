@@ -17,6 +17,7 @@ router = APIRouter()
 
 
 # ============ SCHEMAS ============
+from decimal import Decimal
 
 
 class BookingListResponse(BaseModel):
@@ -27,11 +28,11 @@ class BookingListResponse(BaseModel):
     patient_name: str
     service_id: uuid.UUID
     service_title: str
-    service_price: float  # For pending payment calculations
+    service_price: Decimal  # For pending payment calculations
     start_time: datetime
     end_time: datetime
     status: str
-    amount_paid: float
+    amount_paid: Decimal
     currency: str
     created_at: datetime
 

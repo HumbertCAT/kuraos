@@ -14,6 +14,32 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-01-05 💰 DECIMAL PRECISION REFACTOR
+
+> **Theme:** "Financial precision for enterprise SaaS."
+
+### 💵 Database Schema (BREAKING)
+Monetary fields migrated from `DOUBLE PRECISION` to `NUMERIC` for exact decimal arithmetic.
+
+| Table | Column | New Type |
+|-------|--------|----------|
+| `events` | `price` | `NUMERIC(10,2)` |
+| `service_types` | `price` | `NUMERIC(10,2)` |
+| `bookings` | `amount_paid` | `NUMERIC(10,2)` |
+| `ai_usage_logs` | `cost_provider_usd` | `NUMERIC(10,6)` |
+| `ai_usage_logs` | `cost_user_credits` | `NUMERIC(10,4)` |
+
+### 🔧 Pydantic Schemas
+- **ServiceTypeCreate/Update/Response**: `price: Decimal`
+- **BookingListResponse**: `amount_paid: Decimal`, `service_price: Decimal`
+- JSON serialization: Decimals render as numbers (no string conversion needed)
+
+### 📦 Migration
+- Alembic: `b7573685053a_refactor_monetary_fields_to_decimal.py`
+- **Data preserved**: Existing values converted automatically
+
+---
+
 ## [1.2.2] - 2026-01-04 🔔 CRITICAL NOTIFICATION SYSTEM + UI ACTION TOOLTIPS
 
 > **Theme:** "Transactional messaging infrastructure and professional action hints."

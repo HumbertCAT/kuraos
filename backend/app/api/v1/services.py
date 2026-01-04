@@ -1,6 +1,7 @@
 """ServiceType CRUD endpoints for the Booking Engine."""
 
 from typing import Optional
+from decimal import Decimal
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel, Field
@@ -25,7 +26,7 @@ class ServiceTypeCreate(BaseModel):
     description: Optional[str] = None
     kind: ServiceMode = ServiceMode.ONE_ON_ONE
     duration_minutes: int = Field(60, ge=15, le=10080)  # Max 7 days
-    price: float = Field(0.0, ge=0)
+    price: Decimal = Field(default=Decimal("0.00"), ge=0)
     currency: str = Field("EUR", max_length=3)
     capacity: int = Field(1, ge=1, le=500)
     intake_form_id: Optional[uuid.UUID] = None
@@ -40,7 +41,7 @@ class ServiceTypeUpdate(BaseModel):
     description: Optional[str] = None
     kind: Optional[ServiceMode] = None
     duration_minutes: Optional[int] = Field(None, ge=15, le=10080)  # Max 7 days
-    price: Optional[float] = Field(None, ge=0)
+    price: Optional[Decimal] = Field(None, ge=0)
     currency: Optional[str] = Field(None, max_length=3)
     capacity: Optional[int] = Field(None, ge=1, le=500)
     intake_form_id: Optional[uuid.UUID] = None
@@ -58,7 +59,7 @@ class ServiceTypeResponse(BaseModel):
     description: Optional[str]
     kind: ServiceMode
     duration_minutes: int
-    price: float
+    price: Decimal
     currency: str
     capacity: int
     intake_form_id: Optional[uuid.UUID]
