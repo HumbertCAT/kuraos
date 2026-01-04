@@ -335,20 +335,114 @@ async def get_usage_logs(
 async def get_available_models(
     current_user: User = Depends(require_super_admin),
 ):
-    """Get list of available AI models with capabilities and pricing."""
-    from app.services.ai.factory import ProviderFactory
+    """Get list of available AI models with capabilities and pricing (EU region)."""
+    from app.services.ai.model_registry import ModelRegistry
 
-    models = ProviderFactory.list_available_models()
+    models = ModelRegistry.get_all_models()
 
     return [
         ModelInfo(
-            id=m["id"],
-            provider=m["provider"],
-            name=m["id"].replace("-", " ").title(),
-            supports_audio=m["supports_audio"],
-            cost_input=m["cost"]["input"],
-            cost_output=m["cost"]["output"],
-            is_enabled=True,  # TODO: Load from config
+            id=m.id,
+            provider=m.provider,
+            name=m.name,
+            supports_audio=m.capabilities.supports_audio,
+            cost_input=m.cost_input,
+            cost_output=m.cost_output,
+            is_enabled=True,
         )
         for m in models
     ]
+
+
+# ============================================================================
+# TASK ROUTING ENDPOINTS
+# ============================================================================
+
+
+class TaskRoutingConfig(BaseModel):
+    """Current task→model routing configuration."""
+
+    routing: dict  # task_type -> model_id
+    available_tasks: List[str]
+    region: str = "europe-west1"
+
+
+class TaskRoutingUpdate(BaseModel):
+    """Update task routing."""
+
+    routing: dict  # Partial or full routing map
+
+
+@router.get("/routing", response_model=TaskRoutingConfig)
+async def get_task_routing(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_super_admin),
+):
+    """Get current AI task→model routing configuration."""
+    from app.services.ai.factory import ProviderFactory
+
+    routing = await ProviderFactory.get_routing_config(db)
+
+    # All known task types
+    available_tasks = [
+        "transcription",
+        "clinical_analysis",
+        "audio_synthesis",
+        "chat",
+        "triage",
+        "form_analysis",
+        "help_bot",
+        "document_analysis",
+        "briefing",
+    ]
+
+    return TaskRoutingConfig(
+        routing=routing,
+        available_tasks=available_tasks,
+        region="europe-west1",
+    )
+
+
+@router.patch("/routing", response_model=TaskRoutingConfig)
+async def update_task_routing(
+    update: TaskRoutingUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_super_admin),
+):
+    """Update AI task→model routing configuration."""
+    from app.services.ai.model_registry import ModelRegistry
+
+    # Validate models exist
+    valid_model_ids = {m.id for m in ModelRegistry.get_all_models()}
+
+    for task_type, model_id in update.routing.items():
+        if model_id not in valid_model_ids:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Unknown model: {model_id}. Valid models: {sorted(valid_model_ids)}",
+            )
+
+    # Load or create config
+    result = await db.execute(
+        select(SystemSetting).where(SystemSetting.key == "AI_TASK_ROUTING")
+    )
+    setting = result.scalar_one_or_none()
+
+    if setting:
+        # Merge updates
+        current_routing = setting.value or {}
+        current_routing.update(update.routing)
+        setting.value = current_routing
+    else:
+        # Create new
+        new_setting = SystemSetting(
+            key="AI_TASK_ROUTING",
+            value=update.routing,
+            description="Maps AI task types to specific models",
+        )
+        db.add(new_setting)
+
+    await db.commit()
+
+    # Return updated config
+    return await get_task_routing(db, current_user)

@@ -139,3 +139,107 @@ class ProviderFactory:
         # Phase 3: Add Claude, Llama, Mistral models
 
         return models
+
+    @classmethod
+    async def get_provider_for_task(
+        cls,
+        task_type: str,
+        db_session=None,
+    ) -> "AIProvider":
+        """
+        Get the configured AI provider for a specific task type.
+
+        Reads from AI_TASK_ROUTING in system_settings.
+        Falls back to gemini-2.5-flash if task not configured.
+
+        Args:
+            task_type: The task type (e.g., 'clinical_analysis', 'chat', 'triage')
+            db_session: Optional database session (creates one if not provided)
+
+        Returns:
+            Configured AIProvider instance for the task
+
+        Examples:
+            >>> provider = await ProviderFactory.get_provider_for_task('clinical_analysis')
+            >>> provider = await ProviderFactory.get_provider_for_task('triage')  # Uses Pro
+        """
+        from sqlalchemy import select
+        from app.db.models import SystemSetting
+
+        default_model = "gemini-2.5-flash"
+        model_id = default_model
+
+        try:
+            # Get routing config from database
+            if db_session:
+                result = await db_session.execute(
+                    select(SystemSetting).where(SystemSetting.key == "AI_TASK_ROUTING")
+                )
+                routing_setting = result.scalar_one_or_none()
+            else:
+                # Create session if not provided
+                from app.db.base import AsyncSessionLocal
+
+                async with AsyncSessionLocal() as session:
+                    result = await session.execute(
+                        select(SystemSetting).where(
+                            SystemSetting.key == "AI_TASK_ROUTING"
+                        )
+                    )
+                    routing_setting = result.scalar_one_or_none()
+
+            if routing_setting and routing_setting.value:
+                routing_map = routing_setting.value
+                model_id = routing_map.get(task_type, default_model)
+
+        except Exception as e:
+            import logging
+
+            logging.getLogger(__name__).warning(
+                f"Failed to load task routing, using default: {e}"
+            )
+
+        return cls.get_provider(model_id)
+
+    @classmethod
+    async def get_routing_config(cls, db_session=None) -> dict:
+        """
+        Get the current task routing configuration.
+
+        Returns:
+            Dict mapping task_type -> model_id
+        """
+        from sqlalchemy import select
+        from app.db.models import SystemSetting
+
+        default_routing = {
+            "transcription": "whisper-1",
+            "clinical_analysis": "gemini-2.5-flash",
+            "chat": "gemini-2.5-flash-lite",
+            "triage": "gemini-2.5-pro",
+        }
+
+        try:
+            if db_session:
+                result = await db_session.execute(
+                    select(SystemSetting).where(SystemSetting.key == "AI_TASK_ROUTING")
+                )
+                setting = result.scalar_one_or_none()
+            else:
+                from app.db.base import AsyncSessionLocal
+
+                async with AsyncSessionLocal() as session:
+                    result = await session.execute(
+                        select(SystemSetting).where(
+                            SystemSetting.key == "AI_TASK_ROUTING"
+                        )
+                    )
+                    setting = result.scalar_one_or_none()
+
+            if setting and setting.value:
+                return setting.value
+
+        except Exception:
+            pass
+
+        return default_routing
