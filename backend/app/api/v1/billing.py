@@ -120,8 +120,8 @@ async def create_checkout_session(
         url = await stripe_service.create_checkout_session(
             org=org,
             target_tier=target_tier,
-            success_url=f"{settings.FRONTEND_URL}/settings/billing?success=true",
-            cancel_url=f"{settings.FRONTEND_URL}/settings/billing?canceled=true",
+            success_url=f"{settings.FRONTEND_URL}/settings/plan?success=true",
+            cancel_url=f"{settings.FRONTEND_URL}/settings/plan?canceled=true",
         )
         return CheckoutSessionResponse(url=url)
     except ValueError as e:
@@ -169,7 +169,7 @@ async def create_customer_portal(
     try:
         url = await stripe_service.create_customer_portal(
             org=org,
-            return_url=f"{settings.FRONTEND_URL}/settings/billing",
+            return_url=f"{settings.FRONTEND_URL}/settings/plan",
         )
         return PortalResponse(url=url)
     except Exception as e:
