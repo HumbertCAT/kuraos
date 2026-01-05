@@ -1,10 +1,20 @@
 # Technical Debt Register
 
-> **Status**: Living Document (v1.1.20)  
+> **Status**: Living Document (v1.3.4)  
 > **Purpose**: Active technical debt tracking for KURA OS  
-> **Last Updated**: 2026-01-03
+> **Last Updated**: 2026-01-05 (v1.3.4 Deployment & Gatekeeper Audit)
 
 This document tracks **actionable** technical debt that requires resolution. Resolved items belong in the CHANGELOG.
+
+---
+
+### 0.5 Partial AI Routing Coverage (Incomplete Circuit)
+**File**: `backend/app/services/{risk_detector, briefing, communication, help}.py`
+
+- **Issue**: v1.3.3 fixed the clinical note loop. v1.3.4 fixed Helper. Sentinel, Now, and Pulse still use legacy `AI_MODEL` or hardcoded settings.
+- **Impact**: Admin model selections for these specific units are ignored in production.
+- **Risk Level**: MEDIUM - Operational disconnect and cost inaccuracy.
+- **Fix**: Connect all remaining services (Sentinel, Now, Pulse) to `ProviderFactory.get_provider_for_task()` (Operation Full Circuit).
 
 ---
 
@@ -13,25 +23,17 @@ This document tracks **actionable** technical debt that requires resolution. Res
 ### 1. Booking Notifications
 **File**: `backend/app/api/v1/booking.py`
 
-- **Issue**: Missing email/SMS trigger logic for cancellations and rescheduling
-- **Impact**: Patients are not notified when appointments are changed by therapist
-- **Risk Level**: HIGH - Patient no-shows, confusion, poor UX
-- **Fix**: Implement automation events for `BOOKING_CANCELLED` and `BOOKING_RESCHEDULED`
-
-### 2. Decimal Precision in Financial KPIs
-**File**: `backend/app/api/v1/*` (roster endpoints)
-
-- **Issue**: SQLAlchemy `Decimal` results are cast to `float` for JSON serialization
-- **Impact**: Acceptable for UI display, but risks precision loss for accounting/billing
-- **Risk Level**: MEDIUM - Future audit issues
-- **Fix**: Return financial values as strings or scaled integers for pure financial endpoints
+- **Issue**: Missing email trigger logic for rescheduling (Cancellations resolved in v1.2.2).
+- **Impact**: Patients are not notified when appointments are changed by therapist.
+- **Risk Level**: HIGH - Patient no-shows, confusion, poor UX.
+- **Fix**: Implement automation events for `BOOKING_RESCHEDULED`.
 
 ---
 
 ## 🍄 GROWTH ENGINE (The Mycelium Debt)
 
 > [!NOTE]
-> v1.1.18 implemented viral growth MVP. Automation gaps remain.
+> v1.1.18 implemented viral growth MVP. v1.2.0 migrated to EUR-based spending.
 
 ### Manual Workarounds (The "Soporte" Bottleneck)
 
@@ -40,35 +42,28 @@ This document tracks **actionable** technical debt that requires resolution. Res
 | **Reward Redemption** | 🟡 mailto to soporte@kuraos.ai | No API | `POST /api/v1/growth/redeem` |
 | **+1 Patient Slot** | 🟡 Manual request email | No DB logic | `UPDATE organizations SET max_patients +=1` |
 | **Feature Unlock** | 🟡 Manual tier override | No feature flags | Feature flag system in `system_settings` |
-| **AI Token Grant** | 🟡 Manual quota increase | No credit system | `INSERT INTO ai_usage_log (debit_credit)` |
+| **AI Spend Grant** | 🟡 Manual limit increase | No logic | `UPDATE organizations SET ai_spend_limit += X` |
 | **Redemption History** | ❌ Missing entirely | No table | New table `karma_redemptions` |
 
 **Consequence**: Every reward redemption = manual email to soporte@kuraos.ai. Does not scale.
 
 ---
 
-## 🎨 UI/UX & Fragility
-
-### 3. Forms QR Modal (Broken State)
-**File**: `apps/platform/app/[locale]/forms/page.tsx`
-
-- **Issue**: QR button appears clickable but does nothing if form has no `public_token`
-- **Impact**: Confusing UX, wastes time
-- **Fix**: Either disable button when no token, or auto-generate token on first QR click
+## 🎨 UI/UX & Design System Leak
 
 ### 4. Recursive Refactor Fragility
 **Pattern**: API response structure changes
 
-- **Issue**: Standardizing a list response (e.g., `Patients`) often breaks secondary consumers (`RecentPatients.tsx`, `patient-store.ts`) that are not caught by narrow audits
-- **Impact**: Production crashes after seemingly safe refactors
-- **Fix**: Enforce full-codebase audits (`grep` for legacy keys like `.patients`, `.bookings`) after **ANY** structural API change
+- **Issue**: Standardizing a list response (e.g., `Patients`) often breaks secondary consumers (`RecentPatients.tsx`, `patient-store.ts`) that are not caught by narrow audits.
+- **Impact**: Production crashes after seemingly safe refactors.
+- **Fix**: Enforce full-codebase audits (`grep` for legacy keys like `.patients`, `.bookings`) after **ANY** structural API change.
 
-### 5. FocusSessionCard (Mock Data)
-**File**: `apps/platform/components/dashboard/FocusSessionCard.tsx`
+### 5. Forbidden Hardcoded Layout Values (Semantic Leak)
+**File**: `apps/platform/app/(auth)/*`, `apps/platform/app/(dashboard)/*`
 
-- **Issue**: Widget still uses mock AletheIA insight instead of real patient data
-- **Status**: 🟡 PENDING
-- **Fix**: Wire to `GET /api/v1/insights/patient/{id}` or equivalent
+- **Issue**: Gatekeeper audit v1.3.4 identified manual pixel overrides (e.g., `w-[500px]`, `top-[-20%]`) specifically in Auth and Settings pages.
+- **Impact**: Breaks design system sovereignty. Prevents responsive behavior.
+- **Fix**: Replace arbitrary `-[...]` values with standard Tailwind tokens.
 
 ---
 
@@ -77,16 +72,16 @@ This document tracks **actionable** technical debt that requires resolution. Res
 ### 6. Script Naming Consistency
 **File**: `scripts/backup_db.sh`
 
-- **Issue**: Backup script looks for hardcoded database names instead of using `POSTGRES_DB` env variable
-- **Impact**: Breaks on non-standard DB names
-- **Fix**: Standardize all release scripts to read `POSTGRES_DB` consistently
+- **Issue**: Backup script looks for hardcoded database names instead of using `POSTGRES_DB` env variable.
+- **Impact**: Breaks on non-standard DB names.
+- **Fix**: Standardize all release scripts to read `POSTGRES_DB` consistently.
 
-### 7. Stripe Dynamic Rates (Hardcoded)
-**File**: `backend/app/services/stripe_service.py`
+### 7. Stripe Event Subscription Parity
+**System**: Stripe Webhook Configuration
 
-- **Issue**: Application fee rates (5%/3%/2%) are hardcoded in Python
-- **Impact**: Cannot adjust commission without deployment
-- **Fix**: Read from `system_settings` table for dynamic configuration
+- **Issue**: Manual creation of webhook endpoints results in missing critical event subscriptions.
+- **Impact**: Backend remains silent while Stripe reports "Success" for secondary events.
+- **Fix**: Implement a status endpoint that checks which event types have been received and warns if critical triggers are missing.
 
 ---
 
@@ -95,41 +90,25 @@ This document tracks **actionable** technical debt that requires resolution. Res
 > [!CAUTION]
 > **Zero automated tests exist.** Every deployment is a prayer.
 
-### 8. Automated Unit Testing System
+### 9. Lack of Automated Testing Infrastructure
 **Scope**: Entire codebase (Backend + Frontend)
 
-- **Current State**: ❌ **NO TESTS** - Not a single unit test, integration test, or E2E test
-- **Impact**: CRITICAL - Regressions discovered only in production
-- **Risk Level**: CRITICAL - Every refactor is a gamble
+- **Current State**: ❌ **NO TESTS**
+- **Impact**: CRITICAL - Regressions discovered only in production.
+- **Risk Level**: CRITICAL - Every refactor is a gamble.
+- **Fix**: Initialize **Pytest** for backend core logic and **Playwright** for critical clinical happy-paths.
 
-#### Requirements for "Doubly Automatic" Testing:
+---
 
-| Dimension | Requirement | Implementation |
-|:----------|:------------|:---------------|
-| **Auto-Execute** | Tests run on every release/PR | GitHub Actions workflow with `pytest` + `vitest` |
-| **Auto-Generate** | New tests created per feature | AI/LLM test generator or strict PR template requiring tests |
+## 🏗️ ARCHITECTURAL DEBT
 
-#### Proposed Stack:
+### 10. Service Layer Hybridity (Sync/Async)
+**File**: `backend/app/services/aletheia.py`
 
-| Layer | Tool | Target |
-|:------|:-----|:-------|
-| Backend Unit | `pytest` + `pytest-asyncio` | Models, Services, Utils |
-| Backend Integration | `pytest` + `httpx` | API endpoints |
-| Frontend Unit | `vitest` + `@testing-library/react` | Components, Hooks |
-| E2E | `Playwright` | Critical user journeys |
-| CI/CD Gate | GitHub Actions | Block merge if coverage < 80% |
-
-#### Priority Order:
-1. **Critical paths first**: Auth, Payments, AI Analysis, Booking
-2. **Business logic**: Services (ledger, risk_detector, automation_engine)
-3. **UI components**: Forms, Modals, Data tables
-
-#### Estimated Effort:
-- Initial setup (CI + fixtures): **2-3 days**
-- Core backend tests (~50 tests): **1 week**
-- Frontend tests (~30 tests): **1 week**
-- E2E critical flows (~10 flows): **3 days**
-- **Total**: ~3 weeks for solid foundation
+- **Issue**: The main AI service uses a hybrid of sync and async methods, blocking full Task Routing implementation.
+- **Impact**: Prevents SENTINEL/PULSE from using dynamic routing without blocking the event loop.
+- **Risk Level**: MEDIUM - Blocks full governance circuit.
+- **Fix**: Refactor `AletheIA` to be strictly asynchronous and consume providers from `ProviderFactory`.
 
 ---
 

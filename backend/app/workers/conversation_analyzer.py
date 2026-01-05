@@ -105,7 +105,9 @@ async def analyze_daily_conversations(db: AsyncSession) -> dict:
 
         # Analyze with AletheIA
         try:
-            result = aletheia.analyze_chat_transcript(transcript)
+            # v1.3.5: Set context and use await (now async)
+            aletheia.set_context(db=db, organization_id=org_id, patient_id=patient_id)
+            result = await aletheia.analyze_chat_transcript(transcript)
         except Exception as e:
             logger.error(f"Analysis failed for patient {patient_id}: {e}")
             continue

@@ -1,8 +1,8 @@
 # Product Roadmap
 
-> **Status**: Living Document (v1.1.20+)  
+> **Status**: Living Document (v1.3.4)  
 > **Scope**: Strategic Feature Planning 2026  
-> **Last Updated**: 2026-01-03
+> **Last Updated**: 2026-01-05 (v1.3.4 Sync)
 
 ---
 
@@ -16,7 +16,6 @@ Features prioritizadas por:
 ---
 
 ## 🚀 Priorización
-
 ### TIER 1: Q1 2026 (INMEDIATO)
 
 #### 1.1 Meta Cloud API - WhatsApp Migration
@@ -31,6 +30,17 @@ Features prioritizadas por:
 - Migrar de Twilio (keep as fallback)
 
 **Prioridad:** 🔴 CRITICAL (Cost Reduction)
+
+#### 1.2 Operation Open Heart (v1.4)
+**Esfuerzo:** 2 semanas  
+**Impacto:** Estabilidad, Routing Full Circuit  
+
+**Refactor:**
+- `aletheia.py`: Eliminación de hibridez sync/async
+- Conexión de Sentinel, Now y Pulse al Model Factory
+- Implementación de Unit Tests en el core de IA
+
+**Prioridad:** 🔴 CRITICAL (Architectural Integrity)
 
 ---
 
@@ -143,7 +153,8 @@ Features prioritizadas por:
 ```
 2026
 ├── Q1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-│   └── [3w] WhatsApp Business Migration
+│   ├── [3w] WhatsApp Business Migration
+│   └── [2w] v1.4 Operation Open Heart (Async Refactor)
 │
 ├── Q2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 │   ├── [6w] Membership Builder

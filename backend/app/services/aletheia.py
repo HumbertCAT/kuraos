@@ -31,7 +31,11 @@ from app.services.ai.prompts import (
 
 
 class AletheIA:
-    """AI Clinical Analysis Service using Google Gemini."""
+    """AI Clinical Analysis Service using Google Gemini.
+
+    v1.3.5: Refactored to use per-task model routing via Task Routing settings.
+    No longer holds a single global model - each task gets its configured model.
+    """
 
     def __init__(self):
         """Initialize the AletheIA service with Gemini configuration."""
@@ -40,21 +44,18 @@ class AletheIA:
 
         genai.configure(api_key=settings.GOOGLE_API_KEY)
 
-        # Configure the model with safety settings appropriate for clinical content
-        self.model = genai.GenerativeModel(
-            model_name=settings.AI_MODEL,
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            },
-            generation_config={
-                "temperature": 0.4,
-                "top_p": 0.95,
-                "max_output_tokens": 8192,  # Increased for long transcriptions
-            },
-        )
+        # v1.3.5: Store configs for per-task model creation (no global model)
+        self._safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        }
+        self._generation_config = {
+            "temperature": 0.4,
+            "top_p": 0.95,
+            "max_output_tokens": 8192,
+        }
 
         self.uploads_dir = os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
@@ -169,23 +170,34 @@ class AletheIA:
 
         Args:
             entry: The ClinicalEntry to analyze
-            model_name: Optional model override (reads from system_settings if provided)
+            model_name: Optional model override (reads from Task Routing if not provided)
 
         Returns:
             dict with {id, date, text, model} for the analysis
         """
-        # Use override model if provided and different from default
-        effective_model = model_name or settings.AI_MODEL
-        if model_name and model_name != settings.AI_MODEL:
-            # Create a temporary model with the override
-            self._current_model = genai.GenerativeModel(
-                model_name=model_name,
-                safety_settings=self.model._safety_settings,
-                generation_config=self.model._generation_config,
-            )
-        else:
-            self._current_model = self.model
         entry_type = entry.entry_type
+
+        # v1.3.5: Determine task type and get routed model
+        task_type = {
+            EntryType.SESSION_NOTE: "clinical_analysis",
+            EntryType.AUDIO: "audio_synthesis",
+            EntryType.DOCUMENT: "document_analysis",
+            EntryType.FORM_SUBMISSION: "form_analysis",
+        }.get(entry_type, "clinical_analysis")
+
+        # Get model for this task (or use override)
+        if model_name:
+            effective_model = model_name
+        else:
+            model_obj = await self._get_model_for_task(task_type)
+            effective_model = model_obj._model_name
+
+        # Create model instance for this analysis
+        self._current_model = genai.GenerativeModel(
+            model_name=effective_model,
+            safety_settings=self._safety_settings,
+            generation_config=self._generation_config,
+        )
 
         try:
             if entry_type == EntryType.SESSION_NOTE:
@@ -524,8 +536,11 @@ Responde SOLO con el JSON, sin texto adicional."""
         try:
             import asyncio
 
+            # v1.3.5: Get routed model for briefing/insights (NOW unit)
+            model = await self._get_model_for_task("briefing")
+
             # Run Gemini in thread pool to not block event loop
-            response = await asyncio.to_thread(self.model.generate_content, [prompt])
+            response = await asyncio.to_thread(model.generate_content, [prompt])
 
             # Parse JSON from response
             json_text = response.text.strip()
@@ -580,9 +595,11 @@ Responde SOLO con el JSON, sin texto adicional."""
         except Exception as e:
             return f"Error reading DOCX file: {str(e)}"
 
-    def analyze_chat_transcript(self, transcript: str) -> dict:
+    async def analyze_chat_transcript(self, transcript: str) -> dict:
         """
         Analyze WhatsApp chat transcript for clinical insights.
+
+        v1.3.5: Now async with PULSE task routing.
 
         Args:
             transcript: Raw chat transcript (Patient: ... / System: ...)
@@ -590,9 +607,6 @@ Responde SOLO con el JSON, sin texto adicional."""
         Returns:
             dict with summary, sentiment_score, emotional_state, risk_flags, suggestion
         """
-        if not self.model:
-            return self._neutral_chat_response()
-
         system_prompt = """ROLE:
 Eres AletheIA, un supervisor clínico experto en terapia asistida por psicodélicos y salud mental.
 Tu trabajo es analizar transcripciones diarias de chats de WhatsApp entre un Paciente y un Terapeuta (o sistema automatizado).
@@ -635,7 +649,14 @@ EXAMPLE OUTPUT JSON:
 }"""
 
         try:
-            response = self.model.generate_content(
+            import asyncio
+
+            # v1.3.5: Get routed model for chat analysis (PULSE unit)
+            model = await self._get_model_for_task("chat")
+
+            # Run in thread pool to not block event loop
+            response = await asyncio.to_thread(
+                model.generate_content,
                 [system_prompt, f"TRANSCRIPT:\n{transcript}"],
                 generation_config=genai.GenerationConfig(
                     response_mime_type="application/json",
