@@ -66,17 +66,111 @@ interface UsageLog {
     cost_user_credits: number;
 }
 
-// Task type labels with AletheIA branding (v1.3.0)
-const TASK_LABELS: Record<string, { label: string; description: string; isFixed?: boolean }> = {
-    triage: { label: 'AletheIA Sentinel', description: 'Risk screening (critical)', isFixed: true },
-    clinical_analysis: { label: 'AletheIA Oracle', description: 'Therapy session notes' },
-    briefing: { label: 'AletheIA Now', description: 'Morning summary' },
-    chat: { label: 'AletheIA Pulse', description: 'WhatsApp monitoring' },
-    transcription: { label: 'AletheIA Scribe', description: 'Audio to text (STT)', isFixed: true },
-    audio_synthesis: { label: 'AletheIA Voice', description: 'Voice note analysis' },
-    document_analysis: { label: 'AletheIA Scan', description: 'PDFs, images & forms' },
-    form_analysis: { label: 'AletheIA Scan', description: 'Intake form review' },
-    help_bot: { label: 'AletheIA Helper', description: 'Platform support' },
+// Task type labels with AletheIA branding (v1.3.0) - Enriched with Level Hierarchy
+type TaskLevel = 1 | 2 | 3;
+interface TaskMetadata {
+    label: string;
+    description: string;
+    extendedDescription: string;
+    level: TaskLevel;
+    levelName: string;
+    suggestedModel: string;
+    isFixed?: boolean;
+}
+
+const LEVEL_INFO: Record<TaskLevel, { name: string; description: string; color: string }> = {
+    1: {
+        name: 'CLINICAL JUDGMENT',
+        description: 'High Intelligence — Where AI "understands", "protects", and "connects the dots."',
+        color: 'text-red-500'
+    },
+    2: {
+        name: 'TRANSFORMATION & MEDIA',
+        description: 'Generative Intelligence — Where AI "translates" or "creates" formats.',
+        color: 'text-amber-500'
+    },
+    3: {
+        name: 'OPERATIONS',
+        description: 'Routine — Pure, hard information processing.',
+        color: 'text-green-500'
+    },
+};
+
+const TASK_LABELS: Record<string, TaskMetadata> = {
+    triage: {
+        label: 'AletheIA Sentinel',
+        description: 'Risk screening (critical)',
+        extendedDescription: 'Active Security Monitor. Analyzes every interaction in real-time to detect critical risk markers (suicide, self-harm, violence), immediately alerting the therapist before a crisis occurs.',
+        level: 1,
+        levelName: 'Clinical Judgment',
+        suggestedModel: 'Gemini 3 Pro',
+        isFixed: true
+    },
+    clinical_analysis: {
+        label: 'AletheIA Oracle',
+        description: 'Session notes & deep analysis',
+        extendedDescription: 'Clinical Deduction Engine. Processes full session transcripts to extract latent themes, behavioral patterns, and therapeutic progress, generating structured clinical notes and revealing the "deep truth" of the case.',
+        level: 1,
+        levelName: 'Clinical Judgment',
+        suggestedModel: 'Gemini 2.5 Pro'
+    },
+    briefing: {
+        label: 'AletheIA Now',
+        description: 'Daily briefing & next actions',
+        extendedDescription: 'Strategic Context Synthesizer. Cross-references the patient\'s full history with recent events to generate the "Daily Briefing," offering predictive headlines and immediate "Next Best Action" recommendations.',
+        level: 1,
+        levelName: 'Clinical Judgment',
+        suggestedModel: 'Gemini 2.5 Pro'
+    },
+    chat: {
+        label: 'AletheIA Pulse',
+        description: 'Chat sentiment monitoring',
+        extendedDescription: 'Emotional Temperature Sensor. Monitors tone, urgency, and sentiment in messaging channels (WhatsApp/Chat) to detect subtle mood shifts or resistance between sessions.',
+        level: 1,
+        levelName: 'Clinical Judgment',
+        suggestedModel: 'Gemini 2.5 Flash'
+    },
+    transcription: {
+        label: 'AletheIA Scribe',
+        description: 'Audio to verbatim text',
+        extendedDescription: 'High-Fidelity Transcriber. Converts clinical audio into verbatim text, distinguishing between speakers (diarization) and cleaning noise, preserving the accuracy required for the legal medical record.',
+        level: 2,
+        levelName: 'Transformation',
+        suggestedModel: 'Whisper v3',
+        isFixed: true
+    },
+    audio_synthesis: {
+        label: 'AletheIA Voice',
+        description: 'Text-to-speech synthesis',
+        extendedDescription: 'Vocal Synthesis Engine. Generates natural, empathetic audio from text so the therapist can consume summaries on the go or send automated yet human-warmth voice notes.',
+        level: 2,
+        levelName: 'Transformation',
+        suggestedModel: 'ElevenLabs'
+    },
+    document_analysis: {
+        label: 'AletheIA Scan',
+        description: 'Document OCR & extraction',
+        extendedDescription: 'Structured Data Processor. Extracts "hard" information (names, dates, symptoms, checks) from intake forms, PDFs, or medical report photos to populate the CRM without manual entry.',
+        level: 3,
+        levelName: 'Operations',
+        suggestedModel: 'Gemini 2.5 Flash Lite'
+    },
+    form_analysis: {
+        label: 'AletheIA Scan',
+        description: 'Intake form processing',
+        extendedDescription: 'Form Analysis Module. Processes structured intake forms to extract and validate patient information for clinical records.',
+        level: 3,
+        levelName: 'Operations',
+        suggestedModel: 'Gemini 2.5 Flash Lite'
+    },
+    help_bot: {
+        label: 'AletheIA Helper',
+        description: 'Platform support',
+        extendedDescription: 'Platform Assistant. Resolves operational queries about Kura OS usage ("How do I change my card?", "How do I create an appointment?"), acting as the first level of technical support.',
+        level: 3,
+        levelName: 'Operations',
+        suggestedModel: 'Gemini 2.5 Flash Lite'
+    },
 };
 
 // API helpers
@@ -418,43 +512,80 @@ export default function AiGovernance() {
                             </button>
                         )}
                     </div>
-                    <div className="divide-y divide-border">
-                        {Object.keys(TASK_LABELS).map((taskType) => {
-                            const taskInfo = TASK_LABELS[taskType];
-                            const currentModel = getEffectiveModel(taskType);
-                            const hasChange = hasPendingChange(taskType);
-                            const isFixed = taskInfo.isFixed;
 
-                            return (
-                                <div key={taskType} className={`px-4 py-3 flex items-center justify-between transition-colors ${hasChange ? 'bg-brand/5' : ''}`}>
-                                    <div className="flex-1">
-                                        <p className="font-medium text-sm text-foreground">{taskInfo.label}</p>
-                                        <p className="text-xs text-muted-foreground">{taskInfo.description}</p>
-                                    </div>
+                    {/* Group tasks by level */}
+                    {([1, 2, 3] as TaskLevel[]).map((level) => {
+                        const levelTasks = Object.entries(TASK_LABELS).filter(([, info]) => info.level === level);
+                        if (levelTasks.length === 0) return null;
+                        const levelInfo = LEVEL_INFO[level];
+
+                        return (
+                            <div key={level}>
+                                {/* Level Header */}
+                                <div className="px-4 py-2 bg-muted/50 border-b border-border">
                                     <div className="flex items-center gap-2">
-                                        {isFixed ? (
-                                            <span className="px-3 py-1.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-lg text-sm font-medium">
-                                                🔗 {models.find(m => m.id === currentModel)?.name || currentModel}
-                                            </span>
-                                        ) : (
-                                            <select
-                                                value={currentModel}
-                                                onChange={(e) => handleRoutingChange(taskType, e.target.value)}
-                                                className="px-3 py-1.5 bg-muted border border-border rounded-lg text-sm text-foreground min-w-[200px]"
-                                            >
-                                                {models.filter(m => !COMPANION_MODELS.includes(m.id)).map((model) => (
-                                                    <option key={model.id} value={model.id}>
-                                                        {model.name} (${model.cost_input}/${model.cost_output})
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        )}
-                                        {hasChange && <span className="text-xs text-brand">• Modified</span>}
+                                        <span className={`text-xs font-bold ${levelInfo.color}`}>
+                                            LEVEL {level}
+                                        </span>
+                                        <span className="text-xs font-medium text-foreground">
+                                            {levelInfo.name}
+                                        </span>
                                     </div>
+                                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                                        {levelInfo.description}
+                                    </p>
                                 </div>
-                            );
-                        })}
-                    </div>
+
+                                {/* Level Tasks */}
+                                <div className="divide-y divide-border">
+                                    {levelTasks.map(([taskType, taskInfo]) => {
+                                        const currentModel = getEffectiveModel(taskType);
+                                        const hasChange = hasPendingChange(taskType);
+                                        const isFixed = taskInfo.isFixed;
+
+                                        return (
+                                            <div key={taskType} className={`px-4 py-3 transition-colors ${hasChange ? 'bg-brand/5' : ''}`}>
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <p className="font-medium text-sm text-foreground">{taskInfo.label}</p>
+                                                            <span className={`text-[10px] px-1.5 py-0.5 rounded ${levelInfo.color} bg-current/10`}>
+                                                                L{level}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-xs text-muted-foreground mb-1">{taskInfo.description}</p>
+                                                        <p className="text-[11px] text-muted-foreground/70 leading-relaxed">
+                                                            {taskInfo.extendedDescription}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                                        {isFixed ? (
+                                                            <span className="px-3 py-1.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-lg text-sm font-medium whitespace-nowrap">
+                                                                🔗 {models.find(m => m.id === currentModel)?.name || taskInfo.suggestedModel}
+                                                            </span>
+                                                        ) : (
+                                                            <select
+                                                                value={currentModel}
+                                                                onChange={(e) => handleRoutingChange(taskType, e.target.value)}
+                                                                className="px-3 py-1.5 bg-muted border border-border rounded-lg text-sm text-foreground min-w-[200px]"
+                                                            >
+                                                                {models.filter(m => !COMPANION_MODELS.includes(m.id)).map((model) => (
+                                                                    <option key={model.id} value={model.id}>
+                                                                        {model.name} (${model.cost_input}/${model.cost_output})
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        )}
+                                                        {hasChange && <span className="text-xs text-brand">• Modified</span>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>
