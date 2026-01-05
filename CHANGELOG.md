@@ -14,6 +14,36 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.5] - 2026-01-06 🫀 OPEN HEART REFACTOR
+
+> **Theme:** "Total Governance & Async Architecture"
+
+### 🏗️ Core Architecture (The Full Circuit)
+Completed the migration to the "Model Garden" architecture. 100% of AI tasks are now routed dynamically through the Admin Governance panel.
+
+- **Global Singleton Removed**: `AletheiaService` no longer locks a single model at startup. It now requests models Just-In-Time (JIT) per task.
+- **Async Transformation**: `analyze_chat_transcript` and the WhatsApp pipeline converted to `async/await` to prevent server blocking during high-traffic chat analysis.
+- **Dependency Injection**: Database session (`db`) is now correctly propagated through the entire call stack to enable dynamic routing configuration lookups.
+
+### 🔌 Coverage: 8/8 Units Connected
+| Unit | Task | Status |
+|------|------|--------|
+| **SENTINEL** | Risk/Triage | ✅ Routed |
+| **ORACLE** | Clinical Notes | ✅ Routed |
+| **NOW** | Briefing | ✅ Routed |
+| **PULSE** | Chat Sentiment | ✅ Routed |
+| **SCRIBE** | Transcription | 🔗 Fixed Whisper |
+| **VOICE** | TTS | ✅ Routed |
+| **SCAN** | Forms/Docs | ✅ Routed |
+| **HELPER** | Support Bot | ✅ Routed |
+
+### 🔧 Technical
+- Refactored `backend/app/services/aletheia.py` (Deep Clean)
+- Refactored `backend/app/workers/conversation_analyzer.py` (Async call)
+- Zero Legacy References: All hardcoded `AI_MODEL` usages removed
+
+---
+
 ## [1.3.4] - 2026-01-05 🔌 FULL CIRCUIT
 
 > **Theme:** "Making Admin UI control real AI behavior"
