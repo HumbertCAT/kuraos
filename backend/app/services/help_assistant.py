@@ -48,9 +48,10 @@ USER CONTEXT:
 
 
 class HelpAssistant:
-    """Gemini 2.5 Flash powered help chatbot."""
+    """Gemini powered help chatbot with Task Routing support."""
 
-    MODEL = "gemini-2.5-flash"
+    # v1.3.4: Default fallback, actual model comes from Task Routing
+    DEFAULT_MODEL = "gemini-2.5-flash-lite"
 
     def __init__(self):
         # Initialize client lazily to avoid import-time issues
@@ -62,14 +63,26 @@ class HelpAssistant:
             self._client = genai.Client(api_key=settings.GOOGLE_API_KEY)
         return self._client
 
+    async def _get_routed_model(self) -> str:
+        """Get model from Task Routing (help_bot task type)."""
+        try:
+            from app.services.ai import ProviderFactory
+
+            routing = await ProviderFactory.get_routing_config()
+            return routing.get("help_bot", self.DEFAULT_MODEL)
+        except Exception as e:
+            logger.warning(f"Failed to get routed model, using default: {e}")
+            return self.DEFAULT_MODEL
+
     def _sync_generate(
         self,
+        model: str,
         system_prompt: str,
         contents: list,
     ) -> str:
         """Synchronous Gemini call (runs in thread pool)."""
         response = self.client.models.generate_content(
-            model=self.MODEL,
+            model=model,
             contents=contents,
             config=genai_types.GenerateContentConfig(
                 system_instruction=system_prompt,
@@ -92,8 +105,12 @@ class HelpAssistant:
         Generate a response to the user's help query.
 
         Uses ThreadPoolExecutor to run sync Gemini client without blocking.
+        v1.3.4: Uses Task Routing to get configured model for help_bot.
         """
         try:
+            # v1.3.4: Get routed model from Task Routing
+            model = await self._get_routed_model()
+
             # Build system prompt with context
             system_prompt = SYSTEM_PROMPT.format(
                 locale=locale,
@@ -126,6 +143,7 @@ class HelpAssistant:
             result = await loop.run_in_executor(
                 _executor,
                 self._sync_generate,
+                model,
                 system_prompt,
                 contents,
             )

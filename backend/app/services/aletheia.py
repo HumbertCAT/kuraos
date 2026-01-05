@@ -75,6 +75,40 @@ class AletheIA:
         self._user_id = user_id
         self._patient_id = patient_id
 
+    async def _get_model_for_task(self, task_type: str) -> "genai.GenerativeModel":
+        """
+        v1.3.4: Get configured model for specific task type from Task Routing.
+
+        Args:
+            task_type: One of 'triage', 'clinical_analysis', 'chat', etc.
+
+        Returns:
+            Configured GenerativeModel instance
+        """
+        from app.services.ai import ProviderFactory
+
+        try:
+            routing = await ProviderFactory.get_routing_config(self._db)
+            model_name = routing.get(task_type, settings.AI_MODEL)
+        except Exception as e:
+            print(f"[AletheIA] Failed to get routed model for {task_type}: {e}")
+            model_name = settings.AI_MODEL
+
+        return genai.GenerativeModel(
+            model_name=model_name,
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            },
+            generation_config={
+                "temperature": 0.4,
+                "top_p": 0.95,
+                "max_output_tokens": 8192,
+            },
+        )
+
     async def _log_ai_usage(
         self,
         response,
