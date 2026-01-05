@@ -119,7 +119,11 @@ export default function FormsPage() {
     }
 
     function showQRCode(form: FormTemplate) {
-        if (!form.public_token) return;
+        if (!form.public_token) {
+            // Should never happen after backend fix - log for debugging
+            console.warn('[Forms] QR clicked but form missing public_token:', form.id);
+            return;
+        }
         const url = `${window.location.origin}/${locale}/f/public/${form.public_token}`;
         setQrModal({ title: form.title, url });
     }
@@ -185,7 +189,7 @@ export default function FormsPage() {
 
 
             {/* Control Deck Toolbar & Unified Card */}
-            <div className="card overflow-hidden mt-6 shadow-sm">
+            <div className="card overflow-hidden mt-6">
                 {/* Control Deck Toolbar */}
                 <div className="border-b border-border bg-muted/20 p-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
                     {/* Segmented Control Tabs */}

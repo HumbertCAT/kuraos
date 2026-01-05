@@ -235,7 +235,7 @@ export default function SettingsPage() {
 
       <div className="space-y-6">
         {/* Profile Card */}
-        <div className="bg-card rounded-2xl border border-border shadow-sm">
+        <div className="card rounded-2xl">
           <div className="bg-gradient-to-r from-slate-800 to-slate-700 px-6 py-4 rounded-t-2xl">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-card/20 backdrop-blur flex items-center justify-center text-white text-xl font-bold">
@@ -362,7 +362,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Interface Preferences */}
-        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+        <div className="card rounded-2xl overflow-hidden">
           <div className="p-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">Preferencias de Interfaz</h3>
             <div className="grid md:grid-cols-2 gap-6">
@@ -395,7 +395,7 @@ export default function SettingsPage() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">👥</span>
                   <select
                     disabled
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-foreground transition-all appearance-none bg-muted cursor-not-allowed"
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-brand focus:border-transparent outline-none text-foreground transition-all appearance-none bg-muted cursor-not-allowed"
                   >
                     <option value="CLIENT">Cliente (Coaching)</option>
                     <option value="PATIENT">Paciente (Clínico)</option>
@@ -411,7 +411,7 @@ export default function SettingsPage() {
         </div>
 
         {/* AI Preferences Card */}
-        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+        <div className="card rounded-2xl overflow-hidden">
           <div className="bg-gradient-to-r from-brand to-brand/80 px-6 py-4">
             <div className="flex items-center gap-3">
               <span className="text-2xl">🤖</span>
@@ -462,7 +462,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Integrations Card */}
-        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+        <div className="card rounded-2xl overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4">
             <div className="flex items-center gap-3">
               <Link2 className="w-6 h-6 text-white" />
@@ -539,7 +539,7 @@ export default function SettingsPage() {
 
         {/* Admin Tools (superuser only) */}
         {user?.is_superuser && (
-          <div className="bg-card rounded-2xl border border-warning/30 shadow-sm overflow-hidden">
+          <div className="card rounded-2xl border-warning/30 overflow-hidden">
             <div className="bg-gradient-to-r from-warning to-warning/80 px-6 py-4">
               <div className="flex items-center gap-3">
                 <Shield className="w-6 h-6 text-black" />

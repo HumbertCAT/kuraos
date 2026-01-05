@@ -58,6 +58,7 @@ async def clone_template(
         therapy_type=system_template.therapy_type,
         form_type=system_template.form_type,
         is_active=True,
+        public_token=generate_short_token(),  # Auto-generate for QR code
     )
 
     db.add(cloned_template)

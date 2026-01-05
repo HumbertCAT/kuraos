@@ -42,8 +42,8 @@ const PLANS = {
         patients: 50,
         aiLimit: 50,
         icon: Crown,
-        color: 'bg-gradient-to-br from-purple-500 to-indigo-600',
-        borderColor: 'border-purple-500/50',
+        color: 'bg-gradient-to-br from-brand to-brand/80',
+        borderColor: 'border-brand/50',
         features: ['50 pacientes', '50€ IA/mes', '2% comisión', 'Soporte prioritario', 'Integraciones avanzadas'],
     },
     CENTER: {
@@ -182,9 +182,9 @@ export default function PlanPage() {
             {/* ================================================== */}
             {/* SECTION 1: HERO & USAGE (The "Pressure" Section) */}
             {/* ================================================== */}
-            <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div className="card rounded-2xl overflow-hidden">
                 {/* Header */}
-                <div className={`px-6 py-4 ${currentTier === 'BUILDER' ? 'bg-gradient-to-r from-slate-600 to-slate-700' : currentTier === 'PRO' ? 'bg-gradient-to-r from-purple-600 to-indigo-600' : 'bg-gradient-to-r from-amber-500 to-orange-500'}`}>
+                <div className={`px-6 py-4 ${currentTier === 'BUILDER' ? 'bg-gradient-to-r from-slate-600 to-slate-700' : currentTier === 'PRO' ? 'bg-gradient-to-r from-brand to-brand/80' : 'bg-gradient-to-r from-amber-500 to-orange-500'}`}>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Sparkles className="w-6 h-6 text-white" />
@@ -206,24 +206,6 @@ export default function PlanPage() {
                         <div>
                             <p className="text-sm text-muted-foreground uppercase tracking-wider mb-1">Plan Actual</p>
                             <p className="text-3xl font-bold text-foreground">{currentPlan.name}</p>
-                        </div>
-
-                        {/* Fee Highlight */}
-                        <div className="p-4 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-xl">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Comisión Plataforma</p>
-                                    <p className="text-3xl font-bold text-red-500">{currentPlan.fee}%</p>
-                                </div>
-                                {currentTier !== 'CENTER' && (
-                                    <div className="text-right">
-                                        <p className="text-xs text-muted-foreground">Ahorra subiendo de nivel</p>
-                                        <p className="text-sm font-medium text-emerald-500">
-                                            → {PLANS[currentTier === 'BUILDER' ? 'PRO' : 'CENTER'].fee}% con {currentTier === 'BUILDER' ? 'Pro' : 'Center'}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
                         </div>
 
                         {/* Price display */}
@@ -306,16 +288,16 @@ export default function PlanPage() {
                         return (
                             <div
                                 key={tierKey}
-                                className={`relative p-6 rounded-2xl border-2 transition-all duration-300 ${isCurrent
-                                    ? 'bg-brand/5 border-brand'
+                                className={`relative p-6 rounded-2xl border transition-all duration-300 flex flex-col shadow-[0_0_60px_-15px_rgba(0,0,0,0.15),0_0_25px_-5px_rgba(0,0,0,0.05)] dark:shadow-[0_0_50px_-20px_rgba(0,0,0,0.6)] ${isCurrent
+                                    ? 'border-brand bg-teal-50/80 dark:bg-teal-950/20 shadow-lg shadow-brand/5'
                                     : isHighlighted
-                                        ? 'bg-card border-purple-500 shadow-lg shadow-purple-500/20 scale-[1.02]'
+                                        ? 'bg-card border-brand scale-[1.02]'
                                         : 'bg-card border-border hover:border-muted-foreground/30'
                                     }`}
                             >
                                 {/* Recommended badge */}
                                 {isHighlighted && (
-                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded-full">
+                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-brand text-white text-xs font-bold rounded-full">
                                         RECOMENDADO
                                     </div>
                                 )}
@@ -350,7 +332,7 @@ export default function PlanPage() {
                                 </div>
 
                                 {/* Features */}
-                                <ul className="space-y-2 mb-6">
+                                <ul className="space-y-2 mb-6 flex-1">
                                     {plan.features.map((feature, idx) => (
                                         <li key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
                                             <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
@@ -359,11 +341,11 @@ export default function PlanPage() {
                                     ))}
                                 </ul>
 
-                                {/* CTA Button */}
+                                {/* CTA Button - Always at bottom */}
                                 {isCurrent ? (
                                     <button
                                         disabled
-                                        className="w-full py-3 bg-muted text-muted-foreground rounded-xl font-medium cursor-not-allowed"
+                                        className="w-full py-3 bg-muted text-muted-foreground rounded-xl font-medium cursor-not-allowed mt-auto"
                                     >
                                         Plan Actual
                                     </button>
@@ -371,7 +353,7 @@ export default function PlanPage() {
                                     <button
                                         onClick={() => handleUpgrade(tierKey)}
                                         disabled={upgrading === tierKey}
-                                        className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full py-3 bg-gradient-to-r from-brand to-brand/80 text-white rounded-xl font-semibold hover:from-brand/90 hover:to-brand/70 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
                                     >
                                         {upgrading === tierKey ? 'Procesando...' : 'Mejorar Plan'}
                                         {upgrading !== tierKey && <ArrowRight className="w-4 h-4" />}
@@ -379,7 +361,7 @@ export default function PlanPage() {
                                 ) : (
                                     <button
                                         disabled
-                                        className="w-full py-3 bg-muted/50 text-muted-foreground/50 rounded-xl font-medium cursor-not-allowed"
+                                        className="w-full py-3 bg-muted/50 text-muted-foreground/50 rounded-xl font-medium cursor-not-allowed mt-auto"
                                     >
                                         —
                                     </button>

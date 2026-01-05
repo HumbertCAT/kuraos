@@ -383,7 +383,7 @@ async def duplicate_org_template(
         therapy_type=template.therapy_type,
         form_type=template.form_type,
         is_active=False,  # Start inactive
-        public_token=None,  # Not published
+        public_token=secrets.token_urlsafe(16),  # Auto-generate for QR code
     )
     db.add(new_template)
     await db.commit()

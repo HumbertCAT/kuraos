@@ -99,11 +99,11 @@ export default function BriefingPlayer({ compact = false }: BriefingPlayerProps)
         <div
             className={`
                 grid transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]
-                ${!showCard ? 'grid-rows-[0fr] opacity-0 mb-0 mt-0 pointer-events-none' : 'grid-rows-[1fr] opacity-100 mb-4 mt-2'}
+                ${!showCard ? 'grid-rows-[0fr] opacity-0 pointer-events-none' : 'grid-rows-[1fr] opacity-100'}
             `}
         >
             <div className="overflow-hidden">
-                <div className="group relative bg-card border border-brand/30 rounded-2xl overflow-hidden shadow-lg">
+                <div className="group relative card overflow-hidden">
                     {/* Dismiss Button - "The Flow" Hidden until hover */}
                     <button
                         onClick={handleDismiss}

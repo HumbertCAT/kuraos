@@ -14,6 +14,50 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.5] - 2026-01-05 🎨 THE SHADOW MANDATE
+
+> **Theme:** "Material depth, unified elevation."
+
+### 🎨 Shadow System Consolidation (Sitewide Audit)
+Complete migration to diffuse shadow system via `.card` class across all top-level cards and tables.
+
+**Dashboard Pages Updated:**
+| Page | Cards Migrated |
+|------|----------------|
+| `bookings` | 2 cards |
+| `calendar` | 6 cards (Preview, Schedule, 4 grid cards) |
+| `admin` | 7 sections |
+| `forms` | Removed redundant `shadow-sm` |
+| `automations` | Removed redundant `shadow-sm` |
+| `services` | Removed redundant `shadow-sm` |
+| `leads` | 3 kanban columns with diffuse shadow |
+
+**Settings Pages Updated:**
+| Page | Cards Migrated |
+|------|----------------|
+| `general` | 5 cards (incl. Admin Tools) |
+| `payments` | 2 cards |
+| `plan` | Hero + 3 pricing cards |
+| `billing` | 4 cards |
+
+### 🧩 Component Updates
+- **CyberCard.tsx**: Now extends `.card` base class for automatic shadow inheritance
+- **BriefingPlayer.tsx**: Migrated to `.card`, fixed `rounded-2xl` conflict
+- **KarmaVaultCard.tsx**: Added diffuse shadow (preserves gradient)
+- **ViralShareModule.tsx**: Migrated to `.card`
+- **ReferralHistoryTable.tsx**: Migrated to `.card`
+
+### 🎯 Mi Plan Page UX Improvements
+- **Standard Border**: Changed `border-2` → `border` on pricing cards
+- **Bottom-Aligned CTAs**: `flex-col` + `mt-auto` pattern for consistent button placement
+- **Active Plan Highlight**: `bg-teal-50/80` (light) / `bg-teal-950/20` (dark) background
+- **Removed**: "Comisión Plataforma" box from hero card (price moved up)
+
+### 🛡️ Design System Compliance
+- `design-system/page.tsx`: Hardcoded `#247C7D` → semantic `text-brand`
+
+---
+
 ## [1.2.4] - 2026-01-05 🤖 AGENTS UI REBUILD
 
 > **Theme:** "Command Center, not Disco."

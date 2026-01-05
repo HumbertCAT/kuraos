@@ -118,7 +118,7 @@ export default function PaymentsPage() {
             )}
 
             {/* Connect Status Card */}
-            <div className="bg-card rounded-2xl p-8 shadow-sm border border-border">
+            <div className="card rounded-2xl p-8">
                 <div className="flex items-start gap-6">
                     {/* Status Icon */}
                     <div className={`p-4 rounded-2xl ${status?.is_enabled ? 'bg-emerald-100' : 'bg-red-100'}`}>
@@ -195,7 +195,7 @@ export default function PaymentsPage() {
             </div>
 
             {/* Commission Info */}
-            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+            <div className="card rounded-2xl p-6">
                 <h4 className="font-semibold text-foreground mb-4">Comisiones por Plan</h4>
                 <div className="grid sm:grid-cols-3 gap-4">
                     <div className="p-4 bg-muted rounded-xl text-center">

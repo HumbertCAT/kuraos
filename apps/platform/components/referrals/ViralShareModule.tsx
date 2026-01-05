@@ -41,7 +41,7 @@ export function ViralShareModule({ referralCode }: ViralShareModuleProps) {
     const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(referralUrl)}`;
 
     return (
-        <div className="bg-card border border-border rounded-xl p-6">
+        <div className="card p-6">
             <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
                 <Share2 className="w-5 h-5 text-brand" />
                 {t('shareTitle')}

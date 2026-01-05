@@ -158,11 +158,11 @@ function ButtonsSection() {
                 </div>
 
                 {/* Usage Guide */}
-                <div className="pt-4 border-t border-border bg-[#004F53]/10 rounded-lg p-4">
-                    <h3 className="type-ui text-[#247C7D] tracking-widest mb-2">HIERARCHY GUIDE</h3>
+                <div className="pt-4 border-t border-border bg-brand/10 rounded-lg p-4">
+                    <h3 className="type-ui text-brand tracking-widest mb-2">HIERARCHY GUIDE</h3>
                     <ul className="text-xs text-muted-foreground space-y-1">
-                        <li><code className="text-[#004F53] font-semibold">default</code> → STEEL: Guardar, Crear, Confirmar (commitment actions)</li>
-                        <li><code className="text-[#247C7D] font-semibold">highlight</code> → CRYSTAL: Start Session, Book Now (Hero CTAs)</li>
+                        <li><code className="text-brand font-semibold">default</code> → STEEL: Guardar, Crear, Confirmar (commitment actions)</li>
+                        <li><code className="text-brand font-semibold">highlight</code> → CRYSTAL: Start Session, Book Now (Hero CTAs)</li>
                         <li><code className="text-zinc-400 font-semibold">surface</code> → GLASS: Vista Previa, Configurar (support actions)</li>
                         <li><code className="text-zinc-500 font-semibold">ghost</code> → Cancelar, Cerrar (dismissive actions)</li>
                         <li><code className="text-rose-500 font-semibold">danger</code> → Eliminar (destructive actions)</li>

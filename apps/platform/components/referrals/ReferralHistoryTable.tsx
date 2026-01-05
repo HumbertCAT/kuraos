@@ -51,7 +51,7 @@ export function ReferralHistoryTable({ history, totalReferred, totalActive }: Re
                     <p className="text-sm text-muted-foreground/70 mt-2">{t('startSharing')}</p>
                 </div>
             ) : (
-                <div className="bg-card border border-border rounded-xl overflow-hidden">
+                <div className="card overflow-hidden">
                     <table className="w-full">
                         <thead className="border-b border-border bg-muted/30">
                             <tr className="text-xs text-muted-foreground uppercase tracking-wider">

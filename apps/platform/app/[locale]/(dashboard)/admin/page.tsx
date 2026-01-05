@@ -333,7 +333,7 @@ export default function AdminPage() {
 
             {/* Organizations Tab */}
             {activeTab === 'orgs' && (
-                <section className="bg-card rounded-xl border border-border overflow-hidden">
+                <section className="card overflow-hidden">
                     <div className="px-6 py-4 border-b border-border bg-muted">
                         <h2 className="text-lg font-semibold text-foreground">Organizations</h2>
                         <p className="text-sm text-foreground/60">Manage organization tiers and credits</p>
@@ -389,7 +389,7 @@ export default function AdminPage() {
 
             {/* Templates Tab */}
             {activeTab === 'templates' && (
-                <section className="bg-card rounded-xl border border-border overflow-hidden">
+                <section className="card overflow-hidden">
                     <div className="px-6 py-4 border-b border-border bg-muted flex justify-between items-center">
                         <div>
                             <h2 className="text-lg font-semibold text-foreground">Forms</h2>
@@ -497,7 +497,7 @@ export default function AdminPage() {
 
             {/* Automations Tab */}
             {activeTab === 'automations' && (
-                <section className="bg-card rounded-xl border border-border overflow-hidden">
+                <section className="card overflow-hidden">
                     <div className="px-6 py-4 border-b border-border bg-muted">
                         <h2 className="text-lg font-semibold text-foreground">System Automations</h2>
                         <p className="text-sm text-foreground/60">Playbook templates available in the marketplace</p>
@@ -623,7 +623,7 @@ export default function AdminPage() {
 
             {/* AI Governance Tab */}
             {activeTab === 'aigov' && (
-                <section className="bg-card rounded-xl border border-border p-6">
+                <section className="card p-6">
                     <AiGovernance />
                 </section>
             )}
@@ -749,7 +749,7 @@ function BackupsTab() {
 
     return (
         <>
-            <section className="bg-card rounded-xl border border-border overflow-hidden">
+            <section className="card overflow-hidden">
                 <div className="px-6 py-4 border-b border-border bg-muted flex justify-between items-center">
                     <div>
                         <h2 className="text-lg font-semibold text-foreground">🛡️ Database Backups</h2>
@@ -999,7 +999,7 @@ function TiersTab({ settings, onSettingsChange }: TiersTabProps) {
             </div>
 
             {/* Static Config Card */}
-            <section className="bg-card rounded-xl border border-border overflow-hidden">
+            <section className="card overflow-hidden">
                 <div className="px-6 py-4 border-b border-border bg-muted/50">
                     <h3 className="font-semibold text-foreground">📉 Static Config <span className="text-xs text-muted-foreground font-normal">(Backend Env Vars)</span></h3>
                 </div>
@@ -1018,7 +1018,7 @@ function TiersTab({ settings, onSettingsChange }: TiersTabProps) {
             </section>
 
             {/* Dynamic Limits Card */}
-            <section className="bg-card rounded-xl border border-border overflow-hidden">
+            <section className="card overflow-hidden">
                 <div className={`px-6 py-4 border-b border-border bg-gradient-to-r ${tierInfo.gradient}`}>
                     <h3 className="font-semibold text-white">🎛️ Dynamic Limits <span className="text-xs text-white/70 font-normal">(Editable)</span></h3>
                 </div>

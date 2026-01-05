@@ -36,11 +36,14 @@ export function CyberCard({
     return (
         <div
             className={cn(
-                // ESTILOS BASE (Comunes a todas)
-                "rounded-xl border transition-all duration-200",
-                // ESTILOS DE LA VARIANTE SELECCIONADA
-                cardVariants[variant],
-                // CLASES PERSONALIZADAS (para overrides puntuales)
+                // BASE: Use .card class for consistent shadow system
+                "card transition-all duration-200",
+                // VARIANT-SPECIFIC OVERRIDES (colors only, not structure)
+                variant === "ghost" && "bg-transparent border-border/50 shadow-none",
+                variant === "glass" && "backdrop-blur-xl bg-white/80 dark:bg-card/80",
+                variant === "ai" && "border-ai/30 dark:border-ai/40",
+                variant === "alert" && "border-risk/30 dark:border-risk/40",
+                // CUSTOM CLASSES
                 className
             )}
             {...props}

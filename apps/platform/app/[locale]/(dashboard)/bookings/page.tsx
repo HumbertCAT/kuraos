@@ -178,9 +178,49 @@ export default function BookingsPage() {
             tooltipReschedule: 'Canviar data/hora i notificar al pacient',
             tooltipDelete: 'Eliminar reserva permanentment',
         },
+        it: {
+            title: 'Prenotazioni',
+            subtitle: 'Visualizza, conferma e gestisci le prenotazioni dei tuoi pazienti. Filtra per stato e visualizza in calendario.',
+            future: 'Prossime',
+            past: 'Passate',
+            search: 'Cerca per paziente o servizio...',
+            allStatus: 'Tutti gli stati',
+            confirmed: 'Confermata',
+            pending: 'In attesa',
+            cancelled: 'Annullata',
+            completed: 'Completata',
+            noBookings: 'Nessuna prenotazione',
+            noBookingsDesc: 'Le prenotazioni appariranno qui quando i tuoi clienti fisseranno appuntamenti.',
+            patient: 'Paziente',
+            service: 'Servizio',
+            dateTime: 'Data e ora',
+            status: 'Stato',
+            actions: 'Azioni',
+            confirm: 'Conferma',
+            cancel: 'Annulla',
+            complete: 'Completa',
+            delete: 'Elimina',
+            calendarView: 'Vista Calendario',
+            cancelTitle: 'Annulla Prenotazione',
+            cancelDescription: 'Sei sicuro di voler annullare questa prenotazione? Il paziente sarà notificato.',
+            reasonPlaceholder: 'Motivo dell\'annullamento (opzionale)',
+            confirmCancel: 'Sì, annulla prenotazione',
+            rescheduleTitle: 'Riprogramma Prenotazione',
+            rescheduleDescription: 'Seleziona la nuova data e ora per l\'appuntamento.',
+            newDateTime: 'Nuova data e ora',
+            confirmReschedule: 'Riprogramma',
+            reschedule: 'Riprogramma',
+            rescheduleReasonPlaceholder: 'Nota per il paziente (opzionale)',
+            // Tooltips descrittivi
+            tooltipConfirm: 'Conferma questa prenotazione e notifica il paziente',
+            tooltipComplete: 'Segna come completata (appuntamento già svolto)',
+            tooltipCancel: 'Annulla prenotazione e notifica il paziente',
+            tooltipReschedule: 'Cambia data/ora e notifica il paziente',
+            tooltipDelete: 'Elimina prenotazione permanentemente',
+        },
     };
 
-    const t = translations[locale as 'es' | 'en' | 'ca'] || translations.en;
+    const t = translations[locale as 'es' | 'en' | 'ca' | 'it'] || translations.en;
 
     const statusConfig: Record<string, { label: string; className: string }> = {
         CONFIRMED: { label: t.confirmed, className: 'badge badge-success' },
@@ -362,7 +402,7 @@ export default function BookingsPage() {
 
             {/* Bookings List */}
             {filteredBookings.length === 0 ? (
-                <div className="text-center py-16 bg-card rounded-xl border border-border">
+                <div className="text-center py-16 card">
                     <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-semibold text-foreground">{t.noBookings}</h3>
                     <p className="text-foreground/60 mt-1">{t.noBookingsDesc}</p>
@@ -532,7 +572,7 @@ export default function BookingsPage() {
             )}
 
             {/* Calendar View */}
-            <div className="bg-card rounded-xl border border-border p-4">
+            <div className="card p-4">
                 <h2 className="text-lg font-semibold text-foreground mb-4">{t.calendarView}</h2>
                 <BigCalendar
                     localizer={localizer}

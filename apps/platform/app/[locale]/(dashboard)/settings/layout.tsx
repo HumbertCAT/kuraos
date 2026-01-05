@@ -7,10 +7,10 @@ import { Settings, CreditCard, Palette, Sparkles } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 
 const TABS = [
-    { href: '/settings/general', labelKey: 'tabGeneral', icon: Settings },
-    { href: '/settings/referrals', labelKey: 'tabReferrals', icon: Sparkles },
-    { href: '/settings/appearance', labelKey: 'tabAppearance', icon: Palette },
     { href: '/settings/plan', labelKey: 'tabPlan', icon: CreditCard },
+    { href: '/settings/general', labelKey: 'tabMyData', icon: Settings },
+    { href: '/settings/appearance', labelKey: 'tabAppearance', icon: Palette },
+    { href: '/settings/referrals', labelKey: 'tabReferrals', icon: Sparkles },
 ];
 
 export default function SettingsLayout({
@@ -23,10 +23,11 @@ export default function SettingsLayout({
 
     // Determine active tab from pathname
     const getActiveTab = () => {
+        if (pathname.includes('/settings/general')) return '/settings/general';
         if (pathname.includes('/settings/referrals')) return '/settings/referrals';
         if (pathname.includes('/settings/appearance')) return '/settings/appearance';
         if (pathname.includes('/settings/plan') || pathname.includes('/settings/billing')) return '/settings/plan';
-        return '/settings/general';
+        return '/settings/plan';
     };
 
     const activeTab = getActiveTab();

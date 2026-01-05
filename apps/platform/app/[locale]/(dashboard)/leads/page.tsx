@@ -280,7 +280,7 @@ export default function LeadsPage() {
                     {COLUMNS.map(column => (
                         <div
                             key={column.id}
-                            className={`${column.bgColor} ${column.borderColor} border rounded-2xl p-4`}
+                            className={`${column.bgColor} ${column.borderColor} border rounded-2xl p-4 shadow-[0_0_60px_-15px_rgba(0,0,0,0.15),0_0_25px_-5px_rgba(0,0,0,0.05)] dark:shadow-[0_0_50px_-20px_rgba(0,0,0,0.6)]`}
                         >
                             {/* Column Header */}
                             <div className="flex items-center justify-between mb-4">

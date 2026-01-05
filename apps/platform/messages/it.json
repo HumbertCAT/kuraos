@@ -226,7 +226,7 @@
       "emailBody": "Ciao,\n\nVoglio condividere con te KURA OS, la piattaforma che uso per gestire la mia pratica terapeutica.\n\nRegistrati con il mio codice: {code}\n{url}\n\nSaluti!"
     },
     "subtitle": "Gestisci il tuo account, piano e ottieni aiuto",
-    "tabGeneral": "Generale",
+    "tabMyData": "I Miei Dati",
     "tabReferrals": "Referral",
     "tabAppearance": "Aspetto",
     "tabPlan": "Il Mio Piano",

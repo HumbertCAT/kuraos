@@ -22,7 +22,7 @@ export function KarmaVaultCard({ karma, nextRewardCost = 100 }: KarmaVaultCardPr
     const rewardsEarned = Math.floor(karma / nextRewardCost);
 
     return (
-        <div className="bg-gradient-to-br from-warning/10 via-brand/5 to-transparent border border-warning/20 rounded-xl p-8">
+        <div className="bg-gradient-to-br from-warning/10 via-brand/5 to-transparent border border-warning/20 rounded-xl p-8 shadow-[0_0_60px_-15px_rgba(0,0,0,0.15),0_0_25px_-5px_rgba(0,0,0,0.05)] dark:shadow-[0_0_50px_-20px_rgba(0,0,0,0.6)]">
             <div className="flex items-center gap-6 mb-6">
                 <div className="p-4 bg-warning/10 rounded-xl">
                     <Sparkles className="w-10 h-10 text-warning" />

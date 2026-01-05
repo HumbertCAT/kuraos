@@ -227,7 +227,7 @@
       "emailBody": "Hola,\n\nVull compartir amb tu KURA OS, la plataforma que faig servir per gestionar la meva pràctica terapèutica.\n\nRegistra't amb el meu codi: {code}\n{url}\n\nSalutacions!"
     },
     "subtitle": "Gestiona el teu compte, pla i obté ajuda",
-    "tabGeneral": "General",
+    "tabMyData": "Les Meves Dades",
     "tabReferrals": "Referits",
     "tabAppearance": "Aparença",
     "tabPlan": "El Meu Pla",

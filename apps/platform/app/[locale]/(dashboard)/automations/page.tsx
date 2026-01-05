@@ -230,7 +230,7 @@ export default function AutomationsPage() {
             )}
 
             {/* Control Deck & Table */}
-            <div className="card overflow-hidden mt-6 shadow-sm">
+            <div className="card overflow-hidden mt-6">
                 {/* Control Deck Toolbar */}
                 <div className="border-b border-border bg-muted/20 p-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
                     {/* Segmented Control Tabs */}

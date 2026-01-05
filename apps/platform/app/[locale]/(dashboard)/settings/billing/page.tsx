@@ -163,7 +163,7 @@ export default function BillingPage() {
             )}
 
             {/* Current Plan Badge */}
-            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+            <div className="card rounded-2xl p-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-emerald-100 rounded-xl">
@@ -201,7 +201,7 @@ export default function BillingPage() {
                 {plans.map((plan) => (
                     <div
                         key={plan.id}
-                        className={`relative bg-card rounded-2xl p-6 shadow-sm border-2 transition-all ${plan.current
+                        className={`relative card rounded-2xl p-6 border-2 transition-all ${plan.current
                             ? 'border-emerald-500 ring-2 ring-emerald-500/20'
                             : plan.popular
                                 ? 'border-emerald-200'
