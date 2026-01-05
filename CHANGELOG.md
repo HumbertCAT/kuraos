@@ -14,6 +14,56 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-01-05 🧠 ALETHEIA AWAKENS
+
+> **Theme:** "Semantic AI Governance + Token Economy"
+
+### 🧬 Phase 1: Taxonomy (Semantic Unit Naming)
+Introduction of AletheIA Unit naming system for AI task categorization.
+
+| Unit | Task Type | Description | Protected |
+|------|-----------|-------------|-----------|
+| **Sentinel** | triage | Risk screening (critical) | ✅ |
+| **Oracle** | clinical_analysis | Therapy session notes | |
+| **Now** | briefing | Morning summary | |
+| **Pulse** | chat | WhatsApp monitoring | |
+| **Scribe** | transcription | Audio to text (STT) | ✅ |
+| **Voice** | audio_synthesis | Voice note analysis | |
+| **Scan** | document_analysis | PDFs, images & forms | |
+| **Helper** | help_bot | Platform support | |
+
+- **New File**: `backend/app/core/aletheia_units.py` with `AletheIAUnit` enum
+- **Admin UI**: Task Routing labels updated with AletheIA branding
+
+### 💰 Phase 2: Economy (Kura Credits Engine)
+New credit-based economy system for AI usage tracking.
+
+- **KURA_CREDIT_RATE**: Configurable exchange rate (default: 1€ = 1000 KC)
+- **Cached Lookup**: 5-minute TTL cache for credit rate to avoid DB hits
+- **Decimal Precision**: All financial calculations use `Decimal` type
+- **cost_user_credits**: Now stores actual Kura Credits (KC), not margined EUR
+
+```python
+# Example: If provider cost is 0.01€ and rate is 1000 KC/€
+# cost_user_credits = 0.01 * 1000 = 10 KC
+```
+
+### 📊 Phase 3: UI Credits (Dashboard Widget)
+User-facing credit balance widget in dashboard.
+
+- **New Endpoint**: `GET /dashboard/credits/balance`
+- **KuraCreditsWidget**: Real-time KC balance with usage bar
+- **Low Balance Alert**: Warning when usage exceeds 80%
+- **Tier Badge**: Shows current subscription tier (BUILDER/PRO/CENTER)
+
+### 🔧 Technical
+- **No Alembic Migration**: All changes use existing DB columns
+- **Zero Breaking Changes**: Backward compatible with existing AI usage
+- New files: `aletheia_units.py`, `KuraCreditsWidget.tsx`
+- Modified: `ledger.py`, `seed_tiers.py`, `dashboard.py`, `AiGovernance.tsx`
+
+---
+
 ## [1.2.6] - 2026-01-05 🧠 AI GOVERNANCE UX OVERHAUL
 
 > **Theme:** "Clarity through structure."
