@@ -90,6 +90,49 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
+## 🧪 TESTING INFRASTRUCTURE (The Silent Void)
+
+> [!CAUTION]
+> **Zero automated tests exist.** Every deployment is a prayer.
+
+### 8. Automated Unit Testing System
+**Scope**: Entire codebase (Backend + Frontend)
+
+- **Current State**: ❌ **NO TESTS** - Not a single unit test, integration test, or E2E test
+- **Impact**: CRITICAL - Regressions discovered only in production
+- **Risk Level**: CRITICAL - Every refactor is a gamble
+
+#### Requirements for "Doubly Automatic" Testing:
+
+| Dimension | Requirement | Implementation |
+|:----------|:------------|:---------------|
+| **Auto-Execute** | Tests run on every release/PR | GitHub Actions workflow with `pytest` + `vitest` |
+| **Auto-Generate** | New tests created per feature | AI/LLM test generator or strict PR template requiring tests |
+
+#### Proposed Stack:
+
+| Layer | Tool | Target |
+|:------|:-----|:-------|
+| Backend Unit | `pytest` + `pytest-asyncio` | Models, Services, Utils |
+| Backend Integration | `pytest` + `httpx` | API endpoints |
+| Frontend Unit | `vitest` + `@testing-library/react` | Components, Hooks |
+| E2E | `Playwright` | Critical user journeys |
+| CI/CD Gate | GitHub Actions | Block merge if coverage < 80% |
+
+#### Priority Order:
+1. **Critical paths first**: Auth, Payments, AI Analysis, Booking
+2. **Business logic**: Services (ledger, risk_detector, automation_engine)
+3. **UI components**: Forms, Modals, Data tables
+
+#### Estimated Effort:
+- Initial setup (CI + fixtures): **2-3 days**
+- Core backend tests (~50 tests): **1 week**
+- Frontend tests (~30 tests): **1 week**
+- E2E critical flows (~10 flows): **3 days**
+- **Total**: ~3 weeks for solid foundation
+
+---
+
 ## 📋 Debt Tracking Protocol
 
 1. **NEVER** mark items as "Resolved" in this document. Move to CHANGELOG.
