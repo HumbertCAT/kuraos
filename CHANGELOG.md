@@ -14,53 +14,82 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.0] - 2026-01-05 🧠 ALETHEIA AWAKENS
+## [1.3.4] - 2026-01-05 🔌 FULL CIRCUIT
 
-> **Theme:** "Semantic AI Governance + Token Economy"
+> **Theme:** "Making Admin UI control real AI behavior"
 
-### 🧬 Phase 1: Taxonomy (Semantic Unit Naming)
-Introduction of AletheIA Unit naming system for AI task categorization.
+### Connected to Task Routing
+- **HELPER** (`help_assistant.py`): Now uses routed model from `help_bot` task type
+- Added `_get_model_for_task()` infrastructure to `aletheia.py`
 
-| Unit | Task Type | Description | Protected |
-|------|-----------|-------------|-----------|
-| **Sentinel** | triage | Risk screening (critical) | ✅ |
-| **Oracle** | clinical_analysis | Therapy session notes | |
-| **Now** | briefing | Morning summary | |
-| **Pulse** | chat | WhatsApp monitoring | |
-| **Scribe** | transcription | Audio to text (STT) | ✅ |
-| **Voice** | audio_synthesis | Voice note analysis | |
-| **Scan** | document_analysis | PDFs, images & forms | |
-| **Helper** | help_bot | Platform support | |
+### Pending (Architectural Complexity)
+- SENTINEL, PULSE, NOW require deeper refactor of `aletheia.py` (sync→async)
+- Deferred to v1.4
 
-- **New File**: `backend/app/core/aletheia_units.py` with `AletheIAUnit` enum
-- **Admin UI**: Task Routing labels updated with AletheIA branding
+---
 
-### 💰 Phase 2: Economy (Kura Credits Engine)
-New credit-based economy system for AI usage tracking.
+## [1.3.3] - 2026-01-05 🔗 TASK RE-ROUTING
 
-- **KURA_CREDIT_RATE**: Configurable exchange rate (default: 1€ = 1000 KC)
-- **Cached Lookup**: 5-minute TTL cache for credit rate to avoid DB hits
-- **Decimal Precision**: All financial calculations use `Decimal` type
-- **cost_user_credits**: Now stores actual Kura Credits (KC), not margined EUR
+> **Theme:** "Promises Kept - Admin UI now controls AI behavior"
 
-```python
-# Example: If provider cost is 0.01€ and rate is 1000 KC/€
-# cost_user_credits = 0.01 * 1000 = 10 KC
-```
+### Backend Task Routing
+- **clinical_entries.py**: Added `ENTRY_TYPE_TO_TASK` mapping
+- Replaced global `AI_MODEL` with `get_provider_for_task(task_type, db)`
+- ORACLE, VOICE, SCAN now use Admin-configured models
 
-### 📊 Phase 3: UI Credits (Dashboard Widget)
-User-facing credit balance widget in dashboard.
+### Hardened Fallbacks
+- `factory.py`: Robust JSON parsing for corrupt routing config
 
+---
+
+## [1.3.2] - 2026-01-05 📊 UI CREDITS
+
+> **Theme:** "User-facing credit visibility"
+
+### Dashboard Widget
 - **New Endpoint**: `GET /dashboard/credits/balance`
 - **KuraCreditsWidget**: Real-time KC balance with usage bar
+- Shows EUR equivalent alongside KC
 - **Low Balance Alert**: Warning when usage exceeds 80%
-- **Tier Badge**: Shows current subscription tier (BUILDER/PRO/CENTER)
 
-### 🔧 Technical
-- **No Alembic Migration**: All changes use existing DB columns
-- **Zero Breaking Changes**: Backward compatible with existing AI usage
-- New files: `aletheia_units.py`, `KuraCreditsWidget.tsx`
-- Modified: `ledger.py`, `seed_tiers.py`, `dashboard.py`, `AiGovernance.tsx`
+### Activity Ledger
+- Now shows both Cost € and KC columns
+- Clear financial transparency
+
+---
+
+## [1.3.1] - 2026-01-05 💰 KURA CREDITS ECONOMY
+
+> **Theme:** "Token-based AI usage tracking"
+
+### Credits Engine
+- **KURA_CREDIT_RATE**: Configurable exchange rate (default: 1€ = 1000 KC)
+- **Cached Lookup**: 5-minute TTL cache for credit rate
+- **Decimal Precision**: All calculations use `Decimal` type
+- `cost_user_credits` now stores actual Kura Credits
+
+---
+
+## [1.3.0] - 2026-01-05 🧬 ALETHEIA TAXONOMY
+
+> **Theme:** "Semantic AI Unit naming"
+
+### AletheIA Units
+| Unit | Task Type | Description |
+|------|-----------|-------------|
+| **Sentinel** | triage | Risk screening (critical) |
+| **Oracle** | clinical_analysis | Therapy session notes |
+| **Now** | briefing | Morning summary |
+| **Pulse** | chat | WhatsApp monitoring |
+| **Scribe** | transcription | Audio to text (STT) |
+| **Voice** | audio_synthesis | Voice note analysis |
+| **Scan** | document_analysis | PDFs, images & forms |
+| **Helper** | help_bot | Platform support |
+
+### Admin UI
+- Task Routing with Level hierarchy (L1/L2/L3)
+- Extended descriptions for each unit
+- Unlocked Sentinel model selection
 
 ---
 
