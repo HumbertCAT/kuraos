@@ -324,7 +324,8 @@ export default function AiGovernance() {
                                     <th className="px-3 py-2 text-left font-medium text-muted-foreground">Model</th>
                                     <th className="px-3 py-2 text-left font-medium text-muted-foreground">Task</th>
                                     <th className="px-3 py-2 text-right font-medium text-muted-foreground font-mono">Tokens</th>
-                                    <th className="px-3 py-2 text-right font-medium text-muted-foreground font-mono">Cost ($)</th>
+                                    <th className="px-3 py-2 text-right font-medium text-muted-foreground font-mono">Cost €</th>
+                                    <th className="px-3 py-2 text-right font-medium text-muted-foreground font-mono">KC</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border font-mono">
@@ -337,7 +338,8 @@ export default function AiGovernance() {
                                             <span className="px-1.5 py-0.5 bg-muted rounded text-[10px]">{log.task_type}</span>
                                         </td>
                                         <td className="px-3 py-2 text-right">{formatTokens(log.tokens_input + log.tokens_output)}</td>
-                                        <td className="px-3 py-2 text-right text-brand">{log.cost_user_credits.toFixed(4)}</td>
+                                        <td className="px-3 py-2 text-right text-muted-foreground">{log.cost_provider_usd.toFixed(6)}</td>
+                                        <td className="px-3 py-2 text-right text-brand">{log.cost_user_credits.toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>

@@ -79,11 +79,16 @@ export function KuraCreditsWidget() {
 
             {/* Balance Display */}
             <div className="mb-3">
-                <p className="text-2xl font-bold text-foreground">
-                    {formatKC(credits_used)} <span className="text-sm font-normal text-muted-foreground">KC</span>
-                </p>
+                <div className="flex items-baseline gap-2">
+                    <p className="text-2xl font-bold text-foreground">
+                        {formatKC(credits_used)} <span className="text-sm font-normal text-muted-foreground">KC</span>
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                        ({(credits_used / 1000).toFixed(2)}€)
+                    </p>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                    de {formatKC(credits_limit)} KC este mes
+                    de {formatKC(credits_limit)} KC ({(credits_limit / 1000).toFixed(0)}€) este mes
                 </p>
             </div>
 
@@ -91,8 +96,8 @@ export function KuraCreditsWidget() {
             <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-2">
                 <div
                     className={`absolute inset-y-0 left-0 rounded-full transition-all ${usage_percent > 90 ? 'bg-destructive' :
-                            usage_percent > 80 ? 'bg-warning' :
-                                'bg-brand'
+                        usage_percent > 80 ? 'bg-warning' :
+                            'bg-brand'
                         }`}
                     style={{ width: `${Math.min(usage_percent, 100)}%` }}
                 />
