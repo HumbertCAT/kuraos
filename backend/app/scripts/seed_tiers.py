@@ -19,6 +19,8 @@ TIER_SETTINGS = [
     ("TIER_AI_SPEND_LIMIT_BUILDER", 10, "Monthly AI spend limit USD for BUILDER"),
     ("TIER_AI_SPEND_LIMIT_PRO", 50, "Monthly AI spend limit USD for PRO"),
     ("TIER_AI_SPEND_LIMIT_CENTER", 200, "Monthly AI spend limit USD for CENTER"),
+    # v1.3.1: Kura Credits exchange rate (1€ = N KC)
+    ("KURA_CREDIT_RATE", 1000, "Credits per EUR (1€ = 1000 KC)"),
 ]
 
 

@@ -2,18 +2,65 @@
 AI Cost Ledger
 
 FinOps tracking for AI usage with real token accounting.
-Calculates provider costs and applies configurable margins.
+Calculates provider costs (EUR) and Kura Credits (KC).
+
+v1.3.1: Added KURA_CREDIT_RATE conversion with 5-min cache.
+        cost_user_credits now stores KC instead of margined EUR.
 """
 
+import time
 from decimal import Decimal
 from typing import Optional
 from datetime import datetime
 import uuid
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.services.ai.base import AIResponse
 from app.core.config import settings
+
+
+# ============================================================================
+# KURA CREDITS RATE CACHE
+# ============================================================================
+
+# Cache for KURA_CREDIT_RATE (1€ = N KC)
+# Default: 1000 KC per EUR
+_credit_rate_cache = {
+    "value": Decimal("1000"),
+    "expires": 0.0,
+}
+
+
+async def get_credit_rate(db: AsyncSession) -> Decimal:
+    """
+    Get cached KURA_CREDIT_RATE from SystemSettings.
+
+    Rate is cached for 5 minutes to avoid DB lookups on every AI call.
+    Returns: Credits per EUR (default: 1000)
+    """
+    global _credit_rate_cache
+
+    # Return cached value if not expired
+    if time.time() < _credit_rate_cache["expires"]:
+        return _credit_rate_cache["value"]
+
+    # Fetch from DB
+    from app.db.models import SystemSetting
+
+    result = await db.execute(
+        select(SystemSetting).where(SystemSetting.key == "KURA_CREDIT_RATE")
+    )
+    setting = result.scalar_one_or_none()
+
+    rate = Decimal(str(setting.value)) if setting and setting.value else Decimal("1000")
+
+    # Update cache with 5-minute TTL
+    _credit_rate_cache["value"] = rate
+    _credit_rate_cache["expires"] = time.time() + 300
+
+    return rate
 
 
 class CostLedger:
@@ -66,26 +113,29 @@ class CostLedger:
     def calculate_cost(
         cls,
         response: AIResponse,
-        margin: Optional[Decimal] = None,
+        credit_rate: Optional[Decimal] = None,
     ) -> dict:
         """
         Calculate costs for an AI response.
 
         Args:
             response: AIResponse with token counts
-            margin: Multiplier for user billing (e.g., 1.5 = 50% margin)
+            credit_rate: Kura Credits per EUR (e.g., 1000 = 1€ = 1000 KC)
 
         Returns:
             dict with:
-                - cost_provider_usd: Raw cost from provider
-                - cost_user_credits: Cost with margin applied
+                - cost_provider_eur: Raw cost from provider (EUR)
+                - cost_user_credits: Cost in Kura Credits (KC)
                 - tokens_input: Input token count
                 - tokens_output: Output token count
+
+        Note: cost_provider_usd column stores EUR (legacy naming).
+        TODO v1.4: Rename column to cost_provider_eur.
         """
-        margin = margin or cls.get_default_margin()
+        credit_rate = credit_rate or Decimal("1000")
         pricing = cls.PRICING.get(response.model_id, cls.DEFAULT_PRICING)
 
-        # Calculate provider cost (per 1M tokens)
+        # Calculate provider cost (per 1M tokens) - EUR pricing
         cost_input = (Decimal(response.tokens_input) / Decimal("1000000")) * pricing[
             "input"
         ]
@@ -94,14 +144,15 @@ class CostLedger:
             "output"
         ]
 
-        cost_provider = cost_input + cost_output
+        cost_provider_eur = cost_input + cost_output
 
-        # Apply margin for user billing
-        cost_user = cost_provider * margin
+        # Convert EUR to Kura Credits (KC)
+        # With 4 decimal precision: 0.00001€ * 1000 = 0.0100 KC
+        cost_credits = cost_provider_eur * credit_rate
 
         return {
-            "cost_provider_usd": cost_provider,
-            "cost_user_credits": cost_user,
+            "cost_provider_usd": cost_provider_eur,  # Legacy column name, stores EUR
+            "cost_user_credits": cost_credits,
             "tokens_input": response.tokens_input,
             "tokens_output": response.tokens_output,
         }
@@ -116,7 +167,6 @@ class CostLedger:
         user_id: Optional[str] = None,
         patient_id: Optional[str] = None,
         clinical_entry_id: Optional[str] = None,
-        margin: Optional[Decimal] = None,
     ):
         """
         Log AI usage to database and calculate costs.
@@ -129,16 +179,17 @@ class CostLedger:
             user_id: Optional user UUID
             patient_id: Optional patient UUID
             clinical_entry_id: Optional related entry UUID
-            margin: Optional custom margin (defaults to settings)
 
         Returns:
             AIUsageLog instance
         """
-        from app.db.models import AIUsageLog
+        from app.db.models import AiUsageLog
 
-        costs = cls.calculate_cost(response, margin)
+        # Get cached credit rate
+        credit_rate = await get_credit_rate(db)
+        costs = cls.calculate_cost(response, credit_rate)
 
-        log = AIUsageLog(
+        log = AiUsageLog(
             id=uuid.uuid4(),
             created_at=datetime.utcnow(),
             organization_id=organization_id,
@@ -150,8 +201,8 @@ class CostLedger:
             task_type=task_type,
             tokens_input=costs["tokens_input"],
             tokens_output=costs["tokens_output"],
-            cost_provider_usd=costs["cost_provider_usd"],
-            cost_user_credits=costs["cost_user_credits"],
+            cost_provider_usd=costs["cost_provider_usd"],  # EUR, legacy column name
+            cost_user_credits=costs["cost_user_credits"],  # Kura Credits (KC)
         )
 
         db.add(log)
