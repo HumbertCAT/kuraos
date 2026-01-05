@@ -104,7 +104,7 @@ const TASK_LABELS: Record<string, TaskMetadata> = {
         level: 1,
         levelName: 'Clinical Judgment',
         suggestedModel: 'Gemini 3 Pro',
-        isFixed: true
+        // Note: Sentinel is configurable but recommended to use Pro models for safety
     },
     clinical_analysis: {
         label: 'AletheIA Oracle',
