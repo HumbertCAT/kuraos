@@ -66,17 +66,17 @@ interface UsageLog {
     cost_user_credits: number;
 }
 
-// Task type labels for UI display
+// Task type labels with AletheIA branding (v1.3.0)
 const TASK_LABELS: Record<string, { label: string; description: string; isFixed?: boolean }> = {
-    transcription: { label: 'Transcription', description: 'Audio to text (STT)', isFixed: true },
-    clinical_analysis: { label: 'Clinical Analysis', description: 'Therapy session notes' },
-    audio_synthesis: { label: 'Audio Synthesis', description: 'Voice note analysis' },
-    chat: { label: 'Chat Sentiment', description: 'WhatsApp monitoring' },
-    triage: { label: 'Triage', description: 'Risk screening (critical)' },
-    form_analysis: { label: 'Form Analysis', description: 'Intake form review' },
-    help_bot: { label: 'Help Bot', description: 'Platform support' },
-    document_analysis: { label: 'Document Analysis', description: 'PDFs and images' },
-    briefing: { label: 'Daily Briefing', description: 'Morning summary' },
+    triage: { label: 'AletheIA Sentinel', description: 'Risk screening (critical)', isFixed: true },
+    clinical_analysis: { label: 'AletheIA Oracle', description: 'Therapy session notes' },
+    briefing: { label: 'AletheIA Now', description: 'Morning summary' },
+    chat: { label: 'AletheIA Pulse', description: 'WhatsApp monitoring' },
+    transcription: { label: 'AletheIA Scribe', description: 'Audio to text (STT)', isFixed: true },
+    audio_synthesis: { label: 'AletheIA Voice', description: 'Voice note analysis' },
+    document_analysis: { label: 'AletheIA Scan', description: 'PDFs, images & forms' },
+    form_analysis: { label: 'AletheIA Scan', description: 'Intake form review' },
+    help_bot: { label: 'AletheIA Helper', description: 'Platform support' },
 };
 
 // API helpers
@@ -258,8 +258,8 @@ export default function AiGovernance() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === tab.id
-                                    ? 'bg-background text-foreground shadow-sm'
-                                    : 'text-muted-foreground hover:text-foreground'
+                                ? 'bg-background text-foreground shadow-sm'
+                                : 'text-muted-foreground hover:text-foreground'
                                 }`}
                         >
                             <Icon className="w-4 h-4" />
