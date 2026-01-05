@@ -14,6 +14,34 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4] - 2026-01-05 🤖 AGENTS UI REBUILD
+
+> **Theme:** "Command Center, not Disco."
+
+### 🎨 Complete Page Rebuild
+Rebuilt `/automations` page with professional table view matching `/forms` structure.
+
+**New structure:**
+- **PageHeader**: Trinity kicker `ATRAER · SERVIR · CRECER`, stats badges (Total, Activos)
+- **Data Table**: Professional columns (Agente, Lógica, Ejecuciones, Estado, Acciones)
+- **Logic Column**: `[Trigger] → [Action]` visual flow (e.g., `[Nuevo Lead] → [Enviar Email]`)
+- **Control Deck**: Segmented tabs (Mis Agentes / Catálogo)
+- **Actions**: Settings, Logs, Power toggle, Delete
+
+| Old (Cards) | New (Table) |
+|-------------|-------------|
+| Grid layout | `<table>` rows |
+| Purple gradients | `badge badge-*` semantic |
+| Toggle switch inline | Power icon button |
+| No execution count | `execution_count` column |
+| Single trigger badge | `[Trigger] → [Action]` flow |
+
+### 🌐 i18n
+- Added 3 tooltip keys: `agentSettings`, `viewLogs`, `pauseAgent`
+- All 4 locales (ES, EN, CA, IT) updated
+
+---
+
 ## [1.2.3] - 2026-01-05 💰 DECIMAL PRECISION REFACTOR
 
 > **Theme:** "Financial precision for enterprise SaaS."
@@ -37,28 +65,6 @@ Monetary fields migrated from `DOUBLE PRECISION` to `NUMERIC` for exact decimal 
 ### 📦 Migration
 - Alembic: `b7573685053a_refactor_monetary_fields_to_decimal.py`
 - **Data preserved**: Existing values converted automatically
-
-### 🎨 Agents UI Rebuild (Table View)
-Complete rebuild of `/automations` page to match `/forms` structure.
-
-**New structure:**
-- **PageHeader**: Trinity kicker `ATRAER · SERVIR · CRECER`, stats badges (Total, Activos)
-- **Data Table**: Professional columns (Agente, Lógica, Ejecuciones, Estado, Acciones)
-- **Logic Column**: `[Trigger] → [Action]` visual flow (e.g., `[Nuevo Lead] → [Enviar Email]`)
-- **Control Deck**: Segmented tabs (Mis Agentes / Catálogo)
-- **Actions**: Settings, Logs, Power toggle, Delete
-
-| Old (Cards) | New (Table) |
-|-------------|-------------|
-| Grid layout | `<table>` rows |
-| Purple gradients | `badge badge-*` semantic |
-| Toggle switch inline | Power icon button |
-| No execution count | `execution_count` column |
-| Single trigger badge | `[Trigger] → [Action]` flow |
-
-### 🌐 i18n
-- Added 3 tooltip keys for Agents page: `agentSettings`, `viewLogs`, `pauseAgent`
-- All 4 locales (ES, EN, CA, IT) updated
 
 ---
 
