@@ -14,6 +14,32 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.6] - 2026-01-05 🧠 AI GOVERNANCE UX OVERHAUL
+
+> **Theme:** "Clarity through structure."
+
+### 🧠 AI Governance 4-Tab Restructure
+Complete reorganization of the Admin AI Governance panel into focused sub-sections.
+
+| Tab | Content |
+|-----|---------|
+| **Financials** (default) | Provider Cost, Revenue, Gross Profit cards |
+| **Activity** | Activity Ledger (last 10 entries) |
+| **Models** | AI Models Available + `europe-west1` badge |
+| **Routing** | Task Routing config with Save button |
+
+### 🧹 UX Cleanup
+- **Removed "Select" column**: Eliminated redundant Action column from Models table
+- **Removed legacy code**: `changePrimaryModel()` function no longer needed
+- **Renamed section**: "Neural Registry" → "AI Models Available"
+
+### 🧭 Sidebar Compaction
+- **Help icon moved**: From full-width link to icon-only in controls row
+- **Position**: Before ThemeToggle, same size as other control icons (`w-4 h-4`)
+- **Saves vertical space**: Reclaimed ~40px in sidebar footer
+
+---
+
 ## [1.2.5] - 2026-01-05 🎨 THE SHADOW MANDATE
 
 > **Theme:** "Material depth, unified elevation."
