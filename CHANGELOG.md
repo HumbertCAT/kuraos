@@ -42,8 +42,9 @@ Monetary fields migrated from `DOUBLE PRECISION` to `NUMERIC` for exact decimal 
 Complete rebuild of `/automations` page to match `/forms` structure.
 
 **New structure:**
-- **PageHeader**: Kicker "CRECER", stats badges (Total, Activos)
-- **Data Table**: Professional columns (Agente, Disparador, Ejecuciones, Estado, Acciones)
+- **PageHeader**: Trinity kicker `ATRAER · SERVIR · CRECER`, stats badges (Total, Activos)
+- **Data Table**: Professional columns (Agente, Lógica, Ejecuciones, Estado, Acciones)
+- **Logic Column**: `[Trigger] → [Action]` visual flow (e.g., `[Nuevo Lead] → [Enviar Email]`)
 - **Control Deck**: Segmented tabs (Mis Agentes / Catálogo)
 - **Actions**: Settings, Logs, Power toggle, Delete
 
@@ -53,6 +54,11 @@ Complete rebuild of `/automations` page to match `/forms` structure.
 | Purple gradients | `badge badge-*` semantic |
 | Toggle switch inline | Power icon button |
 | No execution count | `execution_count` column |
+| Single trigger badge | `[Trigger] → [Action]` flow |
+
+### 🌐 i18n
+- Added 3 tooltip keys for Agents page: `agentSettings`, `viewLogs`, `pauseAgent`
+- All 4 locales (ES, EN, CA, IT) updated
 
 ---
 
