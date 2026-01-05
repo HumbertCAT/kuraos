@@ -7,6 +7,14 @@ from sqlalchemy import select
 
 from app.db.base import get_db
 from app.db.models import ClinicalEntry, Patient, EntryType, UserRole
+
+# v1.3.3: Map EntryType to AI task routing keys
+ENTRY_TYPE_TO_TASK: dict[EntryType, str] = {
+    EntryType.SESSION_NOTE: "clinical_analysis",  # → ORACLE
+    EntryType.AUDIO: "audio_synthesis",  # → VOICE
+    EntryType.DOCUMENT: "document_analysis",  # → SCAN
+    EntryType.AI_ANALYSIS: "clinical_analysis",  # fallback
+}
 from app.api.deps import CurrentUser, CurrentClinicalUser
 from app.api.v1.clinical_entry_schemas import (
     ClinicalEntryCreate,
@@ -360,17 +368,16 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
             await db.commit()
 
             # ============================================================
-            # MODEL GARDEN: Get provider from Factory
+            # v1.3.3: Get routed provider based on entry type
             # ============================================================
-            from app.services.settings import get_setting_str
+            # Determine task_type FIRST from entry type
+            task_type = ENTRY_TYPE_TO_TASK.get(entry.entry_type, "clinical_analysis")
 
-            model_spec = await get_setting_str(db, "AI_MODEL", "gemini-2.5-flash")
-            # model_spec is already full model name like "gemini-2.5-flash"
-            provider = ProviderFactory.get_provider(model_spec)
+            # Get routed provider (reads AI_TASK_ROUTING from SystemSettings)
+            provider = await ProviderFactory.get_provider_for_task(task_type, db)
 
-            # Determine task type and prompt
+            # Determine prompt based on entry type
             if entry.entry_type == EntryType.SESSION_NOTE:
-                task_type = "clinical_analysis"
                 prompt = CLINICAL_SYSTEM_PROMPT
                 content = entry.content or ""
 
@@ -378,7 +385,6 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
                 response = await provider.analyze_text(content, prompt)
 
             elif entry.entry_type == EntryType.AUDIO:
-                task_type = "audio_synthesis"
                 prompt = AUDIO_SYNTHESIS_PROMPT
 
                 # Get audio file path - same logic as AletheIA._analyze_audio

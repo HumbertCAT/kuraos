@@ -190,7 +190,10 @@ class ProviderFactory:
 
             if routing_setting and routing_setting.value:
                 routing_map = routing_setting.value
-                model_id = routing_map.get(task_type, default_model)
+                # v1.3.3: Robust extraction with type checking
+                if isinstance(routing_map, dict):
+                    model_id = routing_map.get(task_type, default_model)
+                # else: keep default_model (handles corrupt JSON)
 
         except Exception as e:
             import logging
