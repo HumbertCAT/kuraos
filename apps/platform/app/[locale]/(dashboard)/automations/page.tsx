@@ -377,7 +377,7 @@ export default function AutomationsPage() {
                             <thead className="bg-muted/50">
                                 <tr className="border-b border-border">
                                     <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase">AGENTE</th>
-                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">DISPARADOR</th>
+                                    <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider uppercase hidden md:table-cell">LÓGICA</th>
                                     <th className="px-4 py-3 text-center type-ui text-muted-foreground tracking-wider uppercase">ESTADO</th>
                                     <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider uppercase">ACCIONES</th>
                                 </tr>
@@ -399,9 +399,15 @@ export default function AutomationsPage() {
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3 hidden md:table-cell">
-                                                <span className="badge badge-muted font-mono text-xs">
-                                                    {triggerLabels[template.trigger_event] || template.trigger_event}
-                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">
+                                                        {triggerLabels[template.trigger_event] || template.trigger_event}
+                                                    </span>
+                                                    <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                                                    <span className="text-xs bg-brand/10 text-brand px-2 py-0.5 rounded border border-brand/20">
+                                                        {getMainAction(template)}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="px-4 py-3 text-center">
                                                 {installed ? (
