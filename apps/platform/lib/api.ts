@@ -678,5 +678,17 @@ export const api = {
       });
       return handleResponse<any>(res);
     },
+    getCreditsBalance: async () => {
+      const res = await fetch(`${API_URL}/dashboard/credits/balance`, {
+        credentials: 'include',
+      });
+      return handleResponse<{
+        credits_used: number;
+        credits_limit: number;
+        usage_percent: number;
+        tier: string;
+        is_low_balance: boolean;
+      }>(res);
+    },
   },
 };

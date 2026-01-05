@@ -12,6 +12,7 @@ import { FocusSessionCard } from '@/components/dashboard/FocusSessionCard';
 import { PipelineVelocity } from '@/components/dashboard/PipelineVelocity';
 import { ReferralWidget } from '@/components/dashboard/ReferralWidget';
 import { ActiveJourneysWidget } from '@/components/dashboard/ActiveJourneysWidget';
+import { KuraCreditsWidget } from '@/components/dashboard/KuraCreditsWidget';
 // import { ActivationWidget } from '@/components/dashboard/ActivationWidget'; // v1.1.8 - Temporarily disabled
 import { Brain, Wallet, Target, Activity } from 'lucide-react';
 
@@ -222,6 +223,9 @@ export default function DashboardPage() {
                 <div className="col-span-12 lg:col-span-4 space-y-6">
                     {/* Active Journeys */}
                     <ActiveJourneysWidget journeys={data.activeJourneys} />
+
+                    {/* Kura Credits - v1.3.2 */}
+                    <KuraCreditsWidget />
 
                     {/* Vital Signs */}
                     <div className="space-y-4">
