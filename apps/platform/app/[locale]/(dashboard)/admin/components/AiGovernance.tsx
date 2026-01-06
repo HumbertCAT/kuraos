@@ -215,7 +215,11 @@ const COMPANION_MODELS = ['whisper-1', 'whisper'];
 
 type TabId = 'financials' | 'activity' | 'models' | 'routing';
 
-export default function AiGovernance() {
+interface AiGovernanceProps {
+    defaultSection?: TabId;
+}
+
+export default function AiGovernance({ defaultSection = 'financials' }: AiGovernanceProps) {
     const [stats, setStats] = useState<LedgerStats>(EMPTY_STATS);
     const [config, setConfig] = useState<AiConfig>({ cost_margin: 1.5, active_models: [], vertex_ai_enabled: true });
     const [models, setModels] = useState<ModelInfo[]>(DEFAULT_MODELS);
@@ -226,7 +230,7 @@ export default function AiGovernance() {
     const [isSavingRouting, setIsSavingRouting] = useState(false);
     const [pendingRoutingChanges, setPendingRoutingChanges] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<TabId>('financials');
+    const [activeTab, setActiveTab] = useState<TabId>(defaultSection);
 
     useEffect(() => {
         loadData();
