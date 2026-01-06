@@ -33,7 +33,7 @@ jobs:
       working-directory: backend
       env:
         # Use in-memory SQLite for fast CI tests
-        DATABASE_URL: sqlite+aiosqlite:///:memory:
+        DATABASE_URL: "sqlite+aiosqlite:///:memory:"
         SECRET_KEY: test-secret-key-for-ci-only
         ALGORITHM: HS256
       run: |

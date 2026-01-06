@@ -14,6 +14,39 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.9.4] - 2026-01-06 ⚡ THE NERVOUS SYSTEM
+
+> **Theme:** "Phase 4: CI/CD Automation" — GitHub Actions + Cloud Build + Antigravity Loop.
+
+### 🔄 CI/CD Infrastructure
+Complete automation of all 3 immunity layers plus AI-powered test generation.
+
+| Component | Description |
+|:---|:---|
+| **GitHub Actions** | Fast PR checks (pytest < 10min) |
+| **Cloud Build** | Multi-stage pipeline (build + test + deploy) |
+| **Antigravity Loop** | AI test generator with Vertex AI Gemini |
+
+### 🎯 Pipeline Stages
+1. **Backend Tests** → Pytest (Phase 1 - Innate Immunity)
+2. **E2E Tests** → Playwright (Phase 2 - Adaptive Immunity)
+3. **AI Evaluation** → Semantic validation (Phase 3 - Cognitive Immunity)
+4. **Deploy** → Cloud Run if all pass
+
+### 🧠 Antigravity Loop
+- **`generate_tests.py`:** Reads git diffs, generates pytest tests with Gemini 2.0
+- **Manual Trigger:** GitHub Actions workflow_dispatch
+- **Output:** `tests/generated/test_auto_<timestamp>.py`
+
+### 📦 New Files
+- `.github/workflows/ci-innate.yml` - PR checks
+- `.github/workflows/generate-tests.yml` - Test generator
+- `backend/scripts/generate_tests.py` - AI test generator (7.5K)
+- `cloudbuild.yaml` - Full CI/CD pipeline
+- `backend/tests/generated/` - Generated tests directory
+
+---
+
 ## [1.3.9.3] - 2026-01-06 🧠 COGNITIVE IMMUNITY
 
 > **Theme:** "Phase 3: AI Semantic Testing" — Vertex AI as judge for AletheIA clinical quality.
