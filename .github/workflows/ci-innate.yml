@@ -1,6 +1,11 @@
 name: CI Innate - Backend Tests
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-innate.yml'
   pull_request:
     branches: [ main ]
     paths:
@@ -21,6 +26,11 @@ jobs:
       with:
         python-version: '3.12'
         cache: 'pip'
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++
     
     - name: Install dependencies
       working-directory: backend
