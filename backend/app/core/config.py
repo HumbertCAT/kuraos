@@ -55,8 +55,9 @@ class Settings(BaseSettings):
     # OpenAI (Whisper audio transcription, TTS for Daily Briefing)
     OPENAI_API_KEY: Optional[str] = None
 
-    # Google Gemini (AI script generation for Daily Briefing, Automation agents)
-    GEMINI_API_KEY: Optional[str] = None
+    # DEPRECATED v1.3.11: Use GOOGLE_API_KEY via ProviderFactory instead
+    # Legacy variable kept for backwards compatibility, will be removed in v1.4
+    GEMINI_API_KEY: Optional[str] = None  # @deprecated
 
     # Google Cloud Storage (media files - audio, transcriptions)
     GCS_BUCKET_NAME: str = "kura-production-media"

@@ -221,6 +221,8 @@ class ProviderFactory:
             "clinical_analysis": "gemini-2.5-flash",
             "chat": "gemini-2.5-flash-lite",
             "triage": "gemini-2.5-pro",
+            "briefing": "gemini-2.5-flash",
+            "ai_enhancement": "gemini-2.5-flash-lite",
         }
 
         try:

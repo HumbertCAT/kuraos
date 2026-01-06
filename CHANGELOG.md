@@ -14,6 +14,41 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.11] - 2026-01-06 🧹 THE CLEANUP
+
+> **Theme:** "Refactor First, Migrate Second" — Centralizing AI calls via ProviderFactory before Vertex AI migration.
+
+### 🔧 AI Provider Unification
+
+**Legacy code removed:**
+- `briefing_engine.py`: Eliminated `genai.configure()` and hardcoded `gemini-1.5-flash`
+- `automation_engine.py`: Eliminated `genai.configure()` and hardcoded `gemini-1.5-flash`
+
+**New pattern:**
+- Both services now use `ProviderFactory.get_provider_for_task()` 
+- Models routed via Admin Panel → AI Governance → Task Routing
+
+### 📝 Task Routing Expansion
+
+| New Task | Default Model | Service |
+|----------|---------------|---------|
+| `briefing` | `gemini-2.5-flash` | Daily Briefing |
+| `ai_enhancement` | `gemini-2.5-flash-lite` | Automation tone rewriting |
+
+### 🚮 Deprecations
+
+- **`GEMINI_API_KEY`**: Marked as `@deprecated` in `config.py`
+  - Use `GOOGLE_API_KEY` via ProviderFactory instead
+  - Will be removed in v1.4
+
+### 🎯 v1.4 Preparation
+
+This cleanup enables automatic migration to Vertex AI SDK:
+- All AI calls now flow through `ProviderFactory`
+- Changing the SDK in `GeminiProvider` will update all services
+
+---
+
 ## [1.3.10] - 2026-01-06 ⚡ HYPERSPEED & SMOKE
 
 > **Theme:** "Build Performance" — Kaniko layer caching + automated production verification.

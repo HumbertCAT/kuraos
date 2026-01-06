@@ -535,19 +535,16 @@ async def enhance_message_with_ai(
     signature: Optional[str] = None,
 ) -> str:
     """
-    Use Gemini to rewrite a message with the specified tone.
+    Use AI to rewrite a message with the specified tone.
+
+    v1.3.11: Uses ProviderFactory with 'ai_enhancement' task routing.
 
     Tones:
     - CLINICAL: Professional, clear, focused on facts
     - EMPATHETIC: Warm, understanding, supportive
     - DIRECT: Concise, action-oriented, to the point
     """
-    import google.generativeai as genai
-    from app.core.config import settings
-
-    if not settings.GEMINI_API_KEY:
-        logger.warning("GEMINI_API_KEY not set, skipping AI enhancement")
-        return message_body
+    from app.services.ai import ProviderFactory
 
     tone_instructions = {
         "CLINICAL": "Use a professional, clinical tone. Be clear and factual.",
@@ -555,20 +552,21 @@ async def enhance_message_with_ai(
         "DIRECT": "Use a direct, concise tone. Focus on the action needed.",
     }
 
-    prompt = f"""Rewrite the following message for {recipient_name}.
+    system_prompt = f"""Rewrite the following message for {recipient_name}.
 Tone: {tone_instructions.get(tone, tone_instructions["EMPATHETIC"])}
 Keep it under 50 words. Preserve the key information.
 {f"Sign with: {signature}" if signature else ""}
 
-Original message:
-{message_body}
-
-Rewritten message:"""
+Output language: Same as input (Spanish/Castellano)."""
 
     try:
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        response = await model.generate_content_async(prompt)
+        # v1.3.11: Use centralized ProviderFactory with task routing
+        provider = await ProviderFactory.get_provider_for_task("ai_enhancement")
+
+        response = await provider.analyze_text(
+            content=message_body,
+            system_prompt=system_prompt,
+        )
         return response.text.strip()
     except Exception as e:
         logger.error(f"AI enhancement failed: {e}")

@@ -1,8 +1,8 @@
 # Product Roadmap
 
-> **Status**: Living Document (v1.3.10)  
+> **Status**: Living Document (v1.3.11)  
 > **Scope**: Strategic Feature Planning 2026  
-> **Last Updated**: 2026-01-06 (Hyperspeed & Smoke)
+> **Last Updated**: 2026-01-06 (The Cleanup)
 
 ---
 

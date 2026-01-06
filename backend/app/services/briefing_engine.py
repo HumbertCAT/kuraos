@@ -209,31 +209,29 @@ class BriefingEngine:
         }
 
     async def _generate_script(self, data: dict) -> str:
-        """Generate briefing script with Gemini."""
-        import google.generativeai as genai
-        from app.core.config import settings
+        """Generate briefing script with Gemini via ProviderFactory."""
+        from app.services.ai import ProviderFactory
 
-        gemini_key = getattr(settings, "GEMINI_API_KEY", None)
-        if not gemini_key:
-            logger.warning("GEMINI_API_KEY not set, using fallback script")
-            return self._fallback_script(data)
-
-        prompt = f"""You are a helpful Chief of Staff for a therapist in Spain.
+        system_prompt = """You are a helpful Chief of Staff for a therapist in Spain.
 Summarize this JSON data into a warm, professional, 30-second morning briefing script.
 Be concise. Highlight risks first. Speak in Spanish (Castellano).
 End with something motivating.
 
-Data: {json.dumps(data, ensure_ascii=False)}
+Output: Spanish script (~50 words)."""
 
-Script (Spanish, ~50 words):"""
+        content = f"Daily briefing data:\n{json.dumps(data, ensure_ascii=False)}"
 
         try:
-            genai.configure(api_key=gemini_key)
-            model = genai.GenerativeModel("gemini-1.5-flash")
-            response = await model.generate_content_async(prompt)
+            # v1.3.11: Use centralized ProviderFactory with task routing
+            provider = await ProviderFactory.get_provider_for_task("briefing")
+
+            response = await provider.analyze_text(
+                content=content,
+                system_prompt=system_prompt,
+            )
             return response.text.strip()
         except Exception as e:
-            logger.error(f"Gemini script generation failed: {e}")
+            logger.error(f"Briefing script generation failed: {e}")
             return self._fallback_script(data)
 
     def _fallback_script(self, data: dict) -> str:
