@@ -62,7 +62,6 @@ steps:
 # Use high-CPU machine for faster builds (Kaniko cache decompression)
 options:
   machineType: 'E2_HIGHCPU_8'
-  logging: CLOUD_LOGGING_ONLY
   
 timeout: '3600s'
 
