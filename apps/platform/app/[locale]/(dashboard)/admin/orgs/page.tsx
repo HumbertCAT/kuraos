@@ -74,6 +74,12 @@ export default function OrgsPage() {
         return '🟢';
     };
 
+    const formatKC = (eurCost: number): string => {
+        const kc = Math.round(eurCost * 1000);
+        if (kc >= 1000) return `${Math.round(kc / 1000)}K`;
+        return String(kc);
+    };
+
     if (loading) {
         return <div className="animate-pulse bg-muted/50 h-64 rounded-xl" />;
     }
@@ -84,52 +90,67 @@ export default function OrgsPage() {
                 <h2 className="text-lg font-semibold text-foreground">Organizations</h2>
                 <p className="text-sm text-foreground/60">Manage organization tiers and credits</p>
             </div>
-            <table className="w-full">
-                <thead className="bg-muted border-b border-border">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Name</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Tier</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Term</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Patients</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-foreground/60 uppercase">AI Use</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                    {organizations.map((org) => (
-                        <tr key={org.id}>
-                            <td className="px-6 py-4 text-sm font-medium text-foreground">{org.name}</td>
-                            <td className="px-6 py-4">
-                                <select
-                                    value={org.tier}
-                                    onChange={(e) => handleChangeTier(org.id, e.target.value)}
-                                    className={`text-sm px-2 py-1 rounded border ${TIER_COLORS[org.tier]}`}
-                                >
-                                    {TIERS.map((tier) => (
-                                        <option key={tier} value={tier}>{tier}</option>
-                                    ))}
-                                </select>
-                            </td>
-                            <td className="px-6 py-4">
-                                <select
-                                    value={org.terminology_preference || 'CLIENT'}
-                                    onChange={(e) => handleChangeTerminology(org.id, e.target.value)}
-                                    className="text-sm px-2 py-1 rounded border border-border bg-card text-foreground"
-                                >
-                                    {TERMINOLOGY_OPTIONS.map((term) => (
-                                        <option key={term} value={term}>{term}</option>
-                                    ))}
-                                </select>
-                            </td>
-                            <td className="px-6 py-4 text-sm text-foreground/70">{org.patient_count}</td>
-                            <td className="px-6 py-4">
-                                <span className="font-mono text-sm text-foreground whitespace-nowrap">
-                                    {formatTokens(org.ai_usage_tokens)}TOK/{org.ai_usage_cost_eur.toFixed(4).replace('.', ',')}€ {getCostSemaphore(org.ai_usage_cost_eur, org.tier)}
-                                </span>
-                            </td>
+            <div className="overflow-x-auto">
+                <table className="w-full min-w-[900px]">
+                    <thead className="bg-muted border-b border-border">
+                        <tr>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Name</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Tier</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-foreground/60 uppercase">Term</th>
+                            <th className="px-4 py-3 text-center text-xs font-medium text-foreground/60 uppercase">Patients</th>
+                            <th className="px-4 py-3 text-right text-xs font-medium text-foreground/60 uppercase">€ EUR</th>
+                            <th className="px-4 py-3 text-right text-xs font-medium text-foreground/60 uppercase">Tokens</th>
+                            <th className="px-4 py-3 text-right text-xs font-medium text-foreground/60 uppercase">KC</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                        {organizations.map((org) => (
+                            <tr key={org.id} className="hover:bg-accent/50">
+                                <td className="px-4 py-4 text-sm font-medium text-foreground">{org.name}</td>
+                                <td className="px-4 py-4">
+                                    <select
+                                        value={org.tier}
+                                        onChange={(e) => handleChangeTier(org.id, e.target.value)}
+                                        className={`text-sm px-2 py-1 rounded border ${TIER_COLORS[org.tier]}`}
+                                    >
+                                        {TIERS.map((tier) => (
+                                            <option key={tier} value={tier}>{tier}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td className="px-4 py-4">
+                                    <select
+                                        value={org.terminology_preference || 'CLIENT'}
+                                        onChange={(e) => handleChangeTerminology(org.id, e.target.value)}
+                                        className="text-sm px-2 py-1 rounded border border-border bg-card text-foreground"
+                                    >
+                                        {TERMINOLOGY_OPTIONS.map((term) => (
+                                            <option key={term} value={term}>{term}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td className="px-4 py-4 text-sm text-foreground/70 text-center">{org.patient_count}</td>
+                                <td className="px-4 py-4 text-right">
+                                    <span className="font-mono text-sm text-foreground whitespace-nowrap">
+                                        {org.ai_usage_cost_eur.toFixed(4).replace('.', ',')}€ {getCostSemaphore(org.ai_usage_cost_eur, org.tier)}
+                                    </span>
+                                </td>
+                                <td className="px-4 py-4 text-right">
+                                    <span className="font-mono text-sm text-muted-foreground">
+                                        {formatTokens(org.ai_usage_tokens)}
+                                    </span>
+                                </td>
+                                <td className="px-4 py-4 text-right">
+                                    <span className="font-mono text-sm text-brand font-medium">
+                                        {formatKC(org.ai_usage_cost_eur)} KC
+                                    </span>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </section>
     );
 }
+
