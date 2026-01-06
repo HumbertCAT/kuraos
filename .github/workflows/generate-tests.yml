@@ -1,0 +1,76 @@
+name: Generate Tests (Antigravity Loop)
+
+on:
+  workflow_dispatch:
+    inputs:
+      auto_commit:
+        description: 'Auto-commit generated test'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Need full history for git diff
+    
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Install dependencies
+      working-directory: backend
+      run: |
+        python -m pip install --upgrade pip
+        pip install google-cloud-aiplatform vertexai
+    
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+    
+    - name: Generate tests with AI
+      working-directory: backend
+      env:
+        GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+      run: |
+        python scripts/generate_tests.py
+    
+    - name: Upload generated test
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-test
+        path: backend/tests/generated/test_auto_*.py
+        retention-days: 30
+    
+    - name: Commit generated test
+      if: ${{ github.event.inputs.auto_commit == 'true' }}
+      run: |
+        git config user.name "Antigravity Bot"
+        git config user.email "bot@kuraos.ai"
+        git add backend/tests/generated/
+        git commit -m "test: auto-generated tests from Antigravity Loop" || echo "No changes to commit"
+        git push
+    
+    - name: Summary
+      run: |
+        echo "### 🧠 Antigravity Loop - Test Generation Complete" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Generated test file:" >> $GITHUB_STEP_SUMMARY
+        ls -lh backend/tests/generated/test_auto_*.py | tail -1 >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ github.event.inputs.auto_commit }}" == "true" ]; then
+          echo "✅ Test auto-committed to repository" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "📥 Test available in artifacts - review before committing" >> $GITHUB_STEP_SUMMARY
+        fi
