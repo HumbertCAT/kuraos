@@ -1,9 +1,9 @@
 # Technical Debt Register
 
 > [!NOTE]
-> **Status**: Living Document (v1.3.6)  
+> **Status**: Living Document (v1.3.7)  
 > **Purpose**: Active technical debt tracking for KURA OS  
-> **Last Updated**: 2026-01-06 (v1.3.6 Release)
+> **Last Updated**: 2026-01-06 (v1.3.7 Release)
 
 This document tracks **actionable** technical debt that requires resolution. Resolved items belong in the [CHANGELOG](../../CHANGELOG.md).
 
@@ -20,6 +20,7 @@ This document tracks **actionable** technical debt that requires resolution. Res
 - **Impact**: High - Regressions are frequent during structural refactors.
 - **Risk Level**: CRITICAL
 - **Required Fix**: Initialize **Pytest** for backend core and **Playwright** for critical clinical happy-paths.
+- **Estimated Effort**: 16-24 hours
 
 ---
 
@@ -35,16 +36,7 @@ This document tracks **actionable** technical debt that requires resolution. Res
 > Structural changes in API lists (e.g., `Patients`) often break secondary consumers (`RecentPatients.tsx`, `patient-store.ts`) not covered by specific audits.
 
 - **Fix**: Enforce full-codebase audits using `grep` for legacy keys after any structural change.
-
----
-
-## ⚙️ INFRASTRUCTURE & OPS
-
-### 3. Script Naming Consistency
-**File**: `scripts/backup_db.sh`
-
-- **Issue**: Backup script uses hardcoded database names instead of the `POSTGRES_DB` environment variable.
-- **Fix**: Standardize all release scripts to read environment variables consistently.
+- **Estimated Effort**: 2 hours
 
 ---
 
