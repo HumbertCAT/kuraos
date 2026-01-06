@@ -1,12 +1,13 @@
 import { redirect } from 'next/navigation';
 
 interface PageProps {
-    params: { locale: string };
+    params: Promise<{ locale: string }>;
 }
 
 /**
- * AIGov section root - redirects to models sub-section
+ * AIGov section root - redirects to financials (default sub-section)
  */
-export default function AiGovPage({ params }: PageProps) {
-    redirect(`/${params.locale}/admin/aigov/models`);
+export default async function AiGovPage({ params }: PageProps) {
+    const { locale } = await params;
+    redirect(`/${locale}/admin/aigov/financials`);
 }
