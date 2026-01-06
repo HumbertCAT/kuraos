@@ -9,27 +9,11 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
-## ✅ RESOLVED (v1.3.9.5)
+## 🔴 CRITICAL (Active Debt)
 
-### 1. ~~Lack of Automated Testing Infrastructure~~ → The Immune System
-**Scope**: Entire codebase (Backend + Frontend)  
-**Resolved**: v1.3.9.x series (Phases 1-5)
-
-> [!TIP]
-> **Comprehensive QA infrastructure deployed.** 5 layers of automated testing with 24+ tests.
-
-- **Resolution**: Implemented The Immune System (5 phases)
-  - Phase 1: Backend unit tests (Pytest + testcontainers) - 10+ tests
-  - Phase 2: Frontend E2E (Playwright + auth bypass) - 7 tests
-  - Phase 3: AI semantic evaluation (Vertex AI) - 3 golden cases
-  - Phase 4: CI/CD automation (GitHub Actions + Cloud Build)
-  - Phase 5: Email testing (Mailpit) - 4 tests
-- **Documentation**: `docs/TESTING.md`, `scripts/test.sh`
-- **Total Effort**: ~40 hours (5 phases)
+*No critical debt items at this time.*
 
 ---
-
-## 🔴 CRITICAL (Active Debt)
 
 ---
 
