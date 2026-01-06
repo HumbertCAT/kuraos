@@ -61,6 +61,27 @@ class RedeemResponse(BaseModel):
     reward_applied: str
 
 
+class RedemptionHistoryItem(BaseModel):
+    """Single redemption record for history display."""
+
+    id: str
+    reward_id: str
+    reward_name: str
+    karma_cost: int
+    value_granted: float
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class RedemptionHistoryResponse(BaseModel):
+    """List of redemption history items."""
+
+    redemptions: List[RedemptionHistoryItem]
+    total: int
+
+
 # ============================================================================
 # Endpoints
 # ============================================================================
@@ -275,4 +296,48 @@ async def redeem_reward(
         message=f"Successfully redeemed: {reward['name']}",
         karma_remaining=org.karma_score,
         reward_applied=reward_desc,
+    )
+
+
+@router.get(
+    "/redemptions",
+    response_model=RedemptionHistoryResponse,
+    summary="Get redemption history",
+)
+async def get_redemption_history(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Get history of all karma redemptions for the current organization.
+    """
+    from app.db.models import KarmaRedemption
+
+    # Query redemptions for user's organization
+    result = await db.execute(
+        select(KarmaRedemption)
+        .where(KarmaRedemption.organization_id == current_user.organization_id)
+        .order_by(KarmaRedemption.created_at.desc())
+        .limit(50)
+    )
+    redemptions = result.scalars().all()
+
+    # Map reward_ids to names
+    history = []
+    for r in redemptions:
+        reward_name = REWARD_CATALOG.get(r.reward_id, {}).get("name", r.reward_id)
+        history.append(
+            RedemptionHistoryItem(
+                id=str(r.id),
+                reward_id=r.reward_id,
+                reward_name=reward_name,
+                karma_cost=r.karma_cost,
+                value_granted=float(r.value_granted),
+                created_at=r.created_at,
+            )
+        )
+
+    return RedemptionHistoryResponse(
+        redemptions=history,
+        total=len(history),
     )

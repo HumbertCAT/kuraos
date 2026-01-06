@@ -10,6 +10,7 @@ import {
     RewardsCatalog,
     ReferralHistoryTable
 } from '@/components/referrals';
+import { RedemptionHistory } from '@/components/growth/RedemptionHistory';
 
 interface ReferredOrg {
     id: string;
@@ -113,6 +114,9 @@ export default function ReferralsPage() {
                     currentTier={tier}
                     currentKarma={karma}
                 />
+
+                {/* Redemption History */}
+                <RedemptionHistory />
             </div>
         </div>
     );
