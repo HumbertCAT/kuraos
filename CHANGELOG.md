@@ -52,6 +52,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Uses Vault bucket (`temp_analysis/`) for clinical data security
 - Files <20MB continue using fast inline path
 
+### 🧹 Code Hygiene
+
+- Fixed undefined `model_spec` in error handlers (`clinical_entries.py`)
+- Fixed incorrect `provider_id="vertex-google"` → `"error"` in fallback responses
+
 ---
 
 ## [1.4.0] - 2026-01-06 🧠 SOVEREIGN INTELLIGENCE

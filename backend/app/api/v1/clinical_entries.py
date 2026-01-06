@@ -446,16 +446,16 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
                             text=f"Audio file not found: {filename}",
                             tokens_input=0,
                             tokens_output=0,
-                            model_id=model_spec,
-                            provider_id="vertex-google",
+                            model_id="error",
+                            provider_id="error",
                         )
                 else:
                     response = AIResponse(
                         text="No audio file_url in metadata",
                         tokens_input=0,
                         tokens_output=0,
-                        model_id=model_spec,
-                        provider_id="vertex-google",
+                        model_id="error",
+                        provider_id="error",
                     )
 
             elif entry.entry_type == EntryType.DOCUMENT:
@@ -484,16 +484,16 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
                             text=f"Document file not found: {filename}",
                             tokens_input=0,
                             tokens_output=0,
-                            model_id=model_spec,
-                            provider_id="vertex-google",
+                            model_id="error",
+                            provider_id="error",
                         )
                 else:
                     response = AIResponse(
                         text="No document file_url in metadata",
                         tokens_input=0,
                         tokens_output=0,
-                        model_id=model_spec,
-                        provider_id="vertex-google",
+                        model_id="error",
+                        provider_id="error",
                     )
             else:
                 # Fallback for other types
