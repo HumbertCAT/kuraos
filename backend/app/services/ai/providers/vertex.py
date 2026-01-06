@@ -11,6 +11,7 @@ import tempfile
 import os
 from typing import Optional
 
+import google.auth
 import vertexai
 from vertexai.generative_models import (
     GenerativeModel,
@@ -22,6 +23,36 @@ from vertexai.generative_models import (
 
 from app.services.ai.base import AIProvider, AIResponse
 from app.core.config import settings
+
+
+def _resolve_project_id() -> str:
+    """
+    Resolve Google Cloud project ID with fallback chain.
+
+    Priority:
+    1. Explicit GOOGLE_PROJECT_ID env var / settings
+    2. Auto-detect from ADC (Application Default Credentials)
+
+    This makes Cloud Run deployments work automatically without
+    requiring explicit configuration.
+    """
+    # Try explicit config first
+    if settings.GOOGLE_PROJECT_ID:
+        return settings.GOOGLE_PROJECT_ID
+
+    # Fallback: infer from ADC (works in Cloud Run natively)
+    try:
+        _, project = google.auth.default()
+        if project:
+            return project
+    except Exception:
+        pass
+
+    raise ValueError(
+        "Could not determine Google Cloud project ID. "
+        "Set GOOGLE_PROJECT_ID environment variable or ensure "
+        "Application Default Credentials are configured."
+    )
 
 
 class VertexAIProvider(AIProvider):
@@ -77,14 +108,8 @@ class VertexAIProvider(AIProvider):
 
         # Initialize Vertex AI SDK once per process
         if not VertexAIProvider._initialized:
-            project = settings.GOOGLE_PROJECT_ID
+            project = _resolve_project_id()
             location = settings.GOOGLE_LOCATION
-
-            if not project:
-                raise ValueError(
-                    "GOOGLE_PROJECT_ID is not configured. "
-                    "Set it in environment or config for Vertex AI."
-                )
 
             vertexai.init(project=project, location=location)
             VertexAIProvider._initialized = True

@@ -14,6 +14,26 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.5] - 2026-01-06 🔧 HOTFIX: RESILIENT AI & UX UPLOAD
+
+> **Theme:** "Resilient Infrastructure" — ADC auto-inference and upload feedback.
+
+### 🔧 Vertex AI Resilience
+
+- **Auto-Inference:** `VertexAIProvider` now auto-detects `GOOGLE_PROJECT_ID` from ADC
+- **Fallback Chain:** 1) Explicit env var → 2) `google.auth.default()` credentials
+- **Zero-Config Cloud Run:** Service works without explicit `GOOGLE_PROJECT_ID` config
+- **Error Clarity:** Improved error message when neither config source is available
+
+### 🎨 Upload UX (Ghost Upload Fix)
+
+- **Visual Spinner:** Added animated loading spinner during file upload
+- **Button State:** Upload button disabled and dimmed while uploading
+- **Dynamic Text:** "Subir Archivo" → "Subiendo..." during upload
+- **i18n Complete:** Added `uploading` key to ES and EN locales
+
+---
+
 ## [1.4.4] - 2026-01-06 🧠 NATIVE INTELLIGENCE
 
 > **Theme:** "Native Intelligence" — ADR-021 Vertex AI Native Prompt Engineering.

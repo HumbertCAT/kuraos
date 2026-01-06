@@ -195,6 +195,7 @@
     "noEntries": "No entries yet. Add your first note above.",
     "addNote": "Add Note",
     "uploadFile": "Upload File",
+    "uploading": "Uploading...",
     "notePlaceholder": "Write a session note...",
     "confirmDeleteEntry": "Delete this entry?",
     "entryTypes": {
