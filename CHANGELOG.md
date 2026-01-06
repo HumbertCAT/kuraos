@@ -41,7 +41,37 @@ Complete automation of referral rewards. No more emails to support.
 ### 📊 New API Fields
 - `GET /growth/stats` → `bonus_patient_slots`, `credits_earned`
 
+### 🎨 Admin Panel: Nested Routes
+Complete routing refactor from query params to clean URLs.
+
+| Before | After |
+|:---|:---|
+| `/admin?tab=aigov` | `/admin/aigov/financials` |
+| `/admin?tab=tiers` | `/admin/tiers` |
+| `/admin?tab=orgs` | `/admin/orgs` |
+
+**Structure:**
+- `layout.tsx` with sidebar navigation
+- Self-contained section pages with own data loading
+- AIGov tabs sync with URL (router.push)
+
+### 🔤 Typography System
+- Added `.type-h3`, `.type-h4` semantic tokens
+- Normalized section titles in Referrals page
+
+### 🎁 Karma Redemption API
+- `POST /growth/redeem` endpoint with REWARD_CATALOG
+- Frontend integration in RewardsCatalog.tsx
+- Real-time feedback (loading, success, error states)
+
+### 📊 Orgs Table Clarity
+Split AI USE column:
+- **€ EUR**: Real provider cost (KC/1000)
+- **Tokens**: Token count
+- **KC**: Kura Credits consumed
+
 ---
+
 
 ## [1.3.6] - 2026-01-06 🧾 NO FREE TOKENS
 
