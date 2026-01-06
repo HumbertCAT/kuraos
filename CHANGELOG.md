@@ -14,6 +14,36 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.9.3] - 2026-01-06 🧠 COGNITIVE IMMUNITY
+
+> **Theme:** "Phase 3: AI Semantic Testing" — Vertex AI as judge for AletheIA clinical quality.
+
+### 🔬 Vertex AI Gen AI Evaluation
+AI semantic testing infrastructure using Gemini 1.5 Pro as clinical quality judge.
+
+| Achievement | Details |
+|:---|:---|
+| **Golden Dataset** | 3 synthetic clinical cases |
+| **Vertex AI Judge** | Gemini 1.5 Pro evaluates quality |
+| **GDPR Compliant** | `europe-west1` location enforced |
+| **CI/CD Ready** | Exit codes 0 (pass) / 1 (fail) |
+
+### 📊 Golden Dataset Cases
+- **Case 1 (High Risk):** Suicidal ideation → `risk_score > 70`, CRITICAL flag
+- **Case 2 (Integration):** Post-retreat healthy → `risk_score < 40`
+- **Case 3 (Minimal):** Mild anxiety → `risk_score < 30`
+
+### 🔧 Implementation
+- **`evaluate_aletheia.py`:** Main evaluation script (7.3K, async-compatible)
+- **Quality Threshold:** 0.8 (maps to 4/5 rating)
+- **Structured Prompts:** Clinical rubrics for semantic validation
+- **Async Support:** Compatible with `AletheiaService.analyze_note()`
+
+### 📦 Dependencies
+- Added `google-cloud-aiplatform>=1.40.0`
+
+---
+
 ## [1.3.9.2] - 2026-01-06 🦠 ADAPTIVE IMMUNITY
 
 > **Theme:** "Phase 2: Frontend E2E" — Playwright tests with auth bypass and hydration markers.
