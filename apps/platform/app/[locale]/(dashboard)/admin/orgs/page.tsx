@@ -62,22 +62,25 @@ export default function OrgsPage() {
         return String(n);
     };
 
-    const getCostSemaphore = (costEur: number, tier: string): string => {
+    // Note: ai_usage_cost_eur actually contains KC value (legacy naming)
+    // Real EUR cost = KC / 1000
+    const getCostSemaphore = (kcValue: number, tier: string): string => {
+        const eurCost = kcValue / 1000;
         const monthlyPrice = TIER_PRICES[tier] || 0;
         if (monthlyPrice === 0) return '🔴';
         const dayOfMonth = new Date().getDate();
         const proratedBudget = (monthlyPrice / 30) * dayOfMonth;
-        const ratio = costEur / proratedBudget;
+        const ratio = eurCost / proratedBudget;
         if (ratio > 1) return '🔴';
-        if (ratio >= 0.5) return '��';
+        if (ratio >= 0.5) return '🟠';
         if (ratio >= 0.1) return '🟡';
         return '🟢';
     };
 
-    const formatKC = (eurCost: number): string => {
-        const kc = Math.round(eurCost * 1000);
-        if (kc >= 1000) return `${Math.round(kc / 1000)}K`;
-        return String(kc);
+    // KC value displayed directly (field already in KC despite name)
+    const formatKC = (kcValue: number): string => {
+        if (kcValue >= 1000) return `${Math.round(kcValue / 1000)}K`;
+        return Math.round(kcValue).toString();
     };
 
     if (loading) {
@@ -132,7 +135,7 @@ export default function OrgsPage() {
                                 <td className="px-4 py-4 text-sm text-foreground/70 text-center">{org.patient_count}</td>
                                 <td className="px-4 py-4 text-right">
                                     <span className="font-mono text-sm text-foreground whitespace-nowrap">
-                                        {org.ai_usage_cost_eur.toFixed(4).replace('.', ',')}€ {getCostSemaphore(org.ai_usage_cost_eur, org.tier)}
+                                        {(org.ai_usage_cost_eur / 1000).toFixed(4).replace('.', ',')}€ {getCostSemaphore(org.ai_usage_cost_eur, org.tier)}
                                     </span>
                                 </td>
                                 <td className="px-4 py-4 text-right">
