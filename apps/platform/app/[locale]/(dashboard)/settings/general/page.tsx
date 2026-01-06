@@ -537,69 +537,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Admin Tools (superuser only) */}
-        {user?.is_superuser && (
-          <div className="card rounded-2xl border-warning/30 overflow-hidden">
-            <div className="bg-gradient-to-r from-warning to-warning/80 px-6 py-4">
-              <div className="flex items-center gap-3">
-                <Shield className="w-6 h-6 text-black" />
-                <div>
-                  <h2 className="text-lg font-semibold text-black">Admin Tools</h2>
-                  <p className="text-black/70 text-sm">Herramientas de administración del sistema</p>
-                </div>
-              </div>
-            </div>
 
-            <div className="p-6 space-y-4">
-              {/* Force Conversation Analysis */}
-              <div className="p-5 bg-muted rounded-xl border border-border">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-warning/20 shadow-sm flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-warning" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Forzar Análisis AletheIA</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Ejecuta el análisis de conversaciones WhatsApp inmediatamente para todas las fichas con mensajes nuevos.
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={async () => {
-                      try {
-                        setLoading(true);
-                        const res = await fetch(`${API_URL}/admin/trigger-conversation-analysis`, {
-                          method: 'POST',
-                          credentials: 'include',
-                        });
-                        if (res.ok) {
-                          const data = await res.json();
-                          setSuccess(`✅ Análisis completado: ${data.result?.analyzed || 0} fichas analizadas`);
-                        } else {
-                          setError('Error al ejecutar análisis');
-                        }
-                      } catch (err) {
-                        setError('Error de conexión');
-                      } finally {
-                        setLoading(false);
-                      }
-                    }}
-                    disabled={loading}
-                    className="px-5 py-2.5 bg-warning text-black rounded-xl hover:bg-warning/90 transition-colors flex items-center gap-2 font-medium disabled:opacity-50 shadow-sm"
-                  >
-                    {loading ? (
-                      <span className="animate-spin">⏳</span>
-                    ) : (
-                      <Zap className="w-4 h-4" />
-                    )}
-                    Ejecutar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Save Button */}
         <div className="flex justify-end pt-4">

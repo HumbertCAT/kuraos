@@ -6,7 +6,7 @@
  * Admin interface for managing the Multi-Model Intelligence Engine.
  * Features: Financial HUD, Model Registry, Activity Ledger, Task Routing.
  * 
- * Organized into 4 tabs: Financials | Activity | Models | Routing
+ * Organized into 5 tabs: Financials | Activity | Models | Routing | Run
  */
 
 import { useState, useEffect } from 'react';
@@ -18,6 +18,7 @@ import {
     Activity,
     Zap,
     Settings,
+    Play,
     RefreshCw,
     Check,
     X
@@ -214,7 +215,7 @@ const DEFAULT_MODELS: ModelInfo[] = [
 
 const COMPANION_MODELS = ['whisper-1', 'whisper'];
 
-type TabId = 'financials' | 'activity' | 'models' | 'routing';
+type TabId = 'financials' | 'activity' | 'models' | 'routing' | 'run';
 
 interface AiGovernanceProps {
     defaultSection?: TabId;
@@ -335,6 +336,7 @@ export default function AiGovernance({ defaultSection = 'financials' }: AiGovern
         { id: 'activity', label: 'Activity', icon: Activity },
         { id: 'models', label: 'Models', icon: Zap },
         { id: 'routing', label: 'Routing', icon: Settings },
+        { id: 'run', label: 'Run', icon: Play },
     ];
 
     return (
