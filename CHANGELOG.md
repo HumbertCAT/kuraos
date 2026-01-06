@@ -14,6 +14,29 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.4] - 2026-01-06 🧠 NATIVE INTELLIGENCE
+
+> **Theme:** "Native Intelligence" — ADR-021 Vertex AI Native Prompt Engineering.
+
+### 🎯 ADR-021: Native Prompt Engineering
+
+- **Jinja2 Templates:** Created 7 versioned templates in `templates/` directory
+  - `clinical_v1`, `audio_v1`, `document_v1`, `form_v1`, `triage_v1`, `chat_v1`, `help_v1`
+- **`system_instruction` Native:** VertexAIProvider now uses Vertex AI's native parameter
+- **Template Renderer:** New `render.py` with `get_system_prompt()` function
+- **Factory Integration:** `get_provider_for_task()` renders templates automatically
+- **Backwards Compatibility:** Legacy callers still work via parameter fallback
+
+### 📈 Benefits
+
+| Before (v1.4.2) | After (v1.4.4) |
+|-----------------|----------------|
+| Prompt concatenated as user content | Native system_instruction |
+| Lower attention weight | Higher model adherence |
+| Vulnerable to jailbreaks | Better safety boundary |
+
+---
+
 ## [1.4.2] - 2026-01-06 🎧 DEEP LISTENING
 
 > **Theme:** "Deep Listening" — Large audio support and smart test generation.

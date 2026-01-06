@@ -21,12 +21,15 @@ class ProviderFactory:
     """
 
     @classmethod
-    def get_provider(cls, model_spec: str) -> "AIProvider":
+    def get_provider(
+        cls, model_spec: str, system_instruction: str = None
+    ) -> "AIProvider":
         """
         Get AI provider instance for the given model specification.
 
         Args:
             model_spec: Model identifier in 'provider:model' or legacy format
+            system_instruction: Native system instruction for model (ADR-021)
 
         Returns:
             Configured AIProvider instance
@@ -55,7 +58,7 @@ class ProviderFactory:
         if settings.VERTEX_AI_ENABLED and provider_name == "gemini":
             from app.services.ai.providers.vertex import VertexAIProvider
 
-            return VertexAIProvider(full_model)
+            return VertexAIProvider(full_model, system_instruction=system_instruction)
 
         # Legacy path: Direct API via google-generativeai
         from app.services.ai.providers.gemini import GeminiProvider
@@ -154,16 +157,17 @@ class ProviderFactory:
         cls,
         task_type: str,
         db_session=None,
+        prompt_context: dict = None,
     ) -> "AIProvider":
         """
         Get the configured AI provider for a specific task type.
 
-        Reads from AI_TASK_ROUTING in system_settings.
-        Falls back to gemini-2.5-flash if task not configured.
+        v1.4.4: Now renders system_instruction from Jinja2 templates.
 
         Args:
             task_type: The task type (e.g., 'clinical_analysis', 'chat', 'triage')
             db_session: Optional database session (creates one if not provided)
+            prompt_context: Variables to inject into prompt template
 
         Returns:
             Configured AIProvider instance for the task
@@ -212,7 +216,12 @@ class ProviderFactory:
                 f"Failed to load task routing, using default: {e}"
             )
 
-        return cls.get_provider(model_id)
+        # v1.4.4: Render system instruction from template
+        from app.services.ai.render import get_system_prompt
+
+        system_instruction = get_system_prompt(task_type, prompt_context)
+
+        return cls.get_provider(model_id, system_instruction=system_instruction)
 
     @classmethod
     async def get_routing_config(cls, db_session=None) -> dict:

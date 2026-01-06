@@ -63,14 +63,16 @@ class VertexAIProvider(AIProvider):
 
     _initialized = False
 
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, system_instruction: Optional[str] = None):
         """
         Initialize Vertex AI provider with specified model.
 
         Args:
             model_name: Full model name (e.g., 'gemini-2.5-flash')
+            system_instruction: Native system instruction for model persona (ADR-021)
         """
         self._model_name = model_name
+        self._system_instruction = system_instruction
         self._model: Optional[GenerativeModel] = None
 
         # Initialize Vertex AI SDK once per process
@@ -89,10 +91,11 @@ class VertexAIProvider(AIProvider):
 
     @property
     def model(self) -> GenerativeModel:
-        """Lazy-load the GenerativeModel."""
+        """Lazy-load the GenerativeModel with optional system instruction."""
         if self._model is None:
             self._model = GenerativeModel(
                 model_name=self._model_name,
+                system_instruction=self._system_instruction,  # ADR-021: Native
                 safety_settings=[
                     SafetySetting(
                         category=HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -139,19 +142,33 @@ class VertexAIProvider(AIProvider):
             {"input": 0.10, "output": 0.40},  # Default fallback
         )
 
-    async def analyze_text(self, content: str, system_prompt: str) -> AIResponse:
+    async def analyze_text(self, content: str, system_prompt: str = None) -> AIResponse:
         """
         Analyze text content with system prompt.
 
+        v1.4.4: Supports two patterns:
+        - NATIVE: system_instruction set in constructor (preferred)
+        - LEGACY: system_prompt passed as parameter (backwards compat)
+
         Args:
             content: Text to analyze
-            system_prompt: System instructions
+            system_prompt: System instructions (optional if using native)
 
         Returns:
             AIResponse with analysis and token counts
         """
-        # Vertex AI uses generate_content_async for async
-        response = await self.model.generate_content_async([system_prompt, content])
+        # Build content parts
+        if self._system_instruction:
+            # ADR-021: System instruction is native, just send content
+            parts = [content]
+        elif system_prompt:
+            # Legacy: concatenate prompt with content
+            parts = [system_prompt, content]
+        else:
+            # No instruction at all
+            parts = [content]
+
+        response = await self.model.generate_content_async(parts)
 
         # Extract token counts from usage metadata
         usage = response.usage_metadata

@@ -34,3 +34,5 @@ opentelemetry-api>=1.20.0
 opentelemetry-sdk>=1.20.0
 opentelemetry-exporter-gcp-trace>=1.6.0
 opentelemetry-instrumentation-fastapi>=0.41b0
+# v1.4.4: ADR-021 Native Prompt Engineering
+Jinja2>=3.1.0
