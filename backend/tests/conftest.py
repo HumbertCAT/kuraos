@@ -19,6 +19,8 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngin
 from sqlalchemy.orm import sessionmaker
 
 from testcontainers.postgres import PostgresContainer
+from testcontainers.core.generic import DockerContainer
+import requests
 
 from app.db.base import Base, get_db, set_engine, reset_engine
 from app.db.models import Organization, User
@@ -211,3 +213,79 @@ async def auth_client(
     """Authenticated client with headers pre-set."""
     client.headers.update(auth_headers)
     yield client
+
+
+# =============================================================================
+# Phase 5: Communication Immunity - Mailpit Email Testing
+# =============================================================================
+
+
+@pytest.fixture(scope="session")
+def mailpit_container():
+    """
+    Start Mailpit container for email testing.
+
+    Mailpit captures SMTP emails and provides REST API for inspection.
+    Ports are dynamically mapped by testcontainers - use get_mapped_port().
+    """
+    mailpit = DockerContainer("axllent/mailpit:latest")
+    mailpit.with_exposed_ports(1025, 8025)  # SMTP and API
+
+    with mailpit:
+        yield mailpit
+
+
+@pytest.fixture(scope="session")
+def mailpit_smtp_port(mailpit_container) -> int:
+    """Get dynamically mapped SMTP port for mailpit."""
+    return mailpit_container.get_exposed_port(1025)
+
+
+@pytest.fixture(scope="session")
+def mailpit_api_url(mailpit_container) -> str:
+    """
+    Get Mailpit API URL with dynamically mapped port.
+
+    CRITICAL: Do NOT hardcode port 8025.
+    Testcontainers assigns random ports (e.g. 32768) to avoid conflicts.
+    """
+    api_port = mailpit_container.get_exposed_port(8025)
+    return f"http://localhost:{api_port}"
+
+
+@pytest.fixture(scope="function")
+def mailpit_client(mailpit_api_url: str):
+    """
+    REST API client for querying captured emails.
+
+    Usage:
+        emails = mailpit_client.get_messages()
+        assert len(emails) == 1
+        assert emails[0]['Subject'] == 'Password Reset'
+    """
+
+    class MailpitClient:
+        def __init__(self, base_url: str):
+            self.base_url = base_url
+
+        def get_messages(self) -> list:
+            """Get all captured messages."""
+            response = requests.get(f"{self.base_url}/api/v1/messages")
+            response.raise_for_status()
+            data = response.json()
+            return data.get("messages", [])
+
+        def get_message(self, message_id: str) -> dict:
+            """Get a specific message by ID with full body."""
+            response = requests.get(f"{self.base_url}/api/v1/message/{message_id}")
+            response.raise_for_status()
+            return response.json()
+
+        def delete_all(self):
+            """Clear all messages (cleanup)."""
+            requests.delete(f"{self.base_url}/api/v1/messages")
+
+    client = MailpitClient(mailpit_api_url)
+    client.delete_all()  # Start clean
+    yield client
+    client.delete_all()  # Cleanup after test
