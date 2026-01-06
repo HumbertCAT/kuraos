@@ -1,8 +1,8 @@
 # Product Roadmap
 
-> **Status**: Living Document (v1.3.6)  
+> **Status**: Living Document (v1.3.9)  
 > **Scope**: Strategic Feature Planning 2026  
-> **Last Updated**: 2026-01-06 (v1.3.6 Release)
+> **Last Updated**: 2026-01-06 (AletheIA Cerebral Upgrade)
 
 ---
 
@@ -87,6 +87,89 @@ Features prioritizadas por:
   3. **Certificar:** Generar PDF "Certificate of Erasure" como prueba legal.
 
 **Prioridad:** 🟠 HIGH
+
+---
+
+### TIER 1.7: Q1-Q2 2026 (AletheIA Cerebral Upgrade) 🧠
+
+> **Theme:** "From Wrapper to Engine" — Transforming Kura from an AI consumer to an AI producer.
+
+#### 1.7.1 AutoSxS Model Evaluation Framework
+**ADR:** [ADR-015](./docs/architecture/decisions/ADR-015-autosxs-model-evaluation.md)  
+**Esfuerzo:** 2 semanas  
+**Impacto:** Data-Driven Model Selection
+
+**Contexto:** Actualmente seleccionamos modelos por intuición. Necesitamos evaluación científica.
+
+**Implementación:**
+- Vertex AI AutoSxS para comparación automatizada
+- Golden Datasets por AletheIA Unit (SENTINEL, ORACLE, etc.)
+- Win Rate metrics + explicaciones en lenguaje natural
+- Promotion Gate: Modelo candidato debe superar baseline
+
+**Prioridad:** 🟠 HIGH (Foundation for all AI improvements)
+
+---
+
+#### 1.7.2 Next-Gen Shield (Intelligent Safety + DLP)
+**ADR:** [ADR-016](./docs/architecture/decisions/ADR-016-content-safety-and-dlp.md)  
+**Esfuerzo:** 3 semanas  
+**Impacto:** HIPAA/GDPR Compliance + Clinical Safety
+
+**Contexto:** El Shield actual usa regex/listas negras. Fallos críticos en contexto clínico.
+
+**Implementación:**
+- **Layer 1 (Privacy):** Cloud DLP sanitiza PII antes del LLM
+- **Layer 2 (Safety):** Vertex AI Safety Attributes detecta intención, no palabras
+- Umbrales diferenciados: SENTINEL permite leer riesgo, bloquea generar daño
+- InfoTypes españoles: DNI/NIE, direcciones, teléfonos
+
+**Prioridad:** 🔴 CRITICAL (Bloqueante para Enterprise)
+
+---
+
+#### 1.7.3 Model Distillation Factory (SFT)
+**ADR:** [ADR-017](./docs/architecture/decisions/ADR-017-supervised-fine-tuning.md)  
+**Esfuerzo:** 6 semanas (ongoing)  
+**Impacto:** 10x Cost Reduction + Proprietary IP
+
+**Contexto:** Usamos modelos genéricos caros. Podemos entrenar especialistas con nuestros datos.
+
+**Implementación:**
+- LoRA Fine-Tuning sobre Gemini 2.5 Flash
+- Naming: `kura-oracle-v2`, `kura-sentinel-v2`, etc.
+- Ciclo virtuoso: Producción → Correcciones → Dataset → Retrain → Evaluación
+- CorrectionCollector captura ediciones de terapeutas
+
+| Unit | Base Model | Target Model | Objetivo |
+|------|------------|--------------|----------|
+| ORACLE | Flash 2.5 | `kura-oracle-v2` | Terminología DSM-5/CIE-11 |
+| SENTINEL | Pro 2.5 | `kura-sentinel-v2` | Zero-tolerance falsos negativos |
+| PULSE | Flash 2.5 | `kura-pulse-v2` | Tono cálido + sin alucinaciones médicas |
+
+**Prioridad:** 🟠 HIGH (Competitive Moat)
+
+---
+
+#### 1.7.4 Clinical RAG Engine (Vector Search + Grounding)
+**ADR:** [ADR-018](./docs/architecture/decisions/ADR-018-vector-search-memory.md)  
+**Esfuerzo:** 4 semanas  
+**Impacto:** Infinite Clinical Memory
+
+**Contexto:** Los LLMs olvidan todo al cerrar sesión ("Amnesia Clínica").
+
+**Implementación:**
+- Vertex AI Vector Search con Hybrid Search (semántico + keywords)
+- Ranking API elimina falsos positivos vectoriales
+- Streaming Updates: memoria disponible en ~2 segundos
+- Grounding: El LLM responde basado en documentos, no imaginación
+
+**Arquitectura:**
+```
+Query → Embedding → Vector Search (50 candidates) → Reranker → Top 5 → LLM
+```
+
+**Prioridad:** 🟠 HIGH (Enables Long-Term Therapeutic Continuity)
 
 ---
 
@@ -200,8 +283,13 @@ Features prioritizadas por:
 2026
 ├── Q1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 │   ├── [3w] WhatsApp Business Migration
-│   ├── [3w] WhatsApp Business Migration
-│   └── [DONE] v1.3.6 Operation Open Heart (Async Refactor)
+│   ├── [2w] 🧠 AutoSxS Evaluation Framework (ADR-015)
+│   ├── [3w] 🛡️ Next-Gen Shield (ADR-016)
+│   └── [DONE] v1.3.9 Testing Sovereignty
+│
+├── Q1-Q2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+│   ├── [6w] 🧬 Model Distillation Factory (ADR-017)
+│   └── [4w] 🧠 Clinical RAG Engine (ADR-018)
 │
 ├── Q2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 │   ├── [6w] Membership Builder
@@ -252,6 +340,10 @@ Features prioritizadas por:
 | [ADR-006: Smart Prescriptions](./docs/architecture/decisions/ADR-006-smart-prescriptions.md) | PLANNED | Q2 |
 | [ADR-007: The Mirror](./docs/architecture/decisions/ADR-007-the-mirror.md) | PLANNED | Q3 |
 | [ADR-008: Time Capsule](./docs/architecture/decisions/ADR-008-time-capsule.md) | PLANNED | Q4 |
+| [ADR-015: AutoSxS Evaluation](./docs/architecture/decisions/ADR-015-autosxs-model-evaluation.md) | 🆕 PROPOSED | Q1 |
+| [ADR-016: Next-Gen Shield](./docs/architecture/decisions/ADR-016-content-safety-and-dlp.md) | 🆕 PROPOSED | Q1 |
+| [ADR-017: Model Distillation](./docs/architecture/decisions/ADR-017-supervised-fine-tuning.md) | 🆕 PROPOSED | Q1-Q2 |
+| [ADR-018: Clinical RAG](./docs/architecture/decisions/ADR-018-vector-search-memory.md) | 🆕 PROPOSED | Q1-Q2 |
 
 ---
 
