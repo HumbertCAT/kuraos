@@ -23,22 +23,8 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
-## 🍄 GROWTH ENGINE (The Mycelium Debt)
 
-> [!IMPORTANT]
-> v1.2.0 migrated to EUR-based spending, but manual "Soporte" interventions remain a significant bottleneck.
 
-### Manual Workarounds (The "Soporte" Bottleneck)
-
-| Feature | Current State | Blocker | Required Implementation |
-|:---|:---|:---|:---|
-| **Reward Redemption** | 🟡 `mailto` to support | No API | `POST /api/v1/growth/redeem` |
-| **+1 Patient Slot** | 🟡 Manual request | No DB logic | `UPDATE organizations SET max_patients +=1` |
-| **Feature Unlock** | 🟡 Manual override | No flags | Feature flag system in `system_settings` |
-| **AI Spend Grant** | 🟡 Manual increase | No logic | `UPDATE organizations SET ai_spend_limit += X` |
-| **Redemption History** | ❌ Missing entirely | No table | New table `karma_redemptions` |
-
----
 
 ## 🎨 UI/UX & Design System Sovereignty
 
