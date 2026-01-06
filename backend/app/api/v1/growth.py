@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base import get_db
-from app.db.models import Organization, User
+from app.db.models import Organization, User, ReferralConversion
 from app.api.deps import get_current_user
 
 router = APIRouter()
@@ -40,6 +40,8 @@ class ReferralStatsResponse(BaseModel):
     total_referred: int
     total_active: int
     current_karma: int
+    bonus_patient_slots: int  # v1.3.7: Extra slots from referrals
+    credits_earned: float  # v1.3.7: Total KC earned from referrals
     referral_code: str
     referral_history: List[ReferredOrgSummary]
 
@@ -97,10 +99,22 @@ async def get_referral_stats(
         for org in referred_orgs
     ]
 
+    # v1.3.7: Get total credits earned from conversions
+    from sqlalchemy import func
+
+    credits_result = await db.execute(
+        select(func.sum(ReferralConversion.credits_awarded)).where(
+            ReferralConversion.referrer_org_id == current_user.organization_id
+        )
+    )
+    credits_earned = float(credits_result.scalar() or 0)
+
     return ReferralStatsResponse(
         total_referred=len(referred_orgs),
-        total_active=len([o for o in referred_orgs]),  # All active for now
+        total_active=len([o for o in referred_orgs if o.tier.value != "BUILDER"]),
         current_karma=current_org.karma_score,
+        bonus_patient_slots=current_org.bonus_patient_slots,
+        credits_earned=credits_earned,
         referral_code=current_org.referral_code or "",
         referral_history=referral_history,
     )

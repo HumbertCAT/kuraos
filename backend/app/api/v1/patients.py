@@ -158,9 +158,12 @@ async def create_patient(
     if org:
         # Get limit from system_settings based on tier
         tier_limit_key = f"TIER_USERS_LIMIT_{org.tier.value}"
-        limit = await get_setting_int(
+        tier_limit = await get_setting_int(
             db, tier_limit_key, 999
         )  # Default high if not set
+
+        # Add bonus slots from referrals (v1.3.7 Mycelium Engine)
+        limit = tier_limit + org.bonus_patient_slots
 
         # Count current active patients
         patient_count_result = await db.execute(

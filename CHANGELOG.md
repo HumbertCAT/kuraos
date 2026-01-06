@@ -14,6 +14,35 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.7] - 2026-01-06 🍄 THE MYCELIUM ENGINE
+
+> **Theme:** "Automated Viral Loop" — Close the referral circuit with zero manual intervention.
+
+### 🌱 Growth Engine Automation
+Complete automation of referral rewards. No more emails to support.
+
+**When a referred user registers:**
+- **Referrer receives:** +10,000 Kura Credits (~10€) + 1 bonus patient slot
+- **Referee receives:** +50 Karma welcome bonus
+
+| Component | Change |
+|:---|:---|
+| `referral_conversions` | New table tracking successful referrals |
+| `bonus_patient_slots` | New field in `organizations` |
+| `growth.py` service | Automated reward injection |
+| `auth.py` | Trigger on registration |
+| `patients.py` | Limit now includes bonus slots |
+| `/growth/stats` | Returns KC earned + bonus slots |
+
+### 🔧 Technical
+- **Negative Ledger Trick:** Credit grants use `-cost_user_credits` (accounting "haber")
+- **Fraud Note:** Trigger on `register()` (v1.4 will move to first payment)
+
+### 📊 New API Fields
+- `GET /growth/stats` → `bonus_patient_slots`, `credits_earned`
+
+---
+
 ## [1.3.6] - 2026-01-06 🧾 NO FREE TOKENS
 
 > **Theme:** "Financial Integrity & Model Accuracy"

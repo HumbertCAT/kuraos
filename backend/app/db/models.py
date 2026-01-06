@@ -218,6 +218,21 @@ class DatasetType(str, enum.Enum):
     CHAT_ANALYSIS = "CHAT_ANALYSIS"
 
 
+class RewardType(str, enum.Enum):
+    """Type of referral reward granted (v1.3.7)."""
+
+    CREDITS = "CREDITS"
+    SLOT = "SLOT"
+    BOTH = "BOTH"
+
+
+class ConversionStatus(str, enum.Enum):
+    """Status of referral conversion payment (v1.3.7)."""
+
+    PENDING = "PENDING"
+    PAID = "PAID"
+
+
 # ============ ASSOCIATION TABLES ============
 
 # Many-to-many: Which therapists can offer which services
@@ -251,6 +266,7 @@ class Organization(Base):
         ForeignKey("organizations.id"), nullable=True
     )
     karma_score: Mapped[int] = mapped_column(Integer, default=0)
+    bonus_patient_slots: Mapped[int] = mapped_column(Integer, default=0)  # v1.3.7
 
     # Subscription tier
     tier: Mapped[OrgTier] = mapped_column(Enum(OrgTier), default=OrgTier.BUILDER)
@@ -1591,4 +1607,49 @@ class AnonymousDataset(Base):
     # Timestamp (deliberately NOT linked to any patient event)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class ReferralConversion(Base):
+    """Tracks successful referral conversions and reward payouts (v1.3.7).
+
+    The Mycelium Engine: When a referred organization activates,
+    this record is created and both parties receive rewards.
+    """
+
+    __tablename__ = "referral_conversions"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+
+    # The organization that sent the referral
+    referrer_org_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("organizations.id", ondelete="CASCADE"), index=True
+    )
+
+    # The new organization that signed up with the referral code
+    referee_org_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("organizations.id", ondelete="CASCADE"), unique=True
+    )
+
+    # What type of reward was granted
+    reward_type: Mapped[RewardType] = mapped_column(
+        Enum(RewardType), default=RewardType.BOTH
+    )
+
+    # How many Kura Credits were awarded
+    credits_awarded: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+
+    # Status of the reward
+    status: Mapped[ConversionStatus] = mapped_column(
+        Enum(ConversionStatus), default=ConversionStatus.PENDING
+    )
+
+    # When the referee completed registration
+    converted_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    # When the rewards were actually paid out
+    paid_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
     )

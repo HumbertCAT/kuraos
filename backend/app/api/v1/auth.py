@@ -81,11 +81,6 @@ async def register(
     db.add(org)
     await db.flush()  # Get org.id before creating user
 
-    # Reward the referrer with Karma Points
-    if referring_org:
-        referring_org.karma_score += 100
-        db.add(referring_org)
-
     # Create owner user
     user = User(
         email=request.email,
@@ -98,6 +93,12 @@ async def register(
     await db.commit()
     await db.refresh(user)
     await db.refresh(org)
+
+    # v1.3.7: Process referral rewards (Mycelium Engine)
+    # Grants 10K KC + 1 patient slot to the referrer
+    from app.services.growth import process_referral_conversion
+
+    await process_referral_conversion(db, org)
 
     # Create JWT token
     access_token = create_access_token(
