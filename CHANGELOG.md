@@ -14,6 +14,31 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.8] - 2026-01-06 🏛️ COCKPIT SOVEREIGNTY
+
+> **Theme:** "Admin Panel Maturity" — Nested routes, tracking tables, and documentation hygiene.
+
+### 🐛 Bug Fixes
+- **Negative KC Display**: Fixed admin Orgs table showing negative credits from grant entries
+  - Added `WHERE cost_user_credits >= 0` filter in `admin.py` usage queries
+
+### 🆕 New Features
+- **Karma Redemption Tracking**: New `karma_redemptions` table + `RedemptionType` enum
+  - All redemptions now logged for auditing
+
+### 🔧 Infrastructure
+- **`backup_db.sh`**: Now uses environment variables (`POSTGRES_USER`, `POSTGRES_DB`, `DOCKER_SERVICE`)
+  - Defaults: `postgres` / `therapistos` / `db` for local Docker
+
+### 📚 Documentation
+- **`infrastructure-and-deploy.md`**: Verified via gcloud CLI
+  - Artifact Registry: `cloud-run-source-deploy` (not `kura-repo`)
+  - Secrets: 17 (not 12)
+- **`generator-protocol.md`**: Added "API Refactor Audit" to Pre-Flight Checks
+- **`technical-debt.md`**: Cleaned up resolved items, now only 1 critical item (Testing)
+
+---
+
 ## [1.3.7] - 2026-01-06 🍄 THE MYCELIUM ENGINE
 
 > **Theme:** "Automated Viral Loop" — Close the referral circuit with zero manual intervention.
