@@ -1,26 +1,25 @@
 """Admin Backup API endpoints (Super Admin only).
 
 Provides REST endpoints for database backup/restore operations via the Admin panel.
+Backups are stored in Google Cloud Storage (kura-production-vault) for persistence.
 """
 
 import os
 import subprocess
-import glob
+import tempfile
 from datetime import datetime
 from typing import List
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 from app.db.base import get_db
 from app.api.deps import get_current_user, require_super_admin
 from app.db.models import User
+from app.services.storage import vault_storage, StorageFile
 
 router = APIRouter(prefix="/admin/backups", tags=["admin-backups"])
-
-# Backup directory (relative to backend container)
-BACKUP_DIR = Path("/app/backups")
 
 
 class BackupInfo(BaseModel):
@@ -38,7 +37,7 @@ class BackupListResponse(BaseModel):
 
     backups: List[BackupInfo]
     total_count: int
-    backup_dir: str
+    storage_location: str
 
 
 class BackupCreateResponse(BaseModel):
@@ -48,6 +47,7 @@ class BackupCreateResponse(BaseModel):
     filename: str
     size_human: str
     message: str
+    gcs_uri: str
 
 
 class RestoreRequest(BaseModel):
@@ -64,48 +64,31 @@ class RestoreResponse(BaseModel):
     message: str
 
 
-def get_human_size(size_bytes: int) -> str:
-    """Convert bytes to human-readable size."""
-    for unit in ["B", "KB", "MB", "GB"]:
-        if size_bytes < 1024:
-            return f"{size_bytes:.1f}{unit}"
-        size_bytes /= 1024
-    return f"{size_bytes:.1f}TB"
-
-
 @router.get("", response_model=BackupListResponse)
 async def list_backups(current_user: User = Depends(require_super_admin)):
-    """List available backup files (Super Admin only)."""
+    """List available backup files from GCS vault (Super Admin only)."""
 
-    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        gcs_files = vault_storage.list_backups()
 
-    backups = []
-    backup_files = sorted(
-        glob.glob(str(BACKUP_DIR / "backup_*.sql.gz")),
-        key=os.path.getmtime,
-        reverse=True,
-    )
-
-    now = datetime.now()
-
-    for filepath in backup_files:
-        stat = os.stat(filepath)
-        created = datetime.fromtimestamp(stat.st_mtime)
-        age_hours = (now - created).total_seconds() / 3600
-
-        backups.append(
+        backups = [
             BackupInfo(
-                filename=os.path.basename(filepath),
-                size_bytes=stat.st_size,
-                size_human=get_human_size(stat.st_size),
-                created_at=created.isoformat(),
-                age_hours=round(age_hours, 1),
+                filename=f.name,
+                size_bytes=f.size_bytes,
+                size_human=f.size_human,
+                created_at=f.created_at,
+                age_hours=f.age_hours,
             )
-        )
+            for f in gcs_files
+        ]
 
-    return BackupListResponse(
-        backups=backups, total_count=len(backups), backup_dir=str(BACKUP_DIR)
-    )
+        return BackupListResponse(
+            backups=backups,
+            total_count=len(backups),
+            storage_location="gs://kura-production-vault/backups/",
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listing backups: {str(e)}")
 
 
 def _parse_database_url() -> dict:
@@ -134,13 +117,10 @@ def _parse_database_url() -> dict:
         }
 
     # Use regex to parse URL with potentially special chars in password
-    # Format: scheme://user:password@host:port/dbname?query
-    # Cloud SQL format: scheme://user:password@/dbname?host=/cloudsql/...
     pattern = r"^(?:postgresql\+asyncpg|postgresql)://([^:]+):([^@]+)@([^/:]*)?(?::(\d+))?/([^?]+)(?:\?(.*))?$"
     match = re.match(pattern, database_url)
 
     if not match:
-        # Fallback for unexpected format
         return {
             "host": "localhost",
             "port": "5432",
@@ -171,18 +151,19 @@ def _parse_database_url() -> dict:
 
 @router.post("/create", response_model=BackupCreateResponse)
 async def create_backup(current_user: User = Depends(require_super_admin)):
-    """Create a new database backup (Super Admin only)."""
-
-    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+    """Create a new database backup and upload to GCS vault (Super Admin only)."""
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
     filename = f"backup_{timestamp}.sql.gz"
-    filepath = BACKUP_DIR / filename
 
     # Get database connection details
     db_config = _parse_database_url()
 
     try:
+        # Create temp file for the backup
+        with tempfile.NamedTemporaryFile(suffix=".sql.gz", delete=False) as temp_file:
+            temp_path = temp_file.name
+
         # Run pg_dump
         env = os.environ.copy()
         env["PGPASSWORD"] = db_config["password"]
@@ -200,10 +181,8 @@ async def create_backup(current_user: User = Depends(require_super_admin)):
 
         # Use socket or host depending on environment
         if db_config["socket_path"]:
-            # Cloud SQL Unix socket
             pg_dump_cmd.extend(["-h", db_config["socket_path"]])
         else:
-            # TCP connection (localhost/Docker)
             pg_dump_cmd.extend(["-h", db_config["host"]])
             pg_dump_cmd.extend(["-p", db_config["port"]])
 
@@ -214,8 +193,8 @@ async def create_backup(current_user: User = Depends(require_super_admin)):
             env=env,
         )
 
-        # Pipe to gzip
-        with open(filepath, "wb") as f:
+        # Pipe to gzip and save to temp file
+        with open(temp_path, "wb") as f:
             gzip = subprocess.Popen(
                 ["gzip"], stdin=pg_dump.stdout, stdout=f, stderr=subprocess.PIPE
             )
@@ -224,35 +203,62 @@ async def create_backup(current_user: User = Depends(require_super_admin)):
         pg_dump.wait()
 
         if pg_dump.returncode != 0:
+            stderr = (
+                pg_dump.stderr.read().decode() if pg_dump.stderr else "Unknown error"
+            )
             raise HTTPException(
                 status_code=500,
-                detail=f"pg_dump failed: {pg_dump.stderr.read().decode()}",
+                detail=f"pg_dump failed: {stderr}",
             )
 
         # Verify file was created and has content
-        if not filepath.exists() or filepath.stat().st_size < 100:
+        file_size = os.path.getsize(temp_path)
+        if file_size < 100:
             raise HTTPException(
                 status_code=500, detail="Backup file creation failed or file is empty"
             )
 
-        size_human = get_human_size(filepath.stat().st_size)
+        # Upload to GCS
+        with open(temp_path, "rb") as f:
+            gcs_uri = vault_storage.upload_backup(f, filename)
+
+        # Get size for response
+        size_human = _get_human_size(file_size)
+
+        # Clean up temp file
+        os.unlink(temp_path)
 
         return BackupCreateResponse(
             success=True,
             filename=filename,
             size_human=size_human,
-            message=f"Backup created successfully: {filename} ({size_human})",
+            gcs_uri=gcs_uri,
+            message=f"Backup created and uploaded to vault: {filename} ({size_human})",
         )
 
+    except HTTPException:
+        raise
     except Exception as e:
+        # Clean up temp file on error
+        if "temp_path" in locals() and os.path.exists(temp_path):
+            os.unlink(temp_path)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+def _get_human_size(size_bytes: int) -> str:
+    """Convert bytes to human-readable size."""
+    for unit in ["B", "KB", "MB", "GB"]:
+        if size_bytes < 1024:
+            return f"{size_bytes:.1f}{unit}"
+        size_bytes /= 1024
+    return f"{size_bytes:.1f}TB"
 
 
 @router.post("/restore", response_model=RestoreResponse)
 async def restore_backup(
     request: RestoreRequest, current_user: User = Depends(require_super_admin)
 ):
-    """Restore database from backup (Super Admin only).
+    """Restore database from backup in GCS vault (Super Admin only).
 
     WARNING: This will overwrite the current database!
     """
@@ -262,11 +268,15 @@ async def restore_backup(
             status_code=400, detail="You must set confirm=true to proceed with restore"
         )
 
-    filepath = BACKUP_DIR / request.filename
+    # Validate filename
+    if not _is_valid_backup_filename(request.filename):
+        raise HTTPException(status_code=400, detail="Invalid backup filename")
 
-    if not filepath.exists():
+    # Check if backup exists in GCS
+    if not vault_storage.backup_exists(request.filename):
         raise HTTPException(
-            status_code=404, detail=f"Backup file not found: {request.filename}"
+            status_code=404,
+            detail=f"Backup file not found in vault: {request.filename}",
         )
 
     # Get database connection details
@@ -282,11 +292,18 @@ async def restore_backup(
         return args
 
     try:
+        # Download backup from GCS to temp file
+        backup_data = vault_storage.download_backup(request.filename)
+
+        with tempfile.NamedTemporaryFile(suffix=".sql.gz", delete=False) as temp_file:
+            temp_file.write(backup_data)
+            temp_path = temp_file.name
+
         env = os.environ.copy()
         env["PGPASSWORD"] = db_config["password"]
 
         # Terminate existing connections
-        terminate_cmd = subprocess.run(
+        subprocess.run(
             get_psql_args("postgres")
             + [
                 "-c",
@@ -324,7 +341,7 @@ async def restore_backup(
 
         # Restore data
         gunzip = subprocess.Popen(
-            ["gunzip", "-c", str(filepath)],
+            ["gunzip", "-c", temp_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
@@ -340,6 +357,9 @@ async def restore_backup(
         restore.communicate()
         gunzip.wait()
 
+        # Clean up temp file
+        os.unlink(temp_path)
+
         if restore.returncode != 0:
             raise HTTPException(status_code=500, detail="Restore command failed")
 
@@ -348,7 +368,12 @@ async def restore_backup(
             message=f"Database restored successfully from {request.filename}. Please refresh your browser.",
         )
 
+    except HTTPException:
+        raise
     except Exception as e:
+        # Clean up temp file on error
+        if "temp_path" in locals() and os.path.exists(temp_path):
+            os.unlink(temp_path)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -356,20 +381,17 @@ async def restore_backup(
 async def delete_backup(
     filename: str, current_user: User = Depends(require_super_admin)
 ):
-    """Delete a backup file (Super Admin only)."""
+    """Delete a backup file from GCS vault (Super Admin only)."""
 
     # Security: Validate filename to prevent path traversal
     if not _is_valid_backup_filename(filename):
         raise HTTPException(status_code=400, detail="Invalid backup filename")
 
-    filepath = BACKUP_DIR / filename
-
-    if not filepath.exists():
-        raise HTTPException(status_code=404, detail="Backup not found")
-
     try:
-        filepath.unlink()
-        return {"success": True, "message": f"Deleted {filename}"}
+        vault_storage.delete_backup(filename)
+        return {"success": True, "message": f"Deleted {filename} from vault"}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Backup not found in vault")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -392,22 +414,19 @@ def _is_valid_backup_filename(filename: str) -> bool:
 async def download_backup(
     filename: str, current_user: User = Depends(require_super_admin)
 ):
-    """Download a backup file (Super Admin only).
+    """Get a signed URL to download a backup file (Super Admin only).
 
-    CRITICAL: This allows saving backups to local machine since
-    Cloud Run has ephemeral storage that can be wiped on restart.
+    Returns a redirect to a time-limited signed URL for secure download.
     """
-    from fastapi.responses import FileResponse
 
     # Security: Validate filename
     if not _is_valid_backup_filename(filename):
         raise HTTPException(status_code=400, detail="Invalid backup filename")
 
-    filepath = BACKUP_DIR / filename
-
-    if not filepath.exists():
-        raise HTTPException(status_code=404, detail="Backup not found")
-
-    return FileResponse(
-        path=str(filepath), filename=filename, media_type="application/gzip"
-    )
+    try:
+        signed_url = vault_storage.generate_signed_url(filename, expiration_minutes=15)
+        return RedirectResponse(url=signed_url, status_code=302)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Backup not found in vault")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

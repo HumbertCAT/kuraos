@@ -14,6 +14,42 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.12] - 2026-01-06 🔒 THE VAULT
+
+> **Theme:** "Persistent Storage" — Backups now survive container restarts via GCS.
+
+### 🛡️ Storage Architecture
+
+**Problem Solved:**
+- Backups were stored in `/app/backups` (ephemeral Cloud Run storage)
+- They were lost on every container restart or deploy
+
+**New Architecture:**
+- Created `gs://kura-production-vault` bucket (private, encrypted)
+- Backups now stored persistently in GCS
+- 30-day lifecycle rule for automatic cleanup
+
+### 🔧 Backend Changes
+
+**New Service:**
+- `backend/app/services/storage.py` - `StorageService` class for GCS operations
+
+**Refactored:**
+- `admin_backups.py` - Now uses GCS instead of local filesystem
+- Downloads via signed URLs (15min expiry)
+
+### 🏗️ Infrastructure
+
+| Resource | Configuration |
+|----------|---------------|
+| Bucket | `gs://kura-production-vault` |
+| Region | `europe-west1` |
+| Access | Uniform (no ACLs) |
+| Public | Blocked |
+| Lifecycle | Delete after 30 days |
+
+---
+
 ## [1.3.11] - 2026-01-06 🧹 THE CLEANUP
 
 > **Theme:** "Refactor First, Migrate Second" — Centralizing AI calls via ProviderFactory before Vertex AI migration.
