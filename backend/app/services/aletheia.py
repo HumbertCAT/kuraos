@@ -314,6 +314,14 @@ class AletheIA:
             content,
         ])
 
+        # v1.3.5: Log usage for form analysis (SENTINEL on triage, SCAN on normal)
+        task = (
+            "triage"
+            if (is_flagged or requires_review or risk_flags)
+            else "form_analysis"
+        )
+        await self._log_ai_usage(response, task)
+
         return response.text
 
     async def _analyze_audio(self, entry: ClinicalEntry) -> str:
@@ -542,6 +550,9 @@ Responde SOLO con el JSON, sin texto adicional."""
             # Run Gemini in thread pool to not block event loop
             response = await asyncio.to_thread(model.generate_content, [prompt])
 
+            # v1.3.5: Log usage for NOW briefing
+            await self._log_ai_usage(response, "briefing", model._model_name)
+
             # Parse JSON from response
             json_text = response.text.strip()
 
@@ -663,6 +674,9 @@ EXAMPLE OUTPUT JSON:
                     temperature=0.3,
                 ),
             )
+
+            # v1.3.5: Log usage for PULSE chat analysis
+            await self._log_ai_usage(response, "chat", model._model_name)
 
             import json
 

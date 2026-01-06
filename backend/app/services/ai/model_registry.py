@@ -82,7 +82,7 @@ EU_GEMINI_MODELS: list[AvailableModel] = [
         cost_output=0.40,
     ),
     AvailableModel(
-        id="gemini-3-pro",
+        id="gemini-3-pro-preview",
         provider="vertex-google",
         name="Gemini 3 Pro",
         capabilities=ModelCapabilities(
@@ -90,6 +90,16 @@ EU_GEMINI_MODELS: list[AvailableModel] = [
         ),
         cost_input=2.00,
         cost_output=12.00,
+    ),
+    AvailableModel(
+        id="gemini-3-flash-preview",
+        provider="vertex-google",
+        name="Gemini 3 Flash",
+        capabilities=ModelCapabilities(
+            supports_audio=True, supports_vision=True, max_tokens=1048576
+        ),
+        cost_input=0.50,
+        cost_output=3.00,
     ),
 ]
 

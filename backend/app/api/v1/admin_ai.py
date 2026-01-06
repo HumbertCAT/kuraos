@@ -482,10 +482,10 @@ async def update_task_routing(
     setting = result.scalar_one_or_none()
 
     if setting:
-        # Merge updates
-        current_routing = setting.value or {}
+        # v1.3.5 FIX: Create new dict to trigger SQLAlchemy JSONB change detection
+        current_routing = dict(setting.value or {})
         current_routing.update(update.routing)
-        setting.value = current_routing
+        setting.value = current_routing  # Assign new dict, not mutate in-place
     else:
         # Create new
         new_setting = SystemSetting(

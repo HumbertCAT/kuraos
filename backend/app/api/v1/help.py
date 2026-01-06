@@ -72,6 +72,54 @@ def log_query_background(
         db.close()
 
 
+def log_ai_usage_background(
+    org_id,
+    user_id,
+    model_id: str,
+    tokens_in: int,
+    tokens_out: int,
+):
+    """
+    Log AI usage for HELPER in background task.
+
+    v1.3.5: Free for user (cost_user_credits=0) but tracks real provider cost.
+    """
+    import uuid
+    from decimal import Decimal
+    from app.db.models import AiUsageLog
+    from app.services.ai.ledger import CostLedger
+
+    db: Session = SyncSessionLocal()
+    try:
+        pricing = CostLedger.PRICING.get(model_id, CostLedger.DEFAULT_PRICING)
+        cost_provider = (Decimal(tokens_in) / Decimal("1000000")) * pricing["input"] + (
+            Decimal(tokens_out) / Decimal("1000000")
+        ) * pricing["output"]
+
+        log = AiUsageLog(
+            id=uuid.uuid4(),
+            organization_id=org_id,
+            user_id=user_id,
+            provider="vertex-google",
+            model_id=model_id,
+            task_type="help_bot",
+            tokens_input=tokens_in,
+            tokens_output=tokens_out,
+            cost_provider_usd=float(cost_provider),
+            cost_user_credits=0.0,  # Free for user
+        )
+        db.add(log)
+        db.commit()
+        logger.info(
+            f"Logged HELPER usage: {tokens_in}+{tokens_out} tokens, €{cost_provider:.6f}"
+        )
+    except Exception as e:
+        logger.error(f"Failed to log HELPER usage: {e}")
+        db.rollback()
+    finally:
+        db.close()
+
+
 @router.post("/chat", response_model=HelpChatResponse)
 async def chat_with_assistant(
     request: HelpChatRequest,
@@ -100,8 +148,8 @@ async def chat_with_assistant(
     if request.history:
         history = [{"role": m.role, "content": m.content} for m in request.history]
 
-    # Call Gemini 2.5 Flash
-    response = await help_assistant.chat(
+    # Call Gemini (returns tuple: text, tokens_in, tokens_out, model_id)
+    result = await help_assistant.chat(
         message=request.message,
         locale=current_user.locale or "es",
         user_name=current_user.full_name or "Usuario",
@@ -110,7 +158,22 @@ async def chat_with_assistant(
         history=history,
     )
 
-    return HelpChatResponse(response=response)
+    # v1.3.5: Unpack result and log AI usage (free for user, cost for us)
+    if isinstance(result, tuple):
+        response_text, tokens_in, tokens_out, model_id = result
+        # Log in background (non-blocking, sync session)
+        background_tasks.add_task(
+            log_ai_usage_background,
+            org_id=current_user.organization_id,
+            user_id=current_user.id,
+            model_id=model_id,
+            tokens_in=tokens_in,
+            tokens_out=tokens_out,
+        )
+    else:
+        response_text = result  # Fallback for error cases
+
+    return HelpChatResponse(response=response_text)
 
 
 def detect_topic(message: str) -> Optional[str]:

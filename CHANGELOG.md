@@ -14,12 +14,45 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.6] - 2026-01-06 🧾 NO FREE TOKENS
+
+> **Theme:** "Financial Integrity & Model Accuracy"
+
+### 💰 Ledger Coverage: 8/8 Units Logging
+All AI operations now tracked in Activity Ledger for complete cost visibility.
+
+| Unit | Task Type | Cost Tracking |
+|------|-----------|---------------|
+| ORACLE | `clinical_analysis` | ✅ Billable |
+| SENTINEL | `triage` | ✅ Billable |
+| NOW | `briefing` | ✅ Billable |
+| PULSE | `chat` | ✅ Billable |
+| VOICE | `audio_synthesis` | ✅ Billable |
+| SCAN | `document_analysis` / `form_analysis` | ✅ Billable |
+| SCRIBE | `transcription` | ✅ Billable |
+| HELPER | `help_bot` | 🆓 Free (cost tracked internally) |
+
+### 🔧 Model Registry Fixes
+- Fixed JSONB mutation detection bug in Task Routing save
+- Corrected Gemini 3 Pro ID: `gemini-3-pro-preview`
+- Added Gemini 3 Flash: `gemini-3-flash-preview`
+- Synchronized pricing between `model_registry.py` and `ledger.py`
+
+### 📊 Technical
+- Added `_log_ai_usage()` calls to `generate_patient_insights` (NOW)
+- Added `_log_ai_usage()` calls to `analyze_chat_transcript` (PULSE)
+- Added `_log_ai_usage()` calls to `_analyze_form_submission` (SENTINEL)
+- Added `log_ai_usage_background()` to `help.py` (HELPER with KC=0)
+- Modified `help_assistant.py` to return token counts for logging
+
+---
+
 ## [1.3.5] - 2026-01-06 🫀 OPEN HEART REFACTOR
 
 > **Theme:** "Total Governance & Async Architecture"
 
 ### 🏗️ Core Architecture (The Full Circuit)
-Completed the migration to the "Model Garden" architecture. 100% of AI tasks are now routed dynamically through the Admin Governance panel.
+Completed the migration to prepare forthe "Model Garden" architecture. 100% of AI tasks are now routed dynamically through the Admin Governance panel.
 
 - **Global Singleton Removed**: `AletheiaService` no longer locks a single model at startup. It now requests models Just-In-Time (JIT) per task.
 - **Async Transformation**: `analyze_chat_transcript` and the WhatsApp pipeline converted to `async/await` to prevent server blocking during high-traffic chat analysis.

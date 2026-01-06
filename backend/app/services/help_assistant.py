@@ -79,8 +79,11 @@ class HelpAssistant:
         model: str,
         system_prompt: str,
         contents: list,
-    ) -> str:
-        """Synchronous Gemini call (runs in thread pool)."""
+    ) -> tuple:
+        """Synchronous Gemini call (runs in thread pool).
+
+        v1.3.5: Returns (text, tokens_in, tokens_out, model_id) for logging.
+        """
         response = self.client.models.generate_content(
             model=model,
             contents=contents,
@@ -90,7 +93,14 @@ class HelpAssistant:
                 max_output_tokens=300,
             ),
         )
-        return response.text or "Lo siento, no pude generar una respuesta."
+        text = response.text or "Lo siento, no pude generar una respuesta."
+
+        # Extract token counts for logging
+        usage = getattr(response, "usage_metadata", None)
+        tokens_in = getattr(usage, "prompt_token_count", 0) if usage else 0
+        tokens_out = getattr(usage, "candidates_token_count", 0) if usage else 0
+
+        return (text, tokens_in, tokens_out, model)
 
     async def chat(
         self,

@@ -78,15 +78,16 @@ class CostLedger:
     # Source: https://cloud.google.com/vertex-ai/generative-ai/pricing
     # Note: These are TEXT prices. Audio input is typically higher.
     PRICING = {
-        # Gemini 3.x models (Latest - December 2025)
-        "gemini-3-pro": {"input": Decimal("2.00"), "output": Decimal("12.00")},
+        # Gemini 3.x models (Latest - January 2026)
+        "gemini-3-pro-preview": {"input": Decimal("2.00"), "output": Decimal("12.00")},
+        "gemini-3-flash-preview": {"input": Decimal("0.50"), "output": Decimal("3.00")},
         # Gemini 2.5 models
         "gemini-2.5-pro": {"input": Decimal("1.25"), "output": Decimal("10.00")},
         "gemini-2.5-flash": {"input": Decimal("0.15"), "output": Decimal("0.60")},
-        "gemini-2.5-flash-lite": {"input": Decimal("0.10"), "output": Decimal("0.40")},
+        "gemini-2.5-flash-lite": {"input": Decimal("0.075"), "output": Decimal("0.30")},
         # Gemini 2.0 models (Legacy)
         "gemini-2.0-flash": {"input": Decimal("0.10"), "output": Decimal("0.40")},
-        "gemini-2.0-flash-lite": {"input": Decimal("0.075"), "output": Decimal("0.30")},
+        "gemini-2.0-flash-lite": {"input": Decimal("0.05"), "output": Decimal("0.20")},
         # Vertex AI Speech (Chirp) - per 15 seconds of audio
         "chirp-2": {"input": Decimal("0.016"), "output": Decimal("0")},
         # OpenAI Whisper - $0.006 per minute = $0.0001 per second
