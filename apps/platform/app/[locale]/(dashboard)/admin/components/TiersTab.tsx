@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save } from 'lucide-react';
+import { Save, Users, Cpu, DollarSign } from 'lucide-react';
 import { api } from '@/lib/api';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kuraos.ai/api/v1';
 
 interface SystemSetting {
     key: string;
@@ -34,7 +36,7 @@ interface TiersTabProps {
     onSettingsChange: () => void;
 }
 
-function TiersTab({ settings, onSettingsChange }: TiersTabProps) {
+export function TiersTab({ settings, onSettingsChange }: TiersTabProps) {
     const [activeTier, setActiveTier] = useState<TierType>('BUILDER');
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
