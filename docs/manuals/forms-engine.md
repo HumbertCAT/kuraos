@@ -1,6 +1,6 @@
 # Forms System - How To Guide
 
-Internal documentation for the TherapistOS forms system.
+Internal documentation for the Kura OS forms system.
 
 ---
 
@@ -254,3 +254,7 @@ form_assignments
 2. **CRITICAL forms**: Cannot be made public - require patient assignment
 3. **Tokens**: Form access tokens are URL-safe, unique, and have expiration
 4. **Multi-tenancy**: All queries filter by `organization_id`
+
+---
+
+*Last updated: 2026-01-06*
