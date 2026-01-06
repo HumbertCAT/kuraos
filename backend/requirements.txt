@@ -31,3 +31,4 @@ tenacity>=8.0.0
 testcontainers>=4.0.0
 factory-boy>=3.3.0
 faker>=22.0.0
+google-cloud-aiplatform>=1.40.0

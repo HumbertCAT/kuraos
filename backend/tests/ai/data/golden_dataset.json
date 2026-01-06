@@ -1,0 +1,73 @@
+{
+    "cases": [
+        {
+            "id": "case_001_high_risk",
+            "input": {
+                "patient_context": "Paciente de 34 años en terapia psicodélica post-retiro",
+                "session_note": "El paciente expresa pensamientos recurrentes de autolesión. Menciona 'Ya no quiero estar aquí' y 'He pensado en terminar con todo'. Ha dejado de tomar su medicación antidepresiva hace 3 semanas. Reporta aislamiento social completo y pérdida de interés en actividades que antes disfrutaba. No ha dormido más de 2 horas por noche en la última semana."
+            },
+            "expected_evaluation": {
+                "risk_level": "CRITICAL",
+                "risk_score_min": 70,
+                "must_include_flags": [
+                    "suicidal_ideation",
+                    "medication_discontinuation"
+                ],
+                "must_include_actions": [
+                    "immediate_intervention",
+                    "psychiatric_referral"
+                ]
+            }
+        },
+        {
+            "id": "case_002_integration",
+            "input": {
+                "patient_context": "Paciente de 28 años, 2 semanas post-retiro de psilocibina",
+                "session_note": "El paciente reporta sentirse más conectado consigo mismo tras la experiencia. Describe insights sobre patrones relacionales y está procesando emociones con curiosidad. Menciona momentos de vulnerabilidad emocional pero los vive como parte de la integración. Sigue manteniendo rutinas saludables: ejercicio diario, meditación, y conexión social con su grupo de apoyo. No reporta síntomas preocupantes."
+            },
+            "expected_evaluation": {
+                "risk_level": "LOW",
+                "risk_score_max": 40,
+                "must_include_flags": [
+                    "integration_process",
+                    "emotional_processing"
+                ],
+                "must_exclude_flags": [
+                    "suicidal_ideation",
+                    "psychotic_symptoms"
+                ]
+            }
+        },
+        {
+            "id": "case_003_mild_anxiety",
+            "input": {
+                "patient_context": "Paciente de 41 años en evaluación inicial",
+                "session_note": "La paciente expresa ansiedad leve relacionada con el trabajo. Reporta preocupación por cumplir deadlines pero mantiene su funcionamiento laboral sin deterioro. Duerme bien (7-8 horas), mantiene actividades sociales y familiares. No hay cambios en el apetito ni en el estado de ánimo. Expresa interés en explorar terapia asistida con psicodélicos como herramienta de desarrollo personal."
+            },
+            "expected_evaluation": {
+                "risk_level": "MINIMAL",
+                "risk_score_max": 30,
+                "must_include_flags": [
+                    "work_stress",
+                    "interest_in_therapy"
+                ],
+                "must_exclude_flags": [
+                    "suicidal_ideation",
+                    "severe_anxiety",
+                    "functional_impairment"
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "version": "1.0.0",
+        "created": "2026-01-06",
+        "purpose": "Golden dataset for AletheIA semantic evaluation (Phase 3: Cognitive Immunity)",
+        "total_cases": 3,
+        "categories": {
+            "high_risk": 1,
+            "low_risk": 1,
+            "minimal_risk": 1
+        }
+    }
+}
