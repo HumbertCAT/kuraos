@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🆕 New Features
 - **Karma Redemption Tracking**: New `karma_redemptions` table + `RedemptionType` enum
   - All redemptions now logged for auditing
+- **AIGov Run Page**: Moved Admin Tools from `/settings/general` to `/admin/aigov/run`
+  - Force analysis trigger with execution duration and last run timestamp
+  - Play icon tab in AIGov navigation
+- **Redemption History UI**: New component showing karma spend history
+  - `GET /growth/redemptions` API endpoint
+  - Integrated into `/settings/referrals` page
 
 ### 🔧 Infrastructure
 - **`backup_db.sh`**: Now uses environment variables (`POSTGRES_USER`, `POSTGRES_DB`, `DOCKER_SERVICE`)
