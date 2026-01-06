@@ -258,7 +258,7 @@ function RunTabContent() {
                             <Zap className="w-6 h-6 text-warning" />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-foreground text-lg">Force AletheIA Analysis</h3>
+                            <h3 className="font-semibold text-foreground text-lg">Force AletheIA Pulse</h3>
                             <p className="text-sm text-muted-foreground mt-1">
                                 Trigger WhatsApp conversation analysis for all patient records with new messages.
                             </p>
