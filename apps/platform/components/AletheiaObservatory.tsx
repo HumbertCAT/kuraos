@@ -178,10 +178,11 @@ export default function AletheiaObservatory() {
                     {/* HEADER - Global Mode */}
                     <div className="border-b border-sidebar-border pb-3 pl-6">
                         <div className="flex items-center gap-2 text-ai mb-1">
-                            <Radio size={14} className="animate-pulse" />
-                            <span className="type-ui tracking-widest uppercase">Clinic Radar</span>
+                            <Sparkles size={14} className="animate-pulse" />
+                            <span className="text-xs font-bold tracking-[0.2em] uppercase">AletheIA</span>
+                            <span className="text-xs font-light tracking-wider text-muted-foreground italic">Global</span>
                         </div>
-                        <p className="type-body text-muted-foreground">Global monitoring active</p>
+                        <p className="text-xs text-muted-foreground">Monitoreo activo de clínica</p>
                     </div>
 
                     {/* Briefing Player removed - stays only in Dashboard Hero (v1.0.5.4.1) */}
@@ -444,10 +445,11 @@ export default function AletheiaObservatory() {
             <div className="border-b border-sidebar-border pb-4 pl-6">
                 <div className="flex items-center gap-2 text-ai mb-1">
                     <BrainCircuit size={14} />
-                    <span className="type-body font-bold tracking-widest uppercase">AletheIA Observatory</span>
+                    <span className="text-xs font-bold tracking-[0.2em] uppercase">AletheIA</span>
+                    <span className="text-xs font-light tracking-wider text-muted-foreground italic">Paciente</span>
                 </div>
-                <p className="type-body text-muted-foreground">
-                    Active: {patientName}
+                <p className="text-xs text-muted-foreground">
+                    Activo: {patientName}
                 </p>
             </div>
 
