@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     GOOGLE_API_KEY: Optional[str] = None
     AI_MODEL: str = "gemini-2.5-flash"  # Options: gemini-2.5-flash, gemini-2.5-pro, gemini-2.0-flash-exp
     GOOGLE_PROJECT_ID: Optional[str] = None
-    GOOGLE_LOCATION: str = "us-central1"
+    GOOGLE_LOCATION: str = "europe-west1"
 
     # v1.1.1 Intelligence Engine settings
     VERTEX_AI_ENABLED: bool = True  # Enable Vertex AI Model Garden

@@ -38,8 +38,8 @@ class ProviderFactory:
             >>> ProviderFactory.get_provider('gemini:2.5-flash')
             >>> ProviderFactory.get_provider('gemini-2.5-flash')  # backwards compat
         """
-        # Lazy import to avoid circular dependencies
-        from app.services.ai.providers.gemini import GeminiProvider
+        # Lazy imports to avoid circular dependencies
+        from app.core.config import settings
 
         # Parse model specification
         if ":" in model_spec:
@@ -51,7 +51,16 @@ class ProviderFactory:
             full_model = model_spec
             provider_name = model_spec.split("-")[0]
 
-        # Provider registry
+        # v1.4.0: Route Gemini models through Vertex AI when enabled
+        if settings.VERTEX_AI_ENABLED and provider_name == "gemini":
+            from app.services.ai.providers.vertex import VertexAIProvider
+
+            return VertexAIProvider(full_model)
+
+        # Legacy path: Direct API via google-generativeai
+        from app.services.ai.providers.gemini import GeminiProvider
+
+        # Provider registry (for non-Gemini models in future)
         providers = {
             "gemini": GeminiProvider,
             # Phase 3: Add these when implemented

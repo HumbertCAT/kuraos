@@ -14,24 +14,29 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] - 2026-01-06 🧠 VERTEX AI MIGRATION (Phase 1: Infrastructure)
+## [1.4.0] - 2026-01-06 🧠 VERTEX AI MIGRATION
 
-> **Theme:** "Sovereign AI" — Preparing backend for Vertex AI SDK migration.
+> **Theme:** "Sovereign AI" — Backend now uses Vertex AI SDK with ADC authentication.
 
-### 🔐 IAM Configuration
+### 🔐 Phase 1: Infrastructure
 
 - Assigned `roles/aiplatform.user` to Cloud Run service account
-- Backend can now authenticate to Vertex AI without API keys
+- Promoted `google-cloud-aiplatform>=1.40.0` to production requirements
+- Fixed `GOOGLE_LOCATION` default to `europe-west1`
 
-### 📦 Dependencies
+### 🧠 Phase 2: Provider Migration
 
-- Promoted `google-cloud-aiplatform>=1.40.0` from test to production requirements
-- Ready for SDK adoption in AletheIA providers
+**New Provider:**
+- `VertexAIProvider` using `vertexai` SDK with ADC (no API keys)
+- `provider_id = "vertex_ai"` for observability distinction
 
-### 🎯 Next Phases
+**Factory Integration:**
+- `VERTEX_AI_ENABLED=True` routes Gemini models through Vertex AI
+- Fallback to legacy `GeminiProvider` when disabled
 
-- Phase 2: Migrate `GeminiProvider` from `google-genai` to `aiplatform.preview`
-- Phase 3: Update Task Routing to use Vertex AI model aliases
+### 🎯 Rollback
+
+Set `VERTEX_AI_ENABLED=False` in Cloud Run env vars for instant rollback.
 
 ---
 
