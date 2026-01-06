@@ -100,7 +100,7 @@ def log_ai_usage_background(
             id=uuid.uuid4(),
             organization_id=org_id,
             user_id=user_id,
-            provider="vertex-google",
+            provider="vertex_ai",
             model_id=model_id,
             task_type="help_bot",
             tokens_input=tokens_in,

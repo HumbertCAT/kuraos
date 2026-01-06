@@ -1,25 +1,21 @@
 """
-Help Assistant Service - Gemini 2.5 Flash powered chatbot for user support.
+Help Assistant Service - Vertex AI powered chatbot for user support.
+
+v1.4.1: Migrated from google.genai to ProviderFactory (Vertex AI).
 
 Features:
 - Context-aware assistance (knows current page, user tier)
 - Hallucination-zero: Only answers based on known features
 - Query logging for product analytics
+- AI Governance tracking via ProviderFactory
 """
 
 import logging
-import asyncio
-from typing import Optional, List
-from concurrent.futures import ThreadPoolExecutor
-from google import genai
-from google.genai import types as genai_types
+from typing import Optional, List, Tuple
 
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-
-# Thread pool for running sync Gemini calls
-_executor = ThreadPoolExecutor(max_workers=4)
 
 # System prompt with "hallucination zero" directive
 SYSTEM_PROMPT = """You are KuraOS Support, the technical assistant for TherapistOS (also known as KuraOS).
@@ -48,59 +44,14 @@ USER CONTEXT:
 
 
 class HelpAssistant:
-    """Gemini powered help chatbot with Task Routing support."""
+    """
+    Vertex AI powered help chatbot via ProviderFactory.
 
-    # v1.3.4: Default fallback, actual model comes from Task Routing
-    DEFAULT_MODEL = "gemini-2.5-flash-lite"
-
-    def __init__(self):
-        # Initialize client lazily to avoid import-time issues
-        self._client = None
-
-    @property
-    def client(self):
-        if self._client is None:
-            self._client = genai.Client(api_key=settings.GOOGLE_API_KEY)
-        return self._client
-
-    async def _get_routed_model(self) -> str:
-        """Get model from Task Routing (help_bot task type)."""
-        try:
-            from app.services.ai import ProviderFactory
-
-            routing = await ProviderFactory.get_routing_config()
-            return routing.get("help_bot", self.DEFAULT_MODEL)
-        except Exception as e:
-            logger.warning(f"Failed to get routed model, using default: {e}")
-            return self.DEFAULT_MODEL
-
-    def _sync_generate(
-        self,
-        model: str,
-        system_prompt: str,
-        contents: list,
-    ) -> tuple:
-        """Synchronous Gemini call (runs in thread pool).
-
-        v1.3.5: Returns (text, tokens_in, tokens_out, model_id) for logging.
-        """
-        response = self.client.models.generate_content(
-            model=model,
-            contents=contents,
-            config=genai_types.GenerateContentConfig(
-                system_instruction=system_prompt,
-                temperature=0.3,
-                max_output_tokens=300,
-            ),
-        )
-        text = response.text or "Lo siento, no pude generar una respuesta."
-
-        # Extract token counts for logging
-        usage = getattr(response, "usage_metadata", None)
-        tokens_in = getattr(usage, "prompt_token_count", 0) if usage else 0
-        tokens_out = getattr(usage, "candidates_token_count", 0) if usage else 0
-
-        return (text, tokens_in, tokens_out, model)
+    v1.4.1: Now uses ProviderFactory for:
+    - Vertex AI SDK (ADC authentication)
+    - AI Governance logging
+    - Unified cost tracking
+    """
 
     async def chat(
         self,
@@ -110,16 +61,18 @@ class HelpAssistant:
         tier: str = "BUILDER",
         route: str = "/dashboard",
         history: Optional[List[dict]] = None,
-    ) -> str:
+    ) -> Tuple[str, int, int, str]:
         """
         Generate a response to the user's help query.
 
-        Uses ThreadPoolExecutor to run sync Gemini client without blocking.
-        v1.3.4: Uses Task Routing to get configured model for help_bot.
+        Uses ProviderFactory to route through Vertex AI.
+        Returns tuple for AI usage logging: (text, tokens_in, tokens_out, model_id)
         """
         try:
-            # v1.3.4: Get routed model from Task Routing
-            model = await self._get_routed_model()
+            from app.services.ai import ProviderFactory
+
+            # Get provider for help_bot task (routes through Vertex AI)
+            provider = ProviderFactory.get_provider_for_task("help_bot")
 
             # Build system prompt with context
             system_prompt = SYSTEM_PROMPT.format(
@@ -129,40 +82,47 @@ class HelpAssistant:
                 route=route,
             )
 
-            # Build conversation history
-            contents = []
+            # Build flattened conversation content
+            # (Vertex analyze_text expects a single content string)
+            content_parts = []
 
-            # Add history if provided
+            # Add history as transcript if provided
             if history:
-                for msg in history[-6:]:
-                    role = "user" if msg.get("role") == "user" else "model"
-                    contents.append(
-                        genai_types.Content(
-                            role=role,
-                            parts=[genai_types.Part(text=msg.get("content", ""))],
-                        )
-                    )
+                content_parts.append("[Previous conversation]")
+                for msg in history[-6:]:  # Last 6 messages for context
+                    role = "User" if msg.get("role") == "user" else "Assistant"
+                    content_parts.append(f"{role}: {msg.get('content', '')}")
+                content_parts.append("")  # Blank line separator
 
-            # Add current user message
-            contents.append(
-                genai_types.Content(role="user", parts=[genai_types.Part(text=message)])
+            # Add current query
+            content_parts.append("[Current query]")
+            content_parts.append(f"User: {message}")
+
+            content = "\n".join(content_parts)
+
+            # Call Vertex AI via ProviderFactory
+            response = await provider.analyze_text(
+                content=content,
+                system_prompt=system_prompt,
             )
 
-            # Run sync Gemini call in thread pool to avoid blocking event loop
-            loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(
-                _executor,
-                self._sync_generate,
-                model,
-                system_prompt,
-                contents,
+            # Return tuple for AI usage logging
+            return (
+                response.text,
+                response.tokens_input,
+                response.tokens_output,
+                response.model_id,
             )
-
-            return result
 
         except Exception as e:
             logger.error(f"Help assistant error: {e}")
-            return "Lo siento, hubo un error procesando tu consulta. Por favor, contacta a support@therapistos.com"
+            # Return error message with zero tokens (won't be logged)
+            return (
+                "Lo siento, hubo un error procesando tu consulta. Por favor, contacta a support@therapistos.com",
+                0,
+                0,
+                "error",
+            )
 
 
 # Singleton instance

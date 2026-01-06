@@ -14,6 +14,24 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-01-06 🤖 HELP ASSISTANT SOVEREIGNTY
+
+> **Theme:** "Last Mile" — HelpAssistant chatbot migrated to Vertex AI.
+
+### 🧠 HelpAssistant Migration
+
+- Migrated from direct `google.genai` SDK to `ProviderFactory`
+- Now uses Vertex AI SDK with ADC authentication
+- Appears in AI Governance Activity Ledger with `provider=vertex_ai`
+- Flattened conversation history pattern for context window efficiency
+
+### 📊 Observability
+
+- Help queries now tracked in `ai_usage_logs` with real token counts
+- Cost tracking unified with all other AI features
+
+---
+
 ## [1.4.0] - 2026-01-06 🧠 SOVEREIGN INTELLIGENCE
 
 > **Theme:** "Vertex AI Migration" — From API Keys to IAM Sovereignty.
