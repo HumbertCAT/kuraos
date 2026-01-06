@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Appears in AI Governance Activity Ledger with `provider=vertex_ai`
 - Flattened conversation history pattern for context window efficiency
 
-### 📊 ADR-019: Observability (X-Ray Vision)
+### 📊 ADR-019-Phase1: Observability (X-Ray Vision)
 
 - **Cloud Trace:** Distributed latency tracing for all HTTP requests
 - **Cloud Profiler:** CPU and memory profiling in production
