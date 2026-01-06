@@ -38,8 +38,15 @@ Archivos de contexto que "doman" a la IA para que no olvide las reglas.
 
 ### 2. Validadores Automáticos (Pre-Flight Checks)
 Scripts simples para asegurar calidad antes de la revisión humana.
+
+**Design System Compliance:**
 *   `grep "text-["`: Detectar pixel values prohibidos.
 *   `grep "bg-[#"`: Detectar hex codes arbitrarios.
+
+**API Refactor Audit:**
+Cuando cambias campos de respuesta de API (ej: `patient.ai_insights` → `patient.last_insight_json`):
+*   `grep -r "old_field_name" apps/platform/`: Encontrar consumidores del campo legacy.
+*   Actualizar todos los consumidores antes de hacer commit.
 
 ---
 

@@ -24,22 +24,6 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
-
-
-
-## 🎨 UI/UX & Design System Sovereignty
-
-### 2. Recursive Refactor Fragility
-**Pattern**: API response structure changes
-
-> [!WARNING]
-> Structural changes in API lists (e.g., `Patients`) often break secondary consumers (`RecentPatients.tsx`, `patient-store.ts`) not covered by specific audits.
-
-- **Fix**: Enforce full-codebase audits using `grep` for legacy keys after any structural change.
-- **Estimated Effort**: 2 hours
-
----
-
 ## 📋 Debt Tracking Protocol
 
 1. **NEVER** mark items as "Resolved" here. Move them to the [CHANGELOG](../../CHANGELOG.md).
