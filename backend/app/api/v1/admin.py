@@ -144,6 +144,8 @@ async def list_organizations(
             func.sum(AiUsageLog.cost_user_credits).label("total_cost"),
         )
         .where(AiUsageLog.created_at >= start_of_month)
+        # Exclude credit grants (negative values) from usage calculation
+        .where(AiUsageLog.cost_user_credits >= 0)
         .group_by(AiUsageLog.organization_id)
     )
     usage_map = {row[0]: (row[1] or 0, row[2] or 0.0) for row in usage_result.all()}
@@ -232,6 +234,8 @@ async def update_organization(
         )
         .where(AiUsageLog.organization_id == org.id)
         .where(AiUsageLog.created_at >= thirty_days_ago)
+        # Exclude credit grants (negative values) from usage calculation
+        .where(AiUsageLog.cost_user_credits >= 0)
     )
     usage_row = usage_result.one()
     tokens = usage_row[0] or 0

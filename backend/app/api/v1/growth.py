@@ -245,6 +245,28 @@ async def redeem_reward(
     else:
         reward_desc = reward["name"]
 
+    # Record the redemption for auditing
+    from app.db.models import KarmaRedemption, RedemptionType
+
+    redemption_type_map = {
+        "credits": RedemptionType.AI_TOKENS,
+        "slot": RedemptionType.EXTRA_PATIENT,
+        "feature": RedemptionType.FEATURE,
+    }
+    redemption = KarmaRedemption(
+        organization_id=org.id,
+        user_id=current_user.id,
+        reward_id=request.reward_id,
+        redemption_type=redemption_type_map.get(
+            reward["action"], RedemptionType.AI_TOKENS
+        ),
+        karma_cost=reward["cost"],
+        value_granted=Decimal(str(reward["value"]))
+        if reward["action"] in ["credits", "slot"]
+        else 1,
+    )
+    db.add(redemption)
+
     await db.commit()
     await db.refresh(org)
 

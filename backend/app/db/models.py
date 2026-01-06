@@ -233,6 +233,14 @@ class ConversionStatus(str, enum.Enum):
     PAID = "PAID"
 
 
+class RedemptionType(str, enum.Enum):
+    """Type of karma redemption reward (v1.3.7)."""
+
+    AI_TOKENS = "AI_TOKENS"  # Kura Credits
+    EXTRA_PATIENT = "EXTRA_PATIENT"  # Bonus patient slot
+    FEATURE = "FEATURE"  # Feature unlock
+
+
 # ============ ASSOCIATION TABLES ============
 
 # Many-to-many: Which therapists can offer which services
@@ -1652,4 +1660,43 @@ class ReferralConversion(Base):
     # When the rewards were actually paid out
     paid_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
+    )
+
+
+class KarmaRedemption(Base):
+    """Tracks karma→reward redemptions (v1.3.7).
+
+    When a user redeems karma points for rewards (Kura Credits, patient slots, features),
+    this table records the transaction for auditing and reporting.
+    """
+
+    __tablename__ = "karma_redemptions"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+
+    # The organization redeeming karma
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("organizations.id", ondelete="CASCADE"), index=True
+    )
+
+    # The user who initiated the redemption
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+
+    # Reward catalog ID (e.g. "ai-tokens", "extra-patient")
+    reward_id: Mapped[str] = mapped_column(String(50), index=True)
+
+    # Type of reward
+    redemption_type: Mapped[RedemptionType] = mapped_column(Enum(RedemptionType))
+
+    # Karma cost deducted
+    karma_cost: Mapped[int] = mapped_column(Integer, default=0)
+
+    # Value granted (KC for credits, 1 for slot, etc.)
+    value_granted: Mapped[float] = mapped_column(Numeric(12, 2), default=0)
+
+    # When the redemption occurred
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
     )
