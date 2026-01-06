@@ -42,14 +42,24 @@ class StorageService:
     """Service for interacting with Google Cloud Storage."""
 
     def __init__(self, bucket_name: str = VAULT_BUCKET):
-        """Initialize storage client.
+        """Initialize storage configuration.
 
         In Cloud Run, credentials are automatically provided via the
         service account. Locally, use GOOGLE_APPLICATION_CREDENTIALS.
+
+        Note: Client is lazy-initialized to avoid import-time failures
+        in environments without GCP credentials.
         """
-        self.client = storage.Client()
         self.bucket_name = bucket_name
+        self._client: Optional[storage.Client] = None
         self._bucket: Optional[Bucket] = None
+
+    @property
+    def client(self) -> storage.Client:
+        """Lazy-load GCS client."""
+        if self._client is None:
+            self._client = storage.Client()
+        return self._client
 
     @property
     def bucket(self) -> Bucket:
@@ -201,5 +211,5 @@ class StorageService:
         return blob.exists()
 
 
-# Singleton instance for the vault
+# Singleton instance for the vault (lazy - no client created until first use)
 vault_storage = StorageService(VAULT_BUCKET)
