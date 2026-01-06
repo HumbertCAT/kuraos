@@ -45,6 +45,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Safe exit codes (always exit 0 for pipeline safety)
 - Integrated as Phase 5.5 in `/publish-release` workflow
 
+### 🔊 Large Audio Support (>20MB)
+
+- New `upload_temp_media()` in `vault_storage` for secure temporary uploads
+- Audio files >20MB automatically routed through GCS → Vertex AI
+- Uses Vault bucket (`temp_analysis/`) for clinical data security
+- Files <20MB continue using fast inline path
+
 ---
 
 ## [1.4.0] - 2026-01-06 🧠 SOVEREIGN INTELLIGENCE

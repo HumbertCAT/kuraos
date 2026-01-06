@@ -210,6 +210,25 @@ class StorageService:
         blob = self.bucket.blob(blob_path)
         return blob.exists()
 
+    def upload_temp_media(self, data: bytes, filename: str, content_type: str) -> str:
+        """Upload media file for AI analysis (stored in temp_analysis/).
+
+        Used for large audio/video files that exceed Vertex AI's inline limit.
+        Files in temp_analysis/ should be cleaned up via GCS lifecycle rules.
+
+        Args:
+            data: Raw bytes of the media file
+            filename: Name of the file
+            content_type: MIME type (e.g., audio/webm)
+
+        Returns:
+            GCS URI (gs://bucket/temp_analysis/filename)
+        """
+        blob_path = f"temp_analysis/{filename}"
+        blob = self.bucket.blob(blob_path)
+        blob.upload_from_string(data, content_type=content_type)
+        return f"gs://{self.bucket_name}/{blob_path}"
+
 
 # Singleton instance for the vault (lazy - no client created until first use)
 vault_storage = StorageService(VAULT_BUCKET)

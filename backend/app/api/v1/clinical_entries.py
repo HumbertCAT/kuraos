@@ -415,9 +415,32 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
                         }
                         mime_type = mime_map.get(extension, "audio/webm")
 
-                        response = await provider.analyze_multimodal(
-                            audio_bytes, mime_type, prompt
-                        )
+                        # v1.4.2: Route large files through GCS
+                        LARGE_FILE_THRESHOLD = 20 * 1024 * 1024  # 20MB
+
+                        if len(audio_bytes) > LARGE_FILE_THRESHOLD:
+                            # Large file: upload to Vault first, then reference
+                            from app.services.storage import vault_storage
+                            import logging
+
+                            logging.info(
+                                f"Large audio detected ({len(audio_bytes) / 1024 / 1024:.1f}MB), "
+                                f"routing through GCS"
+                            )
+                            gcs_uri = vault_storage.upload_temp_media(
+                                audio_bytes, filename, mime_type
+                            )
+                            response = await provider.analyze_multimodal(
+                                content=None,  # No inline content
+                                mime_type=mime_type,
+                                prompt=prompt,
+                                gcs_uri=gcs_uri,  # Reference GCS
+                            )
+                        else:
+                            # Small file: inline (fast path)
+                            response = await provider.analyze_multimodal(
+                                audio_bytes, mime_type, prompt
+                            )
                     else:
                         response = AIResponse(
                             text=f"Audio file not found: {filename}",
