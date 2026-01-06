@@ -45,6 +45,12 @@ All AI operations now tracked in Activity Ledger for complete cost visibility.
 - Added `log_ai_usage_background()` to `help.py` (HELPER with KC=0)
 - Modified `help_assistant.py` to return token counts for logging
 
+### 🎨 UI Polish
+- **Dashboard**: Financial cards (Income, Leads, Occupancy) in 3-column grid above Pipeline
+- **VitalSignCard**: Redesigned layout - trend below value, badge floats right
+- **K Format**: Display "10K" instead of "10.0K" for cleaner numbers
+- **AletheIA Headers**: Unified branding - "AletheIA *Global*" / "AletheIA *Paciente*"
+
 ---
 
 ## [1.3.5] - 2026-01-06 🫀 OPEN HEART REFACTOR
