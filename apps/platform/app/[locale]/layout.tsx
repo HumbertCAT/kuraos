@@ -3,6 +3,7 @@ import { getMessages } from 'next-intl/server';
 import { Inter, Space_Grotesk, JetBrains_Mono, Playfair_Display } from "next/font/google";
 import { AuthProvider } from "@/context/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
+import { HydrationMarker } from "@/components/HydrationMarker";
 import "../globals.css";
 
 // Body text - Clean, readable
@@ -45,6 +46,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable} font-body antialiased bg-background text-foreground`}>
+        <HydrationMarker />
         <ThemeProvider>
           <NextIntlClientProvider messages={messages}>
             <AuthProvider>
