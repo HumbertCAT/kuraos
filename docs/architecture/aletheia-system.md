@@ -1,8 +1,8 @@
 # AletheIA System Architecture
 
-> **Status**: Production (v1.1.20)  
-> **Last Updated**: 2026-01-03  
-> **Source of Truth**: This document consolidates all AletheIA documentation.
+> **Status**: Production (v1.3.6)  
+> **Last Updated**: 2026-01-06  
+> **Source of Truth**: Authoritative documentation for the AletheIA Intelligence Engine.
 
 ---
 
@@ -12,81 +12,89 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    ALETHEIA ECOSYSTEM                           │
+│                    ALETHEIA ECOSYSTEM (8 UNITS)                 │
 ├──────────────────┬──────────────────┬───────────────────────────┤
 │   INTELLIGENCE   │   AUTOMATION     │   INTERFACE               │
-│   (Backend)      │   (Agents)       │   (Frontend)              │
+│   (The Core)     │   (The Agents)   │   (The HUD)               │
 ├──────────────────┼──────────────────┼───────────────────────────┤
-│ • Risk Detection │ • Concierge      │ • Sentinel Pulse          │
-│ • Voice Analysis │ • Ghost Detector │ • Focus Session Card      │
-│ • Form Screening │ • Collector      │ • Observatory Sidebar     │
-│ • Cost Tracking  │ • Security Shield│ • Daily Briefing          │
+│ • ORACLE / SCRIBE│ • CONCIERGE      │ • Sentinel Pulse          │
+│ • SENTINEL / NOW │ • GHOST DETECTOR │ • Focus Session Card      │
+│ • PULSE / SCAN   │ • COLLECTOR      │ • Observatory Sidebar     │
+│ • VOICE / HELPER │ • SECURITY SHIELD│ • Daily Briefing          │
 └──────────────────┴──────────────────┴───────────────────────────┘
 ```
 
 ---
 
-## 2. Intelligence Core (Backend)
+## 2. The 8 Units of Intelligence
 
-### 2.1 Provider Factory
-**File**: `backend/app/services/ai/factory.py`
+AletheIA is divided into 8 specialized units, each mapped to specific tasks and routing logic.
 
-```python
-class ProviderFactory:
-    providers = {
-        "gemini": GeminiProvider,
-        # Phase 3: "claude": ClaudeProvider, "llama": LlamaProvider
-    }
-    
-    # Supports: 'gemini:2.5-flash' or 'gemini-2.5-flash'
-    def get_provider(cls, model_spec: str) -> "AIProvider"
-```
-
-### 2.2 Available Models
-**File**: `backend/app/services/ai/providers/gemini.py`
-
-| Model ID | Audio | Input $/1M | Output $/1M |
-|:---|:---:|---:|---:|
-| `gemini-3-pro` | ✅ | $2.00 | $12.00 |
-| `gemini-2.5-pro` | ✅ | $1.25 | $10.00 |
-| `gemini-2.5-flash` ⭐ | ✅ | $0.15 | $0.60 |
-| `gemini-2.5-flash-lite` | ✅ | $0.10 | $0.40 |
-| `gemini-2.0-flash` | ✅ | $0.10 | $0.40 |
-| `whisper-1` (OpenAI) | ✅ | $0.006/min | — |
-| `claude-3-5-sonnet-v2` | ❌ | $3.00 | $15.00 |
-
-⭐ Default model via `settings.AI_MODEL`
-
-### 2.3 The Neural Ledger (FinOps)
-**File**: `backend/app/services/ai/ledger.py`
-
-#### Cost Formula
-```python
-cost_provider = (tokens_input / 1M) × price_in + (tokens_output / 1M) × price_out
-cost_user = cost_provider × margin  # Default: 1.5x (50% gross margin)
-```
-
-#### Usage Tracking
-Every AI call logs to `AiUsageLog`:
-- `tokens_input`, `tokens_output`
-- `cost_provider_usd`, `cost_user_credits`
-- `task_type`: `transcription`, `clinical_analysis`, `chat`, `briefing`
-
-#### Financial Health
-**File**: `backend/app/services/finance/internal_ledger.py`
-
-| Margin % | Status |
-|---:|:---|
-| ≥ 40% | `healthy` |
-| ≥ 20% | `acceptable` |
-| ≥ 0% | `low_margin` |
-| < 0% | `unprofitable` |
+| Unit | Role | Primary Task | Task Routing |
+|:---|:---|:---|:---|
+| **ORACLE** | Clinical Sage | Clinical Analysis | `clinical_analysis` |
+| **SENTINEL** | Safety Guardian| Form Triage | `triage`, `form_analysis` |
+| **NOW** | Morning Pulse | Daily Briefing | `briefing` |
+| **PULSE** | Emotional ECG | Chat Analysis | `chat` |
+| **SCRIBE** | Voice Memory | Transcriptions | `transcription` |
+| **VOICE** | Patient Echo | Audio Synthesis | `audio_synthesis` |
+| **SCAN** | Visual Intake | Document OCR | `document_analysis` |
+| **HELPER** | User Support | Support Assistant| `help_bot` |
 
 ---
 
-## 3. Analysis Protocols
+## 3. Intelligence Core (Backend)
 
-### 3.1 Risk Detection (Keyword-Based)
+### 3.1 Provider Sovereign Architecture (Async)
+**File**: `backend/app/services/aletheia.py`
+
+As of v1.3.5, AletheIA is **strictly asynchronous**. It achieves 100% provider sovereignty via the `ProviderFactory`, which instantiates models Just-In-Time (JIT) based on the current **Task Routing** configuration.
+
+### 3.2 Task Routing & Governance
+The mapping between Clinical Units and LLM Models is managed via the **AiGovernance** panel.
+
+- **Default Routing**: Defined in `seed_routing.py`.
+- **Persistence**: Stored in `SystemSetting` table (`AI_TASK_ROUTING`).
+- **Resolution**: Models are fetched via `ProviderFactory.get_model_for_task(db, task)`.
+
+### 3.3 Available Models
+**File**: `backend/app/services/ai/model_registry.py`
+
+| Model ID | Provider | Tier | Optimized For |
+|:---|:---|:---|:---|
+| `gemini-3-pro-preview` | Vertex AI | CRITICAL | Complex Clinical Analysis (ORACLE) |
+| `gemini-2.5-flash` | Vertex AI | FAST | Transcriptions & Briefing (SCRIBE/NOW) |
+| `gemini-2.5-flash-lite`| Vertex AI | BUDGET | Support & Simple Tasks (HELPER) |
+| `whisper-1` | OpenAI | VOICE | WhatsApp Audio Transcriptions |
+
+---
+
+## 4. The Neural Ledger (AletheIA Economy)
+**File**: `backend/app/services/ai/ledger.py`
+
+### 4.1 Kura Credits (KC) Standard
+Kura OS uses a virtual economy to stabilize costs and ensure sustainability.
+
+- **Ratio**: €1.00 = 1,000 KC.
+- **Margin**: 1.5x (50% markup) over real provider costs.
+- **Conversion Formula**:
+  ```python
+  KC = (cost_provider_usd_in_eur * 1000) * 1.5
+  ```
+
+### 4.2 Unit Monetization
+| Unit | Billing Policy |
+|:---|:---|
+| **Clinical Units** (7/8) | Billable in KC (Paid by Organization) |
+| **HELPER** | 🆓 Free for User (Cost absorbed by Kura OS as Support) |
+
+Every AI operation generates an `AiUsageLog` entry with both real provider cost (€) and user cost (KC).
+
+---
+
+## 5. Analysis Protocols
+
+### 5.1 Risk Detection (Keyword-Based)
 **File**: `backend/app/services/risk_detector.py`
 
 ```python
@@ -114,7 +122,7 @@ RISK_KEYWORDS = [
 
 > **Note**: Current implementation is keyword-based (v0.9.2). Semantic AI analysis planned for future.
 
-### 3.2 Engagement Score
+### 5.2 Engagement Score
 **File**: `backend/app/api/v1/insights.py` → `_generate_fallback_insights()`
 
 ```python
@@ -127,12 +135,12 @@ engagement -= 10 if warning_alert    # Warnings
 ```
 
 | Score | Color | Status |
-|---:|:---|:---|
+|:---|:---|:---|
 | ≥ 70 | 🟢 Green | Healthy engagement |
 | 40-69 | 🟡 Amber | Needs attention |
 | < 40 | 🔴 Red | At risk |
 
-### 3.3 Thematic Pills
+### 5.3 Thematic Pills
 Extracted clinical themes for quick review:
 
 | Raw Note | Extracted Themes |
@@ -144,9 +152,9 @@ Extracted clinical themes for quick review:
 
 ---
 
-## 4. User Experience (Frontend)
+## 6. User Experience (Frontend)
 
-### 4.1 Daily Briefing
+### 6.1 Daily Briefing
 **Component**: Dashboard widget  
 **API**: `GET /api/v1/insights/daily-briefing`
 
@@ -165,7 +173,7 @@ Aggregation → Scripting (Gemini) → TTS (OpenAI) → Caching
 
 **Output**: MP3 audio + text transcript. Cached in `static/briefings/`.
 
-### 4.2 Observatory Sidebar
+### 6.2 Observatory Sidebar
 **Component**: `components/AletheiaObservatory.tsx`
 
 | Widget | Purpose |
@@ -178,14 +186,14 @@ Aggregation → Scripting (Gemini) → TTS (OpenAI) → Caching
 
 **Visibility**: `xl` screens only (`hidden xl:flex`, `w-80`)
 
-### 4.3 Help ChatBot
+### 6.3 Help ChatBot
 **Component**: `components/help/HelpChatBot.tsx`
 
 - Platform-specific support grounded in MDX docs
 - Session-aware (user role, tier, current page)
 - Queries logged to `HelpQueryLog`
 
-### 4.4 Sentinel Pulse (Real-Time Monitor)
+### 6.4 Sentinel Pulse (Real-Time Monitor)
 **Component**: `apps/platform/components/SentimentPulseWidget.tsx`
 
 The emotional ECG/HRV widget showing the patient's 7-day emotional trajectory.
@@ -208,7 +216,7 @@ The emotional ECG/HRV widget showing the patient's 7-day emotional trajectory.
 > [!IMPORTANT]
 > **Data Coherence Rule**: Sentinel Pulse risk score MUST exactly match `Patient.last_insight_json.risk_score`. Any mismatch indicates a cache invalidation bug.
 
-### 4.5 Focus Session Card (The Oracle)
+### 6.5 Focus Session Card (The Oracle)
 **Component**: `apps/platform/components/dashboard/FocusSessionCard.tsx`
 
 The Dashboard Hero widget that preps the therapist in seconds.
@@ -229,9 +237,9 @@ The Dashboard Hero widget that preps the therapist in seconds.
 
 ---
 
-## 5. Automation Agents
+## 7. Automation Agents
 
-### 5.1 Philosophy: "Agents, Not Tools"
+### 7.1 Philosophy: "Agents, Not Tools"
 AI operates as **autonomous teammates**, not passive software.
 
 | Legacy Term | New Term |
@@ -241,7 +249,7 @@ AI operates as **autonomous teammates**, not passive software.
 | Marketplace | Catálogo de Agentes |
 | Automation | Agente IA |
 
-### 5.2 Active Agents
+### 7.2 Active Agents
 
 | Agent | Trigger | Action |
 |:---|:---|:---|
@@ -250,12 +258,12 @@ AI operates as **autonomous teammates**, not passive software.
 | **Security Shield** | `RISK_DETECTED` (HIGH) | Block patient + alert (CENTER only) |
 | **Collector** | `PAYMENT_FAILED` | 48h payment reminder |
 
-### 5.3 Human-in-the-Loop (HITL)
+### 7.3 Human-in-the-Loop (HITL)
 - **Draft Mode**: `agent_config.mode == 'DRAFT_ONLY'`
 - **PendingActions Table**: Stores drafted communications
 - **Approval Widget**: Dashboard View/Edit/Approve/Reject
 
-### 5.4 Event Types
+### 7.4 Event Types
 ```python
 class EventType(str, Enum):
     FORM_SUBMISSION_COMPLETED = "FORM_SUBMISSION_COMPLETED"
@@ -270,9 +278,9 @@ class EventType(str, Enum):
 
 ---
 
-## 6. Registry
+## 8. Registry
 
-### 6.1 Prompts
+### 8.1 Prompts
 **File**: `backend/app/services/ai/prompts.py`
 
 | Prompt | Trigger | Purpose |
@@ -291,7 +299,7 @@ class EventType(str, Enum):
 - Therapeutic lineage sensitivity (astrology, psychedelic, somatic)
 - Audio analysis = synthesis, not transcription
 
-### 6.2 Key Files
+### 8.2 Key Files
 
 | Component | File |
 |:---|:---|
@@ -306,23 +314,22 @@ class EventType(str, Enum):
 | Help Assistant | `backend/app/services/help_assistant.py` |
 | Financial Reports | `backend/app/services/finance/internal_ledger.py` |
 
-### 6.3 Data Flow
+### 8.3 Data Flow
 
-```
-┌────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│ User Input     │───▶│ AletheIA.analyze │───▶│ GeminiProvider  │
-│ (ClinicalEntry)│    │ (aletheia.py)    │    │ (gemini.py)     │
-└────────────────┘    └──────────────────┘    └─────────────────┘
-                               │                      │
-                               ▼                      ▼
-                      ┌──────────────────┐    ┌─────────────────┐
-                      │ CostLedger       │    │ AIResponse      │
-                      │ _log_ai_usage()  │    │ {text, tokens}  │
-                      └──────────────────┘    └─────────────────┘
-                               │
-                               ▼
-                      ┌──────────────────┐
-                      │ Patient.         │
-                      │ last_insight_json│ ← JSONB cache (1 hour)
-                      └──────────────────┘
+```mermaid
+sequenceDiagram
+    participant UI as User Interface
+    participant AL as AletheIA (Service)
+    participant PF as ProviderFactory (JIT)
+    participant CL as CostLedger
+    participant AI as LLM Provider
+
+    UI->>AL: Request Analysis (Task)
+    AL->>PF: get_model_for_task(Task)
+    PF-->>AL: Routed Model (e.g. Gemini 3 Pro)
+    AL->>AI: Generate Content
+    AI-->>AL: Response + Tokens
+    AL->>CL: _log_ai_usage(tokens, credits)
+    CL-->>AL: Usage ID
+    AL-->>UI: Result + Insight Cache
 ```

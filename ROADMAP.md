@@ -1,8 +1,8 @@
 # Product Roadmap
 
-> **Status**: Living Document (v1.3.4)  
+> **Status**: Living Document (v1.3.6)  
 > **Scope**: Strategic Feature Planning 2026  
-> **Last Updated**: 2026-01-05 (v1.3.4 Sync)
+> **Last Updated**: 2026-01-06 (v1.3.6 Release)
 
 ---
 
@@ -31,16 +31,7 @@ Features prioritizadas por:
 
 **Prioridad:** 🔴 CRITICAL (Cost Reduction)
 
-#### 1.2 Operation Open Heart (v1.4)
-**Esfuerzo:** 2 semanas  
-**Impacto:** Estabilidad, Routing Full Circuit  
 
-**Refactor:**
-- `aletheia.py`: Eliminación de hibridez sync/async
-- Conexión de Sentinel, Now y Pulse al Model Factory
-- Implementación de Unit Tests en el core de IA
-
-**Prioridad:** 🔴 CRITICAL (Architectural Integrity)
 
 ---
 
@@ -154,7 +145,8 @@ Features prioritizadas por:
 2026
 ├── Q1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 │   ├── [3w] WhatsApp Business Migration
-│   └── [2w] v1.4 Operation Open Heart (Async Refactor)
+│   ├── [3w] WhatsApp Business Migration
+│   └── [DONE] v1.3.6 Operation Open Heart (Async Refactor)
 │
 ├── Q2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 │   ├── [6w] Membership Builder
