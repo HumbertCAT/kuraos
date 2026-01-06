@@ -46,6 +46,21 @@ class ReferralStatsResponse(BaseModel):
     referral_history: List[ReferredOrgSummary]
 
 
+class RedeemRequest(BaseModel):
+    """Request to redeem a reward from the catalog."""
+
+    reward_id: str  # 'ai-tokens', 'extra-patient', 'sentinel-pulse'
+
+
+class RedeemResponse(BaseModel):
+    """Response after successful redemption."""
+
+    success: bool
+    message: str
+    karma_remaining: int
+    reward_applied: str
+
+
 # ============================================================================
 # Endpoints
 # ============================================================================
@@ -152,3 +167,90 @@ async def list_referrals(
             for org in referred_orgs
         ]
     }
+
+
+# Reward catalog - synced with frontend RewardsCatalog.tsx
+REWARD_CATALOG = {
+    "ai-tokens": {
+        "name": "+1000 AI Tokens",
+        "cost": 300,
+        "tier": "CENTER",
+        "action": "credits",
+        "value": 10000,  # 10K KC (~10€)
+    },
+    "extra-patient": {
+        "name": "+1 Patient Slot",
+        "cost": 100,
+        "tier": "BUILDER",
+        "action": "slot",
+        "value": 1,
+    },
+    "sentinel-pulse": {
+        "name": "Sentinel Pulse",
+        "cost": 500,
+        "tier": "PRO",
+        "action": "feature",
+        "value": "sentinel_pulse",
+    },
+}
+
+
+@router.post("/redeem", response_model=RedeemResponse, summary="Redeem a reward")
+async def redeem_reward(
+    request: RedeemRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Redeem a reward from the karma catalog.
+
+    - Verifies karma balance
+    - Deducts karma cost
+    - Applies reward (credits, slots, features)
+    """
+    from fastapi import HTTPException
+    from decimal import Decimal
+    from app.services.growth import grant_referral_credits
+
+    # Get organization
+    org = await db.get(Organization, current_user.organization_id)
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+
+    # Validate reward exists
+    reward = REWARD_CATALOG.get(request.reward_id)
+    if not reward:
+        raise HTTPException(status_code=400, detail="Invalid reward ID")
+
+    # Check karma balance
+    if org.karma_score < reward["cost"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Insufficient karma. Need {reward['cost']}, have {org.karma_score}",
+        )
+
+    # Deduct karma
+    org.karma_score -= reward["cost"]
+
+    # Apply reward based on action type
+    if reward["action"] == "credits":
+        await grant_referral_credits(db, str(org.id), Decimal(str(reward["value"])))
+        reward_desc = f"+{reward['value']:,} Kura Credits"
+    elif reward["action"] == "slot":
+        org.bonus_patient_slots += reward["value"]
+        reward_desc = f"+{reward['value']} patient slot"
+    elif reward["action"] == "feature":
+        # Future: unlock feature flags in org.settings
+        reward_desc = f"Feature: {reward['value']}"
+    else:
+        reward_desc = reward["name"]
+
+    await db.commit()
+    await db.refresh(org)
+
+    return RedeemResponse(
+        success=True,
+        message=f"Successfully redeemed: {reward['name']}",
+        karma_remaining=org.karma_score,
+        reward_applied=reward_desc,
+    )

@@ -669,6 +669,20 @@ export const api = {
       });
       return handleResponse<any>(res);
     },
+    redeem: async (rewardId: string) => {
+      const res = await fetch(`${API_URL}/growth/redeem`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reward_id: rewardId }),
+        credentials: 'include',
+      });
+      return handleResponse<{
+        success: boolean;
+        message: string;
+        karma_remaining: number;
+        reward_applied: string;
+      }>(res);
+    },
   },
 
   dashboard: {

@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Users, Activity, Brain, Gift, Lock } from 'lucide-react';
+import { Users, Activity, Brain, Gift, Lock, Loader2, Check } from 'lucide-react';
 
 interface Reward {
     id: string;
@@ -61,20 +62,29 @@ export function RewardsCatalog({ currentTier, currentKarma, onRedeem }: RewardsC
         return REWARDS.filter(r => r.tier === currentTier);
     };
 
-    const handleRedeem = (reward: Reward) => {
-        // For now, open mailto - can enhance with modal/API later
-        const rewardTitle = t(reward.titleKey);
-        const subject = encodeURIComponent(`Reward Redemption Request: ${rewardTitle}`);
-        const body = encodeURIComponent(
-            `Hello KURA Team,\n\nI would like to redeem the following reward:\n\n` +
-            `Reward: ${rewardTitle}\n` +
-            `Cost: ${reward.cost} Karma\n` +
-            `My Current Karma: ${currentKarma}\n\n` +
-            `Please process my request.\n\nThank you!`
-        );
-        window.open(`mailto:soporte@kuraos.ai?subject=${subject}&body=${body}`, '_blank');
+    const [redeeming, setRedeeming] = useState<string | null>(null);
+    const [redeemSuccess, setRedeemSuccess] = useState<string | null>(null);
+    const [redeemError, setRedeemError] = useState<string | null>(null);
 
-        if (onRedeem) onRedeem(reward.id);
+    const handleRedeem = async (reward: Reward) => {
+        setRedeeming(reward.id);
+        setRedeemError(null);
+        setRedeemSuccess(null);
+
+        try {
+            const { api } = await import('@/lib/api');
+            const result = await api.growth.redeem(reward.id);
+
+            if (result.success) {
+                setRedeemSuccess(result.message);
+                // Optionally trigger a page refresh or callback
+                if (onRedeem) onRedeem(reward.id);
+            }
+        } catch (err: any) {
+            setRedeemError(err.message || 'Failed to redeem reward');
+        } finally {
+            setRedeeming(null);
+        }
     };
 
     const availableRewards = getAvailableRewards();
@@ -86,6 +96,18 @@ export function RewardsCatalog({ currentTier, currentKarma, onRedeem }: RewardsC
                 {t('rewardsTitle')}
             </h3>
 
+            {/* Success/Error Feedback */}
+            {redeemSuccess && (
+                <div className="bg-success/10 border border-success/30 rounded-lg p-3 flex items-center gap-2">
+                    <Check className="w-4 h-4 text-success" />
+                    <span className="text-sm text-success">{redeemSuccess}</span>
+                </div>
+            )}
+            {redeemError && (
+                <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                    <span className="text-sm text-destructive">{redeemError}</span>
+                </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {availableRewards.map(reward => {
                     const canAfford = currentKarma >= reward.cost;
@@ -115,16 +137,18 @@ export function RewardsCatalog({ currentTier, currentKarma, onRedeem }: RewardsC
                                 </span>
                                 <button
                                     onClick={() => handleRedeem(reward)}
-                                    disabled={!canAfford}
+                                    disabled={!canAfford || redeeming === reward.id}
                                     className={`
                     px-4 py-2 rounded-lg font-medium text-sm transition-all active:scale-95
-                    ${canAfford
+                    ${canAfford && redeeming !== reward.id
                                             ? 'bg-brand text-white hover:bg-brand/90'
                                             : 'bg-muted text-muted-foreground cursor-not-allowed'
                                         }
                   `}
                                 >
-                                    {canAfford ? (
+                                    {redeeming === reward.id ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : canAfford ? (
                                         t('redeem')
                                     ) : (
                                         <span className="flex items-center gap-1">
