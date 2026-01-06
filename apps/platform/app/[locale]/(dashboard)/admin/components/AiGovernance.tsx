@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useRouter, usePathname, useParams } from 'next/navigation';
 import {
     Brain,
     DollarSign,
@@ -220,6 +221,11 @@ interface AiGovernanceProps {
 }
 
 export default function AiGovernance({ defaultSection = 'financials' }: AiGovernanceProps) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const params = useParams();
+    const locale = params.locale as string || 'en';
+
     const [stats, setStats] = useState<LedgerStats>(EMPTY_STATS);
     const [config, setConfig] = useState<AiConfig>({ cost_margin: 1.5, active_models: [], vertex_ai_enabled: true });
     const [models, setModels] = useState<ModelInfo[]>(DEFAULT_MODELS);
@@ -231,6 +237,12 @@ export default function AiGovernance({ defaultSection = 'financials' }: AiGovern
     const [pendingRoutingChanges, setPendingRoutingChanges] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<TabId>(defaultSection);
+
+    // Handle tab change with URL sync
+    const handleTabChange = (tab: TabId) => {
+        setActiveTab(tab);
+        router.push(`/${locale}/admin/aigov/${tab}`);
+    };
 
     useEffect(() => {
         loadData();
@@ -354,7 +366,7 @@ export default function AiGovernance({ defaultSection = 'financials' }: AiGovern
                     return (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
+                            onClick={() => handleTabChange(tab.id)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === tab.id
                                 ? 'bg-background text-foreground shadow-sm'
                                 : 'text-muted-foreground hover:text-foreground'
