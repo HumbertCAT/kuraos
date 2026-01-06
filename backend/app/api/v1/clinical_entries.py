@@ -317,7 +317,7 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
 
     v1.1.1 CLEAN LEDGER: Uses ProviderFactory + CostLedger for accurate billing.
     """
-    from app.db.base import AsyncSessionLocal
+    from app.db.base import get_session_factory
     from app.services.ai import ProviderFactory, CostLedger
     from app.services.ai.base import AIResponse
     from app.services.ai.prompts import (
@@ -336,7 +336,8 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
     from app.core.config import settings
     from decimal import Decimal
 
-    async with AsyncSessionLocal() as db:
+    factory = get_session_factory()
+    async with factory() as db:
         entry = None
         org = None
         try:

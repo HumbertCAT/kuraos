@@ -55,13 +55,17 @@ async def lifespan(app: FastAPI):
         check_stale_leads,
     )
     from app.workers.conversation_analyzer import analyze_daily_conversations
-    from app.db.base import AsyncSessionLocal
+    from app.db.base import get_session_factory, init_db, close_db
+
+    # Initialize database connection (lazy loading pattern)
+    await init_db()
 
     scheduler = AsyncIOScheduler()
 
     async def run_stale_check():
         """Wrapper to run stale check with its own DB session."""
-        async with AsyncSessionLocal() as db:
+        factory = get_session_factory()
+        async with factory() as db:
             try:
                 await check_stale_journeys(db)
             except Exception as e:
@@ -69,7 +73,8 @@ async def lifespan(app: FastAPI):
 
     async def run_stale_leads_check():
         """Wrapper to run stale leads check with its own DB session."""
-        async with AsyncSessionLocal() as db:
+        factory = get_session_factory()
+        async with factory() as db:
             try:
                 await check_stale_leads(db)
             except Exception as e:
@@ -77,7 +82,8 @@ async def lifespan(app: FastAPI):
 
     async def run_conversation_analysis():
         """Wrapper to run daily chat analysis with its own DB session."""
-        async with AsyncSessionLocal() as db:
+        factory = get_session_factory()
+        async with factory() as db:
             try:
                 await analyze_daily_conversations(db)
             except Exception as e:
@@ -118,6 +124,7 @@ async def lifespan(app: FastAPI):
     yield  # Application runs here
 
     scheduler.shutdown()
+    await close_db()  # Clean shutdown of database connection
     logger.info("APScheduler shutdown complete")
 
 

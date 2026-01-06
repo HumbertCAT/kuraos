@@ -178,10 +178,11 @@ async def sanitize_and_store_background(
     Called via FastAPI BackgroundTasks to ensure execution completes
     even after HTTP response is sent. Creates its own DB session.
     """
-    from app.db.base import AsyncSessionLocal
+    from app.db.base import get_session_factory
 
     try:
-        async with AsyncSessionLocal() as db:
+        factory = get_session_factory()
+        async with factory() as db:
             await sanitize_and_store(
                 db=db,
                 content=content,

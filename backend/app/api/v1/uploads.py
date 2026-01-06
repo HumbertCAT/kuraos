@@ -8,8 +8,22 @@ from app.api.deps import CurrentUser
 
 router = APIRouter()
 
-# Ensure upload directory exists
-UPLOAD_DIR = "/app/static/uploads"
+# Upload directory - configurable via env var, with smart defaults
+# Docker: /app/static/uploads
+# Local: ./static/uploads (relative to backend dir)
+UPLOAD_DIR = os.environ.get("UPLOAD_DIR")
+if not UPLOAD_DIR:
+    # Check if we're in Docker or local
+    if os.path.isdir("/app"):
+        UPLOAD_DIR = "/app/static/uploads"
+    else:
+        # Local development / testing
+        UPLOAD_DIR = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "static",
+            "uploads",
+        )
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 

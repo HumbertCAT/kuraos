@@ -178,9 +178,10 @@ class ProviderFactory:
                 routing_setting = result.scalar_one_or_none()
             else:
                 # Create session if not provided
-                from app.db.base import AsyncSessionLocal
+                from app.db.base import get_session_factory
 
-                async with AsyncSessionLocal() as session:
+                factory = get_session_factory()
+                async with factory() as session:
                     result = await session.execute(
                         select(SystemSetting).where(
                             SystemSetting.key == "AI_TASK_ROUTING"
@@ -229,9 +230,10 @@ class ProviderFactory:
                 )
                 setting = result.scalar_one_or_none()
             else:
-                from app.db.base import AsyncSessionLocal
+                from app.db.base import get_session_factory
 
-                async with AsyncSessionLocal() as session:
+                factory = get_session_factory()
+                async with factory() as session:
                     result = await session.execute(
                         select(SystemSetting).where(
                             SystemSetting.key == "AI_TASK_ROUTING"

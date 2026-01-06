@@ -26,3 +26,8 @@ openai>=1.0.0
 google-genai>=1.0.0
 google-auth>=2.0.0
 tenacity>=8.0.0
+
+# Testing (Phase 1: Innate Immunity)
+testcontainers>=4.0.0
+factory-boy>=3.3.0
+faker>=22.0.0

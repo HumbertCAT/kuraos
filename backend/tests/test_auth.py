@@ -123,8 +123,10 @@ class TestAuthEndpoints:
 
         assert response.status_code == 200
         data = response.json()
-        assert data["email"] == register_payload["email"]
-        assert data["full_name"] == register_payload["full_name"]
+        # Handle both flat response and nested {"user": {...}} structure
+        user_data = data if "email" in data else data.get("user", data)
+        assert user_data.get("email") == register_payload["email"]
+        assert user_data.get("full_name") == register_payload["full_name"]
 
     @pytest.mark.asyncio
     async def test_me_unauthenticated(self, client: AsyncClient):
@@ -174,4 +176,4 @@ class TestHealthEndpoints:
 
         assert response.status_code == 200
         data = response.json()
-        assert "TherapistOS" in data["message"]
+        assert "Kura OS" in data["message"]
