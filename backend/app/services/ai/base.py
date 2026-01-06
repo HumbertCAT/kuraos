@@ -65,15 +65,24 @@ class AIProvider(ABC):
 
     @abstractmethod
     async def analyze_multimodal(
-        self, content: bytes, mime_type: str, prompt: str
+        self,
+        content: Optional[bytes],
+        mime_type: str,
+        prompt: str,
+        gcs_uri: Optional[str] = None,
     ) -> AIResponse:
         """
         Analyze multimodal content (audio, image, document).
 
+        Supports two patterns:
+        - INLINE: Pass bytes directly (max 20MB for Vertex AI)
+        - REFERENCE: Pass GCS URI for large files (no size limit)
+
         Args:
-            content: Binary content of the file
+            content: Binary content of the file (None if using gcs_uri)
             mime_type: MIME type of the content
             prompt: Analysis instructions
+            gcs_uri: Optional GCS path (gs://bucket/path) for large files
 
         Returns:
             AIResponse with analysis text and token counts

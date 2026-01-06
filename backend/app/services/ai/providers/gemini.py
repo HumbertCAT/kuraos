@@ -135,19 +135,34 @@ class GeminiProvider(AIProvider):
         )
 
     async def analyze_multimodal(
-        self, content: bytes, mime_type: str, prompt: str
+        self,
+        content: Optional[bytes],
+        mime_type: str,
+        prompt: str,
+        gcs_uri: Optional[str] = None,
     ) -> AIResponse:
         """
         Analyze multimodal content (audio, image, document).
 
+        Note: Legacy GeminiProvider does not support gcs_uri.
+        For large files, use VertexAIProvider with VERTEX_AI_ENABLED=True.
+
         Args:
-            content: Binary file content
+            content: Binary file content (required for this provider)
             mime_type: MIME type of the content
             prompt: Analysis instructions
+            gcs_uri: Ignored - not supported in legacy provider
 
         Returns:
             AIResponse with analysis and token counts
         """
+        if gcs_uri:
+            raise NotImplementedError(
+                "GCS URI not supported in legacy GeminiProvider. "
+                "Enable VERTEX_AI_ENABLED=True for large file support."
+            )
+        if not content:
+            raise ValueError("content bytes required for GeminiProvider")
         # Write content to temp file for upload
         extension = self._get_extension(mime_type)
 

@@ -167,21 +167,49 @@ class VertexAIProvider(AIProvider):
         )
 
     async def analyze_multimodal(
-        self, content: bytes, mime_type: str, prompt: str
+        self,
+        content: Optional[bytes],
+        mime_type: str,
+        prompt: str,
+        gcs_uri: Optional[str] = None,
     ) -> AIResponse:
         """
-        Analyze multimodal content (audio, image, document).
+        Analyze multimodal content via Bytes (Inline) or GCS URI (Reference).
+
+        Supports two patterns:
+        - INLINE: For files <20MB, pass bytes directly (fast, no GCS needed)
+        - REFERENCE: For files >20MB, upload to GCS first, pass gs:// URI
 
         Args:
-            content: Binary file content
-            mime_type: MIME type of the content
+            content: Binary content (max 20MB). None if using gcs_uri.
+            mime_type: MIME type (e.g., 'audio/mp3', 'image/png')
             prompt: Analysis instructions
+            gcs_uri: GCS path (gs://bucket/path). No size limit. Preferred for audio.
 
         Returns:
             AIResponse with analysis and token counts
+
+        Examples:
+            # Small image (inline)
+            await provider.analyze_multimodal(image_bytes, "image/png", "Describe")
+
+            # Large audio session (reference)
+            await provider.analyze_multimodal(
+                content=None,
+                mime_type="audio/mp3",
+                prompt="Transcribe and analyze",
+                gcs_uri="gs://kura-production-vault/audio/session_123.mp3"
+            )
         """
-        # Create Part from binary data
-        media_part = Part.from_data(data=content, mime_type=mime_type)
+        if gcs_uri:
+            # ✅ REFERENCE PATTERN: For large files stored in GCS
+            # Vertex reads directly from bucket (data sovereignty)
+            media_part = Part.from_uri(uri=gcs_uri, mime_type=mime_type)
+        elif content:
+            # ⚠️ INLINE PATTERN: For small files (<20MB)
+            media_part = Part.from_data(data=content, mime_type=mime_type)
+        else:
+            raise ValueError("Must provide either 'content' bytes or 'gcs_uri'.")
 
         # Generate analysis
         response = await self.model.generate_content_async([prompt, media_part])
