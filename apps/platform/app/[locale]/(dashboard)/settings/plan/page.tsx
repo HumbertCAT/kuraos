@@ -33,7 +33,7 @@ const PLANS = {
         icon: Zap,
         color: 'bg-muted',
         borderColor: 'border-border',
-        features: ['3 pacientes', '10€ IA/mes', '5% comisión', 'Soporte email'],
+        features: ['3 pacientes', '10K KC/mes', '5% comisión', 'Soporte email'],
     },
     PRO: {
         name: 'Pro',
@@ -44,7 +44,7 @@ const PLANS = {
         icon: Crown,
         color: 'bg-gradient-to-br from-brand to-brand/80',
         borderColor: 'border-brand/50',
-        features: ['50 pacientes', '50€ IA/mes', '2% comisión', 'Soporte prioritario', 'Integraciones avanzadas'],
+        features: ['50 pacientes', '50K KC/mes', '2% comisión', 'Soporte prioritario', 'Integraciones avanzadas'],
     },
     CENTER: {
         name: 'Center',
@@ -55,7 +55,7 @@ const PLANS = {
         icon: Building2,
         color: 'bg-gradient-to-br from-amber-400 to-orange-500',
         borderColor: 'border-amber-500/50',
-        features: ['150 pacientes', '200€ IA/mes', '1% comisión', 'Soporte dedicado', 'Multi-terapeuta', 'White-label'],
+        features: ['150 pacientes', '200K KC/mes', '1% comisión', 'Soporte dedicado', 'Multi-terapeuta', 'White-label'],
     },
 } as const;
 
@@ -222,10 +222,10 @@ export default function PlanPage() {
                             <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
                                     <Zap className="w-4 h-4 text-brand" />
-                                    <span className="text-sm font-medium">Presupuesto IA</span>
+                                    <span className="text-sm font-medium">Kura Credits</span>
                                 </div>
                                 <span className="text-sm font-mono">
-                                    {formatEUR(aiSpend?.spend_usd || 0)} / {formatEUR(aiSpend?.limit_usd || currentPlan.aiLimit)}
+                                    {Math.round((aiSpend?.spend_usd || 0) * 1000)} / {Math.round((aiSpend?.limit_usd || currentPlan.aiLimit) * 1000)} KC
                                 </span>
                             </div>
                             <div className="h-3 bg-muted rounded-full overflow-hidden">
