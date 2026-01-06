@@ -204,7 +204,7 @@ export default function DashboardPage() {
 
             {/* ========== MAIN LAYOUT: 2/3 + 1/3 ========== */}
             <div className="grid grid-cols-12 gap-6">
-                {/* LEFT COLUMN (2/3): Oracle + Focus stacked */}
+                {/* LEFT COLUMN (2/3): Oracle + Focus + Financials + Pipeline stacked */}
                 <div className="col-span-12 lg:col-span-8 space-y-6">
                     {/* The Oracle - Briefing Player */}
                     <BriefingPlayer />
@@ -215,20 +215,8 @@ export default function DashboardPage() {
                         onViewFullAgenda={() => router.push('/calendar')}
                     />
 
-                    {/* Pipeline Velocity */}
-                    <PipelineVelocity stages={data.pipelineStages} />
-                </div>
-
-                {/* RIGHT COLUMN (1/3): Journeys + VitalSigns + Referral stacked */}
-                <div className="col-span-12 lg:col-span-4 space-y-6">
-                    {/* Active Journeys */}
-                    <ActiveJourneysWidget journeys={data.activeJourneys} />
-
-                    {/* Kura Credits - v1.3.2 */}
-                    <KuraCreditsWidget />
-
-                    {/* Vital Signs */}
-                    <div className="space-y-4">
+                    {/* Financial Cards - 3 columns on desktop */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <VitalSignCard
                             label={t('vitalSigns.monthlyIncome')}
                             value={`€${data.monthlyRevenue.toFixed(0)}`}
@@ -264,6 +252,18 @@ export default function DashboardPage() {
                             iconColor="text-ai"
                         />
                     </div>
+
+                    {/* Pipeline Velocity */}
+                    <PipelineVelocity stages={data.pipelineStages} />
+                </div>
+
+                {/* RIGHT COLUMN (1/3): Journeys + Kura Credits + Referral stacked */}
+                <div className="col-span-12 lg:col-span-4 space-y-6">
+                    {/* Active Journeys */}
+                    <ActiveJourneysWidget journeys={data.activeJourneys} />
+
+                    {/* Kura Credits - v1.3.2 */}
+                    <KuraCreditsWidget />
 
                     {/* The Mycelium - Referral Widget */}
                     <ReferralWidget />

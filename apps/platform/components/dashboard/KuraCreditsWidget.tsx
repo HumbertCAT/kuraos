@@ -52,10 +52,10 @@ export function KuraCreditsWidget() {
 
     const { credits_used, credits_limit, usage_percent, tier, is_low_balance } = balance;
 
-    // Format KC with proper separators
+    // Format KC with proper separators (no decimals for K)
     const formatKC = (value: number) => {
         if (value >= 1000) {
-            return `${(value / 1000).toFixed(1)}K`;
+            return `${Math.round(value / 1000)}K`;
         }
         return value.toFixed(0);
     };
