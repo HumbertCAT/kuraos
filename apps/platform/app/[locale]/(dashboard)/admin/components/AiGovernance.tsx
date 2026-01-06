@@ -258,9 +258,9 @@ function RunTabContent() {
                             <Zap className="w-6 h-6 text-warning" />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-foreground text-lg">Forzar Análisis AletheIA</h3>
+                            <h3 className="font-semibold text-foreground text-lg">Force AletheIA Analysis</h3>
                             <p className="text-sm text-muted-foreground mt-1">
-                                Ejecuta el análisis de conversaciones WhatsApp inmediatamente.
+                                Trigger WhatsApp conversation analysis for all patient records with new messages.
                             </p>
                         </div>
                     </div>
@@ -273,12 +273,12 @@ function RunTabContent() {
                         {isRunning ? (
                             <>
                                 <RefreshCw className="w-4 h-4 animate-spin" />
-                                Ejecutando...
+                                Running...
                             </>
                         ) : (
                             <>
                                 <Play className="w-4 h-4" />
-                                Ejecutar
+                                Execute
                             </>
                         )}
                     </button>
@@ -292,7 +292,7 @@ function RunTabContent() {
                         }`}>
                         <p className={`text-sm font-medium ${result.success ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300'}`}>
                             {result.success
-                                ? `✅ Análisis completado: ${result.analyzed} fichas analizadas`
+                                ? `✅ Analysis complete: ${result.analyzed} patient records analyzed`
                                 : `❌ ${result.error}`
                             }
                         </p>
@@ -302,10 +302,10 @@ function RunTabContent() {
 
             {/* Future triggers placeholder */}
             <div className="p-4 bg-muted/50 rounded-xl text-sm text-muted-foreground">
-                <p className="font-medium mb-2">Próximamente:</p>
+                <p className="font-medium mb-2">Coming Soon:</p>
                 <ul className="space-y-1 text-xs">
-                    <li>• Regenerar Daily Briefings</li>
-                    <li>• Ejecutar Sentinel Risk Scan</li>
+                    <li>• Regenerate Daily Briefings</li>
+                    <li>• Execute Sentinel Risk Scan</li>
                 </ul>
             </div>
         </div>
