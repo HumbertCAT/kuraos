@@ -39,6 +39,9 @@ Implementaremos un **Framework de Evaluación Continua** basado en Vertex AI Aut
 - **SCRIBE**: Fijo a Whisper v3 (transcripción especializada). Evaluable externamente mediante Word Error Rate (WER).
 - **VOICE**: Fijo a ElevenLabs (síntesis vocal). Evaluable externamente mediante Mean Opinion Score (MOS).
 
+> [!NOTE]
+> **Validación Arquitectónica**: AutoSxS es fundamentalmente un evaluador de semántica y razonamiento (Text-to-Text). Forzarlo para evaluar WER o calidad de audio sería ineficiente y costoso. Los benchmarks estándar de la industria (WER/MOS) son mucho más precisos para estas unidades especializadas.
+
 ## Architecture
 
 ### 1. Data Pipeline
@@ -164,6 +167,9 @@ class AletheIAEvaluationService:
             evaluation_task=config["task"],
             template_uri="https://us-kfp.pkg.dev/ml-pipeline/google-cloud-registry/autosxs-template/default",
             dataset_uri=config["dataset_uri"],
+            # NOTA: El modelo debe estar registrado en Vertex AI Model Registry.
+            # Para evaluaciones "in-context" (nuevo prompt, mismo modelo binario),
+            # usar predicciones pre-generadas en el JSONL en lugar de inferencia AutoSxS.
             model_a_self_served_source=aiplatform.Model(candidate_model),
             model_b_self_served_source=aiplatform.Model(baseline_model),
         )
@@ -192,6 +198,9 @@ class AletheIAEvaluationService:
 - [ ] Curar datasets para **ORACLE**, **NOW**, y **PULSE**.
 - [ ] Definir rúbricas personalizadas para evaluación clínica (más allá de tareas predefinidas).
 - [ ] Integrar resultados de evaluación en el Admin Panel (AI Governance > Evaluations).
+
+> [!CAUTION]
+> **El Reto de la Subjetividad Clínica**: La tarea predefinida `summarization` puede quedarse corta para ORACLE. Un resumen puede ser "gramaticalmente perfecto" (ganando en AutoSxS estándar) pero "clínicamente irrelevante" (perdiendo en el mundo real). Se requerirán **Rúbricas Personalizadas** (Custom Tasks) que penalicen severamente omisiones de menciones a ideación suicida o efectos secundarios de medicación.
 
 ### Phase 3: Automation (v1.6.x)
 - [ ] Pipeline CI/CD: Auto-evaluar nuevos modelos cuando Google libera actualizaciones.
@@ -227,6 +236,27 @@ class AletheIAEvaluationService:
 - [Video: Evaluar modelos GenAI con AutoSxS](https://www.youtube.com/watch?v=ysvjuAPY8xs)
 - [AletheIA Taxonomy v1.3](/Users/humbert/.gemini/antigravity/knowledge/therapeutic_ai_and_automation/artifacts/implementation/aletheia_taxonomy_v1_3.md)
 
+## Architect Review Notes
+
+> **Reviewed by**: Arquitecto GEM  
+> **Date**: 2026-01-06  
+> **Status**: ✅ Approved with notes
+
+### Key Validations
+1. **Unidades Protegidas**: Decisión correcta de excluir SCRIBE/VOICE. AutoSxS es Text-to-Text; WER/MOS son mejores métricas.
+2. **Mapeo de Tareas**: Usar `summarization` como proxy para ORACLE es válido (compresión de información). Usar `safety` para SENTINEL aprovecha los datasets internos de Google.
+3. **Código Limpio**: Abstracción `AletheIAEvaluationService` es sólida. Nota añadida sobre Model Registry.
+
+### Recommendation for Phase 2
+Preparar al equipo para definir **Rúbricas Personalizadas** que inyecten guías de evaluación específicas al Autorater:
+
+```
+"No evalúes solo la fluidez. Penaliza severamente si el resumen omite 
+menciones a ideación suicida o efectos secundarios de medicación, 
+aunque el resto del texto esté bien escrito."
+```
+
 ---
-*Authored by: Humbert Costas & Antigravity Agent*
+*Authored by: Humbert Costas & Antigravity Agent*  
+*Reviewed by: Arquitecto GEM*  
 *Date: 2026-01-06*
