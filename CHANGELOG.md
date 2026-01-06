@@ -37,6 +37,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `roles/cloudtrace.agent` to Cloud Run SA
 - Added `roles/cloudprofiler.agent` to Cloud Run SA
 
+### 🧬 Antigravity Loop Integration
+
+- Enhanced `generate_tests.py` with `--release-mode` flag
+- Smart tag comparison (previous tag → current tag)
+- Intelligent filtering: skips config, migrations, deleted files
+- Safe exit codes (always exit 0 for pipeline safety)
+- Integrated as Phase 5.5 in `/publish-release` workflow
+
 ---
 
 ## [1.4.0] - 2026-01-06 🧠 SOVEREIGN INTELLIGENCE

@@ -94,10 +94,32 @@ Frontend (Vercel): Auto-triggers on git push. Monitor Vercel dashboard.
 
 ---
 
+## 🧠 Phase 5.5: Antigravity Loop (Smart Test Generation)
+
+After deploy, analyze if new code needs tests:
+
+// turbo
+```bash
+cd backend && python scripts/generate_tests.py --release-mode || echo "Warning: Test generation skipped"
+```
+
+**Behavior:**
+- Compares current tag vs previous tag
+- Filters only meaningful `.py` changes in `backend/app/`
+- Skips config, migrations, deleted files
+- Generates tests in `tests/generated/` if needed
+- Always exits 0 (safe for pipelines)
+
+If tests are generated, review in next session before committing.
+
+---
+
 ## ✅ Phase 6: Notify User
 
 Report Status:
 - 🛡️ Semantic Audit: PASSED
 - 📦 Backup: Created
 - 🚀 Version: vX.Y.Z Live
+- 🧠 Antigravity: Tests generated / No changes detected
 - 🔗 URLs: https://app.kuraos.ai / https://api.kuraos.ai
+
