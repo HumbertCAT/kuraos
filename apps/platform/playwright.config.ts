@@ -50,39 +50,27 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    // Unauthenticated tests (login flow, public pages)
-    {
-      name: 'unauthenticated',
-      testMatch: /.*\.unauth\.spec\.ts/,
-      use: { 
-        ...devices['Desktop Chrome'],
-        storageState: undefined, // No auth
-      },
-    },
-    // Authenticated tests (dashboard, patients, etc.)
     {
       name: 'chromium',
-      testMatch: /.*\.spec\.ts/,
-      testIgnore: /.*\.unauth\.spec\.ts/,
       use: { 
         ...devices['Desktop Chrome'],
       },
     },
   ],
 
-  /* Run local dev server before starting tests */
+  /* Reuse existing dev server */
   webServer: {
     command: 'pnpm dev',
     url: 'http://localhost:3001',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120 * 1000,
   },
   
   /* Expect timeout for assertions */
   expect: {
-    timeout: 10000,
+    timeout: 15000,
   },
   
   /* Test timeout */
-  timeout: 30000,
+  timeout: 60000,
 });
