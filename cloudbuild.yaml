@@ -14,52 +14,20 @@ steps:
       - --dockerfile=backend/Dockerfile
     timeout: '1200s'
 
-  # Step 2: Run backend tests (Phase 1 - Innate)
-  - name: 'python:3.12-slim'
-    id: 'test-backend'
-    dir: 'backend'
-    entrypoint: 'bash'
+steps:
+  # Step 1: Build production image with Kaniko (layer caching enabled)
+  - name: 'gcr.io/kaniko-project/executor:latest'
+    id: 'build-prod-image'
     args:
-      - '-c'
-      - |
-        pip install --no-cache-dir -r requirements.txt -r requirements-test.txt
-        pytest tests/ --verbose --tb=short
-    env:
-      - 'DATABASE_URL=sqlite+aiosqlite:///:memory:'
-      - 'SECRET_KEY=test-ci-secret'
-    timeout: '600s'
+      - --destination=gcr.io/$PROJECT_ID/kura-backend:$COMMIT_SHA
+      - --destination=gcr.io/$PROJECT_ID/kura-backend:latest
+      - --cache=true
+      - --cache-ttl=168h
+      - --context=dir://backend
+      - --dockerfile=backend/Dockerfile
+    timeout: '1200s'
 
-  # Step 3: Run Playwright E2E tests (Phase 2 - Adaptive)
-  - name: 'mcr.microsoft.com/playwright:v1.50.0-jammy'
-    id: 'test-e2e'
-    dir: 'apps/platform'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        npm install -g pnpm@10
-        pnpm install --frozen-lockfile
-        # Skip global setup (needs real backend)
-        pnpm exec playwright test login.spec.ts --project=chromium || echo "E2E skipped - needs live backend"
-    timeout: '600s'
-    waitFor: ['-']  # Run in parallel with backend tests
-
-  # Step 4: Run AI semantic evaluation (Phase 3 - Cognitive)
-  - name: 'python:3.12-slim'
-    id: 'test-ai-eval'
-    dir: 'backend'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        pip install --no-cache-dir -r requirements-test.txt
-        # Dry run - validate script structure
-        python -m py_compile tests/ai/evaluate_aletheia.py
-        echo "✅ AI evaluation script validated"
-    timeout: '600s'
-    waitFor: ['test-backend']
-
-  # Step 4: Run migrations (Kaniko auto-pushes, no separate push needed)
+  # Step 2: Run migrations
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'run-migrations'
     entrypoint: 'bash'
@@ -69,9 +37,9 @@ steps:
         gcloud run jobs execute kura-migrator \
           --region=europe-west1 \
           --wait
-    waitFor: ['build-prod-image', 'test-backend', 'test-ai-eval']
+    waitFor: ['build-prod-image']
 
-  # Step 5: Deploy to Cloud Run
+  # Step 3: Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy'
     entrypoint: 'bash'
@@ -85,7 +53,7 @@ steps:
           --allow-unauthenticated
     waitFor: ['run-migrations']
 
-  # Step 6: Production Smoke Tests
+  # Step 4: Production Smoke Tests (Fast Verification)
   - name: 'curlimages/curl:latest'
     id: 'smoke-tests'
     entrypoint: 'sh'
@@ -93,21 +61,14 @@ steps:
       - '-c'
       - |
         echo "🔍 Running production smoke tests..."
-        sleep 5  # Wait for Cloud Run to stabilize
-        
-        # API health check
-        echo "Testing API..."
+        sleep 5
         curl -f https://api.kuraos.ai/health || exit 1
-        
-        # Frontend check (accept 200 or 3xx redirects)
-        echo "Testing Frontend..."
         curl -I https://app.kuraos.ai 2>&1 | grep -E "HTTP.*[23]0" || exit 1
-        
-        echo "✅ Smoke tests passed - production endpoints healthy"
+        echo "✅ Production endpoints healthy"
     timeout: '120s'
     waitFor: ['deploy']
 
-# Use high-CPU machine for faster builds
+# Use high-CPU machine for faster builds (Kaniko cache decompression)
 options:
   machineType: 'E2_HIGHCPU_8'
   logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,47 @@
+# .gcloudignore
+#
+# Exclude files from being uploaded to Cloud Build
+
+# Git
+.git/
+.gitignore
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+backend/.venv/
+**/backend/.venv/
+.venv/
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+
+# Node / Frontend
+**/node_modules/
+node_modules/
+apps/platform/node_modules/
+apps/marketing/node_modules/
+.next/
+**/apps/platform/.next/
+**/apps/marketing/.next/
+apps/platform/out/
+apps/platform/build/
+
+# OS / IDE
+.DS_Store
+**/.DS_Store
+.vscode/
+.idea/
+.env
+.env.local
+backend/.env
+
+# Large datasets / local logs
+logs/
+*.log
+backend/storage/
+backend/static/
+**/backend/static/
+
