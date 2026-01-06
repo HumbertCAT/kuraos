@@ -14,29 +14,37 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] - 2026-01-06 🧠 VERTEX AI MIGRATION
+## [1.4.0] - 2026-01-06 🧠 SOVEREIGN INTELLIGENCE
 
-> **Theme:** "Sovereign AI" — Backend now uses Vertex AI SDK with ADC authentication.
+> **Theme:** "Vertex AI Migration" — From API Keys to IAM Sovereignty.
 
-### 🔐 Phase 1: Infrastructure
+### 🧠 Vertex AI Migration (The Brain Transplant)
+Migrated the entire AI inference engine from the public Gemini API (`google-generativeai`) to the enterprise Vertex AI SDK (`vertexai`).
 
-- Assigned `roles/aiplatform.user` to Cloud Run service account
-- Promoted `google-cloud-aiplatform>=1.40.0` to production requirements
-- Fixed `GOOGLE_LOCATION` default to `europe-west1`
+| Feature | Change | Benefit |
+|:---|:---|:---|
+| **Identity** | API Key → IAM Service Account | Zero credential leakage risk (ADC) |
+| **SDK** | `google.generativeai` → `vertexai` | Enterprise SLA & Quotas |
+| **Data Residency** | Global → `europe-west1` | GDPR Compliance guaranteed |
+| **Observability** | `provider="google"` → `provider="vertex_ai"` | Granular cost tracking |
 
-### 🧠 Phase 2: Provider Migration
+### 🏗️ Infrastructure & Operations
+- **Kaniko Builds:** Replaced Docker build with Kaniko Executor (Build time: 3m → <60s).
+- **Smoke Tests:** Added post-deployment health checks (`/health` endpoint validation).
+- **The Vault:** New storage architecture separating public media (`kura-production-media`) from private backups (`kura-production-vault`).
+- **Backup Persistence:** Solved ephemeral storage data loss by piping backups directly to GCS Vault.
 
-**New Provider:**
-- `VertexAIProvider` using `vertexai` SDK with ADC (no API keys)
-- `provider_id = "vertex_ai"` for observability distinction
+### 🧹 Code Hygiene
+- **ProviderFactory:** Centralized all AI calls (briefing, automation, clinical).
+- **Hardcoding Removal:** Eliminated legacy `genai.configure()` calls.
+- **Dependency Audit:** Promoted `google-cloud-aiplatform` to production requirements.
 
-**Factory Integration:**
-- `VERTEX_AI_ENABLED=True` routes Gemini models through Vertex AI
-- Fallback to legacy `GeminiProvider` when disabled
+### 📦 New Components
+- `backend/app/services/ai/providers/vertex.py` - New enterprise provider.
+- `backend/app/services/storage.py` - GCS Storage Service wrapper.
 
 ### 🎯 Rollback
-
-Set `VERTEX_AI_ENABLED=False` in Cloud Run env vars for instant rollback.
+Set `VERTEX_AI_ENABLED=False` in Cloud Run env vars for instant rollback to legacy provider.
 
 ---
 

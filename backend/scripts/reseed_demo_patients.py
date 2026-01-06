@@ -20,7 +20,7 @@ from sqlalchemy import select, text
 # Add parent to path
 sys.path.insert(0, "/app")
 
-from app.db.base import AsyncSessionLocal
+from app.db.base import get_session_factory
 from app.db.models import (
     User,
     Organization,
@@ -650,7 +650,8 @@ async def seed_patients(db, org_id, service_map, therapist_id):
 
 
 async def main():
-    async with AsyncSessionLocal() as db:
+    session_factory = get_session_factory()
+    async with session_factory() as db:
         # Identify Admin
         result = await db.execute(
             select(User).where(User.email == "humbert.torroella@gmail.com")
