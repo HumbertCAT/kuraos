@@ -1,18 +1,5 @@
 # Cloud Build Pipeline - The Nervous System
-# Runs full CI/CD on push to main: Build + E2E + AI Eval + Deploy
-
-steps:
-  # Step 1: Build production image with Kaniko (layer caching enabled)
-  - name: 'gcr.io/kaniko-project/executor:latest'
-    id: 'build-prod-image'
-    args:
-      - --destination=gcr.io/$PROJECT_ID/kura-backend:$COMMIT_SHA
-      - --destination=gcr.io/$PROJECT_ID/kura-backend:latest
-      - --cache=true
-      - --cache-ttl=168h
-      - --context=dir://backend
-      - --dockerfile=backend/Dockerfile
-    timeout: '1200s'
+# Runs lean CD: Build + Migrate + Deploy + Smoke Test
 
 steps:
   # Step 1: Build production image with Kaniko (layer caching enabled)
