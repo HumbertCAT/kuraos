@@ -131,12 +131,17 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="Specialized SaaS for Therapists - System of Record + AI Observatory",
-    version="1.0.0",
+    version="1.4.1",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+# v1.4.1: ADR-019 Observability (X-Ray Vision)
+from app.core.telemetry import init_telemetry
+
+init_telemetry(app)
 
 
 # CORS Middleware - Always enabled for development

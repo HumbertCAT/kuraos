@@ -1,8 +1,8 @@
 # Product Roadmap
 
-> **Status**: Living Document (v1.4.0)  
+> **Status**: Living Document (v1.4.1)  
 > **Scope**: Strategic Feature Planning 2026  
-> **Last Updated**: 2026-01-06 (Sovereign Intelligence)
+> **Last Updated**: 2026-01-06 (X-Ray Vision)
 
 ---
 

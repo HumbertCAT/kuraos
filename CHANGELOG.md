@@ -25,10 +25,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Appears in AI Governance Activity Ledger with `provider=vertex_ai`
 - Flattened conversation history pattern for context window efficiency
 
-### 📊 Observability
+### 📊 ADR-019: Observability (X-Ray Vision)
 
-- Help queries now tracked in `ai_usage_logs` with real token counts
-- Cost tracking unified with all other AI features
+- **Cloud Trace:** Distributed latency tracing for all HTTP requests
+- **Cloud Profiler:** CPU and memory profiling in production
+- New `telemetry.py` module with silent fallback for local development
+- OpenTelemetry SDK integration with FastAPI auto-instrumentation
+
+### 🔐 IAM Permissions
+
+- Added `roles/cloudtrace.agent` to Cloud Run SA
+- Added `roles/cloudprofiler.agent` to Cloud Run SA
 
 ---
 
