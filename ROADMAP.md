@@ -31,7 +31,62 @@ Features prioritizadas por:
 
 **Prioridad:** 🔴 CRITICAL (Cost Reduction)
 
+---
 
+### TIER 1.5: Q1 2026 (The Fortress - Structural Integrity)
+
+> **Theme:** "Sovereignty by Design" — Hardening infrastructure for HIPAA/GDPR compliance.
+
+#### 1.5.1 API Trinity Refactor (Modular Monolith)
+**ADR:** [ADR-011](./docs/architecture/decisions/ADR-011-modular-monolith-api.md)  
+**Esfuerzo:** 1.5 semanas  
+**Impacto:** Security Boundaries + Developer Experience
+
+**Objetivo:** Eliminar el "Monolith Sprawl" y establecer fronteras físicas de seguridad.
+
+**Implementación:**
+- **Reestructuración de Dominios (`backend/app/api/v1`):**
+  - `core/` (Auth, Admin, Config) → Infraestructura Crítica
+  - `connect/` (Leads, Forms) → Zona Pública (Marketing)
+  - `practice/` (Patients, Clinical) → **Zona Blindada (HIPAA PHI)** 🔴
+  - `grow/` (Analytics, Finance) → Zona de Negocio
+  - `intelligence/` (AletheIA) → Motor Transversal
+- **Beneficio:** Permite aplicar *AuditMiddlewares* estrictos solo a la carpeta `practice/`.
+
+**Prioridad:** 🔴 CRITICAL (Bloqueante para Auditoría)
+
+---
+
+#### 1.5.2 The Panopticon (HIPAA Access Logs)
+**Esfuerzo:** 2 semanas  
+**Dependencia:** API Trinity Refactor  
+**Impacto:** Compliance Legal & Enterprise Sales
+
+**Contexto:** HIPAA exige registrar **accesos de lectura** (no solo escritura).
+
+**Implementación:**
+- Middleware de Auditoría aplicado exclusivamente al router `/practice`.
+- Tabla inmutable `access_logs`: `who` (user), `what` (resource:id), `intent` (route), `timestamp`.
+- Visor de auditoría en Admin Panel.
+
+**Prioridad:** 🔴 CRITICAL
+
+---
+
+#### 1.5.3 The Shredder (GDPR Right to Erasure)
+**Esfuerzo:** 2 semanas  
+**Impacto:** Liability Reduction
+
+**Contexto:** El "Soft Delete" (`is_deleted=True`) es insuficiente si un usuario ejerce su Derecho al Olvido.
+
+**Implementación:**
+- Endpoint `POST /api/v1/compliance/erasure/{id}`.
+- **Protocolo de Destrucción:**
+  1. **Sanitizar:** Mover patrones clínicos anónimos a `anonymous_datasets` (The Vault).
+  2. **Destruir:** `DELETE` físico de registros con PII en `patients` y `clinical_entries`.
+  3. **Certificar:** Generar PDF "Certificate of Erasure" como prueba legal.
+
+**Prioridad:** 🟠 HIGH
 
 ---
 
