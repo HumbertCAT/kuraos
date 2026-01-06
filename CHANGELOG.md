@@ -14,6 +14,27 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-01-06 🧠 VERTEX AI MIGRATION (Phase 1: Infrastructure)
+
+> **Theme:** "Sovereign AI" — Preparing backend for Vertex AI SDK migration.
+
+### 🔐 IAM Configuration
+
+- Assigned `roles/aiplatform.user` to Cloud Run service account
+- Backend can now authenticate to Vertex AI without API keys
+
+### 📦 Dependencies
+
+- Promoted `google-cloud-aiplatform>=1.40.0` from test to production requirements
+- Ready for SDK adoption in AletheIA providers
+
+### 🎯 Next Phases
+
+- Phase 2: Migrate `GeminiProvider` from `google-genai` to `aiplatform.preview`
+- Phase 3: Update Task Routing to use Vertex AI model aliases
+
+---
+
 ## [1.3.12] - 2026-01-06 🔒 THE VAULT
 
 > **Theme:** "Persistent Storage" — Backups now survive container restarts via GCS.
