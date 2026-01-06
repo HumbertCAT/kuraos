@@ -56,25 +56,23 @@ export function VitalSignCard({
 
     return (
         <div className="card p-5 flex flex-col justify-between h-32">
-            {/* Header: Label + Badge */}
+            {/* Header: Icon + Label + Badge */}
             <div className="flex items-center justify-between">
-                <span className="type-ui text-muted-foreground tracking-wider">{label.toUpperCase()}</span>
+                <div className="flex items-center gap-2">
+                    <span className={iconColor}>{icon}</span>
+                    <span className="type-ui text-muted-foreground tracking-wider">{label.toUpperCase()}</span>
+                </div>
                 {badge && (
-                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${badgeClasses[badgeType]}`}>
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${badgeClasses[badgeType]}`}>
                         {badge}
                     </span>
                 )}
             </div>
 
-            {/* Main: Icon + Value */}
-            <div className="flex items-center gap-3">
-                <span className={`${iconColor} opacity-80`}>
-                    <span className="[&>svg]:w-8 [&>svg]:h-8">{icon}</span>
-                </span>
-                <span className="type-h1 font-mono text-foreground">
-                    {value}
-                </span>
-            </div>
+            {/* Main: Value */}
+            <span className="type-h1 font-mono text-foreground">
+                {value}
+            </span>
 
             {/* Footer: Trend */}
             {trend && (
