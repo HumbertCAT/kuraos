@@ -1,8 +1,8 @@
 # Infrastructure & Deployment Manual
 
-> **Status**: Production (v1.1.20)  
+> **Status**: Production (v1.3.7)  
 > **Platform**: Google Cloud (europe-southwest1)  
-> **Last Updated**: 2026-01-03
+> **Last Updated**: 2026-01-06
 
 ---
 
@@ -24,7 +24,7 @@
 │                                                                         │
 │   ┌──────────────────┐     ┌──────────────────┐                        │
 │   │ SECRET MANAGER   │     │ ARTIFACT REGISTRY│                        │
-│   │ 12 secrets       │     │ kura-repo        │                        │
+│   │ 17 secrets       │     │ cloud-run-source │                        │
 │   └──────────────────┘     └──────────────────┘                        │
 │                                                                         │
 │   ┌──────────────────┐                                                 │
@@ -40,9 +40,9 @@
 | Component | GCP Service | Spec |
 |:---|:---|:---|
 | API Server | Cloud Run | `kura-backend`, port 8000, unauthenticated |
-| Database | Cloud SQL | Postgres 15, `db-f1-micro`, SSD 10GB |
-| Container Registry | Artifact Registry | `kura-repo` |
-| Secrets | Secret Manager | 12 secrets (see below) |
+| Database | Cloud SQL | Postgres 15, `db-f1-micro`, SSD 10GB, europe-southwest1 |
+| Container Registry | Artifact Registry | `cloud-run-source-deploy` (auto-created by gcloud run deploy) |
+| Secrets | Secret Manager | 17 secrets (see below) |
 | Migrations | Cloud Run Job | `kura-migrator` |
 
 ---
@@ -212,7 +212,7 @@ Run **ONCE** to provision GCP infrastructure:
 ### What It Creates
 
 1. **Enables APIs**: Cloud Run, Cloud SQL, Secret Manager, Artifact Registry, Cloud Build
-2. **Artifact Registry**: `kura-repo` for Docker images
+2. **Artifact Registry**: `cloud-run-source-deploy` (auto-created by `gcloud run deploy --source`)
 3. **Cloud SQL**: `kura-primary` (Postgres 15, db-f1-micro, daily backups at 03:00)
 4. **Database**: `kuraosbd` with user `kura_app`
 5. **Secrets**: `DB_PASSWORD`, `SECRET_KEY`, `DATABASE_URL`
