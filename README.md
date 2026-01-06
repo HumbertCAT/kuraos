@@ -22,13 +22,13 @@ KURA OS is a clinical operating system for therapists, healers, and conscious pr
 ### 💎 Value Proposition: The "Killer" Edge
 *Solving clinical bottlenecks with sovereign intelligence.*
 
-| ⚡ Clinical Challenge | 🛡️ KURA OS Solution | Feature Impact |
+| 🚀 Motor Tecnológico | ⚡ Capacidad "Killer" | Impacto Clínico |
 |:---|:---|:---|
-| **Scattered Records** | **Soul Record** | 360° profile unifying medical, psychological, and spiritual history. |
-| **Silent Burnout** | **AletheIA** (8 Units) | 8 specialized AI units working 24/7 to analyze, synthesize, and alert. |
-| **Risk Blindspots** | **Sentinel Pulse** | Real-time emotional ECG tracking risk trajectories before they escalate. |
-| **Manual Friction** | **Autonomous Protocols** | Leads qualified and patients nudged automatically by intelligent agents. |
-| **Financial Leak** | **Ledger Sovereign** | 100% cost transparency with KuraCredits and provider-direct accounting. |
+| **Inteligencia Soberana** | **AletheIA (8 Units)** | 8 redes neuronales especializadas (Risk, Triage, Chat) trabajando 24/7. |
+| **Automatización** | **Agentes Autónomos** | Protocolos activos que cualifican leads y reactivan pacientes sin intervención. |
+| **Documentación** | **Scribe + Voice** | Transcripción clínica automática y síntesis de audio para WhatsApp. |
+| **Growth Engine** | **Meta Cloud + Booking** | Sincronización total Calendar/Stripe y gestión nativa de leads vía WhatsApp. |
+| **Historia Clínica** | **Patient 360 Timeline** | Perfil clínico unificado con trazabilidad total de la evolución del paciente. |
 
 > [!TIP]
 > **KURA OS isn't just a tool.** It's a clinical partner that bridges the gap between administrative chaos and therapeutic excellence.
@@ -60,11 +60,11 @@ KURA OS is a clinical operating system for therapists, healers, and conscious pr
 
 ## 📦 Core Modules
 
-### 🧬 Soul Record (Patient 360)
-Complete patient profiles tracking medical, psychological, and spiritual history.
+### 🧬 Patient 360 (Clinical Timeline)
+Unified clinical profiles tracking medical and psychological evolution.
 - Clinical Journal with rich text editor
 - Journey status visualization
-- Profile 360° (birth data, language, consent)
+- Profile 360° (data integrity, language, consent)
 
 ### 📅 Box Office (Booking Engine)
 Public booking wizard with integrated payments.
