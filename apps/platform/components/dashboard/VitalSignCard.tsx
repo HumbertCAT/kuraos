@@ -56,37 +56,38 @@ export function VitalSignCard({
 
     return (
         <div className="card p-5 flex flex-col justify-between h-32">
+            {/* Header: Label + Badge */}
             <div className="flex items-center justify-between">
                 <span className="type-ui text-muted-foreground tracking-wider">{label.toUpperCase()}</span>
-                <span className={iconColor}>{icon}</span>
-            </div>
-
-            <div className="flex items-end justify-between">
-                <div className="flex items-baseline gap-2">
-                    <span className="type-h1 font-mono text-foreground">
-                        {value}
-                    </span>
-
-                    {/* Trend Indicator */}
-                    {trend && (
-                        <div className={`flex items-center gap-1 ${getTrendColor()}`}>
-                            <TrendIcon className="w-3.5 h-3.5" />
-                            <span className="text-xs font-medium">{trend.label}</span>
-                        </div>
-                    )}
-                </div>
-
                 {badge && (
-                    <span className={`text-xs font-mono px-2 py-1 rounded ${badgeClasses[badgeType]}`}>
+                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${badgeClasses[badgeType]}`}>
                         {badge}
                     </span>
                 )}
-                {action && (
-                    <a href={action.href} className="text-xs text-brand hover:underline">
-                        {action.label}
-                    </a>
-                )}
             </div>
+
+            {/* Main: Icon + Value */}
+            <div className="flex items-center gap-3">
+                <span className={`${iconColor} opacity-80`}>
+                    <span className="[&>svg]:w-8 [&>svg]:h-8">{icon}</span>
+                </span>
+                <span className="type-h1 font-mono text-foreground">
+                    {value}
+                </span>
+            </div>
+
+            {/* Footer: Trend */}
+            {trend && (
+                <div className={`flex items-center gap-1 ${getTrendColor()}`}>
+                    <TrendIcon className="w-3.5 h-3.5" />
+                    <span className="text-xs font-medium">{trend.label}</span>
+                </div>
+            )}
+            {action && (
+                <a href={action.href} className="text-xs text-brand hover:underline">
+                    {action.label}
+                </a>
+            )}
         </div>
     );
 }
