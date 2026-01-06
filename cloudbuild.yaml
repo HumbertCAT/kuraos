@@ -2,18 +2,16 @@
 # Runs full CI/CD on push to main: Build + E2E + AI Eval + Deploy
 
 steps:
-  # Step 1: Build production image (lean)
-  - name: 'gcr.io/cloud-builders/docker'
+  # Step 1: Build production image with Kaniko (layer caching enabled)
+  - name: 'gcr.io/kaniko-project/executor:latest'
     id: 'build-prod-image'
     args:
-      - 'build'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/kura-backend:$COMMIT_SHA'
-      - '-t'
-      - 'gcr.io/$PROJECT_ID/kura-backend:latest'
-      - '-f'
-      - 'backend/Dockerfile'
-      - 'backend'
+      - --destination=gcr.io/$PROJECT_ID/kura-backend:$COMMIT_SHA
+      - --destination=gcr.io/$PROJECT_ID/kura-backend:latest
+      - --cache=true
+      - --cache-ttl=168h
+      - --context=dir://backend
+      - --dockerfile=backend/Dockerfile
     timeout: '1200s'
 
   # Step 2: Run backend tests (Phase 1 - Innate)
@@ -61,15 +59,7 @@ steps:
     timeout: '600s'
     waitFor: ['test-backend']
 
-  # Step 5: Push image to GCR
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'push-image'
-    args:
-      - 'push'
-      - 'gcr.io/$PROJECT_ID/kura-backend:$COMMIT_SHA'
-    waitFor: ['test-backend', 'test-ai-eval']
-
-  # Step 6: Run migrations
+  # Step 4: Run migrations (Kaniko auto-pushes, no separate push needed)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'run-migrations'
     entrypoint: 'bash'
@@ -79,9 +69,9 @@ steps:
         gcloud run jobs execute kura-migrator \
           --region=europe-west1 \
           --wait
-    waitFor: ['push-image']
+    waitFor: ['build-prod-image', 'test-backend', 'test-ai-eval']
 
-  # Step 7: Deploy to Cloud Run
+  # Step 5: Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy'
     entrypoint: 'bash'
@@ -94,6 +84,28 @@ steps:
           --platform=managed \
           --allow-unauthenticated
     waitFor: ['run-migrations']
+
+  # Step 6: Production Smoke Tests
+  - name: 'curlimages/curl:latest'
+    id: 'smoke-tests'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        echo "🔍 Running production smoke tests..."
+        sleep 5  # Wait for Cloud Run to stabilize
+        
+        # API health check
+        echo "Testing API..."
+        curl -f https://api.kuraos.ai/health || exit 1
+        
+        # Frontend check (accept 200 or 3xx redirects)
+        echo "Testing Frontend..."
+        curl -I https://app.kuraos.ai 2>&1 | grep -E "HTTP.*[23]0" || exit 1
+        
+        echo "✅ Smoke tests passed - production endpoints healthy"
+    timeout: '120s'
+    waitFor: ['deploy']
 
 # Use high-CPU machine for faster builds
 options:
