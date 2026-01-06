@@ -1,44 +1,46 @@
-# Automation Playbooks - How To Guide
+# Automation Agents - How To Guide
 
-Internal documentation for the TherapistOS automation playbook system.
+Internal documentation for the Kura OS automation agent system.
 
 ---
 
 ## Overview
 
-The Playbook system allows therapists to:
+The Agent system allows therapists to:
 1. **Activate pre-built automations** with one click
-2. **Install playbooks** from a marketplace of templates
-3. **Toggle rules ON/OFF** without configuration
-4. **Request custom playbooks** for specific needs
+2. **Install agents** from a curated catalog
+3. **Toggle agents ON/OFF** without configuration
+4. **Request custom agents** for specific needs
+
+> **Philosophy**: "Agents, Not Tools" — AI operates as autonomous teammates, not passive software.
 
 ---
 
 ## Key Concepts
 
-### Playbooks vs Manual Rules
+### Agents vs Manual Rules
 
 | Approach | Description | Example |
 |----------|-------------|---------|
-| **Playbook** | Pre-configured recipe, install & activate | "Block high-risk patients" |
+| **Agent** | Pre-configured protocol, install & activate | "Block high-risk patients" |
 | **Manual Rule** | Custom configuration (future) | "Send email after 3 days" |
 
-**Current Focus:** Playbooks (v0.9.3). Manual rule builder planned for v1.0+.
+**Current Focus:** Agent Catalog (v1.4.x). Manual rule builder planned for future.
 
 ---
 
-### System Templates vs Organization Rules
+### System Templates vs Organization Agents
 
 | Type | Description | `organization_id` |
 |------|-------------|-------------------|
-| **System Template** | Global marketplace template | `NULL` |
-| **Organization Rule** | Installed from template | `UUID` (your org) |
+| **System Template** | Global catalog template | `NULL` |
+| **Organization Agent** | Installed from template | `UUID` (your org) |
 
-**Key Field:** `cloned_from_id` tracks which template a rule was installed from.
+**Key Field:** `cloned_from_id` tracks which template an agent was installed from.
 
 ---
 
-## Available Playbooks
+## Available Agents
 
 ### 1. 🛡️ Escudo de Seguridad (Security Shield)
 
@@ -55,7 +57,36 @@ The Playbook system allows therapists to:
 
 ---
 
-### 2. 💸 Cobrador Automático (Auto Collector)
+### 2. 🤝 Concierge (Welcome Agent)
+
+**Purpose:** Welcome new leads and nudge them toward booking.
+
+| Property | Value |
+|----------|-------|
+| **Trigger** | `LEAD_CREATED` |
+| **Actions** | Send welcome email + booking nudge |
+| **Icon** | `UserPlus` |
+
+**Use Case:** Automatic onboarding for new CRM leads.
+
+---
+
+### 3. 👻 Ghost Detector
+
+**Purpose:** Re-engage leads who haven't responded in 48h.
+
+| Property | Value |
+|----------|-------|
+| **Trigger** | `LEAD_STAGED_TIMEOUT` |
+| **Conditions** | Hours elapsed >= 48 |
+| **Actions** | Send re-engagement message |
+| **Icon** | `Ghost` |
+
+**Use Case:** Prevent lead abandonment.
+
+---
+
+### 4. 💸 Cobrador Automático (Auto Collector)
 
 **Purpose:** Send payment reminders when patients don't complete booking payment.
 
@@ -70,7 +101,7 @@ The Playbook system allows therapists to:
 
 ---
 
-### 3. ❤️ Fidelización Post-Retiro (Post-Retreat Loyalty)
+### 5. ❤️ Fidelización Post-Retiro (Post-Retreat Loyalty)
 
 **Purpose:** Send satisfaction survey after retreat completion.
 
@@ -87,24 +118,24 @@ The Playbook system allows therapists to:
 
 ## User Flows
 
-### 1. Installing a Playbook
+### 1. Installing an Agent
 
 ```
-Settings → Automatizaciones → Marketplace tab → Click "Instalar" → Rule activated
+Agentes → Catálogo de Agentes tab → Click "Activar" → Agent activated
 ```
 
 **What happens:**
 1. System template is cloned to your organization
-2. New rule is created with `is_active = true`
+2. New agent is created with `is_active = true`
 3. `cloned_from_id` links to original template
-4. Rule appears in "Mis Automatizaciones" tab
+4. Agent appears in "Mis Agentes" tab
 
 ---
 
-### 2. Toggling a Playbook
+### 2. Toggling an Agent
 
 ```
-Mis Automatizaciones → Click toggle switch → Rule ON/OFF
+Mis Agentes → Click toggle switch → Agent ON/OFF
 ```
 
 **What happens:**
@@ -114,16 +145,16 @@ Mis Automatizaciones → Click toggle switch → Rule ON/OFF
 
 ---
 
-### 3. Uninstalling a Playbook
+### 3. Uninstalling an Agent
 
 ```
-Mis Automatizaciones → Click trash icon → Confirm → Rule deleted
+Mis Agentes → Click trash icon → Confirm → Agent deleted
 ```
 
 **What happens:**
-1. `DELETE /automations/rules/{id}` removes the rule
-2. Rule no longer executes
-3. Can reinstall from Marketplace anytime
+1. `DELETE /automations/rules/{id}` removes the agent
+2. Agent no longer executes
+3. Can reinstall from Catalog anytime
 
 ---
 
@@ -200,7 +231,7 @@ automation_rules
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/automations/rules` | GET | List org's installed rules |
+| `/automations/rules` | GET | List org's installed agents |
 | `/automations/marketplace` | GET | List system templates |
 | `/automations/rules/install/{id}` | POST | Clone template to org |
 | `/automations/rules/{id}` | PATCH | Toggle ON/OFF |
@@ -215,7 +246,7 @@ automation_rules
 ```
 1. Event occurs (form submission, timeout, etc.)
 2. automation_engine.py receives event
-3. Queries active rules for that trigger type
+3. Queries active agents for that trigger type
 4. Evaluates conditions against event payload
 5. Executes matching actions
 6. Logs to SystemEventLog
@@ -229,12 +260,12 @@ automation_rules
 | `backend/app/api/v1/automations.py` | CRUD endpoints |
 | `backend/app/services/automation_engine.py` | Event processing |
 | `backend/scripts/seed_automation_playbooks.py` | Initial templates |
-| `frontend/.../settings/automations/page.tsx` | Marketplace UI |
-| `frontend/components/IconRenderer.tsx` | Dynamic icons |
+| `apps/platform/app/[locale]/automations/page.tsx` | Agents UI |
+| `apps/platform/components/IconRenderer.tsx` | Dynamic icons |
 
 ---
 
-## Adding New Playbooks
+## Adding New Agents
 
 ### 1. Define in Seed Script
 
@@ -242,7 +273,7 @@ automation_rules
 # backend/scripts/seed_automation_playbooks.py
 
 {
-    "name": "Nuevo Playbook",
+    "name": "Nuevo Agente",
     "description": "Descripción de lo que hace.",
     "icon": "LucideIconName",
     "trigger_event": TriggerEvent.FORM_SUBMISSION_COMPLETED.value,
@@ -255,7 +286,7 @@ automation_rules
 ### 2. Add Icon to Registry
 
 ```tsx
-// frontend/components/IconRenderer.tsx
+// apps/platform/components/IconRenderer.tsx
 import { NewIcon } from 'lucide-react';
 
 const ICON_MAP = {
@@ -277,14 +308,14 @@ docker-compose exec backend python -m scripts.seed_automation_playbooks
 1. **Multi-tenancy**: All queries filter by `organization_id`
 2. **System templates**: Cannot be modified or deleted by users
 3. **Cloning**: Only system templates can be cloned
-4. **Execution**: Only `is_active = true` rules execute
+4. **Execution**: Only `is_active = true` agents execute
 5. **Audit**: All events logged to `SystemEventLog`
 
 ---
 
 ## Troubleshooting
 
-### Playbook not executing
+### Agent not executing
 
 1. Check `is_active` is `true`
 2. Verify trigger event is firing
@@ -299,4 +330,4 @@ docker-compose exec backend python -m scripts.seed_automation_playbooks
 
 ---
 
-*Last updated: 2025-12-14*
+*Last updated: 2026-01-06*
