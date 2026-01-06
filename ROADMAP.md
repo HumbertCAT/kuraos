@@ -1,8 +1,8 @@
 # Product Roadmap
 
-> **Status**: Living Document (v1.3.11)  
+> **Status**: Living Document (v1.4.0)  
 > **Scope**: Strategic Feature Planning 2026  
-> **Last Updated**: 2026-01-06 (The Cleanup)
+> **Last Updated**: 2026-01-06 (Sovereign Intelligence)
 
 ---
 
