@@ -24,6 +24,7 @@ import {
     X
 } from 'lucide-react';
 
+
 // Types
 interface LedgerStats {
     period_days: number;
@@ -214,6 +215,102 @@ const DEFAULT_MODELS: ModelInfo[] = [
 ];
 
 const COMPANION_MODELS = ['whisper-1', 'whisper'];
+
+// ============================================================================
+// Run Tab Content (Manual Execution)
+// ============================================================================
+
+function RunTabContent() {
+    const [isRunning, setIsRunning] = useState(false);
+    const [result, setResult] = useState<{ success: boolean; analyzed?: number; error?: string } | null>(null);
+
+    async function handleForceAnalysis() {
+        setIsRunning(true);
+        setResult(null);
+
+        try {
+            const res = await fetch(`${API_URL}/admin/trigger-conversation-analysis`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setResult({ success: true, analyzed: data.result?.analyzed || 0 });
+            } else {
+                setResult({ success: false, error: data.detail || 'Error al ejecutar' });
+            }
+        } catch (err: any) {
+            setResult({ success: false, error: err.message || 'Error de conexión' });
+        } finally {
+            setIsRunning(false);
+        }
+    }
+
+    return (
+        <div className="space-y-4">
+            {/* Force Analysis Card */}
+            <div className="p-5 bg-gradient-to-br from-warning/10 to-warning/5 rounded-xl border border-warning/20">
+                <div className="flex items-start justify-between gap-6">
+                    <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-warning/20 flex items-center justify-center flex-shrink-0">
+                            <Zap className="w-6 h-6 text-warning" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-foreground text-lg">Forzar Análisis AletheIA</h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Ejecuta el análisis de conversaciones WhatsApp inmediatamente.
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleForceAnalysis}
+                        disabled={isRunning}
+                        className="px-5 py-2.5 bg-warning text-black font-semibold rounded-xl hover:bg-warning/90 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-warning/20"
+                    >
+                        {isRunning ? (
+                            <>
+                                <RefreshCw className="w-4 h-4 animate-spin" />
+                                Ejecutando...
+                            </>
+                        ) : (
+                            <>
+                                <Play className="w-4 h-4" />
+                                Ejecutar
+                            </>
+                        )}
+                    </button>
+                </div>
+
+                {/* Result Feedback */}
+                {result && (
+                    <div className={`mt-4 p-3 rounded-xl ${result.success
+                        ? 'bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/30'
+                        : 'bg-red-50 border border-red-200 dark:bg-red-950/30'
+                        }`}>
+                        <p className={`text-sm font-medium ${result.success ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300'}`}>
+                            {result.success
+                                ? `✅ Análisis completado: ${result.analyzed} fichas analizadas`
+                                : `❌ ${result.error}`
+                            }
+                        </p>
+                    </div>
+                )}
+            </div>
+
+            {/* Future triggers placeholder */}
+            <div className="p-4 bg-muted/50 rounded-xl text-sm text-muted-foreground">
+                <p className="font-medium mb-2">Próximamente:</p>
+                <ul className="space-y-1 text-xs">
+                    <li>• Regenerar Daily Briefings</li>
+                    <li>• Ejecutar Sentinel Risk Scan</li>
+                </ul>
+            </div>
+        </div>
+    );
+}
 
 type TabId = 'financials' | 'activity' | 'models' | 'routing' | 'run';
 
@@ -605,6 +702,11 @@ export default function AiGovernance({ defaultSection = 'financials' }: AiGovern
                         );
                     })}
                 </div>
+            )}
+
+            {/* Tab: Run (Manual Execution) */}
+            {activeTab === 'run' && (
+                <RunTabContent />
             )}
         </div>
     );

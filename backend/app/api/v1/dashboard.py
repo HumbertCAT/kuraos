@@ -116,7 +116,7 @@ async def get_credits_balance(
     current_user: User = Depends(get_current_user),
 ):
     """Get current organization's Kura Credits balance for the billing period.
-    
+
     Returns:
         - credits_used: Total KC consumed this month
         - credits_limit: Monthly KC limit based on tier
@@ -126,35 +126,36 @@ async def get_credits_balance(
     from sqlalchemy import func
     from app.db.models import AiUsageLog, Organization
     from app.services.settings import get_setting
-    
+
     org_id = current_user.organization_id
-    
+
     # Get organization tier
-    org_result = await db.execute(
-        select(Organization).where(Organization.id == org_id)
-    )
+    org_result = await db.execute(select(Organization).where(Organization.id == org_id))
     org = org_result.scalar_one_or_none()
     tier = org.tier if org and org.tier else "BUILDER"
-    
+
     # Get credit rate and tier limit
     credit_rate = await get_setting(db, "KURA_CREDIT_RATE", default=1000)
     spend_limit_eur = await get_setting(db, f"TIER_AI_SPEND_LIMIT_{tier}", default=10)
-    credits_limit = float(spend_limit_eur) * float(credit_rate)  # Convert EUR limit to KC
-    
+    credits_limit = float(spend_limit_eur) * float(
+        credit_rate
+    )  # Convert EUR limit to KC
+
     # Calculate usage for current month
     now = datetime.utcnow()
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    
+
     usage_result = await db.execute(
         select(func.sum(AiUsageLog.cost_user_credits)).where(
             AiUsageLog.organization_id == org_id,
             AiUsageLog.created_at >= month_start,
+            AiUsageLog.cost_user_credits >= 0,  # Exclude grants (negative values)
         )
     )
     credits_used = float(usage_result.scalar_one() or 0)
-    
+
     usage_percent = (credits_used / credits_limit * 100) if credits_limit > 0 else 0
-    
+
     return CreditsBalanceResponse(
         credits_used=round(credits_used, 2),
         credits_limit=round(credits_limit, 2),
