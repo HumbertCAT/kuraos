@@ -14,6 +14,45 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.9] - 2026-01-06 🧪 TESTING SOVEREIGNTY
+
+> **Theme:** "The Immune System" — From zero tests to self-healing QA infrastructure.
+
+### 🧬 Phase 1: Innate Immunity (Backend Core)
+Complete backend testing infrastructure with testcontainers and factory-boy.
+
+| Achievement | Details |
+|:---|:---|
+| **10/10 tests PASSED** | Authentication & health endpoints |
+| **Testcontainers** | Ephemeral PostgreSQL per test run |
+| **Python 3.12 parity** | Aligned with production Docker |
+
+### 🏗️ Architecture: Lazy Loading Pattern
+Major refactor to `app/db/base.py` for async-friendly engine creation.
+
+| Function | Purpose |
+|:---|:---|
+| `get_engine()` | Lazy singleton initialization |
+| `get_session_factory()` | Session factory lazy init |
+| `set_engine()` / `reset_engine()` | Test engine injection |
+| `init_db()` / `close_db()` | Lifespan hooks |
+
+### 🔧 Infrastructure
+- **main.py lifespan**: Now uses `init_db()` / `close_db()` for clean startup/shutdown
+- **Legacy migrations**: 4 files updated from `AsyncSessionLocal` → `get_session_factory()`
+  - `clinical_entries.py`, `data_sanitizer.py`, `ai/factory.py` (x2)
+
+### 📦 New Files
+- `tests/conftest.py` - Testcontainers fixtures, minimal test app
+- `tests/factories.py` - Factory-Boy factories (Organization, User, Patient)
+- `tests/unit/__init__.py` - Unit tests directory structure
+
+### 🐛 Bug Fixes  
+- **Dashboard KC Hotfix**: Added `cost_user_credits >= 0` filter to exclude grants from balance sum
+- **AletheIA Pulse Branding**: Renamed AIGov Run page to "Force AletheIA Pulse"
+
+---
+
 ## [1.3.8] - 2026-01-06 🏛️ COCKPIT SOVEREIGNTY
 
 > **Theme:** "Admin Panel Maturity" — Nested routes, tracking tables, and documentation hygiene.
