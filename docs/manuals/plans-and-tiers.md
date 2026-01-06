@@ -1,6 +1,6 @@
 # 📊 How-To: Plan & Tier System
 
-> **Last updated:** 2025-12-15
+> **Last updated:** 2026-01-06
 
 Este documento explica el sistema de tiers, límites, y cómo funciona el control de acceso basado en roles.
 
@@ -8,11 +8,11 @@ Este documento explica el sistema de tiers, límites, y cómo funciona el contro
 
 ## 1. Los Tres Tiers
 
-| Tier | Límite Pacientes | Precio | Características |
-|------|------------------|--------|-----------------|
-| **BUILDER** | 3 | Gratis | Funcionalidades básicas |
-| **PRO** | 50 | €X/mes | Límites extendidos |
-| **CENTER** | 150 | €X/mes | Todo + Risk Shield auto-block |
+| Tier | Límite Pacientes | AI Credits (KC) | Precio | Características |
+|------|------------------|-----------------|--------|-----------------|
+| **BUILDER** | 3 | 2,000 KC | Gratis | Funcionalidades básicas |
+| **PRO** | 50 | 15,000 KC | €19/mes | Límites extendidos |
+| **CENTER** | 150 | 50,000 KC | €49/mes | Todo + Risk Shield auto-block |
 
 ### Configuración en Base de Datos
 
@@ -192,7 +192,7 @@ GET /api/v1/auth/me/usage
 
 ### Componente Frontend
 
-`frontend/components/PlanUsageWidget.tsx`
+`apps/platform/components/PlanUsageWidget.tsx`
 
 Se muestra en el dropdown de usuario y cambia color según uso:
 - 🟢 < 75%: verde
