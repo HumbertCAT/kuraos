@@ -81,7 +81,7 @@ export function RewardsCatalog({ currentTier, currentKarma, onRedeem }: RewardsC
 
     return (
         <div className="space-y-4">
-            <h3 className="font-bold text-foreground flex items-center gap-2">
+            <h3 className="type-h4 flex items-center gap-2">
                 <Gift className="w-5 h-5 text-brand" />
                 {t('rewardsTitle')}
             </h3>

@@ -42,7 +42,7 @@ export function ViralShareModule({ referralCode }: ViralShareModuleProps) {
 
     return (
         <div className="card p-6">
-            <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
+            <h3 className="type-h4 mb-4 flex items-center gap-2">
                 <Share2 className="w-5 h-5 text-brand" />
                 {t('shareTitle')}
             </h3>

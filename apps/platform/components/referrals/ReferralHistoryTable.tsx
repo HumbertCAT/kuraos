@@ -30,7 +30,7 @@ export function ReferralHistoryTable({ history, totalReferred, totalActive }: Re
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
-                <h3 className="font-bold text-foreground flex items-center gap-2">
+                <h3 className="type-h4 flex items-center gap-2">
                     <Users className="w-5 h-5 text-brand" />
                     {t('historyTitle')}
                 </h3>
