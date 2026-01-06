@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.3.8-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.3.9.5-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 
 ---
@@ -112,6 +112,48 @@ cp apps/platform/.env.local.example apps/platform/.env.local
 | Platform | http://localhost:3001 |
 | Backend API | http://localhost:8001 |
 | API Docs | http://localhost:8001/docs |
+
+---
+
+## 🧪 Testing
+
+>**The Immune System** - 5 layers of quality assurance
+
+### Quick Test Commands
+
+```bash
+# Run all test layers
+./scripts/test.sh all
+
+# Run specific layer
+./scripts/test.sh innate      # Backend unit tests
+./scripts/test.sh adaptive    # Frontend E2E tests
+./scripts/test.sh cognitive   # AI semantic evaluation
+./scripts/test.sh email       # Email flow tests
+```
+
+### Test Coverage
+
+| Layer | Technology | Tests |
+|:---|:---|:---|
+| **Innate** (Backend) | Pytest + testcontainers | 10+ unit tests |
+| **Adaptive** (Frontend) | Playwright | 7 E2E tests |
+| **Cognitive** (AI) | Vertex AI Evaluation | 3 golden cases |
+| **Communication** (Email) | Mailpit | 4 email tests |
+
+### Additional Setup for Testing
+
+**Playwright browsers:**
+```bash
+cd apps/platform && pnpm exec playwright install
+```
+
+**Test dependencies:**
+```bash
+cd backend && .venv/bin/pip install -r requirements-test.txt
+```
+
+📚 **Full testing guide:** [docs/TESTING.md](docs/TESTING.md)
 
 ---
 

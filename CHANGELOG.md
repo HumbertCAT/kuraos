@@ -14,6 +14,51 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.9.5] - 2026-01-06 🎯 CONSOLIDATION & CLEAN SLATE
+
+> **Theme:** "Project Hygiene" — Scripts, docs, and code in perfect sync.
+
+### 🏆 The Immune System - COMPLETE
+
+All 5 phases operational and documented:
+
+| Phase | Status | Infrastructure |
+|:---|:---|:---|
+| 1. Inn Immunity (Backend) | ✅ | Pytest + testcontainers (10+ tests) |
+| 2. Adaptive Immunity (Frontend) | ✅ | Playwright + auth bypass (7 E2E tests) |
+| 3. Cognitive Immunity (AI) | ✅ | Vertex AI evaluation (3 golden cases) |
+| 4. Nervous System (CI/CD) | ✅ | GitHub Actions + Cloud Build |
+| 5. Communication (Email) | ✅ | Mailpit SMTP sink (4 email tests) |
+
+### 🧹 Operational Hygiene
+
+**Scripts:**
+- **`test.sh`:** Unified test runner for all layers (`innate|adaptive|cognitive|email|all`)
+- **`deploy.sh`:** Verified lean (no test dependencies in production)
+
+**Documentation:**
+- **`docs/TESTING.md`:** 8K comprehensive QA guide (The Bible)
+- **`README.md`:** Updated with testing section, quick commands, Playwright setup
+
+### 📊 Test Coverage
+
+- Backend: 14+ tests (unit + email)
+- Frontend: 7 E2E tests
+- AI: 3 semantic evaluation cases
+- Total: 24+ automated tests
+
+### 🎓 Developer Experience
+
+```bash
+# Single command to run all tests
+./scripts/test.sh all
+
+# Full documentation
+docs/TESTING.md
+```
+
+---
+
 ## [1.3.9.4] - 2026-01-06 ⚡ THE NERVOUS SYSTEM
 
 > **Theme:** "Phase 4: CI/CD Automation" — GitHub Actions + Cloud Build + Antigravity Loop.
