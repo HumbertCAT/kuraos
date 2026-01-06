@@ -432,7 +432,96 @@ Cloud DLP elimina los **18 identificadores** requeridos:
 
 ---
 
+## Advanced Techniques (Future Enhancements)
+
+> [!NOTE]
+> **Architect Review Note (GEM):** El siguiente enfoque está planificado para v2.0. La v1.0 usa placeholders `[TAG]` por simplicidad y seguridad.
+
+### Masking vs. Synthesis: The Quality Dilemma
+
+**Problema con placeholders actuales:**
+
+```
+Input:  "Juan García se siente triste"
+Output: "[PERSON_NAME] se siente triste"  ← Modelo aprende sintaxis robótica
+```
+
+Si entrenamos modelos con `[PERSON_NAME]`, el modelo puede empezar a generar respuestas con tags en producción:
+
+```
+"El paciente [PERSON_NAME] debería considerar terapia cognitiva..."  ❌
+```
+
+**Solución PRO: DLP Surrogate Types (v2.0)**
+
+Cloud DLP soporta **"Crypto-based tokenization"** que reemplaza PII con valores sintéticos deterministas:
+
+```python
+# backend/app/services/safety/privacy_shield_v2.py (FUTURE)
+
+class PrivacyShieldV2:
+    """
+    Versión avanzada con surrogate types para training natural.
+    """
+    
+    async def sanitize_with_surrogates(self, text: str) -> str:
+        """
+        Reemplaza PII con nombres falsos pero realistas.
+        
+        Example:
+            Input:  "Juan García (DNI 12345678A) reporta ansiedad"
+            Output: "Roberto Fernández (DNI 87654321B) reporta ansiedad"
+        
+        Beneficios:
+        - El modelo aprende gramática humana natural
+        - La identidad real sigue protegida (deterministic hash)
+        - Reversible con crypto key (si es necesario legalmente)
+        """
+        response = self.dlp.deidentify_content(
+            request={
+                "parent": f"projects/{PROJECT_ID}/locations/europe-west1",
+                "deidentify_config": {
+                    "info_type_transformations": {
+                        "transformations": [{
+                            "info_types": [{"name": "PERSON_NAME"}],
+                            "primitive_transformation": {
+                                "crypto_replace_ffx_fpe_config": {
+                                    "crypto_key": self.crypto_key,
+                                    "context": {"name": "clinical_training"},
+                                    "surrogate_info_type": {"name": "PERSON_NAME"},
+                                    # Alphabet español + números
+                                    "common_alphabet": "ALPHA_NUMERIC",
+                                }
+                            }
+                        }]
+                    }
+                },
+                "item": {"value": text},
+            }
+        )
+        
+        return response.item.value
+```
+
+**Comparación:**
+
+| Enfoque | v1.0 (Masking) | v2.0 (Synthesis) |
+|---------|----------------|------------------|
+| **Output** | `[PERSON_NAME]` se siente triste | `Roberto` se siente triste |
+| **Naturalidad** | ❌ Sintaxis robótica | ✅ Lenguaje humano |
+| **Seguridad** | ✅ Obvio que está sanitizado | ⚠️ Requiere auditoría de re-identificación |
+| **Debug** | ✅ Fácil verificar eliminación | ⚠️ Necesita logging de mappings |
+| **Costo DLP** | $1/GB | $3/GB (crypto overhead) |
+
+**Recomendación GEM:**
+
+> "Para v1.0, déjalo con placeholders `[TAG]`. Es más seguro y fácil de depurar. Para v2.0, cuando tengamos 1000+ ejemplos de training, investiga **DLP De-identification with surrogate types** para mejorar la naturalidad de los modelos."
+
+---
+
 ## Consequences
+
+
 
 ### Positive
 
