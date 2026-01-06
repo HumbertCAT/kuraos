@@ -44,7 +44,7 @@ Operational guides for feature usage and configuration.
 |:---|:---|
 | [booking-system.md](./manuals/booking-system.md) | The Box Office (Public Booking Engine) |
 | [whatsapp-monitoring.md](./manuals/whatsapp-monitoring.md) | Twilio + AletheIA integration |
-| [automation-agents.md](./manuals/automation-agents.md) | Playbooks and agent configuration |
+| [automation-agents.md](./manuals/automation-agents.md) | AI Agents and automation configuration |
 | [forms-engine.md](./manuals/forms-engine.md) | Dynamic forms and lead capture |
 | [plans-and-tiers.md](./manuals/plans-and-tiers.md) | Subscription tiers (BUILDER/PRO/CENTER) |
 
@@ -58,6 +58,7 @@ Infrastructure, deployment, and technical debt.
 |:---|:---|
 | [infrastructure-and-deploy.md](./ops/infrastructure-and-deploy.md) | GCP, Cloud Run, secrets, DR |
 | [technical-debt.md](./ops/technical-debt.md) | Active debt registry |
+| [testing.md](./ops/testing.md) | The Immune System QA architecture |
 
 ---
 
