@@ -3,6 +3,7 @@
 
 steps:
   # Step 1: Build production image with Kaniko (layer caching enabled)
+  # Starts immediately (no waitFor)
   - name: 'gcr.io/kaniko-project/executor:latest'
     id: 'build-prod-image'
     args:
@@ -13,8 +14,10 @@ steps:
       - --context=dir://backend
       - --dockerfile=backend/Dockerfile
     timeout: '1200s'
+    waitFor: ['-']  # Start immediately
 
-  # Step 2: Run migrations
+  # Step 2: Run migrations (IN PARALLEL with build)
+  # The migrator uses the EXISTING production image, so it's safe to run in parallel
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'run-migrations'
     entrypoint: 'bash'
@@ -24,9 +27,10 @@ steps:
         gcloud run jobs execute kura-migrator \
           --region=europe-west1 \
           --wait
-    waitFor: ['build-prod-image']
+    waitFor: ['-']  # Start immediately (parallel with build)
 
-  # Step 3: Deploy to Cloud Run (using standard deploy script logic)
+  # Step 3: Deploy to Cloud Run
+  # SAFETY: Waits for BOTH build AND migrations to complete before deployment
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy'
     entrypoint: 'bash'
@@ -38,7 +42,7 @@ steps:
           --region=europe-west1 \
           --platform=managed \
           --allow-unauthenticated
-    waitFor: ['run-migrations']
+    waitFor: ['build-prod-image', 'run-migrations']  # Wait for BOTH
 
   # Step 4: Production Smoke Tests (Fast Verification)
   - name: 'curlimages/curl:latest'
@@ -62,6 +66,3 @@ options:
   
 timeout: '3600s'
 
-images:
-  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kura-backend:$COMMIT_SHA'
-  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kura-backend:latest'
