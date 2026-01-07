@@ -22,7 +22,7 @@ google-auth==2.47.0
 google-cloud-storage==2.19.0
 google-cloud-profiler==4.1.0
 google-cloud-trace==1.17.0
-google-cloud-billing==1.18.0
+google-cloud-billing==1.17.0
 
 # OpenTelemetry (ADR-019 Observability)
 opentelemetry-api==1.39.1
