@@ -130,7 +130,6 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         level: 2,
         levelName: 'Transformation',
         suggestedModel: 'Whisper v3',
-        isFixed: true
     },
     audio_synthesis: {
         label: 'AletheIA Voice',
