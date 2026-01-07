@@ -494,7 +494,7 @@ export default function EditPatientPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-muted-foreground mb-2">Nivel de Privacidad</label>
-              <div className="flex gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={async () => {
@@ -506,16 +506,16 @@ export default function EditPatientPage() {
                     setSavingPrivacy(false);
                   }}
                   disabled={savingPrivacy}
-                  className={`flex-1 p-4 rounded-xl border-2 transition-all ${(!privacyTier || privacyTier === 'STANDARD')
-                      ? 'border-emerald-500 bg-emerald-500/10'
-                      : 'border-border hover:border-emerald-300'
+                  className={`p-4 rounded-xl border-2 transition-all ${(!privacyTier || privacyTier === 'STANDARD')
+                    ? 'border-emerald-500 bg-emerald-500/10'
+                    : 'border-border hover:border-emerald-300'
                     }`}
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Shield className="w-5 h-5 text-emerald-500" />
                     <span className="font-medium text-foreground">Standard</span>
                   </div>
-                  <p className="text-xs text-muted-foreground text-left">Audio eliminado. Transcripción preservada.</p>
+                  <p className="text-xs text-muted-foreground text-left">Audio eliminado. Texto preservado.</p>
                 </button>
                 <button
                   type="button"
@@ -528,16 +528,38 @@ export default function EditPatientPage() {
                     setSavingPrivacy(false);
                   }}
                   disabled={savingPrivacy}
-                  className={`flex-1 p-4 rounded-xl border-2 transition-all ${privacyTier === 'GHOST'
-                      ? 'border-indigo-500 bg-indigo-500/10'
-                      : 'border-border hover:border-indigo-300'
+                  className={`p-4 rounded-xl border-2 transition-all ${privacyTier === 'GHOST'
+                    ? 'border-indigo-500 bg-indigo-500/10'
+                    : 'border-border hover:border-indigo-300'
                     }`}
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Ghost className="w-5 h-5 text-indigo-500" />
                     <span className="font-medium text-foreground">Ghost</span>
                   </div>
-                  <p className="text-xs text-muted-foreground text-left">Solo RAM. Sin datos persistentes.</p>
+                  <p className="text-xs text-muted-foreground text-left">Solo RAM. Sin persistencia.</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setSavingPrivacy(true);
+                    try {
+                      await api.patients.updatePrivacy(patientId, 'LEGACY');
+                      setPrivacyTier('LEGACY');
+                    } catch (e) { console.error(e); }
+                    setSavingPrivacy(false);
+                  }}
+                  disabled={savingPrivacy}
+                  className={`p-4 rounded-xl border-2 transition-all ${privacyTier === 'LEGACY'
+                    ? 'border-amber-500 bg-amber-500/10'
+                    : 'border-border hover:border-amber-300'
+                    }`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="w-5 h-5 text-amber-500" />
+                    <span className="font-medium text-foreground">Legacy</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-left">Archivo frio. Todo conservado.</p>
                 </button>
               </div>
               {savingPrivacy && (

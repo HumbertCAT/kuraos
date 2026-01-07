@@ -148,7 +148,7 @@ export const api = {
     },
 
     // v1.5.6: Ghost Protocol - Update patient privacy tier
-    updatePrivacy: async (id: string, tier: 'GHOST' | 'STANDARD') => {
+    updatePrivacy: async (id: string, tier: 'GHOST' | 'STANDARD' | 'LEGACY') => {
       const res = await fetch(`${API_URL}/settings/privacy/patient/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
