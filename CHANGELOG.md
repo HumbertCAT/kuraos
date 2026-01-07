@@ -14,7 +14,36 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.12] - 2026-01-07 🧠 CRYSTAL MIND - CLINICAL CONTEXT
+## [1.4.14] - 2026-01-07 🔓 CRYSTAL MIND - TOTAL FREEDOM
+    
+> **Theme:** "Unblocked Governance" — Freedom-first routing + Advanced discovery.
+
+### 🔓 Unblocked Routing
+- **Total Choice**: All enabled models now visible in AI task selectors.
+- **Starred Recommendations**: Ideal models prioritized with ⭐ in `Recomendados ✨` group.
+- **Grouped Selection**: Clear distinction between `Recomendados ✨` and `Otros Modelos Disponibles`.
+
+### 🔍 Advanced Model Discovery
+- **4-Tier Filtering**: New console in `Models` page (Provider, Role, Capabilities, Compatibility).
+- **Consolidated Registry**: Full Vertex AI Model Garden (Claude, Llama, Mistral) with cost/capability matrix.
+
+---
+
+## [1.4.13] - 2026-01-07 🌳 CRYSTAL MIND - MODEL GARDEN
+
+> **Theme:** "Ecosystem Expansion" — Multi-provider infrastructure & Intelligent Routing.
+
+### 🌳 Model Garden Expansion
+- **New Providers**: Anthropic (Claude 3.5), Meta (Llama 3.1), and Mistral on Vertex AI.
+- **Capability Matrix**: New `AIRequirement` system (Reasoning, Memory, Audio, Vision).
+- **Cost Transparency**: Integrated per-token pricing for all Model Garden additions.
+
+### 🎯 Dynamic Selection Architecture
+- **Requirement-Aware UI**: Routing selectors now contextually aware of model capabilities.
+- **Restored Versioning**: Re-alignment with Kura OS internal `v2.5` / `v3.0` power nomenclature.
+
+---
+
 
 > **Theme:** "Light Memory" — Session continuity via context injection.
 
