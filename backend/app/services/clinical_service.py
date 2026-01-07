@@ -257,31 +257,59 @@ class ClinicalService:
                 # 2. Sentinel Pulse Update (Heart)
                 if "metrics" in analysis_json:
                     metrics = analysis_json["metrics"]
+                    soap = analysis_json.get("soap_note", {})
+
                     # Build insight object compatible with PatientInsightsResponse
                     risk_score = metrics.get("risk_score", 0.0)
-                    risk_level = "NONE"
+                    # v1.5.9: Normalize risk level from numerical score
+                    risk_level = "LOW"
+                    alerts = []
+
                     if risk_score > 0.8:
                         risk_level = "CRITICAL"
+                        alerts.append({
+                            "type": "critical",
+                            "message": f"🚨 ALERTA CRÍTICA: Detectado riesgo severo en el análisis.",
+                        })
                     elif risk_score > 0.6:
                         risk_level = "HIGH"
+                        alerts.append({
+                            "type": "critical",
+                            "message": "⚠️ ALTO RIESGO: Se recomienda revisión inmediata.",
+                        })
                     elif risk_score > 0.4:
                         risk_level = "MEDIUM"
-                    elif risk_score > 0.2:
-                        risk_level = "LOW"
+                        alerts.append({
+                            "type": "warning",
+                            "message": "🟡 RIESGO MEDIO: Indicadores de inestabilidad detectados.",
+                        })
+
+                    # v1.5.9: Robust summary extraction (Text uses 'summary', Audio uses 'subjective')
+                    summary = soap.get("summary") or soap.get("subjective") or ""
 
                     patient.last_insight_json = {
-                        "summary": analysis_json["soap_note"].get("summary", ""),
-                        "alerts": [],  # Could be expanded later
+                        "summary": summary,
+                        "alerts": alerts,
                         "suggestions": [
-                            analysis_json["soap_note"].get("therapeutic_plan", "")
+                            soap.get("therapeutic_plan") or soap.get("plan") or ""
                         ],
                         "engagement_score": int(
                             metrics.get("engagement_score", 0.5) * 100
                         ),
-                        "risk_level": risk_level,
+                        "risk_level": risk_level.lower(),
                         "risk_score": risk_score,
                         "key_themes": [
-                            analysis_json["soap_note"].get("observations", "")
+                            t.strip()
+                            for t in (
+                                soap.get("observations") or soap.get("assessment") or ""
+                            ).split(",")[:3]
+                        ]
+                        if ","
+                        in (soap.get("observations") or soap.get("assessment") or "")
+                        else [
+                            (soap.get("observations") or soap.get("assessment") or "")[
+                                :50
+                            ]
                         ],
                     }
                     patient.last_insight_at = datetime.now(timezone.utc)

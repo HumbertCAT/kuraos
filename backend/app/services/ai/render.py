@@ -96,7 +96,7 @@ def get_system_prompt(
         "triage": "triage_v1.jinja2",
         "chat": "chat_v1.jinja2",
         "help_bot": "help_v1.jinja2",
-        "briefing": "clinical_v1.jinja2",  # Reuse clinical for now
+        "briefing": "daily_briefing_v1.jinja2",  # Standardized v1.5.9
         "ai_enhancement": "clinical_v1.jinja2",
     }
 

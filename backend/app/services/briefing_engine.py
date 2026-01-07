@@ -227,9 +227,23 @@ Output: Spanish script (~50 words)."""
 
             response = await provider.analyze_text(
                 content=content,
-                system_prompt=system_prompt,
+                task_type="briefing",
+                context={"briefing_data": content},
             )
-            return response.text.strip()
+
+            # v1.5.9: Parse JSON script
+            raw_text = response.text.strip()
+            if "```json" in raw_text:
+                raw_text = raw_text.split("```json")[1].split("```")[0].strip()
+
+            try:
+                result = json.loads(raw_text)
+                script = result.get("script_text", raw_text)
+                # Store metadata for future use (priority, etc)
+                logger.info(f"Briefing priority: {result.get('priority_level', 'LOW')}")
+                return script
+            except json.JSONDecodeError:
+                return raw_text.strip()
         except Exception as e:
             logger.error(f"Briefing script generation failed: {e}")
             return self._fallback_script(data)

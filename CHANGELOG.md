@@ -15,6 +15,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.5.9-HF3] - 2026-01-07 🧠 OPERATION CORTEX COMPLETION
+
+### ✨ AI Integrity & Standardisation
+- **JSON Output MANDATE**: Unified all AI clinical templates (`audio_v1`, `clinical_v1`, `daily_briefing_v1`) to strict JSON format.
+- **Sentinel Pulse Fix**: `ClinicalService` now robustly parses metadata from both text (summary) and audio (subjective) inputs.
+- **Daily Briefing (Morning Pulse)**: Created dedicated template and logic to restore automated morning briefings with priority detection.
+- **Bug Fixes**: Resolved indentation errors in `clinical_service.py` and regression in `briefing_engine.py`.
+
+---
+
 ## [1.5.9-HF2] - 2026-01-07 🐛 LOGGING FIX
 
 ### 🐛 Critical Fixes

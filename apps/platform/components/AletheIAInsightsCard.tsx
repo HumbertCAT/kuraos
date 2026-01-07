@@ -202,6 +202,7 @@ export default function AletheIAInsightsCard({
         low: { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Bajo' },
         medium: { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Medio' },
         high: { bg: 'bg-red-100', text: 'text-red-700', label: 'Alto' },
+        critical: { bg: 'bg-red-600 animate-pulse shadow-lg shadow-red-200', text: 'text-white font-bold', label: 'CRÍTICO' },
     }[insights.riskLevel];
 
     return (
