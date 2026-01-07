@@ -279,8 +279,11 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                   {entry.entry_metadata?.ai_insights && (
                     <div className="mt-3 pt-3 border-t border-indigo-500/20">
                       <div className="text-xs text-indigo-400/80 mb-2">Insights Preservados:</div>
-                      {entry.entry_metadata.ai_insights.summary && (
-                        <p className="text-sm text-foreground/80">{entry.entry_metadata.ai_insights.summary}</p>
+                      {/* Support both legacy (.summary) and Cortex (.analysis_json.raw_text) formats */}
+                      {(entry.entry_metadata.ai_insights.summary || entry.entry_metadata.ai_insights.analysis_json?.raw_text) && (
+                        <p className="text-sm text-foreground/80 whitespace-pre-wrap">
+                          {entry.entry_metadata.ai_insights.summary || entry.entry_metadata.ai_insights.analysis_json?.raw_text}
+                        </p>
                       )}
                     </div>
                   )}
@@ -340,6 +343,30 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                     )}
                   </>
                 )}
+              </div>
+            )}
+
+            {/* Cortex AI Analysis (for non-Ghost completed entries) */}
+            {!entry.is_ghost && entry.processing_status === 'COMPLETED' && entry.entry_metadata?.ai_insights && (
+              <div className="mt-3 p-3 bg-purple-50/50 dark:bg-ai/10 rounded-lg border border-purple-100 dark:border-ai/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-ai">{Icons.sparkles}</span>
+                  <span className="text-xs font-medium text-purple-700 dark:text-ai">Análisis Cortex</span>
+                  {entry.entry_metadata?.cortex?.elapsed_seconds && (
+                    <span className="text-xs text-purple-400">
+                      ({Math.round(entry.entry_metadata.cortex.elapsed_seconds)}s)
+                    </span>
+                  )}
+                </div>
+                <div className="text-sm text-foreground/80 whitespace-pre-wrap">
+                  <MarkdownRenderer
+                    content={
+                      entry.entry_metadata.ai_insights.summary ||
+                      entry.entry_metadata.ai_insights.analysis_json?.raw_text ||
+                      JSON.stringify(entry.entry_metadata.ai_insights, null, 2)
+                    }
+                  />
+                </div>
               </div>
             )}
 
