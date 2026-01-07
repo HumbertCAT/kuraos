@@ -83,6 +83,9 @@ export interface ClinicalEntry {
   updated_at: string;
   processing_status: 'IDLE' | 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
   processing_error: string | null;
+  // v1.5.5: Ghost Protocol
+  is_ghost?: boolean;
+  pipeline_name?: string;
 }
 
 export interface ClinicalEntryListResponse {

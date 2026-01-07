@@ -14,6 +14,31 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.6] - 2026-01-07 👻 THE GHOST INTERFACE
+
+> **Theme:** "The UI Speaks Privacy" — Frontend reflects Cortex intelligence.
+
+### 🎨 New Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `PrivacyTierBadge` | `patient/` | GHOST/STANDARD selector dropdown |
+| Ghost Card | `TimelineEntry.tsx` | Glassmorphic display for `is_ghost` entries |
+
+### 👻 Ghost Card Features
+
+- **Glassmorphism**: `bg-indigo-500/5 backdrop-blur-md`
+- **Animated Ghost Icon**: Pulsing indigo
+- **Privacy Message**: "Secure Analysis (RAM). Raw data terminated."
+- **Preserved Insights**: Shows `ai_insights.summary` when available
+
+### 📊 Types Updated
+
+- `ClinicalEntry.is_ghost` (boolean)
+- `ClinicalEntry.pipeline_name` (string)
+
+---
+
 ## [1.5.5] - 2026-01-07 ⚡ THE HARD SWITCH
 
 > **Theme:** "Kill the Legacy" — 100% Cortex, no canary, no rollback.

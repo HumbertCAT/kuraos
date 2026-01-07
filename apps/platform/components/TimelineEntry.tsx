@@ -88,6 +88,15 @@ const Icons = {
   ),
 };
 
+// Ghost icon for Ghost Protocol entries
+const GhostIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3c-4.97 0-9 4.03-9 9v6c0 1.1.9 2 2 2h1c.55 0 1-.45 1-1v-1c0-.55.45-1 1-1s1 .45 1 1v1c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1c0-.55.45-1 1-1s1 .45 1 1v1c0 .55.45 1 1 1h1c1.1 0 2-.9 2-2v-6c0-4.97-4.03-9-9-9z" />
+    <circle cx="9" cy="11" r="1.5" fill="currentColor" />
+    <circle cx="15" cy="11" r="1.5" fill="currentColor" />
+  </svg>
+);
+
 const ENTRY_ICONS: Record<string, React.ReactNode> = {
   SESSION_NOTE: Icons.note,
   AUDIO: Icons.audio,
@@ -253,7 +262,31 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
             </div>
 
             {/* Entry text with truncation or editing */}
-            {entry.content && (
+            {/* v1.5.6: Ghost Protocol Visual */}
+            {entry.is_ghost ? (
+              <div className="relative mt-2">
+                <div className="bg-indigo-500/5 border border-indigo-500/20 backdrop-blur-md rounded-lg p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="text-indigo-400 animate-pulse">
+                      <GhostIcon />
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-indigo-400">Ghost Protocol</span>
+                      <p className="text-xs text-indigo-300/70">Secure Analysis (RAM). Raw data terminated.</p>
+                    </div>
+                  </div>
+                  {/* Show AI insights if available */}
+                  {entry.entry_metadata?.ai_insights && (
+                    <div className="mt-3 pt-3 border-t border-indigo-500/20">
+                      <div className="text-xs text-indigo-400/80 mb-2">Insights Preservados:</div>
+                      {entry.entry_metadata.ai_insights.summary && (
+                        <p className="text-sm text-foreground/80">{entry.entry_metadata.ai_insights.summary}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : entry.content && (
               <div className="relative">
                 {isEditing ? (
                   <div className="space-y-2">
