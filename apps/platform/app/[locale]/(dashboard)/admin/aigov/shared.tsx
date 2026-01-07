@@ -143,7 +143,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
     audio_memo: {
         label: 'AletheIA Memo',
         description: 'Quick audio notes (<15 min)',
-        extendedDescription: 'Executive Notes Extractor. Processes short voice memos to extract action items, medications, and key data as structured JSON.',
+        extendedDescription: 'Executive Notes Extractor. Processes short voice memos to extract action items, medications, and key data.',
         level: 2,
         levelName: 'Transformation',
         suggestedModel: 'Gemini 2.5 Flash'
