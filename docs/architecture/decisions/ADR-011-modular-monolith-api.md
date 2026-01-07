@@ -1,4 +1,4 @@
-# ADR-010: Modular Monolith API Structure
+# ADR-011: Modular Monolith API Structure
 
 ## Status
 ACCEPTED (v1.3.6)
@@ -46,6 +46,3 @@ backend/app/api/v1/
 ## Compliance Note
 
 Esta separación física es un **control compensatorio** fundamental para auditorías de seguridad. Demuestra "Data Isolation" y "Least Privilege" a nivel de arquitectura.
-
-## Related ADRs
-- [ADR-010: Clean Room Strategy](./ADR-010-clean-room-strategy.md) - Data retention and anonymization
