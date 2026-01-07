@@ -1,7 +1,7 @@
 """Add AI task config tables for v1.4.5 Governance Pro
 
-Revision ID: n4567hijkl890
-Revises: m3456ghij7890
+Revision ID: p5678klmno901
+Revises: n4567hijkl890
 Create Date: 2026-01-07
 
 Creates ai_task_configs and ai_task_config_history tables for runtime
@@ -17,8 +17,8 @@ from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
-revision: str = "n4567hijkl890"
-down_revision: Union[str, None] = "m3456ghij7890"
+revision: str = "p5678klmno901"
+down_revision: Union[str, None] = "n4567hijkl890"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

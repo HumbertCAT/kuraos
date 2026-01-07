@@ -131,7 +131,22 @@ export default function TaskDetailPage() {
                 safety_mode: data.config.safety_mode,
             });
         } catch (err: any) {
-            setError(err.message);
+            // Fallback to defaults when API unavailable (for local dev)
+            setError('API no disponible. Mostrando valores por defecto.');
+            setFormData({
+                model_id: 'gemini-2.5-flash',
+                temperature: 0.7,
+                max_output_tokens: 2048,
+                safety_mode: 'CLINICAL',
+            });
+            setMetrics({
+                total_calls: 0,
+                total_tokens_input: 0,
+                total_tokens_output: 0,
+                total_cost_usd: 0,
+                total_cost_credits: 0,
+                success_rate: 1.0,
+            });
         } finally {
             setIsLoading(false);
         }

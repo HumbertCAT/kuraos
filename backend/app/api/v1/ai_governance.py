@@ -14,8 +14,8 @@ from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
-from app.api.deps import CurrentSuperuser
-from app.db.base import get_async_session
+from app.api.deps import CurrentSuperAdmin
+from app.db.base import get_db
 from app.db.models import AiTaskConfig, AiTaskConfigHistory, AiUsageLog, SafetyMode
 from app.services.ai_governance import (
     get_all_task_configs,
@@ -93,8 +93,8 @@ class HistoryEntryResponse(BaseModel):
 
 @router.get("/tasks", response_model=List[TaskConfigResponse])
 async def list_task_configs(
-    current_user: CurrentSuperuser,
-    db: AsyncSession = Depends(get_async_session),
+    current_user: CurrentSuperAdmin,
+    db: AsyncSession = Depends(get_db),
 ):
     """List all AI task configurations."""
     configs = await get_all_task_configs(db)
@@ -114,8 +114,8 @@ async def list_task_configs(
 @router.get("/tasks/{task_type}", response_model=TaskDetailResponse)
 async def get_task_detail(
     task_type: str,
-    current_user: CurrentSuperuser,
-    db: AsyncSession = Depends(get_async_session),
+    current_user: CurrentSuperAdmin,
+    db: AsyncSession = Depends(get_db),
 ):
     """Get full detail for a task including config, metrics, and history."""
     from datetime import datetime, timedelta
@@ -196,8 +196,8 @@ async def get_task_detail(
 async def update_task(
     task_type: str,
     update: TaskConfigUpdate,
-    current_user: CurrentSuperuser,
-    db: AsyncSession = Depends(get_async_session),
+    current_user: CurrentSuperAdmin,
+    db: AsyncSession = Depends(get_db),
 ):
     """Update AI task configuration."""
     # Parse safety_mode
@@ -233,7 +233,7 @@ async def update_task(
 @router.post("/cache/invalidate")
 async def invalidate_config_cache(
     task_type: Optional[str] = None,
-    current_user: CurrentSuperuser = None,
+    current_user: CurrentSuperAdmin = None,
 ):
     """Invalidate config cache (optionally for a specific task)."""
     invalidate_cache(task_type)

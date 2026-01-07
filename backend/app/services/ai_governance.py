@@ -15,7 +15,6 @@ from typing import Optional
 from cachetools import TTLCache
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from vertexai.generative_models import HarmCategory, HarmBlockThreshold
 
 from app.db.models import AiTaskConfig, AiTaskConfigHistory, SafetyMode, User
 
@@ -32,30 +31,38 @@ logger = logging.getLogger(__name__)
 _config_cache: TTLCache = TTLCache(maxsize=50, ttl=300)
 
 
-# Safety mode mapping to Vertex AI constants (Architect Clause #1)
-SAFETY_MAPPING = {
-    SafetyMode.CLINICAL: {
-        # Permissive: allows clinical discussions of suicide/self-harm
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    },
-    SafetyMode.STANDARD: {
-        # Balanced filtering
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    },
-    SafetyMode.STRICT: {
-        # Maximum filtering (for public-facing bots)
-        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-    },
-}
+def get_safety_mapping(safety_mode: SafetyMode) -> dict:
+    """Get Vertex AI safety settings for a safety mode.
+
+    Uses lazy import to avoid import errors when Vertex AI SDK not available.
+    """
+    try:
+        from vertexai.generative_models import HarmCategory, HarmBlockThreshold
+
+        mappings = {
+            SafetyMode.CLINICAL: {
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            SafetyMode.STANDARD: {
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            },
+            SafetyMode.STRICT: {
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            },
+        }
+        return mappings.get(safety_mode, mappings[SafetyMode.CLINICAL])
+    except ImportError:
+        logger.warning("Vertex AI SDK not available, returning empty safety settings")
+        return {}
 
 
 # Hardcoded fallback defaults (Architect Clause #3)
