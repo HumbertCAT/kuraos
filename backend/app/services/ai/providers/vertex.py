@@ -303,3 +303,47 @@ class VertexAIProvider(AIProvider):
             model_id=self._model_name,
             provider_id=self.provider_id,
         )
+
+    async def transcribe_audio(self, audio_uri: str, language: str = "es") -> dict:
+        """
+        Transcribe audio from a GCS URI.
+
+        v1.5.8: Uses Gemini's native audio understanding for transcription.
+
+        Args:
+            audio_uri: GCS path (gs://bucket/path/to/audio.mp3)
+            language: Target language code (default: 'es')
+
+        Returns:
+            dict with 'text', 'duration', 'language' keys
+        """
+        # Determine mime type from URI extension
+        mime_map = {
+            ".mp3": "audio/mp3",
+            ".m4a": "audio/mp4",
+            ".wav": "audio/wav",
+            ".ogg": "audio/ogg",
+            ".webm": "audio/webm",
+            ".flac": "audio/flac",
+        }
+        ext = audio_uri.lower().rsplit(".", 1)[-1] if "." in audio_uri else "mp3"
+        mime_type = mime_map.get(f".{ext}", "audio/mp3")
+
+        transcription_prompt = f"""Transcribe this audio file completely and accurately.
+Output ONLY the verbatim transcription text, nothing else.
+Language: {language}
+Do not add any explanations, timestamps, or speaker labels.
+Just output the exact words spoken."""
+
+        response = await self.analyze_multimodal(
+            content=None,
+            mime_type=mime_type,
+            prompt=transcription_prompt,
+            gcs_uri=audio_uri,
+        )
+
+        return {
+            "text": response.text,
+            "duration": None,  # Gemini doesn't provide duration
+            "language": language,
+        }
