@@ -345,7 +345,40 @@ export const ALL_MODELS: ExtendedModelInfo[] = [
         compatibleTasks: ['audio_synthesis'],
         tier: 'specialized',
     },
+    {
+        id: 'google-chirp-v2',
+        provider: 'vertex-google',
+        name: 'Chirp (STT v2)',
+        supports_audio: true,
+        cost_input: 0.016, // Approx $0.016 per minute
+        cost_output: 0,
+        is_enabled: true,
+        capabilities: ['audio', 'accuracy'],
+        compatibleTasks: ['transcription'],
+        tier: 'specialized',
+    },
+    {
+        id: 'privacy-shield-sdp',
+        provider: 'vertex-google',
+        name: 'PrivacyShield (SDP)',
+        supports_audio: false,
+        cost_input: 3.00, // Search/Inspect pricing varies
+        cost_output: 0,
+        is_enabled: false,
+        capabilities: ['accuracy'],
+        compatibleTasks: [], // For future Privacy layer
+        tier: 'specialized',
+    },
 ];
+
+/**
+ * NOTE: Pricing logic for Vertex AI
+ * Currently, pricing is hardcoded in the FE based on Google Cloud SKUs.
+ * While the Cloud Billing Catalog API provides programmatic access, mapping 
+ * specific GenAI model names (e.g., gemini-1.5-pro) to billing SKUs is 
+ * non-trivial as SKUs are region-specific and use alphanumeric IDs.
+ */
+
 
 // Legacy compatibility
 export const DEFAULT_MODELS: ModelInfo[] = ALL_MODELS.map(m => ({

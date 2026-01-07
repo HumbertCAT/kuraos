@@ -15,6 +15,7 @@ import {
     TASK_LABELS,
     LEVEL_INFO,
     DEFAULT_MODELS,
+    ALL_MODELS,
     COMPANION_MODELS,
     LoadingSpinner,
     type ModelInfo,
@@ -39,12 +40,15 @@ export default function RoutingPage() {
     async function loadData() {
         setIsLoading(true);
         try {
-            const [modelsData, routingData] = await Promise.all([
-                fetchWithAuth('/admin/ai/models').catch(() => DEFAULT_MODELS),
-                fetchWithAuth('/admin/ai/routing').catch(() => ({ routing: {} })),
-            ]);
-            setModels(modelsData);
-            setTaskRouting(routingData.routing || {});
+            // Fetch task configs from backend, models are static FE registry
+            const tasksData = await fetchWithAuth('/admin/ai-governance/tasks').catch(() => []);
+            // Build routing map: { task_type: model_id }
+            const routingMap: Record<string, string> = {};
+            for (const task of tasksData) {
+                routingMap[task.task_type] = task.model_id;
+            }
+            setModels(ALL_MODELS);
+            setTaskRouting(routingMap);
         } catch (err) {
             console.error('Failed to load routing data:', err);
         } finally {
@@ -60,10 +64,13 @@ export default function RoutingPage() {
         if (Object.keys(pendingChanges).length === 0) return;
         setIsSaving(true);
         try {
-            await fetchWithAuth('/admin/ai/routing', {
-                method: 'PATCH',
-                body: JSON.stringify({ routing: pendingChanges }),
-            });
+            // Iterate over pending changes and update each task individually
+            for (const [taskType, modelId] of Object.entries(pendingChanges)) {
+                await fetchWithAuth(`/admin/ai-governance/tasks/${taskType}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ model_id: modelId }),
+                });
+            }
             setTaskRouting(prev => ({ ...prev, ...pendingChanges }));
             setPendingChanges({});
         } catch (err) {
