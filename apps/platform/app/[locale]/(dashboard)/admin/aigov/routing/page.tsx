@@ -169,17 +169,16 @@ export default function RoutingPage() {
                                                         className="px-3 py-1.5 bg-muted border border-border rounded-lg text-sm text-foreground min-w-[200px]"
                                                     >
                                                         {(() => {
-                                                            const { ALL_MODELS, TASK_REQUIREMENTS } = require('../shared');
-                                                            const reqs = TASK_REQUIREMENTS[taskType] || [];
-                                                            const compatibleModels = ALL_MODELS.filter((m: any) =>
-                                                                reqs.every((r: any) => m.capabilities.includes(r))
-                                                            );
+                                                            const { ALL_MODELS } = require('../shared');
 
-                                                            // Separate Recommended from Other Compatible
-                                                            const recommended = compatibleModels.filter((m: any) =>
+                                                            // Filter only enabled models for production safety
+                                                            const availableModels = ALL_MODELS.filter((m: any) => m.is_enabled);
+
+                                                            // Distinguish between recommended (starred) and others
+                                                            const recommended = availableModels.filter((m: any) =>
                                                                 m.compatibleTasks.includes(taskType)
                                                             );
-                                                            const others = compatibleModels.filter((m: any) =>
+                                                            const others = availableModels.filter((m: any) =>
                                                                 !m.compatibleTasks.includes(taskType)
                                                             );
 
@@ -195,7 +194,7 @@ export default function RoutingPage() {
                                                                         </optgroup>
                                                                     )}
                                                                     {others.length > 0 && (
-                                                                        <optgroup label="Más Compatibles">
+                                                                        <optgroup label="Otros Modelos Disponibles">
                                                                             {others.map((model: any) => (
                                                                                 <option key={model.id} value={model.id}>
                                                                                     {model.name} (€{model.cost_input}/€{model.cost_output})
