@@ -132,10 +132,18 @@ class AnalyzeStep(PipelineStep):
             # Parse JSON response
             import json
 
+            raw_text = response.text
+
+            # v1.5.9-hf1: Robust JSON cleanup (remove markdown code blocks)
+            if "```json" in raw_text:
+                raw_text = raw_text.split("```json")[1].split("```")[0].strip()
+            elif "```" in raw_text:
+                raw_text = raw_text.split("```")[1].strip()
+
             try:
-                result = json.loads(response.text)
+                result = json.loads(raw_text)
             except json.JSONDecodeError:
-                # If not valid JSON, wrap text in dict
+                # If not valid JSON, wrap raw text in dict
                 result = {"raw_text": response.text}
 
             # Write structured outputs

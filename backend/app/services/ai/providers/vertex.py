@@ -260,10 +260,19 @@ class VertexAIProvider(AIProvider):
             local_path = Path(path_uri)
 
         if not local_path.exists():
+            import os
+
+            # v1.5.9-hf1: Enhanced logging for path resolution
+            abs_path = local_path.absolute()
+            cwd = os.getcwd()
+            logger.error(
+                f"❌ Local file NOT FOUND: {local_path} (Absolute: {abs_path}, CWD: {cwd})"
+            )
             raise FileNotFoundError(
                 f"Local file not found for AI analysis: {local_path}"
             )
 
+        logger.info(f"📂 Reading local file for AI: {local_path}")
         async with aiofiles.open(local_path, "rb") as f:
             return await f.read()
 

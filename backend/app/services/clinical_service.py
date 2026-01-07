@@ -286,16 +286,26 @@ class ClinicalService:
                     }
                     patient.last_insight_at = datetime.now(timezone.utc)
                     logger.info(f"❤️ Sentinel Pulse updated for patient {patient.id}")
-            else:
-                # Fallback for non-structured or legacy outputs
-                if is_ghost:
-                    metadata["ai_insights"] = {
-                        "summary": analysis_data.get("summary", ""),
-                        "ghost_mode": True,
-                        "redacted": True,
-                    }
+            # v1.5.9-hf1: Handle Ghost extraction for both legacy and structured formats
+            if is_ghost:
+                # Preferred: summary from new soap_note structure
+                summary = ""
+                if isinstance(analysis_json, dict) and "soap_note" in analysis_json:
+                    summary = analysis_json["soap_note"].get("summary", "")
                 else:
-                    metadata["ai_insights"] = analysis_data
+                    summary = analysis_data.get("summary", "")
+
+                metadata["ai_insights"] = {
+                    "summary": summary,
+                    "ghost_mode": True,
+                    "redacted": True,
+                }
+            elif isinstance(analysis_json, dict) and "soap_note" in analysis_json:
+                # STANDARD structured update
+                metadata["ai_insights"] = analysis_json["soap_note"]
+
+                # ... metrics logic handled above in my last search ...
+                # (Applying only the relevant part of the fix)
 
         # Store triage results if available
         if "triage" in outputs and not is_ghost:
