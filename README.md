@@ -24,7 +24,7 @@ KURA OS is a clinical operating system for therapists, healers, and conscious pr
 
 | 🚀 Motor Tecnológico | ⚡ Capacidad "Killer" | Impacto Clínico |
 |:---|:---|:---|
-| **Inteligencia Soberana** | **AletheIA (8 Units)** | 8 redes neuronales especializadas (Risk, Triage, Chat) trabajando 24/7. |
+| **Inteligencia Soberana** | **AletheIA (9 Units)** | 9 redes neuronales especializadas (Risk, Triage, Chat) trabajando 24/7. |
 | **Automatización** | **Agentes Autónomos** | Protocolos activos que cualifican leads y reactivan pacientes sin intervención. |
 | **Documentación** | **Scribe + Voice** | Transcripción clínica automática y síntesis de audio para WhatsApp. |
 | **Growth Engine** | **Meta Cloud + Booking** | Sincronización total Calendar/Stripe y gestión nativa de leads vía WhatsApp. |
@@ -75,18 +75,19 @@ Public booking wizard with integrated payments.
 ### 🔭 AletheIA (AI Observatory)
 Clinical intelligence that never sleeps.
 
-#### The 8 Specialized Units
+#### The 9 Specialized Units
 
-| Unit | Template | Purpose |
+| Category | Unit | Purpose |
 |:---|:---|:---|
-| 🩺 **CLINICAL** | `clinical_v1.jinja2` | Session analysis with IFS/Trauma framework |
-| 🎤 **VOICE** | `audio_v1.jinja2` | Full session audio synthesis (≥15min) |
-| 📝 **MEMO** | `memo_v1.jinja2` | Quick audio notes → JSON (v1.4.10) |
-| 📄 **DOCUMENT** | `document_v1.jinja2` | PDF/DOCX clinical document analysis |
-| 📋 **FORM** | `form_v1.jinja2` | Intake form intelligent routing |
-| 🛡️ **SENTINEL** | `triage_v1.jinja2` | Risk detection (JSON structured, v1.4.9) |
-| 💬 **ORACLE** | `chat_v1.jinja2` | Conversational patient assistant |
-| ❓ **HELP** | `help_v1.jinja2` | User support and guidance |
+| **L1 Clinical Judgment** | 🛡️ **SENTINEL** | Risk screening (critical detection) |
+| | 🩺 **ORACLE** | Session notes & deep analysis |
+| | � **NOW** | Daily briefing & next actions |
+| | � **PULSE** | Chat sentiment monitoring |
+| **L2 Transformation** | ✍️ **SCRIBE** | Audio to verbatim text (transcription) |
+| | 🎤 **VOICE** | Full session audio analysis (≥15min) |
+| | � **MEMO** | Quick audio notes → JSON (<15min) |
+| **L3 Operations** | 📄 **SCAN** | Document OCR & extraction |
+| | ❓ **HELPER** | Platform support assistant |
 
 #### Key Capabilities
 - **Risk Detection**: Suicide, self-harm, integration crisis

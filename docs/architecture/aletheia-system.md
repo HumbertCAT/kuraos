@@ -14,7 +14,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    ALETHEIA ECOSYSTEM (8 UNITS)                 │
+│                    ALETHEIA ECOSYSTEM (9 UNITS)                 │
 ├──────────────────┬──────────────────┬───────────────────────────┤
 │   INTELLIGENCE   │   AUTOMATION     │   INTERFACE               │
 │   (The Core)     │   (The Agents)   │   (The HUD)               │
@@ -28,9 +28,9 @@
 
 ---
 
-## 2. The 8 Units of Intelligence
+## 2. The 9 Units of Intelligence
 
-AletheIA is divided into 8 specialized units, each mapped to specific tasks and routing logic.
+AletheIA is divided into 9 specialized units, each mapped to specific tasks and routing logic.
 
 | Unit | Role | Primary Task | Task Routing |
 |:---|:---|:---|:---|
@@ -40,6 +40,7 @@ AletheIA is divided into 8 specialized units, each mapped to specific tasks and 
 | **PULSE** | Emotional ECG | Chat Analysis | `chat` |
 | **SCRIBE** | Voice Memory | Transcriptions | `transcription` |
 | **VOICE** | Patient Echo | Audio Synthesis | `audio_synthesis` |
+| **MEMO** | Quick Notes | Short Audio JSON | `audio_memo` |
 | **SCAN** | Visual Intake | Document OCR | `document_analysis` |
 | **HELPER** | User Support | Support Assistant| `help_bot` |
 
@@ -201,7 +202,7 @@ Kura OS uses a virtual economy to stabilize costs and ensure sustainability.
 ### 4.2 Unit Monetization
 | Unit | Billing Policy |
 |:---|:---|
-| **Clinical Units** (7/8) | Billable in KC (Paid by Organization) |
+| **Clinical Units** (8/9) | Billable in KC (Paid by Organization) |
 | **HELPER** | 🆓 Free for User (Cost absorbed by Kura OS as Support) |
 
 Every AI operation generates an `AiUsageLog` entry with both real provider cost (€) and user cost (KC).
