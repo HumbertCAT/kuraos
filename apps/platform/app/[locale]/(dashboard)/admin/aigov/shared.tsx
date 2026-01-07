@@ -174,6 +174,173 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
     },
 };
 
+// =============================================================================
+// AI Requirements (What each task needs)
+// =============================================================================
+
+export type AIRequirement =
+    | 'reasoning'      // Deep clinical logic
+    | 'speed'          // Low latency
+    | 'memory'         // Context window
+    | 'accuracy'       // Precision (transcription, data)
+    | 'audio'          // Native audio input
+    | 'vision'         // Image/PDF processing
+    | 'humanizer';     // Natural voice/empathy
+
+export const AI_REQUIREMENTS: Record<AIRequirement, { label: string; icon: string; color: string }> = {
+    reasoning: { label: 'Reasoning', icon: '🧠', color: 'text-purple-500' },
+    speed: { label: 'Speed', icon: '⚡', color: 'text-yellow-500' },
+    memory: { label: 'Memory', icon: '📚', color: 'text-blue-500' },
+    accuracy: { label: 'Accuracy', icon: '🎯', color: 'text-green-500' },
+    audio: { label: 'Audio', icon: '🎙️', color: 'text-pink-500' },
+    vision: { label: 'Vision', icon: '👁️', color: 'text-cyan-500' },
+    humanizer: { label: 'Humanizer', icon: '💬', color: 'text-orange-500' },
+};
+
+// Task → Required capabilities mapping
+export const TASK_REQUIREMENTS: Record<string, AIRequirement[]> = {
+    triage: ['reasoning', 'accuracy'],
+    clinical_analysis: ['reasoning', 'memory'],
+    briefing: ['reasoning', 'memory'],
+    chat: ['speed', 'humanizer'],
+    transcription: ['audio', 'accuracy'],
+    audio_synthesis: ['audio', 'reasoning', 'memory'],
+    audio_memo: ['audio', 'speed'],
+    document_analysis: ['vision', 'accuracy'],
+    form_analysis: ['accuracy'],
+    help_bot: ['speed'],
+};
+
+// =============================================================================
+// Model Registry with Capabilities
+// =============================================================================
+
+export interface ExtendedModelInfo extends ModelInfo {
+    capabilities: AIRequirement[];
+    compatibleTasks: string[];
+    tier: 'flagship' | 'balanced' | 'efficient' | 'specialized';
+}
+
+export const ALL_MODELS: ExtendedModelInfo[] = [
+    // === Flagship (Max Intelligence) ===
+    {
+        id: 'gemini-3-pro',
+        provider: 'vertex-google',
+        name: 'Gemini 3 Pro',
+        supports_audio: true,
+        cost_input: 2.00,
+        cost_output: 12.00,
+        is_enabled: true,
+        capabilities: ['reasoning', 'memory', 'audio', 'vision', 'accuracy'],
+        compatibleTasks: ['triage', 'clinical_analysis', 'briefing', 'audio_synthesis', 'document_analysis'],
+        tier: 'flagship',
+    },
+    {
+        id: 'gemini-2.5-pro',
+        provider: 'vertex-google',
+        name: 'Gemini 2.5 Pro',
+        supports_audio: true,
+        cost_input: 1.25,
+        cost_output: 10.00,
+        is_enabled: true,
+        capabilities: ['reasoning', 'memory', 'audio', 'vision'],
+        compatibleTasks: ['triage', 'clinical_analysis', 'briefing', 'audio_synthesis', 'document_analysis'],
+        tier: 'flagship',
+    },
+    // === Balanced (Good all-around) ===
+    {
+        id: 'gemini-2.5-flash',
+        provider: 'vertex-google',
+        name: 'Gemini 2.5 Flash',
+        supports_audio: true,
+        cost_input: 0.15,
+        cost_output: 0.60,
+        is_enabled: true,
+        capabilities: ['speed', 'audio', 'vision', 'reasoning'],
+        compatibleTasks: ['triage', 'clinical_analysis', 'chat', 'audio_synthesis', 'audio_memo', 'document_analysis'],
+        tier: 'balanced',
+    },
+    {
+        id: 'gemini-2.0-flash',
+        provider: 'vertex-google',
+        name: 'Gemini 2.0 Flash',
+        supports_audio: true,
+        cost_input: 0.10,
+        cost_output: 0.40,
+        is_enabled: true,
+        capabilities: ['speed', 'audio'],
+        compatibleTasks: ['chat', 'audio_memo', 'transcription'],
+        tier: 'balanced',
+    },
+    // === Efficient (Cost-optimized) ===
+    {
+        id: 'gemini-2.5-flash-lite',
+        provider: 'vertex-google',
+        name: 'Gemini 2.5 Flash Lite',
+        supports_audio: false,
+        cost_input: 0.075,
+        cost_output: 0.30,
+        is_enabled: true,
+        capabilities: ['speed', 'accuracy'],
+        compatibleTasks: ['form_analysis', 'help_bot'],
+        tier: 'efficient',
+    },
+    {
+        id: 'gemini-2.0-flash-lite',
+        provider: 'vertex-google',
+        name: 'Gemini 2.0 Flash Lite',
+        supports_audio: false,
+        cost_input: 0.075,
+        cost_output: 0.30,
+        is_enabled: true,
+        capabilities: ['speed'],
+        compatibleTasks: ['form_analysis', 'help_bot'],
+        tier: 'efficient',
+    },
+    // === Specialized ===
+    {
+        id: 'whisper-1',
+        provider: 'openai',
+        name: 'Whisper v3',
+        supports_audio: true,
+        cost_input: 0.006,
+        cost_output: 0,
+        is_enabled: true,
+        capabilities: ['audio', 'accuracy'],
+        compatibleTasks: ['transcription'],
+        tier: 'specialized',
+    },
+    {
+        id: 'imagen-3',
+        provider: 'vertex-google',
+        name: 'Imagen 3',
+        supports_audio: false,
+        cost_input: 0.04,
+        cost_output: 0,
+        is_enabled: false,
+        capabilities: ['vision'],
+        compatibleTasks: [],
+        tier: 'specialized',
+    },
+];
+
+// Legacy compatibility
+export const DEFAULT_MODELS: ModelInfo[] = ALL_MODELS.map(m => ({
+    id: m.id,
+    provider: m.provider,
+    name: m.name,
+    supports_audio: m.supports_audio,
+    cost_input: m.cost_input,
+    cost_output: m.cost_output,
+    is_enabled: m.is_enabled,
+}));
+
+export const COMPANION_MODELS = ['whisper-1', 'whisper'];
+
+// =============================================================================
+// Stats & Ledger
+// =============================================================================
+
 export const EMPTY_STATS: LedgerStats = {
     period_days: 30,
     total_cost_usd: 0,
@@ -187,16 +354,6 @@ export const EMPTY_STATS: LedgerStats = {
     usage_by_provider: {},
     usage_by_model: {},
 };
-
-export const DEFAULT_MODELS: ModelInfo[] = [
-    { id: 'gemini-2.5-flash', provider: 'vertex-google', name: 'Gemini 2.5 Flash', supports_audio: true, cost_input: 0.075, cost_output: 0.30, is_enabled: true },
-    { id: 'gemini-2.5-pro', provider: 'vertex-google', name: 'Gemini 2.5 Pro', supports_audio: true, cost_input: 1.25, cost_output: 5.00, is_enabled: true },
-    { id: 'gemini-2.5-flash-lite', provider: 'vertex-google', name: 'Gemini 2.5 Flash Lite', supports_audio: false, cost_input: 0.02, cost_output: 0.10, is_enabled: true },
-    { id: 'gemini-2.0-flash', provider: 'vertex-google', name: 'Gemini 2.0 Flash', supports_audio: true, cost_input: 0.10, cost_output: 0.40, is_enabled: true },
-    { id: 'whisper-1', provider: 'openai', name: 'Whisper (Transcription)', supports_audio: true, cost_input: 0.006, cost_output: 0, is_enabled: true },
-];
-
-export const COMPANION_MODELS = ['whisper-1', 'whisper'];
 
 // =============================================================================
 // API Helper
