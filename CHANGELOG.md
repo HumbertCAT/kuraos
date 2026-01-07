@@ -65,6 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 
+## [1.4.12] - 2026-01-07 🧠 CRYSTAL MIND - CLINICAL CONTEXT
+
 > **Theme:** "Light Memory" — Session continuity via context injection.
 
 ### 🧠 Light Memory System
