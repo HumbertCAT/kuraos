@@ -259,7 +259,58 @@ curl https://api.kuraos.ai/health
 
 ---
 
-## 7. Key Files Reference
+## 7. Docker Build Architecture (v1.4.14+)
+
+KURA OS uses a **two-tier Dockerfile strategy** for fast builds.
+
+### The Two-Tier Pattern
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Tier 1: kura-base:v1 (rebuilt ~quarterly)                      │
+│  ├── python:3.11-slim                                           │
+│  ├── g++ (compile only, then purged)                            │
+│  └── requirements-heavy.txt (~225MB)                            │
+│       └── google-cloud-aiplatform, profiler, opentelemetry...   │
+├─────────────────────────────────────────────────────────────────┤
+│  Tier 2: kura-backend:latest (rebuilt on every deploy)          │
+│  ├── FROM kura-base:v1                                          │
+│  ├── requirements-light.txt (~15MB)                             │
+│  │    └── fastapi, sqlalchemy, stripe, etc.                     │
+│  └── Application code                                           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Key Files
+
+| File | Purpose |
+|:---|:---|
+| `backend/Dockerfile` | App layer (uses `kura-base:v1`) |
+| `backend/Dockerfile.base` | Base image with heavy deps |
+| `backend/requirements-heavy.txt` | Dependencies for base image |
+| `backend/requirements-light.txt` | Dependencies for app layer |
+| `scripts/rebuild-base.sh` | Script to rebuild base image |
+
+### When to Rebuild Base Image
+
+Run `./scripts/rebuild-base.sh v2` when:
+- Upgrading `google-cloud-aiplatform` major version
+- Adding new heavy dependencies (>50MB)
+- Security patches in base dependencies
+
+> [!IMPORTANT]
+> After rebuilding base, commit the updated `Dockerfile` (which references the new tag).
+
+### Build Performance
+
+| Metric | Before (v1.4.7) | After (v1.4.14) |
+|:---|:---|:---|
+| Build time | ~4 min | **<90s** |
+| pip install | ~80s | **<10s** |
+
+---
+
+## 8. Key Files Reference
 
 | File | Purpose |
 |:---|:---|
@@ -267,12 +318,13 @@ curl https://api.kuraos.ai/health
 | `scripts/deploy.sh` | Safe deployment with migration job pattern |
 | `scripts/backup_db.sh` | Local Docker database backup |
 | `scripts/config/env-vars.yaml` | Non-sensitive environment variables |
-| `backend/app/api/v1/admin_backups.py` | REST API for backup/restore |
-| `backend/Dockerfile` | Production container definition |
+| `backend/Dockerfile` | App layer container (FROM kura-base:v1) |
+| `backend/Dockerfile.base` | Base image with heavy dependencies |
+| `scripts/rebuild-base.sh` | Manual script to rebuild base image |
 
 ---
 
-## 8. Post-Deployment Verification (Human Checklist)
+## 9. Post-Deployment Verification (Human Checklist)
 
 After a successful deployment, manually verify these critical flows:
 
