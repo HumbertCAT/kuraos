@@ -289,10 +289,16 @@ async def analyze_clinical_entry(
         ProcessingStatus.PROCESSING,
     ):
         # Check if analysis is stale (stuck for more than 5 minutes)
-        from datetime import datetime, timedelta
+        from datetime import datetime, timedelta, timezone
 
-        cutoff = datetime.utcnow() - timedelta(minutes=5)
-        if entry.updated_at and entry.updated_at > cutoff:
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=5)
+        # Make comparison timezone-aware
+        entry_updated = (
+            entry.updated_at.replace(tzinfo=timezone.utc)
+            if entry.updated_at and entry.updated_at.tzinfo is None
+            else entry.updated_at
+        )
+        if entry_updated and entry_updated > cutoff:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Analysis already in progress",
