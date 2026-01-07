@@ -7,7 +7,6 @@ steps:
   - name: 'gcr.io/kaniko-project/executor:latest'
     id: 'build-prod-image'
     args:
-      - --destination=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kura-backend:$COMMIT_SHA
       - --destination=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kura-backend:latest
       - --cache=true
       - --cache-ttl=168h
@@ -38,7 +37,7 @@ steps:
       - '-c'
       - |
         gcloud run deploy kura-backend \
-          --image=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kura-backend:$COMMIT_SHA \
+          --image=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kura-backend:latest \
           --region=europe-west1 \
           --platform=managed \
           --allow-unauthenticated
