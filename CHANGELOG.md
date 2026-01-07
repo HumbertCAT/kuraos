@@ -14,6 +14,44 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.5] - 2026-01-07 🎛️ AI GOVERNANCE PRO
+
+> **Theme:** "Control de Vuelo" — Runtime AI configuration without redeploys.
+
+### 🎛️ AI Task Configuration (Backend)
+
+- **`AiTaskConfig` Model:** New table for per-task AI configuration
+  - `temperature`: Generation creativity (0.0-2.0)
+  - `max_output_tokens`: Response length limit
+  - `safety_mode`: CLINICAL | STANDARD | STRICT
+- **`AiTaskConfigHistory`:** Audit trail for all config changes
+- **LRU Cache:** 5-minute TTL to minimize DB queries (Architect Clause #2)
+- **Safety Mapping:** Maps modes to Vertex AI `HarmBlockThreshold` (Clause #1)
+- **Fallback Defaults:** Hardcoded fallback if DB unavailable (Clause #3)
+
+### 🎨 AI Governance UI (Frontend)
+
+- **Task Detail Page:** `/admin/aigov/routing/[task]`
+  - Temperature slider with color feedback (⚠️ warning for >0.8)
+  - Safety mode selector with confirmation modal
+  - 30-day metrics cards (calls, tokens, cost, success rate)
+  - Change history with user avatars
+- **Configure Button:** Added ⚙️ button to routing table for each task
+- **Toast Notification:** "Configuration updated & Cache invalidated"
+
+### 🔌 API Endpoints
+
+- `GET /admin/ai-governance/tasks` - List all configs
+- `GET /admin/ai-governance/tasks/{task}` - Detail with metrics
+- `PATCH /admin/ai-governance/tasks/{task}` - Update config
+- `POST /admin/ai-governance/cache/invalidate` - Force cache refresh
+
+### 📦 Dependencies
+
+- `cachetools>=5.3.0` - LRU cache with TTL support
+
+---
+
 ## [1.4.4] - 2026-01-06 🧠 NATIVE INTELLIGENCE
 
 > **Theme:** "Native Intelligence" — ADR-021 Vertex AI Native Prompt Engineering.
