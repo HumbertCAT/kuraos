@@ -14,6 +14,34 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.15] - 2026-01-07 🎨 ORGANIC ATMOSPHERE
+
+> **Theme:** "Diffuse Polish" — Softer shadows, refined typography, and synchronized theming.
+
+### 🎨 Design System Refinements
+
+- **`--shadow-diffuse`**: New semantic CSS variable for lateral vignette shadows
+- **`.tabs-nav`**: Utility class with diffuse shadow applied to Forms, Agents, Bookings, Admin tabs
+- **Palette Evolution**: Light mode 10% darker, Dark mode 10% lighter (no pure whites)
+- **Card Shadows**: Increased transparency (0.15→0.08 light, 0.6→0.4 dark)
+- **ThemeEditor Sync**: Default values now match globals.css palette
+
+### 📝 Typography Scale
+
+- **`type-h4`**: Space Grotesk 16px/400 (now matches H2 font family)
+- Added to Design System demo page for documentation
+
+### 📄 Documentation
+
+- **ADR Reorganization**: Split ADR-001 into focused ADRs (023-025)
+- **ADR-002**: Removed (fully implemented in design-system.md)
+- **ADR-011**: Moved to standards/api-structure.md (implemented)
+- **AletheIA Fleet**: Updated to 9 Units (added MEMO)
+- **Infrastructure**: Updated to kura-base:v2 documentation
+- **Journeys**: Reflects implemented UI components
+
+---
+
 ## [1.4.14] - 2026-01-07 🔓 CRYSTAL MIND - TOTAL FREEDOM
     
 > **Theme:** "Unblocked Governance" — Freedom-first routing + Advanced discovery + Pipeline Performance.
