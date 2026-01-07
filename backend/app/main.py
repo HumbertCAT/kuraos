@@ -39,6 +39,7 @@ from app.api.v1 import (
     help,
     leads,
     pending_actions,
+    ai_governance,
 )
 
 # Configure structured logging
@@ -237,6 +238,11 @@ app.include_router(
     tags=["Self-Service Booking"],
 )
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["Admin"])
+app.include_router(
+    ai_governance.router,
+    prefix=settings.API_V1_STR,
+    tags=["Admin-AI-Governance"],
+)
 app.include_router(
     schedules.router,
     prefix=f"{settings.API_V1_STR}/schedules",

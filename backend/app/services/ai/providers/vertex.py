@@ -94,16 +94,31 @@ class VertexAIProvider(AIProvider):
 
     _initialized = False
 
-    def __init__(self, model_name: str, system_instruction: Optional[str] = None):
+    def __init__(
+        self,
+        model_name: str,
+        system_instruction: Optional[str] = None,
+        temperature: Optional[float] = None,
+        max_output_tokens: Optional[int] = None,
+        safety_settings: Optional[dict] = None,
+    ):
         """
         Initialize Vertex AI provider with specified model.
 
         Args:
             model_name: Full model name (e.g., 'gemini-2.5-flash')
             system_instruction: Native system instruction for model persona (ADR-021)
+            temperature: Generation temperature (v1.4.5, default 0.7)
+            max_output_tokens: Max response tokens (v1.4.5, default 2048)
+            safety_settings: Dict mapping HarmCategory -> HarmBlockThreshold (v1.4.5)
         """
         self._model_name = model_name
         self._system_instruction = system_instruction
+        self._temperature = temperature if temperature is not None else 0.7
+        self._max_output_tokens = (
+            max_output_tokens if max_output_tokens is not None else 2048
+        )
+        self._safety_settings = safety_settings  # Dict from ai_governance
         self._model: Optional[GenerativeModel] = None
 
         # Initialize Vertex AI SDK once per process
@@ -118,10 +133,15 @@ class VertexAIProvider(AIProvider):
     def model(self) -> GenerativeModel:
         """Lazy-load the GenerativeModel with optional system instruction."""
         if self._model is None:
-            self._model = GenerativeModel(
-                model_name=self._model_name,
-                system_instruction=self._system_instruction,  # ADR-021: Native
-                safety_settings=[
+            # v1.4.5: Build safety settings from governance config or use defaults
+            if self._safety_settings:
+                safety_list = [
+                    SafetySetting(category=category, threshold=threshold)
+                    for category, threshold in self._safety_settings.items()
+                ]
+            else:
+                # Default: permissive for clinical content
+                safety_list = [
                     SafetySetting(
                         category=HarmCategory.HARM_CATEGORY_HARASSMENT,
                         threshold=HarmBlockThreshold.OFF,
@@ -138,11 +158,16 @@ class VertexAIProvider(AIProvider):
                         category=HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
                         threshold=HarmBlockThreshold.OFF,
                     ),
-                ],
+                ]
+
+            self._model = GenerativeModel(
+                model_name=self._model_name,
+                system_instruction=self._system_instruction,  # ADR-021: Native
+                safety_settings=safety_list,
                 generation_config={
-                    "temperature": 0.4,
+                    "temperature": self._temperature,
                     "top_p": 0.95,
-                    "max_output_tokens": 8192,
+                    "max_output_tokens": self._max_output_tokens,
                 },
             )
         return self._model

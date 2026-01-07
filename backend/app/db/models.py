@@ -609,6 +609,81 @@ class SystemSetting(Base):
     )
 
 
+class SafetyMode(str, enum.Enum):
+    """AI Safety Mode for content filtering.
+
+    Controls how aggressively the model filters harmful content:
+    - CLINICAL: Permissive (allows discussion of suicide/self-harm in therapy context)
+    - STANDARD: Balanced filtering
+    - STRICT: Maximum filtering (for public-facing bots)
+    """
+
+    CLINICAL = "CLINICAL"
+    STANDARD = "STANDARD"
+    STRICT = "STRICT"
+
+
+class AiTaskConfig(Base):
+    """Configuration for AI tasks (temperature, model, safety).
+
+    v1.4.5: Enables runtime configuration of AI parameters per task
+    without code deployment. Cached with LRU for performance.
+    """
+
+    __tablename__ = "ai_task_configs"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    task_type: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+
+    # Model selection
+    model_id: Mapped[str] = mapped_column(String(100), default="gemini-2.5-flash")
+
+    # Generation parameters
+    temperature: Mapped[float] = mapped_column(Numeric(3, 2), default=0.70)
+    max_output_tokens: Mapped[int] = mapped_column(Integer, default=2048)
+
+    # Safety filtering
+    safety_mode: Mapped[SafetyMode] = mapped_column(
+        Enum(SafetyMode), default=SafetyMode.CLINICAL
+    )
+
+    # Audit
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), onupdate=func.now(), server_default=func.now()
+    )
+    updated_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )
+
+    # Relationships
+    updated_by: Mapped[Optional["User"]] = relationship()
+
+
+class AiTaskConfigHistory(Base):
+    """Audit log for AI task configuration changes.
+
+    Tracks who changed what and when for compliance and debugging.
+    """
+
+    __tablename__ = "ai_task_config_history"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    task_type: Mapped[str] = mapped_column(String(50), index=True)
+    field_changed: Mapped[str] = mapped_column(String(50))
+    old_value: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    new_value: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    changed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    changed_by_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("users.id"), nullable=True
+    )
+
+    # Relationships
+    changed_by: Mapped[Optional["User"]] = relationship()
+
+
 class AiUsageLog(Base):
     """AI Usage Ledger - FinOps tracking with real token accounting.
 

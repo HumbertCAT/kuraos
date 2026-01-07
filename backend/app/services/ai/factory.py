@@ -22,7 +22,12 @@ class ProviderFactory:
 
     @classmethod
     def get_provider(
-        cls, model_spec: str, system_instruction: str = None
+        cls,
+        model_spec: str,
+        system_instruction: str = None,
+        temperature: float = None,
+        max_output_tokens: int = None,
+        safety_settings: dict = None,
     ) -> "AIProvider":
         """
         Get AI provider instance for the given model specification.
@@ -30,6 +35,9 @@ class ProviderFactory:
         Args:
             model_spec: Model identifier in 'provider:model' or legacy format
             system_instruction: Native system instruction for model (ADR-021)
+            temperature: Generation temperature (v1.4.5)
+            max_output_tokens: Max response tokens (v1.4.5)
+            safety_settings: Vertex AI safety settings dict (v1.4.5)
 
         Returns:
             Configured AIProvider instance
@@ -58,7 +66,13 @@ class ProviderFactory:
         if settings.VERTEX_AI_ENABLED and provider_name == "gemini":
             from app.services.ai.providers.vertex import VertexAIProvider
 
-            return VertexAIProvider(full_model, system_instruction=system_instruction)
+            return VertexAIProvider(
+                full_model,
+                system_instruction=system_instruction,
+                temperature=temperature,
+                max_output_tokens=max_output_tokens,
+                safety_settings=safety_settings,
+            )
 
         # Legacy path: Direct API via google-generativeai
         from app.services.ai.providers.gemini import GeminiProvider
@@ -178,42 +192,39 @@ class ProviderFactory:
         """
         from sqlalchemy import select
         from app.db.models import SystemSetting
+        from app.services.ai_governance import get_task_config
 
         default_model = "gemini-2.5-flash"
         model_id = default_model
+        temperature = None
+        max_tokens = None
+        safety_settings = None
 
         try:
-            # Get routing config from database
+            # v1.4.5: Get config from ai_governance service (cached + fallback)
             if db_session:
-                result = await db_session.execute(
-                    select(SystemSetting).where(SystemSetting.key == "AI_TASK_ROUTING")
-                )
-                routing_setting = result.scalar_one_or_none()
+                task_config = await get_task_config(db_session, task_type)
+                model_id = task_config.get("model_id", default_model)
+                temperature = task_config.get("temperature")
+                max_tokens = task_config.get("max_output_tokens")
+                safety_settings = task_config.get("safety_settings")
             else:
-                # Create session if not provided
+                # Fallback to routing config if no session
                 from app.db.base import get_session_factory
 
                 factory = get_session_factory()
                 async with factory() as session:
-                    result = await session.execute(
-                        select(SystemSetting).where(
-                            SystemSetting.key == "AI_TASK_ROUTING"
-                        )
-                    )
-                    routing_setting = result.scalar_one_or_none()
-
-            if routing_setting and routing_setting.value:
-                routing_map = routing_setting.value
-                # v1.3.3: Robust extraction with type checking
-                if isinstance(routing_map, dict):
-                    model_id = routing_map.get(task_type, default_model)
-                # else: keep default_model (handles corrupt JSON)
+                    task_config = await get_task_config(session, task_type)
+                    model_id = task_config.get("model_id", default_model)
+                    temperature = task_config.get("temperature")
+                    max_tokens = task_config.get("max_output_tokens")
+                    safety_settings = task_config.get("safety_settings")
 
         except Exception as e:
             import logging
 
             logging.getLogger(__name__).warning(
-                f"Failed to load task routing, using default: {e}"
+                f"Failed to load task config, using defaults: {e}"
             )
 
         # v1.4.4: Render system instruction from template
@@ -221,7 +232,14 @@ class ProviderFactory:
 
         system_instruction = get_system_prompt(task_type, prompt_context)
 
-        return cls.get_provider(model_id, system_instruction=system_instruction)
+        # v1.4.5: Pass temperature, max_tokens, safety_settings to provider
+        return cls.get_provider(
+            model_id,
+            system_instruction=system_instruction,
+            temperature=temperature,
+            max_output_tokens=max_tokens,
+            safety_settings=safety_settings,
+        )
 
     @classmethod
     async def get_routing_config(cls, db_session=None) -> dict:
