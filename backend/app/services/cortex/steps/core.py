@@ -123,9 +123,20 @@ class AnalyzeStep(PipelineStep):
             task = task_map.get(self.prompt_key, PromptTask.CLINICAL_ANALYSIS)
             prompt = get_prompt(task)
 
-            result = await provider.generate(
-                prompt=prompt, content=input_text, output_format="json"
-            )
+            # Build full prompt with content
+            full_prompt = f"{prompt}\n\n---\n\n{input_text}"
+
+            # Use standard AIProvider method
+            response = await provider.analyze_text(content=full_prompt)
+
+            # Parse JSON response
+            import json
+
+            try:
+                result = json.loads(response.text)
+            except json.JSONDecodeError:
+                # If not valid JSON, wrap text in dict
+                result = {"raw_text": response.text}
 
             # Write structured outputs
             context.add_output(self.step_type, "analysis_json", result)
@@ -267,9 +278,19 @@ class TriageStep(PipelineStep):
             provider = ProviderFactory.get_provider("gemini:2.5-flash")
             prompt = get_prompt(PromptTask.TRIAGE_FORM)
 
-            result = await provider.generate(
-                prompt=prompt, content=content, output_format="json"
-            )
+            # Build full prompt with content
+            full_prompt = f"{prompt}\n\n---\n\n{content}"
+
+            # Use standard AIProvider method
+            response = await provider.analyze_text(content=full_prompt)
+
+            # Parse JSON response
+            import json
+
+            try:
+                result = json.loads(response.text)
+            except json.JSONDecodeError:
+                result = {"risk_level": "NONE", "reason": "Failed to parse response"}
 
             risk_level = (
                 result.get("risk_level", "NONE") if isinstance(result, dict) else "NONE"
