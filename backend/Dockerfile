@@ -1,13 +1,22 @@
-FROM python:3.11-slim
+# =============================================================================
+# KURA OS - Production Dockerfile (App Layer)
+# =============================================================================
+# This Dockerfile builds on top of the pre-built base image (kura-base)
+# which contains heavy dependencies (Google Cloud, OpenTelemetry, etc.)
+#
+# The base image is rebuilt manually when requirements-heavy.txt changes.
+# See: ./scripts/rebuild-base.sh
+# =============================================================================
+
+FROM europe-west1-docker.pkg.dev/kura-os/cloud-run-source-deploy/kura-base:v1
 
 WORKDIR /app
 
-# Install PostgreSQL client, g++ for google-cloud-profiler compilation
-RUN apt-get update && apt-get install -y postgresql-client g++ && rm -rf /var/lib/apt/lists/*
+# Install only light dependencies (fast - no heavy downloads)
+COPY requirements-light.txt .
+RUN pip install --no-cache-dir -r requirements-light.txt
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Copy application code
 COPY . .
 
 # Make startup script executable

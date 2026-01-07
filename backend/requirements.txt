@@ -1,6 +1,38 @@
-# KURA OS Backend Dependencies
-# v1.4.13: Full version pinning for reproducible builds
-# Last freeze: 2026-01-07 (Build 9833fcbf)
+# =============================================================================
+# KURA OS - Complete Dependencies (Local Development)
+# =============================================================================
+# ⚠️ AUTO-GENERATED: Do not edit directly!
+# This file is the concatenation of:
+#   - requirements-heavy.txt (base image layer)
+#   - requirements-light.txt (app layer)
+# 
+# To regenerate: cat requirements-heavy.txt requirements-light.txt > requirements.txt
+# =============================================================================
+
+# === HEAVY DEPENDENCIES (Base Image Layer) ===
+
+# Google Cloud - AI (large, rarely changes)
+google-genai==1.2.0
+google-generativeai==0.8.6
+google-cloud-aiplatform==1.115.0
+google-cloud-speech==2.35.0
+google-auth==2.47.0
+
+# Google Cloud - Infrastructure (large, rarely changes)
+google-cloud-storage==2.19.0
+google-cloud-profiler==4.1.0
+google-cloud-trace==1.17.0
+
+# OpenTelemetry (ADR-019 Observability)
+opentelemetry-api==1.39.1
+opentelemetry-sdk==1.39.1
+opentelemetry-exporter-gcp-trace==1.11.0
+opentelemetry-instrumentation-fastapi==0.60b1
+
+# Heavy external services
+openai==2.14.0
+
+# === LIGHT DEPENDENCIES (App Layer) ===
 
 # Core Framework
 fastapi==0.109.0
@@ -25,28 +57,9 @@ email-validator==2.1.0.post1
 # Logging
 structlog==24.1.0
 
-# Google Cloud - AI
-google-genai==1.2.0
-google-generativeai==0.8.6
-google-cloud-aiplatform==1.115.0
-google-cloud-speech==2.35.0
-google-auth==2.47.0
-
-# Google Cloud - Storage & Infra
-google-cloud-storage==2.19.0
-google-cloud-profiler==4.1.0
-google-cloud-trace==1.17.0
-
-# OpenTelemetry (ADR-019 Observability)
-opentelemetry-api==1.39.1
-opentelemetry-sdk==1.39.1
-opentelemetry-exporter-gcp-trace==1.11.0
-opentelemetry-instrumentation-fastapi==0.60b1
-
 # External Services
 stripe==14.1.0
 sib-api-v3-sdk==7.6.0
-openai==2.14.0
 
 # Utilities
 apscheduler==3.11.2

@@ -1,0 +1,28 @@
+# =============================================================================
+# KURA OS - Heavy Dependencies (Base Image Layer)
+# =============================================================================
+# These packages are installed in the base image (kura-base:v1)
+# Only rebuild base image when these change (quarterly or less)
+# Last freeze: 2026-01-07
+# =============================================================================
+
+# Google Cloud - AI (large, rarely changes)
+google-genai==1.2.0
+google-generativeai==0.8.6
+google-cloud-aiplatform==1.115.0
+google-cloud-speech==2.35.0
+google-auth==2.47.0
+
+# Google Cloud - Infrastructure (large, rarely changes)
+google-cloud-storage==2.19.0
+google-cloud-profiler==4.1.0
+google-cloud-trace==1.17.0
+
+# OpenTelemetry (ADR-019 Observability)
+opentelemetry-api==1.39.1
+opentelemetry-sdk==1.39.1
+opentelemetry-exporter-gcp-trace==1.11.0
+opentelemetry-instrumentation-fastapi==0.60b1
+
+# Heavy external services
+openai==2.14.0

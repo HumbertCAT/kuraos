@@ -1,0 +1,35 @@
+# =============================================================================
+# KURA OS - Base Image (Heavy Dependencies Layer)
+# =============================================================================
+# This Dockerfile creates the base image with pre-installed heavy dependencies.
+# Rebuild this image manually when requirements-heavy.txt changes.
+#
+# Build:
+#   docker build -f Dockerfile.base -t europe-west1-docker.pkg.dev/kura-os/cloud-run-source-deploy/kura-base:v1 .
+#   docker push europe-west1-docker.pkg.dev/kura-os/cloud-run-source-deploy/kura-base:v1
+#
+# Or use: ./scripts/rebuild-base.sh
+# =============================================================================
+
+FROM python:3.11-slim
+
+# Build dependencies (g++ required for google-cloud-profiler compilation)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install heavy dependencies (these rarely change)
+COPY requirements-heavy.txt .
+RUN pip install --no-cache-dir -r requirements-heavy.txt
+
+# Cleanup build dependencies to reduce image size
+RUN apt-get update && apt-get purge -y g++ \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm requirements-heavy.txt
+
+# Add metadata
+LABEL maintainer="Kura OS Team"
+LABEL version="1.0"
+LABEL description="Base image with heavy Python dependencies for Kura OS"

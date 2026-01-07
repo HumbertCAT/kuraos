@@ -1,0 +1,47 @@
+# =============================================================================
+# KURA OS - Light Dependencies (App Layer)
+# =============================================================================
+# These packages are installed on top of the base image during each build
+# Can change frequently without rebuilding base image
+# =============================================================================
+# ⚠️ DO NOT add packages that are in requirements-heavy.txt here!
+# Run: cat requirements-heavy.txt requirements-light.txt > requirements.txt
+# =============================================================================
+
+# Core Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+sqlalchemy==2.0.25
+asyncpg==0.29.0
+psycopg2-binary==2.9.11
+pydantic==2.5.3
+pydantic-settings==2.1.0
+python-multipart==0.0.6
+httpx==0.26.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+
+# Database & Migrations
+alembic==1.13.1
+email-validator==2.1.0.post1
+
+# Logging
+structlog==24.1.0
+
+# External Services
+stripe==14.1.0
+sib-api-v3-sdk==7.6.0
+
+# Utilities
+apscheduler==3.11.2
+tenacity==9.1.2
+python-docx==1.2.0
+Jinja2==3.1.6
+cachetools==6.2.4
+
+# Testing (keep for local dev)
+pytest==7.4.4
+pytest-asyncio==0.23.3
