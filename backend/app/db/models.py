@@ -241,6 +241,22 @@ class RedemptionType(str, enum.Enum):
     FEATURE = "FEATURE"  # Feature unlock
 
 
+class PrivacyTier(str, enum.Enum):
+    """Data retention policy tier (Kura Cortex v1.5).
+
+    Controls how clinical data is handled after AI processing:
+    - GHOST: Process in RAM, save summary only, delete raw + transcript immediately
+    - STANDARD: Save transcript (sanitized), delete raw audio (GDPR default)
+    - LEGACY: Save transcript, archive raw audio to Cold Storage (BAA-covered, AI-ready)
+
+    Inheritance waterfall: Patient Override → Organization Default → Country Default
+    """
+
+    GHOST = "GHOST"  # Maximum privacy: RAM-only processing
+    STANDARD = "STANDARD"  # GDPR-compliant: no raw retention
+    LEGACY = "LEGACY"  # Full archive for AI training (under BAA)
+
+
 # ============ ASSOCIATION TABLES ============
 
 # Many-to-many: Which therapists can offer which services
@@ -305,6 +321,15 @@ class Organization(Base):
     # Stripe Connect (therapist payouts)
     stripe_connect_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     stripe_connect_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    # Kura Cortex v1.5: Privacy & Compliance
+    # ISO 3166-1 alpha-2 country code (e.g., "ES", "US", "DE")
+    # Used for default privacy tier resolution (GDPR vs BAA regions)
+    country_code: Mapped[str] = mapped_column(String(2), default="ES")
+    # Org-level privacy policy override (if set, applies to all patients)
+    default_privacy_tier: Mapped[Optional[PrivacyTier]] = mapped_column(
+        Enum(PrivacyTier), nullable=True
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
@@ -422,6 +447,12 @@ class Patient(Base):
     last_insight_json: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
     last_insight_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
+    )
+
+    # Kura Cortex v1.5: Patient-level privacy override
+    # If set, takes precedence over organization default
+    privacy_tier_override: Mapped[Optional[PrivacyTier]] = mapped_column(
+        Enum(PrivacyTier), nullable=True
     )
 
     organization: Mapped["Organization"] = relationship(back_populates="patients")
@@ -685,6 +716,52 @@ class AiTaskConfigHistory(Base):
 
     # Relationships
     changed_by: Mapped[Optional["User"]] = relationship()
+
+
+class AIPipelineConfig(Base):
+    """Cognitive Pipeline Configuration (Kura Cortex v1.5).
+
+    Defines DAG-based AI processing pipelines that replace hardcoded task logic.
+    Each pipeline specifies:
+    - Input modality (AUDIO, TEXT, VISION)
+    - Processing stages (JSON array)
+    - Privacy tier constraints
+
+    Replaces the flat AI_TASK_ROUTING system with structured pipeline definitions.
+    """
+
+    __tablename__ = "ai_pipeline_configs"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    name: Mapped[str] = mapped_column(String(100), unique=True, index=True)
+
+    # Input type
+    input_modality: Mapped[str] = mapped_column(String(20))  # AUDIO, TEXT, VISION
+
+    # Pipeline stages (JSON array of step configurations)
+    # Example: [
+    #   {"step": "transcribe", "model": "gemini:2.5-flash"},
+    #   {"step": "analyze", "model": "gemini:2.5-pro", "prompt_key": "SOAP"}
+    # ]
+    stages: Mapped[dict] = mapped_column(JSONB, default=list)
+
+    # Privacy constraints
+    # If set, this pipeline requires at least this privacy tier
+    privacy_tier_required: Mapped[Optional[PrivacyTier]] = mapped_column(
+        Enum(PrivacyTier), nullable=True
+    )
+
+    # Status
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    # Audit
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), onupdate=func.now(), server_default=func.now()
+    )
 
 
 class AiUsageLog(Base):
