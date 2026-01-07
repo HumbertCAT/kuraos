@@ -168,11 +168,19 @@ export default function RoutingPage() {
                                                         onChange={(e) => handleRoutingChange(taskType, e.target.value)}
                                                         className="px-3 py-1.5 bg-muted border border-border rounded-lg text-sm text-foreground min-w-[200px]"
                                                     >
-                                                        {models.filter(m => !COMPANION_MODELS.includes(m.id)).map((model) => (
-                                                            <option key={model.id} value={model.id}>
-                                                                {model.name} (€{model.cost_input}/€{model.cost_output})
-                                                            </option>
-                                                        ))}
+                                                        {(() => {
+                                                            const { ALL_MODELS, TASK_REQUIREMENTS } = require('../shared');
+                                                            const reqs = TASK_REQUIREMENTS[taskType] || [];
+                                                            const compatibleModels = ALL_MODELS.filter((m: any) =>
+                                                                reqs.every((r: any) => m.capabilities.includes(r))
+                                                            );
+
+                                                            return compatibleModels.map((model: any) => (
+                                                                <option key={model.id} value={model.id}>
+                                                                    {model.name} (€{model.cost_input}/€{model.cost_output})
+                                                                </option>
+                                                            ));
+                                                        })()}
                                                     </select>
                                                 )}
                                                 <button
