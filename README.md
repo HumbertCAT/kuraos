@@ -74,9 +74,25 @@ Public booking wizard with integrated payments.
 
 ### 🔭 AletheIA (AI Observatory)
 Clinical intelligence that never sleeps.
-- Risk detection (suicide, self-harm, crisis)
-- Session synthesis from notes and audio
-- Sentinel Pulse: 7-day emotional trajectory
+
+#### The 8 Specialized Units
+
+| Unit | Template | Purpose |
+|:---|:---|:---|
+| 🩺 **CLINICAL** | `clinical_v1.jinja2` | Session analysis with IFS/Trauma framework |
+| 🎤 **VOICE** | `audio_v1.jinja2` | Full session audio synthesis (≥15min) |
+| 📝 **MEMO** | `memo_v1.jinja2` | Quick audio notes → JSON (v1.4.10) |
+| 📄 **DOCUMENT** | `document_v1.jinja2` | PDF/DOCX clinical document analysis |
+| 📋 **FORM** | `form_v1.jinja2` | Intake form intelligent routing |
+| 🛡️ **SENTINEL** | `triage_v1.jinja2` | Risk detection (JSON structured, v1.4.9) |
+| 💬 **ORACLE** | `chat_v1.jinja2` | Conversational patient assistant |
+| ❓ **HELP** | `help_v1.jinja2` | User support and guidance |
+
+#### Key Capabilities
+- **Risk Detection**: Suicide, self-harm, integration crisis
+- **Session Synthesis**: From notes and audio transcription
+- **Sentinel Pulse**: 7-day emotional trajectory
+- **Light Memory**: Previous session context injection (v1.4.12)
 
 ### 🛤️ Journeys (Clinical Lifecycle)
 Orchestrated patient workflows.
