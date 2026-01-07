@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { Mail, Phone, MessageCircle, Edit, Calendar, Activity, TrendingUp } from 'lucide-react';
 import { getButtonClasses } from '@/components/ui/CyberButton';
+import PrivacyTierBadge from '@/components/patient/PrivacyTierBadge';
 
 /**
  * PatientHero v1.0 - "The Clinical Canvas"
@@ -23,7 +25,9 @@ interface PatientHeroProps {
         phone?: string | null;
         profile_image_url?: string | null;
         created_at?: string;
+        privacy_tier_override?: 'GHOST' | 'STANDARD' | 'LEGACY' | null;
     };
+    orgDefaultTier?: 'GHOST' | 'STANDARD' | 'LEGACY';
     stats?: {
         totalSessions: number;
         nextSession?: string;
@@ -31,9 +35,10 @@ interface PatientHeroProps {
     };
     onContact?: () => void;
     onSendForm?: () => void;
+    onPrivacyChange?: (patientId: string, tier: 'GHOST' | 'STANDARD') => Promise<void>;
 }
 
-export default function PatientHero({ patient, stats, onContact, onSendForm }: PatientHeroProps) {
+export default function PatientHero({ patient, orgDefaultTier, stats, onContact, onSendForm, onPrivacyChange }: PatientHeroProps) {
     const initials = `${patient.first_name?.[0] || ''}${patient.last_name?.[0] || ''}`;
     const fullName = `${patient.first_name} ${patient.last_name}`;
 
@@ -62,7 +67,17 @@ export default function PatientHero({ patient, stats, onContact, onSendForm }: P
 
                 {/* Info Column */}
                 <div className="flex-1 min-w-0">
-                    <h1 className="type-h1 text-foreground truncate">{fullName}</h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="type-h1 text-foreground truncate">{fullName}</h1>
+                        {/* v1.5.6: Privacy Tier Selector */}
+                        <div className="hidden sm:block">
+                            <PrivacyTierBadge
+                                patientId={patient.id}
+                                currentTier={patient.privacy_tier_override || orgDefaultTier || 'STANDARD'}
+                                onTierChange={onPrivacyChange ? (tier) => onPrivacyChange(patient.id, tier) : undefined}
+                            />
+                        </div>
+                    </div>
                     {memberSince && (
                         <p className="type-body text-muted-foreground mt-1">
                             Cliente desde {memberSince}
