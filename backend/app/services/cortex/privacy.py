@@ -40,45 +40,10 @@ class PrivacyResolver:
     - Unknown: STANDARD (conservative default)
     """
 
-    # Country code → Default privacy tier
-    # GDPR countries default to STANDARD (deletion)
-    # US defaults to LEGACY (archival under BAA)
-    COUNTRY_DEFAULTS = {
-        # EU/EEA - GDPR
-        "ES": PrivacyTier.STANDARD,  # Spain
-        "DE": PrivacyTier.STANDARD,  # Germany
-        "FR": PrivacyTier.STANDARD,  # France
-        "IT": PrivacyTier.STANDARD,  # Italy
-        "PT": PrivacyTier.STANDARD,  # Portugal
-        "NL": PrivacyTier.STANDARD,  # Netherlands
-        "BE": PrivacyTier.STANDARD,  # Belgium
-        "AT": PrivacyTier.STANDARD,  # Austria
-        "CH": PrivacyTier.STANDARD,  # Switzerland (adequate)
-        "GB": PrivacyTier.STANDARD,  # UK (post-Brexit adequate)
-        "IE": PrivacyTier.STANDARD,  # Ireland
-        "SE": PrivacyTier.STANDARD,  # Sweden
-        "NO": PrivacyTier.STANDARD,  # Norway (EEA)
-        "DK": PrivacyTier.STANDARD,  # Denmark
-        "FI": PrivacyTier.STANDARD,  # Finland
-        "PL": PrivacyTier.STANDARD,  # Poland
-        "GR": PrivacyTier.STANDARD,  # Greece
-        # Americas
-        "US": PrivacyTier.LEGACY,  # USA - BAA permits
-        "CA": PrivacyTier.STANDARD,  # Canada - PIPEDA
-        "MX": PrivacyTier.STANDARD,  # Mexico
-        "AR": PrivacyTier.STANDARD,  # Argentina
-        "CL": PrivacyTier.STANDARD,  # Chile
-        "CO": PrivacyTier.STANDARD,  # Colombia
-        "BR": PrivacyTier.STANDARD,  # Brazil - LGPD
-        # LATAM (Spanish-speaking markets)
-        "PE": PrivacyTier.STANDARD,  # Peru
-        "EC": PrivacyTier.STANDARD,  # Ecuador
-        "UY": PrivacyTier.STANDARD,  # Uruguay
-        "CR": PrivacyTier.STANDARD,  # Costa Rica
-    }
-
-    # Fallback for unknown countries
-    DEFAULT_TIER = PrivacyTier.STANDARD
+    # v1.5.9-hf1: Set ALL defaults to LEGACY per user request
+    # This ensures maximum retention and minimum processing friction during launch.
+    COUNTRY_DEFAULTS = {}  # Emptying will force usage of DEFAULT_TIER
+    DEFAULT_TIER = PrivacyTier.LEGACY
 
     @classmethod
     def resolve(cls, patient: "Patient", organization: "Organization") -> PrivacyTier:

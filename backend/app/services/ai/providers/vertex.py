@@ -282,9 +282,13 @@ class VertexAIProvider(AIProvider):
 
         Supports GCS URIs and Local Paths.
         """
-        # Determine mime type
-        ext = image_uri.lower().rsplit(".", 1)[-1] if "." in image_uri else "png"
-        mime_type = f"image/{ext}" if ext != "pdf" else "application/pdf"
+        import mimetypes
+
+        # Determine mime type robustly
+        mime_type, _ = mimetypes.guess_type(image_uri)
+        if not mime_type:
+            ext = image_uri.lower().rsplit(".", 1)[-1] if "." in image_uri else "png"
+            mime_type = f"image/{ext}" if ext != "pdf" else "application/pdf"
 
         if image_uri.startswith("gs://"):
             response = await self.analyze_multimodal(
@@ -415,27 +419,27 @@ Just output the exact words spoken."""
                 )
                 from vertexai.generative_models import GenerativeModel
 
-                # Create a temporary Pro model for this task
-                pro_model = GenerativeModel("gemini-2.5-pro")
+                # v1.5.9-hf1: Model Fallback (Pro -> Flash) for Quota/Capacity issues
+                try:
+                    media_part = Part.from_data(data=content, mime_type=mime_type)
+                    resp = await pro_model.generate_content_async([
+                        transcription_prompt,
+                        media_part,
+                    ])
 
-                # We need to call generate_content manually since self.analyze_multimodal
-                # uses self.model. To keep it clean, we override temporarily or reimplement.
-                # Reimplementing inline for safety:
-                from vertexai.generative_models import Part
+                    return {
+                        "text": resp.text,
+                        "duration": None,
+                        "language": language,
+                        "routed_model": "gemini-2.5-pro",
+                    }
+                except Exception as e:
+                    logger.warning(
+                        f"⚠️ Routing to Pro failed ({e}). Falling back to {self._model_name}"
+                    )
+                    # Proceed to default logic below
 
-                media_part = Part.from_data(data=content, mime_type=mime_type)
-                resp = await pro_model.generate_content_async([
-                    transcription_prompt,
-                    media_part,
-                ])
-
-                return {
-                    "text": resp.text,
-                    "duration": None,
-                    "language": language,
-                    "routed_model": "gemini-2.5-pro",
-                }
-
+            # Default logic (Flash)
             response = await self.analyze_multimodal(
                 content=content,
                 mime_type=mime_type,

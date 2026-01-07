@@ -15,24 +15,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
-## [1.5.9] - 2026-01-07 🧠 COGNITIVE INTEGRITY (AletheIA Update)
+## [1.5.9-HF1] - 2026-01-07 🧠 COGNITIVE INTEGRITY (Master Bundle)
 
-> **Theme:** "The Complete Neural Loop" — Stabilization of the entire AI circuit.
+> **Theme:** "The Complete Neural Loop" — Final stabilization and global policy rollout.
 
-### 🧠 AletheIA & Cortex Stabilization
-
-| Component | Status | Fix |
-|-----------|--------|-----|
-| **Audio Routing** | ✅ Active | **15-Minute Rule**: Long audios (>15MB) automatically route to `gemini-2.5-pro` |
-| **OCR (Grapho)** | ✅ Fixed | Added `analyze_image` bridge for clinical document extraction |
-| **Model Garden** | ✅ Ready | Support added for **Gemini 3 Flash** |
-| **Local Storage** | ✅ Fixed | AI steps now handle `/static/uploads/` paths by reading bytes directly |
+### 🧠 AletheIA & Model Garden
+- **Model Fallback (Pro → Flash)**: Automatic retry with Flash if Pro hits quota or capacity limits.
+- **Robust MIME Detection**: Improved file type detection for OCR and Audio processing.
+- **LEGACY Rollout**: Forced `LEGACY` privacy tier globally to ensure data persistence during launch.
 
 ### 🐛 Critical Fixes
-
-- **OCR Step Failure**: Fixed missing method `analyze_image` in `VertexAIProvider`.
-- **Audio 500 Error**: Fixed GCS URI mismatch for locally stored audio files.
-- **Path Resolution**: Robust helper for finding static files in both production and development.
+- **Missing Dependency**: Added `aiofiles` to `requirements-light.txt`.
+- **JSON Markdown Buffer**: Strips ```json blocks from AI responses before parsing.
+- **Ghost Protocol Visuals**: Re-enabled summary display for ephemeral clinical sessions.
+- **Path Audit**: Enhanced logging for local file path resolution in ephemeral environments.
 
 ---
 
