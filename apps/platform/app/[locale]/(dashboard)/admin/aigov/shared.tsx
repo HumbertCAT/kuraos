@@ -134,11 +134,19 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
     },
     audio_synthesis: {
         label: 'AletheIA Voice',
-        description: 'Text-to-speech synthesis',
-        extendedDescription: 'Vocal Synthesis Engine. Generates natural, empathetic audio from text.',
+        description: 'Full session audio analysis',
+        extendedDescription: 'Session Synthesis Engine. Analyzes long audio (≥15 min) for comprehensive clinical insights.',
         level: 2,
         levelName: 'Transformation',
-        suggestedModel: 'ElevenLabs'
+        suggestedModel: 'Gemini 2.5 Flash'
+    },
+    audio_memo: {
+        label: 'AletheIA Memo',
+        description: 'Quick audio notes (<15 min)',
+        extendedDescription: 'Executive Notes Extractor. Processes short voice memos to extract action items, medications, and key data as structured JSON.',
+        level: 2,
+        levelName: 'Transformation',
+        suggestedModel: 'Gemini 2.5 Flash'
     },
     document_analysis: {
         label: 'AletheIA Scan',
