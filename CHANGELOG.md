@@ -50,6 +50,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `cachetools>=5.3.0` - LRU cache with TTL support
 
+### 📝 Prompt Studio Lite
+
+- **Editable Prompts:** System prompts now stored in DB and editable from UI
+- **Jinja2 Templates:** Prompts use `{{ variable }}` syntax for dynamic data
+- **Native Architecture:** Pure system instructions + User Message channel (Vertex AI best practice)
+- **Smart Warning:** Variable warning only for tasks requiring them (`help_bot`)
+- **Informational Note:** Clear explanation for pure instructions
+
 ---
 
 ## [1.4.4] - 2026-01-06 🧠 NATIVE INTELLIGENCE
