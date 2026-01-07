@@ -426,10 +426,10 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
-/* Component Headers - Inter Bold (Lists, Tables, Small sections) */
+/* Component Headers - Space Grotesk 16px/400 */
 .type-h4 {
-  @apply font-body text-sm font-bold text-foreground;
-  letter-spacing: -0.005em;
+  @apply font-display text-base font-normal text-foreground;
+  letter-spacing: -0.01em;
 }
 
 /* Body Content - Inter (Readable prose) */
