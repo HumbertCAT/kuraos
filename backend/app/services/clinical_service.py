@@ -272,14 +272,15 @@ class ClinicalService:
         entry.processing_status = ProcessingStatus.COMPLETED
         entry.processing_error = None
 
-        # v1.5.7: Update patient.last_insight_json for timeline display
+        # v1.5.8: Invalidate insights cache so panel regenerates with new data
+        # Don't directly set last_insight_json as Cortex format differs from PatientInsightsResponse schema
         from datetime import datetime, timezone
 
         insights_data = metadata.get("ai_insights", {})
         if insights_data:
-            patient.last_insight_json = insights_data
-            patient.last_insight_at = datetime.now(timezone.utc)
-            logger.info(f"📊 Updated patient {patient.id} last_insight_json")
+            # Set last_insight_at to epoch to invalidate cache, forcing regeneration
+            patient.last_insight_at = datetime.fromtimestamp(0, tz=timezone.utc)
+            logger.info(f"📊 Invalidated insights cache for patient {patient.id}")
 
         await self.db.flush()
         logger.info(
