@@ -14,6 +14,36 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.7] - 2026-01-07 🧠 CORTEX ACTIVATION PROTOCOL
+
+> **Theme:** "The Neural Network Awakens" — All 10 AletheIA pipelines seeded and operational.
+
+### 🧠 Cortex Activation
+
+| Script | Purpose |
+|--------|---------|
+| `seed_cortex_pipelines.py` | Idempotent seeder for all 10 AletheIA Units |
+| `verify_cortex_readiness.py` | Synapse check smoke test |
+
+### 🌐 10 Pipelines Seeded
+
+| Level | Pipelines |
+|-------|-----------|
+| Clinical Judgment | `triage`, `clinical_analysis`, `briefing`, `chat` |
+| Transformation | `transcription`, `session_analysis`, `audio_memo` |
+| Operations | `document_analysis`, `form_analysis`, `help_bot` |
+
+### 🐛 Fixes
+
+- **Privacy API**: Corrected endpoint route (`/patients/{id}/privacy`)
+- **Cortex AnalyzeStep**: Now reads `text_content` from direct input
+- **Design System**: `CollapsibleSection` uses semantic tokens only
+- **UI Compliance**: Submit button uses `--brand`, Danger zone uses `--risk`
+- **Local Dev**: `VERTEX_AI_ENABLED=false` in docker-compose.yml
+- **Dependencies**: `google-cloud-aiplatform` → 1.132.0
+
+---
+
 ## [1.5.6] - 2026-01-07 👻 THE GHOST INTERFACE
 
 > **Theme:** "The UI Speaks Privacy" — Frontend reflects Cortex intelligence.
