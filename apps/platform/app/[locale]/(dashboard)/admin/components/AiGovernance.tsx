@@ -675,7 +675,7 @@ export default function AiGovernance({ defaultSection = 'financials' }: AiGovern
                                                     </div>
                                                     <div className="flex items-center gap-2 flex-shrink-0">
                                                         {isFixed ? (
-                                                            <span className="px-3 py-1.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-lg text-sm font-medium whitespace-nowrap">
+                                                            <span className="px-3 py-1.5 bg-brand/10 text-brand border border-brand/20 rounded-lg text-sm font-medium whitespace-nowrap">
                                                                 🔗 {models.find(m => m.id === currentModel)?.name || taskInfo.suggestedModel}
                                                             </span>
                                                         ) : (
