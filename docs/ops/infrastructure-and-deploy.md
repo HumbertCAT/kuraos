@@ -1,8 +1,8 @@
 # Infrastructure & Deployment Manual
 
-> **Status**: Production (v1.3.7)  
+> **Status**: Production (v1.4.14)  
 > **Platform**: Google Cloud (europe-southwest1)  
-> **Last Updated**: 2026-01-06
+> **Last Updated**: 2026-01-07
 
 ---
 
@@ -254,7 +254,7 @@ gcloud run jobs executions logs kura-migrator --region=europe-west1
 
 ```bash
 curl https://api.kuraos.ai/health
-# Expected: {"status": "healthy", "version": "1.1.20"}
+# Expected: {"status": "healthy", "version": "1.4.14"}
 ```
 
 ---
@@ -267,14 +267,14 @@ KURA OS uses a **two-tier Dockerfile strategy** for fast builds.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Tier 1: kura-base:v1 (rebuilt ~quarterly)                      │
+│  Tier 1: kura-base:v2 (rebuilt ~quarterly)                      │
 │  ├── python:3.11-slim                                           │
 │  ├── g++ (compile only, then purged)                            │
 │  └── requirements-heavy.txt (~225MB)                            │
 │       └── google-cloud-aiplatform, profiler, opentelemetry...   │
 ├─────────────────────────────────────────────────────────────────┤
 │  Tier 2: kura-backend:latest (rebuilt on every deploy)          │
-│  ├── FROM kura-base:v1                                          │
+│  ├── FROM kura-base:v2                                          │
 │  ├── requirements-light.txt (~15MB)                             │
 │  │    └── fastapi, sqlalchemy, stripe, etc.                     │
 │  └── Application code                                           │
@@ -285,7 +285,7 @@ KURA OS uses a **two-tier Dockerfile strategy** for fast builds.
 
 | File | Purpose |
 |:---|:---|
-| `backend/Dockerfile` | App layer (uses `kura-base:v1`) |
+| `backend/Dockerfile` | App layer (uses `kura-base:v2`) |
 | `backend/Dockerfile.base` | Base image with heavy deps |
 | `backend/requirements-heavy.txt` | Dependencies for base image |
 | `backend/requirements-light.txt` | Dependencies for app layer |
@@ -318,7 +318,7 @@ Run `./scripts/rebuild-base.sh v2` when:
 | `scripts/deploy.sh` | Safe deployment with migration job pattern |
 | `scripts/backup_db.sh` | Local Docker database backup |
 | `scripts/config/env-vars.yaml` | Non-sensitive environment variables |
-| `backend/Dockerfile` | App layer container (FROM kura-base:v1) |
+| `backend/Dockerfile` | App layer container (FROM kura-base:v2) |
 | `backend/Dockerfile.base` | Base image with heavy dependencies |
 | `scripts/rebuild-base.sh` | Manual script to rebuild base image |
 
