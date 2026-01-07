@@ -23,6 +23,7 @@ from app.api.v1.core import (
     admin_backups,
     monitoring,
     uploads,
+    privacy,
 )
 
 # Connect: Pilar I - ATRAER (Leads, Public Forms, Campaigns)
@@ -263,6 +264,11 @@ app.include_router(
     tags=["Self-Service Booking"],
 )
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["Admin"])
+app.include_router(
+    privacy.router,
+    prefix=settings.API_V1_STR,
+    tags=["Privacy"],
+)
 app.include_router(
     ai_governance.router,
     prefix=settings.API_V1_STR,

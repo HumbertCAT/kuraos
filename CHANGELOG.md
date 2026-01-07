@@ -56,6 +56,73 @@ services/cortex/
 
 ---
 
+## [1.5.2] - 2026-01-07 🔌 CORTEX API LAYER
+
+> **Theme:** "Accessible Intelligence" — Exposing privacy configuration to API layer.
+
+### 🌐 Privacy API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/org/privacy` | GET | Get org privacy config |
+| `/org/privacy` | PATCH | Update org default tier |
+| `/patients/{id}/privacy` | GET | Get resolved patient tier |
+| `/patients/{id}/privacy` | PATCH | Set patient override |
+| `/patients/{id}/privacy` | DELETE | Clear patient override |
+
+### 📊 Data Backfill
+
+- New backfill script: `scripts/ops/backfill_privacy_v1_5.py`
+- Sets all existing organizations to `ES` + `LEGACY` tier
+- Demo seed updated: Julian Soler now has `GHOST` privacy override
+
+### 🧬 Demo Data
+
+- Updated `reseed_demo_patients.py` with Cortex privacy tier support
+- Julian (The Ghost) now demonstrates patient-level privacy override
+
+---
+
+## [1.5.1] - 2026-01-07 ⚙️ CORTEX ORCHESTRATION ENGINE
+
+> **Theme:** "The Machine Awakens" — Pipeline execution engine with step registry.
+
+### 🧠 CortexOrchestrator
+
+Main pipeline execution engine:
+- Loads pipelines from `AIPipelineConfig`
+- Resolves privacy tier via waterfall
+- Executes stages sequentially
+- Enforces privacy tier requirements
+- Calls `PipelineFinalizer` post-processing
+
+### 🔌 Pipeline Steps
+
+| Step | Function | Input → Output |
+|------|----------|----------------|
+| `transcribe` | Audio transcription | Audio → Text |
+| `analyze` | Clinical analysis | Text → SOAP/Insights |
+| `ocr` | Document digitization | Image → Text |
+| `triage` | Risk assessment | Text → Risk Level |
+| `intake` | Form normalization | Form → Structured Text |
+
+### 🏗️ Architecture
+
+```
+services/cortex/
+├── orchestrator.py      # CortexOrchestrator
+└── steps/
+    ├── base.py          # PipelineStep ABC
+    ├── registry.py      # Factory pattern
+    └── core.py          # 5 step implementations
+```
+
+### ✅ Quality
+
+- **29 unit tests** (11 new for orchestration)
+
+---
+
 ## [1.4.15] - 2026-01-07 🎨 ORGANIC ATMOSPHERE
 
 > **Theme:** "Diffuse Polish" — Softer shadows, refined typography, and synchronized theming.

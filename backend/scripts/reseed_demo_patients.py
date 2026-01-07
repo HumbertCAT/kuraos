@@ -35,6 +35,7 @@ from app.db.models import (
     BookingStatus,
     FormTemplate,
     SystemSetting,
+    PrivacyTier,
 )
 
 # --- SYSTEM SETTINGS (Global Configuration) ---
@@ -213,7 +214,7 @@ SEED_PATIENTS = [
             "entry_type": "AI_ANALYSIS",
         },
     },
-    # ARCHETYPE C: "THE GHOST" (Julian Soler)
+    # ARCHETYPE C: "THE GHOST" (Julian Soler) - Demonstrates privacy override
     {
         "first_name": "Julian",
         "last_name": "Soler",
@@ -221,6 +222,7 @@ SEED_PATIENTS = [
         "journey_key": "neuro_repatterning",
         "journey_status": "AWAITING_PAYMENT",
         "ghost_mode": True,  # Special flag for stale date
+        "privacy_tier_override": PrivacyTier.GHOST,  # v1.5.2: Cortex privacy demo
     },
     # ARCHETYPE D: "THE SUCCESS STORY" (Sarah Jenkins)
     {
@@ -527,6 +529,7 @@ async def seed_patients(db, org_id, service_map, therapist_id):
             email=p_data["email"],
             journey_status={p_data["journey_key"]: p_data["journey_status"]},
             profile_image_url=avatar_url,
+            privacy_tier_override=p_data.get("privacy_tier_override"),  # v1.5.2 Cortex
         )
         db.add(patient)
         await db.flush()
