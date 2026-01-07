@@ -1,4 +1,7 @@
-"""Clinical Entry CRUD endpoints for patient timeline."""
+"""Clinical Entry CRUD endpoints for patient timeline.
+
+v1.5.5: HARD SWITCH to Cortex. All analysis routes through ClinicalService.
+"""
 
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
@@ -7,6 +10,7 @@ from sqlalchemy import select
 
 from app.db.base import get_db
 from app.db.models import ClinicalEntry, Patient, EntryType, UserRole
+from app.services.clinical_service import ClinicalService
 
 # v1.3.3: Map EntryType to AI task routing keys
 ENTRY_TYPE_TO_TASK: dict[EntryType, str] = {
@@ -301,9 +305,10 @@ async def analyze_clinical_entry(
     await db.commit()
     await db.refresh(entry)
 
-    # Add background task
+    # v1.5.5: HARD SWITCH - Direct to Cortex
+    clinical_service = ClinicalService(db)
     background_tasks.add_task(
-        run_analysis_task,
+        clinical_service.process_entry_async,
         entry_id=entry.id,
         user_id=current_user.id,
     )
@@ -313,10 +318,20 @@ async def analyze_clinical_entry(
 
 async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
     """
-    Background task to run AI analysis with REAL token-based cost accounting.
+    ⚠️ DEPRECATED v1.5.5 - Use ClinicalService.process_entry_async instead.
 
+    This legacy function is kept for reference only.
+    All new analysis flows go through CortexOrchestrator via ClinicalService.
+
+    Original: Background task to run AI analysis with REAL token-based cost accounting.
     v1.1.1 CLEAN LEDGER: Uses ProviderFactory + CostLedger for accurate billing.
     """
+    import warnings
+
+    warnings.warn(
+        "run_analysis_task is deprecated. Use ClinicalService.process_entry_async",
+        DeprecationWarning,
+    )
     from app.db.base import get_session_factory
     from app.services.ai import ProviderFactory, CostLedger
     from app.services.ai.base import AIResponse

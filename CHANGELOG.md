@@ -14,6 +14,31 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.5] - 2026-01-07 ⚡ THE HARD SWITCH
+
+> **Theme:** "Kill the Legacy" — 100% Cortex, no canary, no rollback.
+
+### 🔌 Direct Rewiring
+
+| Endpoint | Before | After |
+|----------|--------|-------|
+| `POST /clinical_entries/{id}/analyze` | `run_analysis_task()` | **`ClinicalService.process_entry_async()`** |
+
+### 🗑️ Deprecated
+
+- `run_analysis_task()` marked as **DEPRECATED** - kept for reference only
+
+### 🧠 What This Means
+
+Every clinical entry analysis now flows through:
+```
+ClinicalService → CortexOrchestrator → Pipeline → ProviderFactory
+```
+
+The UI Config (Admin Panel → Routing) **still works** because Cortex uses `ProviderFactory` internally.
+
+---
+
 ## [1.5.4] - 2026-01-07 🧠 CEREBRAL INTEGRATION
 
 > **Theme:** "The Brain Transplant" — Native Cortex integration for clinical entries.
