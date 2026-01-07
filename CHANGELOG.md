@@ -56,6 +56,41 @@ services/cortex/
 
 ---
 
+## [1.5.3] - 2026-01-07 🔀 STRANGLER SWITCH
+
+> **Theme:** "Gradual Migration" — Feature flag for controlled Cortex rollout.
+
+### 🔀 Traffic Routing
+
+| State | Behavior |
+|-------|----------|
+| `OFF` | 100% legacy pipeline |
+| `SHADOW` | Legacy runs, Cortex logs only (testing) |
+| `CANARY` | Small percentage to Cortex |
+| `ROLLOUT` | Gradual increase (configurable %) |
+| `FULL` | 100% Cortex |
+
+### 🧩 New Components
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `CortexSwitch` | `services/cortex/switch.py` | Feature flag routing |
+| `CortexAdapter` | `services/cortex/adapter.py` | Legacy/Cortex bridge |
+
+### 📊 Features
+
+- **Allowlist/Blocklist**: Early access for specific orgs
+- **Task-specific overrides**: Route audio to Cortex while text stays legacy
+- **Database-backed config**: `CORTEX_SWITCH_CONFIG` in SystemSettings
+- **Instant rollback**: Change state without deploy
+
+### ✅ Quality
+
+- **40 unit tests** (12 new for switch/adapter)
+- Updated `docs/architecture/aletheia-system.md` with Cortex section
+
+---
+
 ## [1.5.2] - 2026-01-07 🔌 CORTEX API LAYER
 
 > **Theme:** "Accessible Intelligence" — Exposing privacy configuration to API layer.

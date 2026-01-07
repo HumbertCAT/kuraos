@@ -1,7 +1,7 @@
 # AletheIA System Architecture
 
-> **Status**: Production (v1.4.4)  
-> **Last Updated**: 2026-01-06  
+> **Status**: Production (v1.5.3)  
+> **Last Updated**: 2026-01-07  
 > **Source of Truth**: Authoritative documentation for the AletheIA Intelligence Engine.
 
 ---
@@ -498,6 +498,106 @@ sequenceDiagram
 | v1.4.2 | Deep Listening | Large audio (>20MB), Cloud Trace/Profiler |
 | v1.4.3 | Resilient AI | ADC auto-inference, upload UX |
 | **v1.4.4** | **Native Intelligence** | ADR-021 Jinja2 templates, native `system_instruction` |
+| **v1.5.0** | **Cortex Foundation** | Privacy Tiers, PatientEventContext, PipelineFinalizer |
+| v1.5.1 | Cortex Engine | CortexOrchestrator, Pipeline Steps (transcribe, analyze, ocr) |
+| v1.5.2 | Cortex API | Privacy endpoints, backfill script |
+| **v1.5.3** | **Strangler Switch** | Traffic routing, gradual migration |
+
+---
+
+## 12. Kura Cortex (v1.5+)
+
+Kura Cortex is the **next-generation cognitive pipeline engine** that orchestrates clinical AI workflows with privacy-first data handling.
+
+### 12.1 Architecture Overview
+
+```mermaid
+graph TB
+    subgraph "Strangler Switch"
+        SW[CortexSwitch]
+        SW -->|OFF/SHADOW| L[Legacy Pipeline]
+        SW -->|CANARY/FULL| C[Cortex Pipeline]
+    end
+    
+    subgraph "Cortex Engine"
+        C --> O[CortexOrchestrator]
+        O --> PC[PatientEventContext]
+        O --> PR[PrivacyResolver]
+        O --> ST[Pipeline Steps]
+        ST --> PF[PipelineFinalizer]
+    end
+    
+    subgraph "Steps Registry"
+        ST --> T[TranscribeStep]
+        ST --> A[AnalyzeStep]
+        ST --> OC[OCRStep]
+        ST --> TR[TriageStep]
+        ST --> I[IntakeStep]
+    end
+```
+
+### 12.2 Privacy Tiers (HIPAA/GDPR)
+
+| Tier | Behavior | Use Case |
+|:---|:---|:---|
+| **GHOST** | RAM-only, delete everything | Ultra-sensitive sessions |
+| **STANDARD** | Keep transcript, delete raw audio | GDPR default (EU) |
+| **LEGACY** | Archive raw to cold storage | BAA-covered AI training (US) |
+
+**Waterfall Inheritance:**
+1. Patient Override (`privacy_tier_override`)
+2. Organization Default (`default_privacy_tier`)
+3. Country Default (COUNTRY_DEFAULTS map)
+
+### 12.3 Core Components
+
+| Component | File | Purpose |
+|:---|:---|:---|
+| **CortexOrchestrator** | `services/cortex/orchestrator.py` | Pipeline execution engine |
+| **PatientEventContext** | `services/cortex/context.py` | Blackboard pattern for HIPAA |
+| **PrivacyResolver** | `services/cortex/privacy.py` | Waterfall tier resolution |
+| **PipelineFinalizer** | `services/cortex/privacy.py` | Data retention enforcement |
+| **CortexSwitch** | `services/cortex/switch.py` | Strangler pattern routing |
+| **CortexAdapter** | `services/cortex/adapter.py` | Legacy/Cortex bridge |
+
+### 12.4 Pipeline Steps
+
+| Step | Task Type | Input → Output |
+|:---|:---|:---|
+| `transcribe` | Audio → Text | Uses Vertex AI Speech-to-Text |
+| `analyze` | Text → Clinical Insights | ORACLE prompt template |
+| `ocr` | Image/PDF → Text | Document digitization |
+| `triage` | Text → Risk Assessment | SENTINEL screening |
+| `intake` | Form JSON → Structured Text | Normalization |
+
+### 12.5 Strangler Switch States
+
+| State | Percentage | Behavior |
+|:---|:---|:---|
+| `OFF` | 0% | 100% legacy, Cortex dormant |
+| `SHADOW` | 0% | Legacy runs, Cortex logs only |
+| `CANARY` | 1-25% | Small percentage to Cortex |
+| `ROLLOUT` | 26-99% | Gradual increase |
+| `FULL` | 100% | 100% Cortex |
+
+**Configuration:**
+```python
+# Admin: Enable Cortex for specific org
+CortexSwitch.add_to_allowlist(org_id)
+
+# Gradual rollout: 25%
+CortexSwitch.set_state(SwitchState.CANARY, percentage=25)
+
+# Full migration
+CortexSwitch.set_state(SwitchState.FULL)
+```
+
+### 12.6 API Endpoints
+
+| Endpoint | Method | Purpose |
+|:---|:---|:---|
+| `/org/privacy` | GET/PATCH | Organization privacy config |
+| `/patients/{id}/privacy` | GET/PATCH/DELETE | Patient privacy override |
 
 ---
 
@@ -512,4 +612,5 @@ sequenceDiagram
 
 ---
 
-> **"Context is King. AletheIA illuminates; the therapist decides."**
+> **"Context is King. AletheIA illuminates; the therapist decides."**  
+> **"Privacy is non-negotiable. Cortex enforces it."**
