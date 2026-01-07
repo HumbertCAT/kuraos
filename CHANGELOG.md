@@ -15,12 +15,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
-## [1.5.9-HF4] - 2026-01-08 🤺 OPERATION GRAND SLAM
+## [1.5.9-HF5] - 2026-01-08 🤺 OPERATION GRAND SLAM [DEPLOYED]
 
 ### ✨ Dashboard & Automation Stabilization
 - **Focus Card Alignment**: Fixed `dashboard.py` logic to robustly map both `v1.1.x` (flat) and `v1.5.9` (nested) Cortex JSON structures.
 - **Legacy Compatibility**: Restored `AsyncSessionLocal` in `app.db.base` to fix `TypeError` in independent scripts and seeders.
-- **Agent Catalogue Seeding**: Re-seeded the system playbook catalogue to ensure "Escudo de Seguridad", "Agente Concierge", and other protocols are visible.
+- **Migration-based Seeding**: Implemented a mandatory database migration to ensure the system playbook catalogue (Agentes) is populated in production.
 
 ---
 
