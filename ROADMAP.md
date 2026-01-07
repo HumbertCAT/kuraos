@@ -1,8 +1,8 @@
 # Product Roadmap
 
-> **Status**: Living Document (v1.4.6)  
+> **Status**: Living Document (v1.5.9-HF3)  
 > **Scope**: Strategic Feature Planning 2026  
-> **Last Updated**: 2026-01-07 (Modular Monolith Execution)
+> **Last Updated**: 2026-01-07 (Operation Cortex Completion)
 
 ---
 
@@ -285,7 +285,7 @@ Query → Embedding → Vector Search (50 candidates) → Reranker → Top 5 →
 │   ├── [3w] WhatsApp Business Migration
 │   ├── [2w] 🧠 AutoSxS Evaluation Framework (ADR-015)
 │   ├── [3w] 🛡️ Next-Gen Shield (ADR-016)
-│   └── [DONE] v1.3.9 Testing Sovereignty
+│   └── [DONE] v1.5.9 Operation Cortex Completion
 │
 ├── Q1-Q2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 │   ├── [6w] 🧬 Model Distillation Factory (ADR-017)

@@ -116,9 +116,13 @@ async def get_db():
 # Legacy Compatibility (for imports that expect these at module level)
 # =============================================================================
 
+
 # These are now functions, but we keep the old names for compatibility
 # Code should migrate to using get_engine() and get_session_factory()
-engine = property(lambda self: get_engine())  # Will raise error if used directly
-AsyncSessionLocal = property(
-    lambda self: get_session_factory()
-)  # Will raise error if used directly
+def engine():
+    return get_engine()
+
+
+def AsyncSessionLocal():
+    """Legacy wrapper that returns a session instance."""
+    return get_session_factory()()

@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.db.base import get_db
-from app.db.models import Booking, BookingStatus, Patient, ServiceType, User
+from app.db.models import Booking, BookingStatus, User
 from app.api.deps import get_current_user
 
 router = APIRouter()
@@ -83,8 +83,17 @@ def _format_time_ago(dt: datetime) -> str:
         return f"{days}d ago"
 
 
-def _calculate_insight_type(risk_score: int) -> str:
-    """Determine insight severity from risk score."""
+def _calculate_insight_type(risk_score: float) -> str:
+    """Determine insight severity from risk score (handles 0-1 and 0-100 scales)."""
+    # 0.0 to 1.0 Scale (New Cortex Standard)
+    if 0.0 < risk_score <= 1.0:
+        if risk_score > 0.6:
+            return "warning"
+        elif risk_score > 0.4:
+            return "info"
+        return "success"
+
+    # 0 to 100 Scale (Legacy)
     if risk_score >= 70:
         return "warning"
     elif risk_score >= 40:
@@ -223,14 +232,34 @@ async def get_dashboard_focus(
     insight_data = None
     if patient.last_insight_json:
         insight_json = patient.last_insight_json
-        risk_score = insight_json.get("risk_score", 0)
+
+        # v1.5.9: Robust mapping for both legacy and Cortex formats
+        # We handle cases where data might be nested or flat
+        metrics = (
+            insight_json.get("metrics", {})
+            if isinstance(insight_json.get("metrics"), dict)
+            else {}
+        )
+        soap = (
+            insight_json.get("soap_note", {})
+            if isinstance(insight_json.get("soap_note"), dict)
+            else {}
+        )
+
+        # Risk Score extraction
+        risk_score = metrics.get("risk_score") or insight_json.get("risk_score") or 0.0
+
+        # Message/Brief extraction
         message = (
-            insight_json.get("summary")
+            soap.get("summary")
+            or soap.get("assessment")
+            or soap.get("subjective")
+            or insight_json.get("summary")
             or insight_json.get("topic")
             or "Análisis disponible"
         )
 
-        # Truncate message if too long
+        # Truncate message if too long for the Focus Card UI
         if len(message) > 60:
             message = message[:57] + "..."
 
