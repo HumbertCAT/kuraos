@@ -64,6 +64,7 @@ from app.api.v1.intelligence import (
     forms,
     connect,
     help,
+    pricing,
 )
 
 # Configure structured logging
@@ -264,6 +265,11 @@ app.include_router(
 app.include_router(admin.router, prefix=f"{settings.API_V1_STR}/admin", tags=["Admin"])
 app.include_router(
     ai_governance.router,
+    prefix=settings.API_V1_STR,
+    tags=["Admin-AI-Governance"],
+)
+app.include_router(
+    pricing.router,
     prefix=settings.API_V1_STR,
     tags=["Admin-AI-Governance"],
 )

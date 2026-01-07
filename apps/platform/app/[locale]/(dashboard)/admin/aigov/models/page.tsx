@@ -12,7 +12,7 @@
  * v1.4.14: Advanced Filtering System implementation.
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
     Fingerprint,
     Target,
@@ -21,12 +21,14 @@ import {
     Filter,
     RotateCcw,
     ChevronDown,
-    ChevronUp
+    ChevronUp,
+    RefreshCw
 } from 'lucide-react';
 import {
     ALL_MODELS,
     AI_REQUIREMENTS,
     TASK_LABELS,
+    fetchWithAuth,
     type ExtendedModelInfo,
     type AIRequirement,
 } from '../shared';
@@ -56,6 +58,47 @@ export default function ModelsPage() {
     });
 
     const [isFiltersExpanded, setIsFiltersExpanded] = useState(true);
+
+    // Dynamic pricing state
+    const [pricing, setPricing] = useState<Record<string, { input: number; output: number }>>({});
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [pricingStatus, setPricingStatus] = useState<{ timestamp: string | null; isStale: boolean }>({ timestamp: null, isStale: true });
+
+    // Fetch pricing on mount
+    useEffect(() => {
+        fetchPricing();
+    }, []);
+
+    async function fetchPricing() {
+        try {
+            const data = await fetchWithAuth('/admin/ai-governance/pricing');
+            const priceMap: Record<string, { input: number; output: number }> = {};
+            for (const p of data.prices || []) {
+                priceMap[p.model_id] = { input: p.cost_input, output: p.cost_output };
+            }
+            setPricing(priceMap);
+            setPricingStatus({ timestamp: data.cache_timestamp, isStale: data.is_stale });
+        } catch (err) {
+            console.error('Failed to fetch pricing:', err);
+        }
+    }
+
+    async function handleRefreshPricing() {
+        setIsRefreshing(true);
+        try {
+            await fetchWithAuth('/admin/ai-governance/pricing/refresh', { method: 'POST' });
+            await fetchPricing();
+        } catch (err) {
+            console.error('Failed to refresh pricing:', err);
+        } finally {
+            setIsRefreshing(false);
+        }
+    }
+
+    // Helper to get dynamic price or fallback to static
+    function getPrice(modelId: string): { input: number; output: number } {
+        return pricing[modelId] || { input: 0, output: 0 };
+    }
 
     const filteredModels = useMemo(() => {
         return ALL_MODELS.filter(model => {
@@ -127,6 +170,16 @@ export default function ModelsPage() {
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
+                        {/* Refresh Pricing Button */}
+                        <button
+                            onClick={(e) => { e.stopPropagation(); handleRefreshPricing(); }}
+                            disabled={isRefreshing}
+                            className="text-[10px] flex items-center gap-1 text-muted-foreground hover:text-brand transition-colors disabled:opacity-50"
+                            title={pricingStatus.timestamp ? `Última actualización: ${new Date(pricingStatus.timestamp).toLocaleString()}` : 'Sin datos de precios'}
+                        >
+                            <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+                            {pricingStatus.isStale ? 'Actualizar precios' : 'Precios actuales'}
+                        </button>
                         {(filters.provider || filters.tier || filters.capability || filters.task) && (
                             <button
                                 onClick={(e) => { e.stopPropagation(); resetFilters(); }}
@@ -237,7 +290,7 @@ export default function ModelsPage() {
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs font-mono text-brand font-bold">
-                                        €{model.cost_input} <span className="text-muted-foreground font-normal">/</span> €{model.cost_output}
+                                        €{(getPrice(model.id).input || model.cost_input).toFixed(2)} <span className="text-muted-foreground font-normal">/</span> €{(getPrice(model.id).output || model.cost_output).toFixed(2)}
                                     </p>
                                     <p className="text-[10px] text-muted-foreground uppercase">1M Tokens</p>
                                 </div>

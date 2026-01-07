@@ -6,6 +6,7 @@ from . import automations
 from . import forms
 from . import connect
 from . import help
+from . import pricing
 
 __all__ = [
     "ai_governance",
@@ -15,4 +16,5 @@ __all__ = [
     "forms",
     "connect",
     "help",
+    "pricing",
 ]
