@@ -370,12 +370,28 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
 
             # ============================================================
             # v1.3.3: Get routed provider based on entry type
+            # v1.4.12: Crystal Mind - Light Memory context injection
             # ============================================================
             # Determine task_type FIRST from entry type
             task_type = ENTRY_TYPE_TO_TASK.get(entry.entry_type, "clinical_analysis")
 
+            # Build context for prompt template (Light Memory)
+            prompt_context = {
+                "patient_name": patient.name if patient else None,
+            }
+
+            # Inject last session summary if available (from previous AI analysis)
+            if patient and patient.last_insight_json:
+                last_insight = patient.last_insight_json
+                if isinstance(last_insight, dict):
+                    prompt_context["last_session_summary"] = last_insight.get(
+                        "summary", last_insight.get("clinical_reasoning", "")
+                    )
+
             # Get routed provider (reads AI_TASK_ROUTING from SystemSettings)
-            provider = await ProviderFactory.get_provider_for_task(task_type, db)
+            provider = await ProviderFactory.get_provider_for_task(
+                task_type, db, prompt_context=prompt_context
+            )
 
             # Determine prompt based on entry type
             if entry.entry_type == EntryType.SESSION_NOTE:
@@ -411,9 +427,9 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
                             f"Audio duration unknown, defaulting to VOICE for safety"
                         )
 
-                # Get provider for the routed task
+                # Get provider for the routed task (with patient context)
                 provider = await ProviderFactory.get_provider_for_task(
-                    audio_task_type, db
+                    audio_task_type, db, prompt_context=prompt_context
                 )
 
                 # Get prompt from provider's system instruction (already rendered)
