@@ -13,6 +13,57 @@ All notable changes to KURA OS will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+---
+
+## [1.5.8] - 2026-01-07 🔧 OPERATION STABILIZATION
+
+> **Theme:** "The Debugging Marathon" — 6 critical fixes to bring Cortex online end-to-end.
+
+### 🎯 Mission Accomplished
+
+| Component | Status |
+|-----------|--------|
+| Privacy Tier Persistence | ✅ Working |
+| Cortex Pipeline Execution | ✅ Working |
+| AI Analysis (Gemini 2.5) | ✅ Working |
+| Data Persistence | ✅ Working |
+| Frontend Display | ✅ Working |
+
+### 🐛 Critical Fixes
+
+| # | Issue | File | Fix |
+|---|-------|------|-----|
+| 1 | DTO missing `privacy_tier_override` | `patient_schemas.py` | Added optional field |
+| 2 | Migration not idempotent | `add_ghost_protocol.py` | Added column existence check |
+| 3 | `generate()` method doesn't exist | `cortex/steps/core.py` | Use `analyze_text()` instead |
+| 4 | Datetime naive vs aware comparison | `clinical_entries.py` | Use `timezone.utc` everywhere |
+| 5 | `transcribe_audio()` missing | `vertex.py` | Added method using `analyze_multimodal()` |
+| 6 | UI not showing insights | `TimelineEntry.tsx` | Added Cortex analysis display block |
+
+### 🎨 Frontend Updates
+
+- **New "Análisis Cortex" block** in Timeline entries
+- Shows elapsed processing time (e.g., "24s")
+- Supports both legacy `.summary` and Cortex `.analysis_json.raw_text` formats
+- Ghost entries show preserved insights with glassmorphic design
+
+### 📊 Architecture Discovery
+
+```
+ClinicalEntry.entry_metadata.ai_insights  →  Timeline Display
+Patient.last_insight_json                 →  Sentinel Pulse (v1.6)
+```
+
+> **Note:** Cortex analysis format differs from Panel insights format. 
+> Sentinel Pulse update deferred to v1.6 dual-output architecture.
+
+### 🔧 Database Interventions
+
+- Cleared corrupted `last_insight_json` entries
+- Reset stuck `processing_status` entries to IDLE
+- Manual fix: Updated `clinical_soap_v1` stages to use `"step"` key
+
+---
 
 ## [1.5.7] - 2026-01-07 🧠 CORTEX ACTIVATION PROTOCOL
 
