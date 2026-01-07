@@ -11,7 +11,7 @@ steps:
       - --cache=true
       - --cache-ttl=168h
       - --context=dir://backend
-      - --dockerfile=backend/Dockerfile.prod
+      - --dockerfile=backend/Dockerfile
     timeout: '1200s'
     waitFor: ['-']  # Start immediately
 
