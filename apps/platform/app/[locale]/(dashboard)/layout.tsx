@@ -29,7 +29,10 @@ export default function DashboardLayout({
       <TrinityNav />
 
       {/* COL 2: Main Stage (Fluid) */}
-      <main className="flex-1 overflow-y-auto relative bg-background">
+      <main
+        className="flex-1 overflow-y-auto relative bg-background"
+        style={{ boxShadow: 'var(--shadow-diffuse)' }}
+      >
         <div className="max-w-6xl mx-auto p-6 pb-20 lg:pb-6">
           {children}
         </div>

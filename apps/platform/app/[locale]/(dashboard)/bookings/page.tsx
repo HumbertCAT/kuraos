@@ -412,7 +412,7 @@ export default function BookingsPage() {
                     {/* Control Deck Toolbar */}
                     <div className="border-b border-border bg-muted/20 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
                         {/* Tabs (Segmented Control) */}
-                        <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit order-2 sm:order-1">
+                        <div className="tabs-nav flex gap-1 w-fit order-2 sm:order-1">
                             <button
                                 onClick={() => setActiveTab('future')}
                                 className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-medium transition-all ${activeTab === 'future' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}

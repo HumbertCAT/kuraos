@@ -37,7 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
 
             {/* Navigation Tabs */}
-            <nav className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
+            <nav className="tabs-nav flex gap-1 w-fit">
                 {ADMIN_SECTIONS.map((section) => {
                     const Icon = section.icon;
                     const isActive = currentSection === section.key;
@@ -47,8 +47,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             key={section.key}
                             href={section.href}
                             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${isActive
-                                    ? 'bg-card text-foreground shadow-sm'
-                                    : 'text-foreground/70 hover:text-foreground'
+                                ? 'bg-card text-foreground shadow-sm'
+                                : 'text-foreground/70 hover:text-foreground'
                                 }`}
                         >
                             <Icon className="w-4 h-4" />

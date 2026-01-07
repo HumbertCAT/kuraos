@@ -193,7 +193,7 @@ export default function FormsPage() {
                 {/* Control Deck Toolbar */}
                 <div className="border-b border-border bg-muted/20 p-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
                     {/* Segmented Control Tabs */}
-                    <div className="flex gap-1 bg-muted p-1 rounded-lg w-fit">
+                    <div className="tabs-nav flex gap-1 w-fit">
                         <button
                             onClick={() => setActiveTab('my-forms')}
                             className={`px-4 py-1.5 rounded-md font-medium transition-all ${activeTab === 'my-forms'
