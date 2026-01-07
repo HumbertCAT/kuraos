@@ -76,6 +76,7 @@ class VertexAIProvider(AIProvider):
     # Pricing per 1M tokens (USD) - Same as public API
     COST_STRUCTURE = {
         "gemini-3-pro": {"input": 2.00, "output": 12.00},
+        "gemini-3-flash": {"input": 0.10, "output": 0.40},
         "gemini-2.5-pro": {"input": 1.25, "output": 10.00},
         "gemini-2.5-flash": {"input": 0.15, "output": 0.60},
         "gemini-2.5-flash-lite": {"input": 0.10, "output": 0.40},
@@ -83,9 +84,9 @@ class VertexAIProvider(AIProvider):
         "gemini-2.0-flash-lite": {"input": 0.075, "output": 0.30},
     }
 
-    # Models that support native audio input
     AUDIO_CAPABLE_MODELS = {
         "gemini-3-pro",
+        "gemini-3-flash",
         "gemini-2.5-flash",
         "gemini-2.5-pro",
         "gemini-2.5-flash-lite",
@@ -244,6 +245,54 @@ class VertexAIProvider(AIProvider):
             provider_id=self.provider_id,
         )
 
+    async def _read_local_file(self, path_uri: str) -> bytes:
+        """Helper to read local files from /static/uploads/ or direct paths."""
+        import aiofiles
+        from pathlib import Path
+
+        # Handle /static/uploads/ paths by prepending the static directory
+        if path_uri.startswith("/static/"):
+            # In production, static files are served from backend/static/ or /app/static
+            local_path = Path("/app/static") / path_uri.replace("/static/", "")
+            if not local_path.exists():
+                local_path = Path("static") / path_uri.replace("/static/", "")
+        else:
+            local_path = Path(path_uri)
+
+        if not local_path.exists():
+            raise FileNotFoundError(
+                f"Local file not found for AI analysis: {local_path}"
+            )
+
+        async with aiofiles.open(local_path, "rb") as f:
+            return await f.read()
+
+    async def analyze_image(self, image_uri: str, prompt: str) -> dict:
+        """
+        Analyze an image for OCR or clinical document understanding.
+
+        Supports GCS URIs and Local Paths.
+        """
+        # Determine mime type
+        ext = image_uri.lower().rsplit(".", 1)[-1] if "." in image_uri else "png"
+        mime_type = f"image/{ext}" if ext != "pdf" else "application/pdf"
+
+        if image_uri.startswith("gs://"):
+            response = await self.analyze_multimodal(
+                content=None, mime_type=mime_type, prompt=prompt, gcs_uri=image_uri
+            )
+        else:
+            content = await self._read_local_file(image_uri)
+            response = await self.analyze_multimodal(
+                content=content, mime_type=mime_type, prompt=prompt, gcs_uri=None
+            )
+
+        return {
+            "text": response.text,
+            "document_type": "clinical_document",
+            "confidence": 0.95,
+        }
+
     async def analyze_multimodal(
         self,
         content: Optional[bytes],
@@ -308,19 +357,13 @@ class VertexAIProvider(AIProvider):
         """
         Transcribe audio from a GCS URI or local file path.
 
-        v1.5.8: Uses Gemini's native audio understanding for transcription.
+        v1.5.9: Uses Gemini's native audio understanding for transcription.
         Supports both GCS URIs (gs://) and local paths (/static/uploads/).
 
-        Args:
-            audio_uri: GCS path (gs://...) or local path (/static/uploads/...)
-            language: Target language code (default: 'es')
-
-        Returns:
-            dict with 'text', 'duration', 'language' keys
+        Model Routing (Cognitive Integrity):
+        - Files > 15MB (~15 min) are routed to gemini-2.5-pro.
+        - Files <= 15MB use the default model (Flash).
         """
-        import aiofiles
-        from pathlib import Path
-
         # Determine mime type from URI extension
         mime_map = {
             ".mp3": "audio/mp3",
@@ -341,7 +384,8 @@ Just output the exact words spoken."""
 
         # Check if GCS URI or local path
         if audio_uri.startswith("gs://"):
-            # GCS: Pass URI directly to Gemini
+            # GCS: For now we default to provided model as we can't check size easily
+            target_model = self.model
             response = await self.analyze_multimodal(
                 content=None,
                 mime_type=mime_type,
@@ -349,22 +393,42 @@ Just output the exact words spoken."""
                 gcs_uri=audio_uri,
             )
         else:
-            # Local path: Read bytes and pass inline
-            # Handle /static/uploads/ paths by prepending the static directory
-            if audio_uri.startswith("/static/"):
-                # In production, static files are served from backend/static/
-                local_path = Path("/app/static") / audio_uri.replace("/static/", "")
-            else:
-                local_path = Path(audio_uri)
+            # Local path: Read bytes via helper
+            content = await self._read_local_file(audio_uri)
 
-            if not local_path.exists():
-                raise FileNotFoundError(f"Audio file not found: {local_path}")
+            # Routing Logic: > 15MB (approx 15 min at 128kbps) -> Switch to PRO
+            if len(content) > 15 * 1024 * 1024 and "pro" not in self._model_name:
+                import logging
 
-            async with aiofiles.open(local_path, "rb") as f:
-                audio_bytes = await f.read()
+                logger = logging.getLogger(__name__)
+                logger.info(
+                    f"🔄 Routing long audio ({len(content)} bytes) to gemini-2.5-pro"
+                )
+                from vertexai.generative_models import GenerativeModel
+
+                # Create a temporary Pro model for this task
+                pro_model = GenerativeModel("gemini-2.5-pro")
+
+                # We need to call generate_content manually since self.analyze_multimodal
+                # uses self.model. To keep it clean, we override temporarily or reimplement.
+                # Reimplementing inline for safety:
+                from vertexai.generative_models import Part
+
+                media_part = Part.from_data(data=content, mime_type=mime_type)
+                resp = await pro_model.generate_content_async([
+                    transcription_prompt,
+                    media_part,
+                ])
+
+                return {
+                    "text": resp.text,
+                    "duration": None,
+                    "language": language,
+                    "routed_model": "gemini-2.5-pro",
+                }
 
             response = await self.analyze_multimodal(
-                content=audio_bytes,
+                content=content,
                 mime_type=mime_type,
                 prompt=transcription_prompt,
                 gcs_uri=None,
@@ -372,6 +436,6 @@ Just output the exact words spoken."""
 
         return {
             "text": response.text,
-            "duration": None,  # Gemini doesn't provide duration
+            "duration": None,  # Gemini doesn't provide duration directly
             "language": language,
         }

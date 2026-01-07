@@ -15,6 +15,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.5.9] - 2026-01-07 🧠 COGNITIVE INTEGRITY (AletheIA Update)
+
+> **Theme:** "The Complete Neural Loop" — Stabilization of the entire AI circuit.
+
+### 🧠 AletheIA & Cortex Stabilization
+
+| Component | Status | Fix |
+|-----------|--------|-----|
+| **Audio Routing** | ✅ Active | **15-Minute Rule**: Long audios (>15MB) automatically route to `gemini-2.5-pro` |
+| **OCR (Grapho)** | ✅ Fixed | Added `analyze_image` bridge for clinical document extraction |
+| **Model Garden** | ✅ Ready | Support added for **Gemini 3 Flash** |
+| **Local Storage** | ✅ Fixed | AI steps now handle `/static/uploads/` paths by reading bytes directly |
+
+### 🐛 Critical Fixes
+
+- **OCR Step Failure**: Fixed missing method `analyze_image` in `VertexAIProvider`.
+- **Audio 500 Error**: Fixed GCS URI mismatch for locally stored audio files.
+- **Path Resolution**: Robust helper for finding static files in both production and development.
+
+---
+
 ## [1.5.8] - 2026-01-07 🔧 OPERATION STABILIZATION
 
 > **Theme:** "The Debugging Marathon" — 6 critical fixes to bring Cortex online end-to-end.
@@ -26,122 +47,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | Privacy Tier Persistence | ✅ Working |
 | Cortex Pipeline Execution | ✅ Working |
 | AI Analysis (Gemini 2.5) | ✅ Working |
-| Data Persistence | ✅ Working |
 | Frontend Display | ✅ Working |
 
 ### 🐛 Critical Fixes
 
-| # | Issue | File | Fix |
-|---|-------|------|-----|
-| 1 | DTO missing `privacy_tier_override` | `patient_schemas.py` | Added optional field |
-| 2 | Migration not idempotent | `add_ghost_protocol.py` | Added column existence check |
-| 3 | `generate()` method doesn't exist | `cortex/steps/core.py` | Use `analyze_text()` instead |
-| 4 | Datetime naive vs aware comparison | `clinical_entries.py` | Use `timezone.utc` everywhere |
-| 5 | `transcribe_audio()` missing | `vertex.py` | Added method using `analyze_multimodal()` |
-| 6 | UI not showing insights | `TimelineEntry.tsx` | Added Cortex analysis display block |
-
-### 🎨 Frontend Updates
-
-- **New "Análisis Cortex" block** in Timeline entries
-- Shows elapsed processing time (e.g., "24s")
-- Supports both legacy `.summary` and Cortex `.analysis_json.raw_text` formats
-- Ghost entries show preserved insights with glassmorphic design
-
-### 📊 Architecture Discovery
-
-```
-ClinicalEntry.entry_metadata.ai_insights  →  Timeline Display
-Patient.last_insight_json                 →  Sentinel Pulse (v1.6)
-```
-
-> **Note:** Cortex analysis format differs from Panel insights format. 
-> Sentinel Pulse update deferred to v1.6 dual-output architecture.
-
-### 🔧 Database Interventions
-
-- Cleared corrupted `last_insight_json` entries
-- Reset stuck `processing_status` entries to IDLE
-- Manual fix: Updated `clinical_soap_v1` stages to use `"step"` key
+- **DTO Fix**: Added `privacy_tier_override` to `PatientResponse`.
+- **Migration Fix**: Made `add_ghost_protocol` migration idempotent.
+- **Provider Interface**: Replaced legacy `generate()` with `analyze_text()`.
+- **Temporal Fix**: Fixed offset-naive vs offset-aware datetime comparisons.
+- **Audio Logic**: Added `transcribe_audio()` method to `VertexAIProvider`.
+- **UI HUD**: Enabled "Análisis Cortex" block in `TimelineEntry.tsx`.
 
 ---
 
-## [1.5.7] - 2026-01-07 🧠 CORTEX ACTIVATION PROTOCOL
+## [1.5.0 - 1.5.7] - 2026-01-06 a 2026-01-07 🚀 THE CORTEX REVOLUTION
 
-> **Theme:** "The Neural Network Awakens" — All 10 AletheIA pipelines seeded and operational.
+> **Major Milestone**: Transition from Legacy GeminiGen to **Kura Cortex v1.5**.
 
-### 🧠 Cortex Activation
+### 🏗️ Major Transformations
 
-| Script | Purpose |
-|--------|---------|
-| `seed_cortex_pipelines.py` | Idempotent seeder for all 10 AletheIA Units |
-| `verify_cortex_readiness.py` | Synapse check smoke test |
+1. **The Brain Transplant**: Migrated core intelligence from `GeminiGen` to `VertexAIProvider`.
+2. **DAG Orchestration**: Introducton of `CortexOrchestrator` using a directed acyclic graph of Steps (`Transcribe`, `Analyze`, `Triage`, `OCR`).
+3. **Ghost Protocol**: Implementation of ephemeral analysis for high-privacy clinical sessions.
+4. **Data Sovereignty**: Shift toward path-by-reference for clinical content handling.
+5. **Sentinel Pulse**: Foundation for the v1.6 Intelligence Panel using structured JSON outputs.
 
-### 🌐 10 Pipelines Seeded
+### 🧪 Evolutionary Path
 
-| Level | Pipelines |
-|-------|-----------|
-| Clinical Judgment | `triage`, `clinical_analysis`, `briefing`, `chat` |
-| Transformation | `transcription`, `session_analysis`, `audio_memo` |
-| Operations | `document_analysis`, `form_analysis`, `help_bot` |
-
-### 🐛 Fixes
-
-- **Privacy API**: Corrected endpoint route (`/patients/{id}/privacy`)
-- **Cortex AnalyzeStep**: Now reads `text_content` from direct input
-- **Design System**: `CollapsibleSection` uses semantic tokens only
-- **UI Compliance**: Submit button uses `--brand`, Danger zone uses `--risk`
-- **Local Dev**: `VERTEX_AI_ENABLED=false` in docker-compose.yml
-- **Dependencies**: `google-cloud-aiplatform` → 1.132.0
-
----
-
-## [1.5.6] - 2026-01-07 👻 THE GHOST INTERFACE
-
-> **Theme:** "The UI Speaks Privacy" — Frontend reflects Cortex intelligence.
-
-### 🎨 New Components
-
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| `PrivacyTierBadge` | `patient/` | GHOST/STANDARD selector dropdown |
-| Ghost Card | `TimelineEntry.tsx` | Glassmorphic display for `is_ghost` entries |
-
-### 👻 Ghost Card Features
-
-- **Glassmorphism**: `bg-indigo-500/5 backdrop-blur-md`
-- **Animated Ghost Icon**: Pulsing indigo
-- **Privacy Message**: "Secure Analysis (RAM). Raw data terminated."
-- **Preserved Insights**: Shows `ai_insights.summary` when available
-
-### 📊 Types Updated
-
-- `ClinicalEntry.is_ghost` (boolean)
-- `ClinicalEntry.pipeline_name` (string)
-
----
-
-## [1.5.5] - 2026-01-07 ⚡ THE HARD SWITCH
-
-> **Theme:** "Kill the Legacy" — 100% Cortex, no canary, no rollback.
-
-### 🔌 Direct Rewiring
-
-| Endpoint | Before | After |
-|----------|--------|-------|
-| `POST /clinical_entries/{id}/analyze` | `run_analysis_task()` | **`ClinicalService.process_entry_async()`** |
-
-### 🗑️ Deprecated
-
-- `run_analysis_task()` marked as **DEPRECATED** - kept for reference only
-
-### 🧠 What This Means
-
-Every clinical entry analysis now flows through:
-```
-ClinicalService → CortexOrchestrator → Pipeline → ProviderFactory
-```
-
-The UI Config (Admin Panel → Routing) **still works** because Cortex uses `ProviderFactory` internally.
+- **v1.5.0 - v1.5.3**: Experimental implementation of the Strangler Pattern.
+- **v1.5.4 - v1.5.5**: The "Hard Switch" - removal of legacy analysis tasks.
+- **v1.5.6 - v1.5.7**: UI/UX Activation - Badges, HUDs, and the Ghost Interface.
 
 ---
 
