@@ -8,7 +8,7 @@
 # See: ./scripts/rebuild-base.sh
 # =============================================================================
 
-FROM europe-west1-docker.pkg.dev/kura-os/cloud-run-source-deploy/kura-base:v1
+FROM europe-west1-docker.pkg.dev/kura-os/cloud-run-source-deploy/kura-base:v2
 
 WORKDIR /app
 

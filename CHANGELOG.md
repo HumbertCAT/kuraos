@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.14] - 2026-01-07 🔓 CRYSTAL MIND - TOTAL FREEDOM
     
-> **Theme:** "Unblocked Governance" — Freedom-first routing + Advanced discovery.
+> **Theme:** "Unblocked Governance" — Freedom-first routing + Advanced discovery + Pipeline Performance.
 
 ### 🔓 Unblocked Routing
 - **Total Choice**: All enabled models now visible in AI task selectors.
@@ -26,6 +26,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🔍 Advanced Model Discovery
 - **4-Tier Filtering**: New console in `Models` page (Provider, Role, Capabilities, Compatibility).
 - **Consolidated Registry**: Full Vertex AI Model Garden (Claude, Llama, Mistral) with cost/capability matrix.
+
+### ⚡ Pipeline Performance Optimization
+
+**Build time reduced from 4min to <90s** (-62%):
+
+| Optimization | Impact |
+|:---|:---|
+| **Full Dependency Pinning** | Eliminated pip backtracking |
+| **Two-Tier Dockerfile** | Pre-built base image with heavy deps |
+| **Migration Toggle** | Skip redundant Alembic checks in prod |
+
+- **`kura-base:v2`**: Base image with Google Cloud SDKs (~225MB)
+- **`RUN_MIGRATIONS_ON_STARTUP=false`**: Trust the Pipeline (4-5s cold start savings)
+
+### 💰 Dynamic Pricing (Cloud Billing API)
+
+- **Real-Time Costs**: Fetch SKU prices from Google Cloud Billing Catalog
+- **Refresh Button**: Manual price update with 24h cache
+- **Fallback**: Hardcoded defaults if API unavailable
+- **New Dep**: `google-cloud-billing==1.17.0`
 
 ---
 
