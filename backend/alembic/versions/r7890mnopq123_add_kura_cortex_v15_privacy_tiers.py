@@ -27,62 +27,70 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    """Add Cortex v1.5 schema changes."""
+    """Add Cortex v1.5 schema changes (idempotent)."""
+    conn = op.get_bind()
 
-    # 1. Create PrivacyTier enum
-    privacy_tier_enum = sa.Enum(
-        "GHOST", "STANDARD", "LEGACY", name="privacytier", create_type=False
-    )
-    privacy_tier_enum.create(op.get_bind(), checkfirst=True)
-
-    # 2. Add columns to organizations
-    op.add_column(
-        "organizations",
-        sa.Column("country_code", sa.String(2), nullable=False, server_default="ES"),
-    )
-    op.add_column(
-        "organizations",
-        sa.Column(
-            "default_privacy_tier",
-            sa.Enum("GHOST", "STANDARD", "LEGACY", name="privacytier"),
-            nullable=True,
-        ),
+    # 1. Create PrivacyTier enum if not exists
+    conn.execute(
+        sa.text("""
+        DO $$ BEGIN
+            CREATE TYPE privacytier AS ENUM ('GHOST', 'STANDARD', 'LEGACY');
+        EXCEPTION
+            WHEN duplicate_object THEN null;
+        END $$;
+    """)
     )
 
-    # 3. Add column to patients
-    op.add_column(
-        "patients",
-        sa.Column(
-            "privacy_tier_override",
-            sa.Enum("GHOST", "STANDARD", "LEGACY", name="privacytier"),
-            nullable=True,
-        ),
+    # 2. Add columns to organizations (if not exist)
+    conn.execute(
+        sa.text("""
+        ALTER TABLE organizations 
+        ADD COLUMN IF NOT EXISTS country_code VARCHAR(2) DEFAULT 'ES' NOT NULL;
+    """)
+    )
+    conn.execute(
+        sa.text("""
+        ALTER TABLE organizations 
+        ADD COLUMN IF NOT EXISTS default_privacy_tier privacytier;
+    """)
     )
 
-    # 4. Create ai_pipeline_configs table
-    op.create_table(
-        "ai_pipeline_configs",
-        sa.Column("id", sa.UUID(), primary_key=True),
-        sa.Column("name", sa.String(100), unique=True, nullable=False, index=True),
-        sa.Column("input_modality", sa.String(20), nullable=False),
-        sa.Column("stages", JSONB, nullable=False, server_default="[]"),
-        sa.Column(
-            "privacy_tier_required",
-            sa.Enum("GHOST", "STANDARD", "LEGACY", name="privacytier"),
-            nullable=True,
-        ),
-        sa.Column("is_active", sa.Boolean, nullable=False, server_default="true"),
-        sa.Column("description", sa.Text, nullable=True),
-        sa.Column(
-            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now()
-        ),
-        sa.Column(
-            "updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()
-        ),
+    # 3. Add column to patients (if not exist)
+    conn.execute(
+        sa.text("""
+        ALTER TABLE patients 
+        ADD COLUMN IF NOT EXISTS privacy_tier_override privacytier;
+    """)
     )
 
-    # 5. Seed initial pipeline configurations
-    op.execute("""
+    # 4. Create ai_pipeline_configs table if not exists
+    conn.execute(
+        sa.text("""
+        CREATE TABLE IF NOT EXISTS ai_pipeline_configs (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            name VARCHAR(100) UNIQUE NOT NULL,
+            input_modality VARCHAR(20) NOT NULL,
+            stages JSONB NOT NULL DEFAULT '[]',
+            privacy_tier_required privacytier,
+            is_active BOOLEAN NOT NULL DEFAULT true,
+            description TEXT,
+            created_at TIMESTAMPTZ DEFAULT now(),
+            updated_at TIMESTAMPTZ DEFAULT now()
+        );
+    """)
+    )
+
+    # 5. Create index if not exists
+    conn.execute(
+        sa.text("""
+        CREATE INDEX IF NOT EXISTS ix_ai_pipeline_configs_name 
+        ON ai_pipeline_configs(name);
+    """)
+    )
+
+    # 6. Seed initial pipeline configurations (upsert)
+    conn.execute(
+        sa.text("""
         INSERT INTO ai_pipeline_configs (id, name, input_modality, stages, description)
         VALUES 
         (gen_random_uuid(), 'session_analysis', 'AUDIO', 
@@ -93,8 +101,10 @@ def upgrade() -> None:
          'Intake form analysis with risk triage'),
         (gen_random_uuid(), 'grapho_digitization', 'VISION', 
          '[{"step": "ocr", "model": "gemini:2.5-flash"}]',
-         'Document/image OCR and digitization');
+         'Document/image OCR and digitization')
+        ON CONFLICT (name) DO NOTHING;
     """)
+    )
 
 
 def downgrade() -> None:
