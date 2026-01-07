@@ -14,6 +14,51 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - 2026-01-07 🧠 CEREBRAL INTEGRATION
+
+> **Theme:** "The Brain Transplant" — Native Cortex integration for clinical entries.
+
+### 🏗️ ClinicalService (New)
+
+Cortex-native facade for clinical entry processing:
+
+| Method | Purpose |
+|--------|---------|
+| `process_entry()` | Full pipeline execution with tier-aware routing |
+| `_select_pipeline()` | GHOST/STANDARD/LEGACY pipeline selection |
+| `_update_entry()` | Content Gatekeeper enforcement |
+
+### 👻 Ghost Protocol (GEM Amendments)
+
+| Feature | Description |
+|---------|-------------|
+| **Fail-Safe Cleanup** | `try/finally` ensures cleanup runs even on exception |
+| **Content Gatekeeper** | GHOST entries get `[CONTENIDO EFÍMERO ELIMINADO - GHOST PROTOCOL]` |
+| **is_ghost Flag** | New column on `ClinicalEntry` for UI rendering |
+
+### 📊 Pipeline Configurations
+
+| Pipeline | Entry Type | Tier | Description |
+|----------|-----------|------|-------------|
+| `clinical_soap_v1` | TEXT | ANY | Notes → SOAP analysis |
+| `audio_session_v1` | AUDIO | STANDARD/LEGACY | Audio → Transcription → SOAP |
+| `ghost_session_v1` | AUDIO | GHOST | RAM-only processing |
+| `document_ocr_v1` | VISION | ANY | Documents → OCR |
+| `audio_memo_v1` | AUDIO | ANY | Quick audio → JSON |
+
+### 🗄️ Schema Updates
+
+- `ClinicalEntry.is_ghost` (Boolean) — GHOST mode marker
+- `ClinicalEntry.pipeline_name` (String) — Cortex pipeline used
+
+### ✅ Quality
+
+- **53 unit tests** (13 new for Ghost Protocol)
+- Fail-safe cleanup verified
+- Content Gatekeeper verified
+
+---
+
 ## [1.5.3] - 2026-01-07 🔀 STRANGLER SWITCH
 
 > **Theme:** "Gradual Migration" — Feature flag for controlled Cortex rollout.

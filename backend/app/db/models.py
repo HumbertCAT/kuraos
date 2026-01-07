@@ -617,6 +617,10 @@ class ClinicalEntry(Base):
     )
     processing_error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+    # Cortex v1.5.4: Ghost Protocol
+    is_ghost: Mapped[bool] = mapped_column(Boolean, default=False)
+    pipeline_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+
     # Relationships
     patient: Mapped["Patient"] = relationship(back_populates="clinical_entries")
     author: Mapped["User"] = relationship()

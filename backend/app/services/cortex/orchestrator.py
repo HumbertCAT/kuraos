@@ -142,46 +142,72 @@ class CortexOrchestrator:
                     f"but patient has {context.resolved_tier.value}",
                 )
 
-        # 4. Execute stages
+        # 4. Execute stages (with fail-safe cleanup for GHOST)
         stages = config.stages or []
-        for i, stage_config in enumerate(stages):
-            step_type = stage_config.get("step")
-            if not step_type:
-                logger.warning(f"Stage {i} missing 'step' key, skipping")
-                continue
+        execution_error = None
 
-            try:
-                logger.info(f"  → Stage {i + 1}/{len(stages)}: {step_type}")
-                step = get_step(step_type)
+        try:
+            for i, stage_config in enumerate(stages):
+                step_type = stage_config.get("step")
+                if not step_type:
+                    logger.warning(f"Stage {i} missing 'step' key, skipping")
+                    continue
 
-                # Pass config to step if it accepts it
-                if hasattr(step, "model") and "model" in stage_config:
-                    step.model = stage_config["model"]
-                if hasattr(step, "prompt_key") and "prompt_key" in stage_config:
-                    step.prompt_key = stage_config["prompt_key"]
+                try:
+                    logger.info(f"  → Stage {i + 1}/{len(stages)}: {step_type}")
+                    step = get_step(step_type)
 
-                await step.execute(context)
+                    # Pass config to step if it accepts it
+                    if hasattr(step, "model") and "model" in stage_config:
+                        step.model = stage_config["model"]
+                    if hasattr(step, "prompt_key") and "prompt_key" in stage_config:
+                        step.prompt_key = stage_config["prompt_key"]
 
-            except StepExecutionError as e:
-                logger.error(f"  ✗ Stage {step_type} failed: {e}")
-                raise PipelineExecutionError(pipeline_name, str(e), step=step_type)
-            except Exception as e:
-                logger.error(f"  ✗ Unexpected error in {step_type}: {e}")
-                raise PipelineExecutionError(pipeline_name, str(e), step=step_type)
+                    await step.execute(context)
 
-        logger.info(f"  ✓ All {len(stages)} stages complete")
+                except StepExecutionError as e:
+                    logger.error(f"  ✗ Stage {step_type} failed: {e}")
+                    execution_error = PipelineExecutionError(
+                        pipeline_name, str(e), step=step_type
+                    )
+                    break
+                except Exception as e:
+                    logger.error(f"  ✗ Unexpected error in {step_type}: {e}")
+                    execution_error = PipelineExecutionError(
+                        pipeline_name, str(e), step=step_type
+                    )
+                    break
 
-        # 5. Apply privacy enforcement
-        finalization_result = {"skipped": True}
-        if self.gcs_service:
-            try:
-                finalization_result = await self.finalizer.finalize(
-                    context, self.gcs_service
-                )
-                logger.info(f"🔐 Privacy enforcement: {finalization_result}")
-            except Exception as e:
-                logger.error(f"Privacy enforcement failed: {e}")
-                finalization_result = {"error": str(e)}
+            if not execution_error:
+                logger.info(f"  ✓ All {len(stages)} stages complete")
+
+        finally:
+            # 5. CRITICAL: Apply privacy enforcement ALWAYS
+            # GEM Amendment: GHOST cleanup must run even on failure
+            finalization_result = {"skipped": True}
+
+            if self.gcs_service:
+                try:
+                    # For GHOST mode, cleanup is mandatory regardless of success/failure
+                    if context.resolved_tier and context.resolved_tier.value == "GHOST":
+                        logger.warning("🔐 GHOST MODE: Executing mandatory cleanup")
+
+                    finalization_result = await self.finalizer.finalize(
+                        context, self.gcs_service
+                    )
+                    logger.info(f"🔐 Privacy enforcement: {finalization_result}")
+                except Exception as e:
+                    logger.error(f"Privacy enforcement failed: {e}")
+                    finalization_result = {"error": str(e)}
+                    # For GHOST, this is critical - log with high severity
+                    if context.resolved_tier and context.resolved_tier.value == "GHOST":
+                        logger.critical(
+                            f"⚠️ GHOST CLEANUP FAILED: {e} - Manual intervention required"
+                        )
+
+        # Re-raise execution error after cleanup
+        if execution_error:
+            raise execution_error
 
         # 6. Build result
         elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
@@ -192,6 +218,7 @@ class CortexOrchestrator:
             "organization_id": str(organization.id),
             "clinical_entry_id": str(clinical_entry_id) if clinical_entry_id else None,
             "privacy_tier": context.resolved_tier.value,
+            "is_ghost": context.resolved_tier.value == "GHOST",
             "outputs": context.outputs,
             "finalization": finalization_result,
             "elapsed_seconds": round(elapsed, 2),
