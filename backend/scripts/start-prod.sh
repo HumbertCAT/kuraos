@@ -28,17 +28,26 @@ log_error() {
 }
 
 # ==============================================================================
-# STEP 1: Run Database Migrations
+# STEP 1: Database Migrations (Optional - controlled by pipeline)
+# ==============================================================================
+# In production, migrations are handled by the Cloud Run Job (kura-migrator)
+# BEFORE the deploy step. This toggle allows skipping redundant checks.
+# Default: true (safe for local/manual runs)
+# Production: Set RUN_MIGRATIONS_ON_STARTUP=false in Cloud Run env vars
 # ==============================================================================
 log_info "Starting Kura OS Backend..."
-log_info "Running database migrations..."
 
-if alembic upgrade heads; then
-    log_info "✅ Database migrations completed successfully"
+if [ "${RUN_MIGRATIONS_ON_STARTUP:-true}" = "true" ]; then
+    log_info "Running database migrations..."
+    if alembic upgrade heads; then
+        log_info "✅ Database migrations completed successfully"
+    else
+        log_error "❌ Database migrations FAILED"
+        log_error "Container will exit. Please check your DATABASE_URL and migration files."
+        exit 1
+    fi
 else
-    log_error "❌ Database migrations FAILED"
-    log_error "Container will exit. Please check your DATABASE_URL and migration files."
-    exit 1
+    log_info "⏭️  Skipping migrations (handled by pipeline)"
 fi
 
 # ==============================================================================
