@@ -77,17 +77,29 @@ Clinical intelligence that never sleeps.
 
 #### The 9 Specialized Units
 
-| Category | Unit | Purpose |
-|:---|:---|:---|
-| **L1 Clinical Judgment** | 🛡️ **SENTINEL** | Risk screening (critical detection) |
-| | 🩺 **ORACLE** | Session notes & deep analysis |
-| | � **NOW** | Daily briefing & next actions |
-| | � **PULSE** | Chat sentiment monitoring |
-| **L2 Transformation** | ✍️ **SCRIBE** | Audio to verbatim text (transcription) |
-| | 🎤 **VOICE** | Full session audio analysis (≥15min) |
-| | � **MEMO** | Quick audio notes → JSON (<15min) |
-| **L3 Operations** | 📄 **SCAN** | Document OCR & extraction |
-| | ❓ **HELPER** | Platform support assistant |
+**L1 · Clinical Judgment** — AI that "understands" and "protects"
+
+| Unit | Purpose |
+|:---|:---|
+| 🛡️ **SENTINEL** | Risk screening (suicide, crisis, self-harm) |
+| 🩺 **ORACLE** | Session notes & deep clinical analysis |
+| 📅 **NOW** | Daily briefing & next actions |
+| 💓 **PULSE** | Chat sentiment monitoring |
+
+**L2 · Transformation** — AI that "translates" and "creates"
+
+| Unit | Purpose |
+|:---|:---|
+| ✍️ **SCRIBE** | Audio → verbatim text (transcription) |
+| 🎤 **VOICE** | Full session audio analysis (≥15min) |
+| 📝 **MEMO** | Quick audio notes → JSON (<15min) |
+
+**L3 · Operations** — Routine information processing
+
+| Unit | Purpose |
+|:---|:---|
+| 📄 **SCAN** | Document OCR & extraction |
+| ❓ **HELPER** | Platform support assistant |
 
 #### Key Capabilities
 - **Risk Detection**: Suicide, self-harm, integration crisis
