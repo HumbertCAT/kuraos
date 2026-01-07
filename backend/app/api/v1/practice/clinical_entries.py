@@ -386,10 +386,44 @@ async def run_analysis_task(entry_id: uuid.UUID, user_id: uuid.UUID):
                 response = await provider.analyze_text(content, prompt)
 
             elif entry.entry_type == EntryType.AUDIO:
-                prompt = AUDIO_SYNTHESIS_PROMPT
-
-                # Get audio file path - same logic as AletheIA._analyze_audio
+                # v1.4.11 Crystal Mind: Smart routing by audio duration
                 metadata = entry.entry_metadata or {}
+                duration_seconds = metadata.get("duration_seconds", 0)
+
+                # Route short audios (<15 min) to MEMO, longer to VOICE
+                MEMO_THRESHOLD = 15 * 60  # 15 minutes in seconds
+
+                if duration_seconds and duration_seconds < MEMO_THRESHOLD:
+                    # Short audio → MEMO (faster, structured output)
+                    audio_task_type = "audio_memo"
+                    import logging
+
+                    logging.info(
+                        f"Short audio ({duration_seconds / 60:.1f} min), routing to MEMO"
+                    )
+                else:
+                    # Long audio or unknown duration → VOICE (full synthesis)
+                    audio_task_type = "audio_synthesis"
+                    if not duration_seconds:
+                        import logging
+
+                        logging.info(
+                            f"Audio duration unknown, defaulting to VOICE for safety"
+                        )
+
+                # Get provider for the routed task
+                provider = await ProviderFactory.get_provider_for_task(
+                    audio_task_type, db
+                )
+
+                # Get prompt from provider's system instruction (already rendered)
+                from app.services.ai.prompts import AUDIO_SYNTHESIS_PROMPT
+
+                prompt = (
+                    AUDIO_SYNTHESIS_PROMPT  # Fallback (provider has the real prompt)
+                )
+
+                # Get audio file path
                 file_url = metadata.get("file_url", "")
 
                 if file_url:
