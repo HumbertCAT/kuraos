@@ -175,11 +175,36 @@ export default function RoutingPage() {
                                                                 reqs.every((r: any) => m.capabilities.includes(r))
                                                             );
 
-                                                            return compatibleModels.map((model: any) => (
-                                                                <option key={model.id} value={model.id}>
-                                                                    {model.name} (€{model.cost_input}/€{model.cost_output})
-                                                                </option>
-                                                            ));
+                                                            // Separate Recommended from Other Compatible
+                                                            const recommended = compatibleModels.filter((m: any) =>
+                                                                m.compatibleTasks.includes(taskType)
+                                                            );
+                                                            const others = compatibleModels.filter((m: any) =>
+                                                                !m.compatibleTasks.includes(taskType)
+                                                            );
+
+                                                            return (
+                                                                <>
+                                                                    {recommended.length > 0 && (
+                                                                        <optgroup label="Recomendados ✨">
+                                                                            {recommended.map((model: any) => (
+                                                                                <option key={model.id} value={model.id}>
+                                                                                    ⭐ {model.name} (€{model.cost_input}/€{model.cost_output})
+                                                                                </option>
+                                                                            ))}
+                                                                        </optgroup>
+                                                                    )}
+                                                                    {others.length > 0 && (
+                                                                        <optgroup label="Más Compatibles">
+                                                                            {others.map((model: any) => (
+                                                                                <option key={model.id} value={model.id}>
+                                                                                    {model.name} (€{model.cost_input}/€{model.cost_output})
+                                                                                </option>
+                                                                            ))}
+                                                                        </optgroup>
+                                                                    )}
+                                                                </>
+                                                            );
                                                         })()}
                                                     </select>
                                                 )}
