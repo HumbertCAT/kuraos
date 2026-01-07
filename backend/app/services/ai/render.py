@@ -89,6 +89,8 @@ def get_system_prompt(
     TASK_TEMPLATES = {
         "clinical_analysis": "clinical_v1.jinja2",
         "audio_synthesis": "audio_v1.jinja2",
+        "audio_memo": "memo_v1.jinja2",  # v1.4.10 Crystal Mind
+        "transcription": "audio_v1.jinja2",  # SCRIBE uses audio prompt
         "document_analysis": "document_v1.jinja2",
         "form_analysis": "form_v1.jinja2",
         "triage": "triage_v1.jinja2",

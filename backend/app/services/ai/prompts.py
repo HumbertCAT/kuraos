@@ -19,6 +19,7 @@ class PromptTask(str, Enum):
 
     CLINICAL_ANALYSIS = "clinical_analysis"
     AUDIO_SYNTHESIS = "audio_synthesis"
+    AUDIO_MEMO = "audio_memo"  # v1.4.10 Crystal Mind
     DOCUMENT_ANALYSIS = "document_analysis"
     FORM_ANALYSIS = "form_analysis"
     ASTROLOGY_FORM = "astrology_form"
