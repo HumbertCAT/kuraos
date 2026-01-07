@@ -96,44 +96,44 @@ select:disabled,
 /* -------------------------------------------------------------------------- */
 
 :root {
-  /* ☀️ LIGHT MODE (Zinc Scale) */
+  /* ☀️ LIGHT MODE (Organic Palette - No Pure Whites) */
   
   /* Base Layer */
-  --background: #FAF9F6;       /* Soft Parchment - No-White Canvas */
+  --background: #F0EFEA;       /* Darkened Parchment - 10% deeper */
   --foreground: #1A1A14;       /* Matted Earth */
   
   /* Layout Areas */
-  --sidebar: #F2F1EC;          /* Structured Sidebar (Framing) */
+  --sidebar: #E8E7E2;          /* Darkened Sidebar (Framing) */
   --sidebar-foreground: #57534E; 
-  --sidebar-border: #E5E4DB;   
-  --header: #FAF9F6;
+  --sidebar-border: #D5D4CB;   
+  --header: #F0EFEA;
 
-  /* Surfaces (Cards) */
-  --card: #FFFEFB;             /* Bone White - Soft contrast */
+  /* Surfaces (Cards) - NO MORE FFFFFF */
+  --card: #F5F4EF;             /* Warm Bone - 10% darker than before */
   --card-foreground: #1A1A14;
   
-  --popover: #FFFEFB;
+  --popover: #F5F4EF;
   --popover-foreground: #1A1A14;
   
   /* Controls & Inputs */
   --primary: #292524;
-  --primary-foreground: #FAF9F6;
+  --primary-foreground: #F5F4EF;
 
-  --secondary: #F2F1EC;
+  --secondary: #E8E7E2;
   --secondary-foreground: #292524;
   
-  --muted: #F2F1EC;
+  --muted: #E8E7E2;
   --muted-foreground: #78716C;
   
-  --accent: #F2F1EC;
+  --accent: #E8E7E2;
   --accent-foreground: #1A1A14;
   
   --destructive: #E11D48;
-  --destructive-foreground: #FAF9F6;
+  --destructive-foreground: #F5F4EF;
   
-  --border: #E5E4DB;           /* Soft Earth border */
-  --input: #FFFEFB;
-  --input-border: #E5E4DB;
+  --border: #D5D4CB;           /* Darker border for contrast */
+  --input: #F5F4EF;
+  --input-border: #D5D4CB;
   --ring: #247C7D;
 
   /* Brand Palette (Day) - Official KURA OS Colors */
@@ -151,28 +151,28 @@ select:disabled,
 }
 
 .dark {
-  /* 🌑 DARK MODE (The Void) */
+  /* 🌑 DARK MODE (The Void - 10% Lighter) */
   
   /* Base Layer */
-  --background: #040F10;       /* Central Void */
+  --background: #0A1518;       /* Lifted Void - 10% lighter */
   --foreground: #F2F2EB;       
   
   /* Layout Areas */
-  --sidebar: #020606;          /* Deep Root Sidebar (Framing) */
+  --sidebar: #060C0E;          /* Slightly lifted sidebar */
   --sidebar-foreground: #94A3B8; 
-  --sidebar-border: #142020;   
-  --header: #020606;
+  --sidebar-border: #1A2828;   
+  --header: #060C0E;
 
   /* Surfaces (Cards) */
-  --card: #0C1414;             /* Teal-Lifted Cards */
+  --card: #121A1A;             /* Lifted Cards - 10% lighter */
   --card-foreground: #F2F2EB;
   
-  --popover: #081010;
+  --popover: #0E1618;
   --popover-foreground: #F2F2EB;
   
   /* Controls & Inputs */
   --primary: #F2F2EB;
-  --primary-foreground: #020606;
+  --primary-foreground: #060C0E;
   
   --secondary: #111C1C;        
   --secondary-foreground: #F2F2EB;

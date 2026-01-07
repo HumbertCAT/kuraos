@@ -31,6 +31,10 @@ function TypographySection() {
                     <span className="type-h3">Heading 3: Subsection</span>
                 </div>
                 <div className="flex items-baseline gap-4">
+                    <code className="text-xs font-mono text-muted-foreground w-24">.type-h4</code>
+                    <span className="type-h4">Heading 4: Component Title</span>
+                </div>
+                <div className="flex items-baseline gap-4">
                     <code className="text-xs font-mono text-muted-foreground w-24">.type-body</code>
                     <span className="type-body">Body text: The patient reported improvements in sleep patterns after the third session. Emotional regulation techniques are showing positive results.</span>
                 </div>
