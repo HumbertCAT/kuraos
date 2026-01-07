@@ -58,15 +58,15 @@ const THEME_SECTIONS = [
     }
 ];
 
-// DEFAULT VALUES (Architect's Constitución Visual)
+// DEFAULT VALUES (Architect's Constitución Visual - v1.4.14)
 const DEFAULT_LIGHT: Record<string, string> = {
-    "--background": "#FAF9F6",
+    "--background": "#F0EFEA",  // Darkened Parchment (10% deeper)
     "--foreground": "#1A1A14",
-    "--card": "#FFFEFB",
-    "--border": "#E5E4DB",
-    "--sidebar": "#F2F1EC",
+    "--card": "#F5F4EF",        // Warm Bone (no pure white)
+    "--border": "#D5D4CB",      // Darker border for contrast
+    "--sidebar": "#E8E7E2",     // Darkened Sidebar
     "--sidebar-foreground": "#57534E",
-    "--sidebar-border": "#E5E4DB",
+    "--sidebar-border": "#D5D4CB",
     "--brand": "#247C7D",
     "--primary": "#292524",
     "--risk": "#E11D48",
@@ -79,13 +79,13 @@ const DEFAULT_LIGHT: Record<string, string> = {
 };
 
 const DEFAULT_DARK: Record<string, string> = {
-    "--background": "#040F10",
+    "--background": "#0A1518",  // Lifted Void (10% lighter)
     "--foreground": "#F2F2EB",
-    "--card": "#0C1414",
-    "--border": "#142020",
-    "--sidebar": "#020606",
+    "--card": "#121A1A",        // Lifted Cards (10% lighter)
+    "--border": "#1A2828",      // Lifted borders
+    "--sidebar": "#060C0E",     // Slightly lifted sidebar
     "--sidebar-foreground": "#94A3B8",
-    "--sidebar-border": "#142020",
+    "--sidebar-border": "#1A2828",
     "--brand": "#247C7D",
     "--primary": "#F2F2EB",
     "--risk": "#FB7185",
