@@ -42,6 +42,7 @@ class TaskConfigResponse(BaseModel):
     temperature: float
     max_output_tokens: int
     safety_mode: str
+    system_prompt_template: Optional[str] = None  # v1.4.6
 
     class Config:
         from_attributes = True
@@ -54,6 +55,7 @@ class TaskConfigUpdate(BaseModel):
     temperature: Optional[float] = Field(None, ge=0.0, le=2.0)
     max_output_tokens: Optional[int] = Field(None, ge=256, le=8192)
     safety_mode: Optional[str] = None
+    system_prompt_template: Optional[str] = None  # v1.4.6
 
 
 class TaskMetrics(BaseModel):
@@ -174,6 +176,7 @@ async def get_task_detail(
             temperature=float(db_config.temperature),
             max_output_tokens=db_config.max_output_tokens,
             safety_mode=db_config.safety_mode.value,
+            system_prompt_template=db_config.system_prompt_template,  # v1.4.6
         )
     else:
         # Fallback config
@@ -183,6 +186,7 @@ async def get_task_detail(
             temperature=config_dict.get("temperature", 0.7),
             max_output_tokens=config_dict.get("max_output_tokens", 2048),
             safety_mode="CLINICAL",
+            system_prompt_template=None,  # v1.4.6
         )
 
     return TaskDetailResponse(
@@ -219,6 +223,7 @@ async def update_task(
         temperature=update.temperature,
         max_output_tokens=update.max_output_tokens,
         safety_mode=safety_mode,
+        system_prompt_template=update.system_prompt_template,  # v1.4.6
     )
 
     return TaskConfigResponse(
@@ -227,6 +232,7 @@ async def update_task(
         temperature=float(config.temperature),
         max_output_tokens=config.max_output_tokens,
         safety_mode=config.safety_mode.value,
+        system_prompt_template=config.system_prompt_template,  # v1.4.6
     )
 
 

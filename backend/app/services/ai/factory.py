@@ -199,6 +199,7 @@ class ProviderFactory:
         temperature = None
         max_tokens = None
         safety_settings = None
+        db_template = None  # v1.4.6: Editable prompt template
 
         try:
             # v1.4.5: Get config from ai_governance service (cached + fallback)
@@ -208,6 +209,7 @@ class ProviderFactory:
                 temperature = task_config.get("temperature")
                 max_tokens = task_config.get("max_output_tokens")
                 safety_settings = task_config.get("safety_settings")
+                db_template = task_config.get("system_prompt_template")  # v1.4.6
             else:
                 # Fallback to routing config if no session
                 from app.db.base import get_session_factory
@@ -219,6 +221,7 @@ class ProviderFactory:
                     temperature = task_config.get("temperature")
                     max_tokens = task_config.get("max_output_tokens")
                     safety_settings = task_config.get("safety_settings")
+                    db_template = task_config.get("system_prompt_template")  # v1.4.6
 
         except Exception as e:
             import logging
@@ -228,9 +231,12 @@ class ProviderFactory:
             )
 
         # v1.4.4: Render system instruction from template
+        # v1.4.6: Now supports DB-stored editable templates
         from app.services.ai.render import get_system_prompt
 
-        system_instruction = get_system_prompt(task_type, prompt_context)
+        system_instruction = get_system_prompt(
+            task_type, prompt_context, db_template=db_template
+        )
 
         # v1.4.5: Pass temperature, max_tokens, safety_settings to provider
         return cls.get_provider(

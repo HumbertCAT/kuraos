@@ -157,6 +157,7 @@ async def get_task_config(db: AsyncSession, task_type: str) -> dict:
                 "temperature": float(config.temperature),
                 "max_output_tokens": config.max_output_tokens,
                 "safety_settings": get_safety_mapping(config.safety_mode),
+                "system_prompt_template": config.system_prompt_template,  # v1.4.6
             }
             _config_cache[task_type] = config_dict
             logger.debug(f"Loaded config from DB for {task_type}")
@@ -199,6 +200,7 @@ async def update_task_config(
     temperature: Optional[float] = None,
     max_output_tokens: Optional[int] = None,
     safety_mode: Optional[SafetyMode] = None,
+    system_prompt_template: Optional[str] = None,  # v1.4.6
 ) -> AiTaskConfig:
     """Update task config and log changes to history."""
 
@@ -216,6 +218,7 @@ async def update_task_config(
             temperature=Decimal(str(temperature)) if temperature else Decimal("0.70"),
             max_output_tokens=max_output_tokens or 2048,
             safety_mode=safety_mode or SafetyMode.CLINICAL,
+            system_prompt_template=system_prompt_template,  # v1.4.6
             updated_by_id=user.id,
         )
         db.add(config)
@@ -245,6 +248,20 @@ async def update_task_config(
         if safety_mode is not None and config.safety_mode != safety_mode:
             changes.append(("safety_mode", config.safety_mode.value, safety_mode.value))
             config.safety_mode = safety_mode
+
+        # v1.4.6: Update prompt template
+        if (
+            system_prompt_template is not None
+            and config.system_prompt_template != system_prompt_template
+        ):
+            old_preview = (config.system_prompt_template or "")[:50]
+            new_preview = system_prompt_template[:50]
+            changes.append((
+                "system_prompt_template",
+                f"{old_preview}...",
+                f"{new_preview}...",
+            ))
+            config.system_prompt_template = system_prompt_template
 
         config.updated_by_id = user.id
 

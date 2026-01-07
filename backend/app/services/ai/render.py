@@ -49,19 +49,42 @@ def render_prompt(template_name: str, context: Optional[dict] = None) -> str:
     return template.render(context or {})
 
 
-def get_system_prompt(task_type: str, context: Optional[dict] = None) -> str:
+def get_system_prompt(
+    task_type: str, context: Optional[dict] = None, db_template: Optional[str] = None
+) -> str:
     """
     Get system prompt for a task type.
 
-    Maps task types to versioned templates and renders them.
+    v1.4.6: Now supports editable templates from DB.
+
+    Priority:
+    1. db_template parameter (from AiTaskConfig.system_prompt_template)
+    2. File-based templates (templates/*.jinja2)
+    3. Legacy prompts.py fallback
 
     Args:
         task_type: Task identifier (e.g., 'clinical_analysis', 'triage')
         context: Variables for template
+        db_template: Custom template from database (Jinja2 syntax)
 
     Returns:
         Rendered system instruction string
     """
+    from jinja2 import Template
+
+    # v1.4.6: If DB template provided, render it directly
+    if db_template:
+        try:
+            template = Template(db_template)
+            return template.render(context or {})
+        except Exception as e:
+            import logging
+
+            logging.getLogger(__name__).warning(
+                f"Failed to render DB template for {task_type}: {e}"
+            )
+            # Fall through to file-based template
+
     # Task to template mapping
     TASK_TEMPLATES = {
         "clinical_analysis": "clinical_v1.jinja2",

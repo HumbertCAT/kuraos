@@ -647,6 +647,9 @@ class AiTaskConfig(Base):
         Enum(SafetyMode), default=SafetyMode.CLINICAL
     )
 
+    # Prompt template (Jinja2 syntax for variable substitution)
+    system_prompt_template: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
     # Audit
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), onupdate=func.now(), server_default=func.now()

@@ -105,6 +105,7 @@ export default function TaskDetailPage() {
         temperature: 0.7,
         max_output_tokens: 2048,
         safety_mode: 'CLINICAL',
+        system_prompt_template: '',
     });
 
     useEffect(() => {
@@ -129,6 +130,7 @@ export default function TaskDetailPage() {
                 temperature: data.config.temperature,
                 max_output_tokens: data.config.max_output_tokens,
                 safety_mode: data.config.safety_mode,
+                system_prompt_template: data.config.system_prompt_template || '',
             });
         } catch (err: any) {
             // Fallback to defaults when API unavailable (for local dev)
@@ -138,6 +140,7 @@ export default function TaskDetailPage() {
                 temperature: 0.7,
                 max_output_tokens: 2048,
                 safety_mode: 'CLINICAL',
+                system_prompt_template: '',
             });
             setMetrics({
                 total_calls: 0,
@@ -371,6 +374,30 @@ export default function TaskDetailPage() {
                                     </button>
                                 ))}
                             </div>
+                        </div>
+
+                        {/* v1.4.6: System Prompt Template */}
+                        <div>
+                            <label className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                                📝 System Prompt Template (Jinja2)
+                            </label>
+                            <textarea
+                                value={formData.system_prompt_template}
+                                onChange={(e) => setFormData({ ...formData, system_prompt_template: e.target.value })}
+                                className="w-full h-64 px-4 py-3 bg-muted border border-border rounded-xl text-foreground font-mono text-sm resize-y"
+                                placeholder="Escribe el prompt de sistema aquí..."
+                            />
+                            <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+                                <span>{formData.system_prompt_template.split('\n').length} líneas</span>
+                                <span>Variables: {'{{ variable }}'}</span>
+                            </div>
+                            {/* Warning if critical variables missing */}
+                            {formData.system_prompt_template && !formData.system_prompt_template.includes('{{') && (
+                                <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-2 text-xs text-yellow-500">
+                                    <AlertTriangle className="w-4 h-4" />
+                                    <span>No hay variables Jinja2 en el prompt. El modelo no recibirá datos dinámicos.</span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
