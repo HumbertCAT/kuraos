@@ -594,8 +594,8 @@ export default function AiGovernance({ defaultSection = 'financials' }: AiGovern
                                             <td className="px-4 py-3 text-center">
                                                 {model.supports_audio ? <Check className="w-4 h-4 text-green-400 inline" /> : <X className="w-4 h-4 text-muted-foreground inline" />}
                                             </td>
-                                            <td className="px-4 py-3 text-right font-mono text-muted-foreground">${model.cost_input.toFixed(3)}</td>
-                                            <td className="px-4 py-3 text-right font-mono text-muted-foreground">${model.cost_output.toFixed(2)}</td>
+                                            <td className="px-4 py-3 text-right font-mono text-muted-foreground">€{model.cost_input.toFixed(3)}</td>
+                                            <td className="px-4 py-3 text-right font-mono text-muted-foreground">€{model.cost_output.toFixed(2)}</td>
                                             <td className="px-4 py-3 text-center">
                                                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${status.style}`}>{status.label}</span>
                                             </td>
@@ -686,7 +686,7 @@ export default function AiGovernance({ defaultSection = 'financials' }: AiGovern
                                                             >
                                                                 {models.filter(m => !COMPANION_MODELS.includes(m.id)).map((model) => (
                                                                     <option key={model.id} value={model.id}>
-                                                                        {model.name} (${model.cost_input}/${model.cost_output})
+                                                                        {model.name} (€{model.cost_input}/€{model.cost_output})
                                                                     </option>
                                                                 ))}
                                                             </select>
