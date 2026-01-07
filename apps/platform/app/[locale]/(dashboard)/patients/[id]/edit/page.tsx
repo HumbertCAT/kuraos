@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api';
 import { Patient } from '@/types/auth';
-import { ChevronDown, ChevronUp, User, Phone, HeartPulse, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, User, Phone, HeartPulse, Sparkles, Ghost, Shield } from 'lucide-react';
 import CountrySelect from '@/components/CountrySelect';
 import CityAutocomplete from '@/components/CityAutocomplete';
 
@@ -109,6 +109,9 @@ export default function EditPatientPage() {
   const [cityValue, setCityValue] = useState('');
   const [nationalityCountry, setNationalityCountry] = useState<string | null>(null);
   const [languageValue, setLanguageValue] = useState('');
+  // v1.5.6: Privacy tier state
+  const [privacyTier, setPrivacyTier] = useState<'GHOST' | 'STANDARD' | 'LEGACY' | null>(null);
+  const [savingPrivacy, setSavingPrivacy] = useState(false);
 
   useEffect(() => {
     loadPatient();
@@ -126,6 +129,8 @@ export default function EditPatientPage() {
       setCityValue(profile.city || '');
       setNationalityCountry(profile.nationality_code || null);
       setLanguageValue(data.language || '');
+      // @ts-ignore - privacy_tier_override may exist
+      setPrivacyTier(data.privacy_tier_override || null);
     } catch (error) {
       console.error('Failed to load patient', error);
     } finally {
@@ -480,6 +485,64 @@ export default function EditPatientPage() {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+        </CollapsibleSection>
+
+        {/* v1.5.6: Privacy Settings - Collapsible */}
+        <CollapsibleSection title="Privacidad y Datos" icon={Shield} color="slate">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-2">Nivel de Privacidad</label>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setSavingPrivacy(true);
+                    try {
+                      await api.patients.updatePrivacy(patientId, 'STANDARD');
+                      setPrivacyTier('STANDARD');
+                    } catch (e) { console.error(e); }
+                    setSavingPrivacy(false);
+                  }}
+                  disabled={savingPrivacy}
+                  className={`flex-1 p-4 rounded-xl border-2 transition-all ${(!privacyTier || privacyTier === 'STANDARD')
+                      ? 'border-emerald-500 bg-emerald-500/10'
+                      : 'border-border hover:border-emerald-300'
+                    }`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="w-5 h-5 text-emerald-500" />
+                    <span className="font-medium text-foreground">Standard</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-left">Audio eliminado. Transcripción preservada.</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setSavingPrivacy(true);
+                    try {
+                      await api.patients.updatePrivacy(patientId, 'GHOST');
+                      setPrivacyTier('GHOST');
+                    } catch (e) { console.error(e); }
+                    setSavingPrivacy(false);
+                  }}
+                  disabled={savingPrivacy}
+                  className={`flex-1 p-4 rounded-xl border-2 transition-all ${privacyTier === 'GHOST'
+                      ? 'border-indigo-500 bg-indigo-500/10'
+                      : 'border-border hover:border-indigo-300'
+                    }`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <Ghost className="w-5 h-5 text-indigo-500" />
+                    <span className="font-medium text-foreground">Ghost</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-left">Solo RAM. Sin datos persistentes.</p>
+                </button>
+              </div>
+              {savingPrivacy && (
+                <p className="text-xs text-muted-foreground mt-2 animate-pulse">Guardando preferencia...</p>
+              )}
             </div>
           </div>
         </CollapsibleSection>

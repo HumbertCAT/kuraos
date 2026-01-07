@@ -146,6 +146,17 @@ export const api = {
         throw new Error(errorData.detail || 'Delete failed');
       }
     },
+
+    // v1.5.6: Ghost Protocol - Update patient privacy tier
+    updatePrivacy: async (id: string, tier: 'GHOST' | 'STANDARD') => {
+      const res = await fetch(`${API_URL}/settings/privacy/patient/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ privacy_tier: tier }),
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
   },
   
   services: {
