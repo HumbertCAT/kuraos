@@ -156,9 +156,7 @@ async def get_task_config(db: AsyncSession, task_type: str) -> dict:
                 "model_id": config.model_id,
                 "temperature": float(config.temperature),
                 "max_output_tokens": config.max_output_tokens,
-                "safety_settings": SAFETY_MAPPING.get(
-                    config.safety_mode, SAFETY_MAPPING[SafetyMode.CLINICAL]
-                ),
+                "safety_settings": get_safety_mapping(config.safety_mode),
             }
             _config_cache[task_type] = config_dict
             logger.debug(f"Loaded config from DB for {task_type}")
@@ -172,9 +170,7 @@ async def get_task_config(db: AsyncSession, task_type: str) -> dict:
         "model_id": defaults["model_id"],
         "temperature": float(defaults["temperature"]),
         "max_output_tokens": defaults["max_output_tokens"],
-        "safety_settings": SAFETY_MAPPING.get(
-            defaults["safety_mode"], SAFETY_MAPPING[SafetyMode.CLINICAL]
-        ),
+        "safety_settings": get_safety_mapping(defaults["safety_mode"]),
     }
     logger.info(f"Using fallback config for {task_type}")
     return config_dict
