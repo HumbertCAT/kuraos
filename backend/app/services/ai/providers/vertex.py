@@ -306,17 +306,21 @@ class VertexAIProvider(AIProvider):
 
     async def transcribe_audio(self, audio_uri: str, language: str = "es") -> dict:
         """
-        Transcribe audio from a GCS URI.
+        Transcribe audio from a GCS URI or local file path.
 
         v1.5.8: Uses Gemini's native audio understanding for transcription.
+        Supports both GCS URIs (gs://) and local paths (/static/uploads/).
 
         Args:
-            audio_uri: GCS path (gs://bucket/path/to/audio.mp3)
+            audio_uri: GCS path (gs://...) or local path (/static/uploads/...)
             language: Target language code (default: 'es')
 
         Returns:
             dict with 'text', 'duration', 'language' keys
         """
+        import aiofiles
+        from pathlib import Path
+
         # Determine mime type from URI extension
         mime_map = {
             ".mp3": "audio/mp3",
@@ -335,12 +339,36 @@ Language: {language}
 Do not add any explanations, timestamps, or speaker labels.
 Just output the exact words spoken."""
 
-        response = await self.analyze_multimodal(
-            content=None,
-            mime_type=mime_type,
-            prompt=transcription_prompt,
-            gcs_uri=audio_uri,
-        )
+        # Check if GCS URI or local path
+        if audio_uri.startswith("gs://"):
+            # GCS: Pass URI directly to Gemini
+            response = await self.analyze_multimodal(
+                content=None,
+                mime_type=mime_type,
+                prompt=transcription_prompt,
+                gcs_uri=audio_uri,
+            )
+        else:
+            # Local path: Read bytes and pass inline
+            # Handle /static/uploads/ paths by prepending the static directory
+            if audio_uri.startswith("/static/"):
+                # In production, static files are served from backend/static/
+                local_path = Path("/app/static") / audio_uri.replace("/static/", "")
+            else:
+                local_path = Path(audio_uri)
+
+            if not local_path.exists():
+                raise FileNotFoundError(f"Audio file not found: {local_path}")
+
+            async with aiofiles.open(local_path, "rb") as f:
+                audio_bytes = await f.read()
+
+            response = await self.analyze_multimodal(
+                content=audio_bytes,
+                mime_type=mime_type,
+                prompt=transcription_prompt,
+                gcs_uri=None,
+            )
 
         return {
             "text": response.text,
