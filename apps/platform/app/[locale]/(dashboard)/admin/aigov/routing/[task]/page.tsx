@@ -389,13 +389,21 @@ export default function TaskDetailPage() {
                             />
                             <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
                                 <span>{formData.system_prompt_template.split('\n').length} líneas</span>
-                                <span>Variables: {'{{ variable }}'}</span>
+                                {formData.system_prompt_template.includes('{{') && (
+                                    <span className="text-brand">Variables Jinja2 detectadas</span>
+                                )}
                             </div>
-                            {/* Warning if critical variables missing */}
-                            {formData.system_prompt_template && !formData.system_prompt_template.includes('{{') && (
+                            {/* Warning ONLY for tasks that require variables (help_bot) */}
+                            {['help_bot'].includes(taskType) && formData.system_prompt_template && !formData.system_prompt_template.includes('{{') && (
                                 <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-2 text-xs text-yellow-500">
                                     <AlertTriangle className="w-4 h-4" />
-                                    <span>No hay variables Jinja2 en el prompt. El modelo no recibirá datos dinámicos.</span>
+                                    <span>Esta tarea requiere variables (locale, user_name). Verifica el template.</span>
+                                </div>
+                            )}
+                            {/* Informational note for pure system instructions */}
+                            {!['help_bot'].includes(taskType) && (
+                                <div className="mt-2 text-xs text-muted-foreground italic">
+                                    ℹ️ Esta es una instrucción de sistema pura. Los datos del paciente se inyectan automáticamente vía User Message.
                                 </div>
                             )}
                         </div>
