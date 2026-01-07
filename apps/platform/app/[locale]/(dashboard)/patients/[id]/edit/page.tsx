@@ -57,11 +57,13 @@ function CollapsibleSection({
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
+  // Design System Compliance: Only semantic tokens allowed
+  // All sections use bg-muted, icons get accent colors from brand palette
   const colorClasses: Record<string, { bg: string, border: string, icon: string }> = {
-    slate: { bg: 'bg-muted', border: 'border-border', icon: 'text-foreground/60' },
-    violet: { bg: 'bg-violet-50', border: 'border-violet-200', icon: 'text-violet-500' },
-    emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'text-emerald-500' },
-    fuchsia: { bg: 'bg-fuchsia-50', border: 'border-fuchsia-200', icon: 'text-fuchsia-500' },
+    slate: { bg: 'bg-muted', border: 'border-border', icon: 'text-muted-foreground' },
+    violet: { bg: 'bg-muted', border: 'border-border', icon: 'text-[hsl(var(--ai))]' },
+    emerald: { bg: 'bg-muted', border: 'border-border', icon: 'text-[hsl(var(--success))]' },
+    fuchsia: { bg: 'bg-muted', border: 'border-border', icon: 'text-[hsl(var(--ai))]' },
   };
 
   const colors = colorClasses[color] || colorClasses.slate;
@@ -647,7 +649,7 @@ export default function EditPatientPage() {
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white p-3 rounded-lg hover:from-violet-700 hover:to-fuchsia-700 disabled:opacity-50 transition-colors font-medium shadow-lg shadow-fuchsia-200"
+            className="flex-1 bg-brand text-white p-3 rounded-lg hover:bg-brand/90 disabled:opacity-50 transition-all font-medium shadow-lg shadow-brand/25 active:scale-95"
           >
             {saving ? t('saving') : t('save')}
           </button>
@@ -662,9 +664,9 @@ export default function EditPatientPage() {
       </form>
 
       {/* Danger Zone */}
-      <div className="mt-8 p-6 bg-red-50 border border-red-200 rounded-lg">
-        <h3 className="text-lg font-semibold text-red-800 mb-2">Zona de Peligro</h3>
-        <p className="text-sm text-red-600 mb-4">
+      <div className="mt-8 p-6 bg-[hsl(var(--risk)/0.1)] border-l-4 border-[hsl(var(--risk))] rounded-lg">
+        <h3 className="text-lg font-semibold text-[hsl(var(--risk))] mb-2">Zona de Peligro</h3>
+        <p className="text-sm text-muted-foreground mb-4">
           Eliminar este paciente borrará permanentemente todos sus datos incluyendo entradas clínicas y formularios.
         </p>
         <button

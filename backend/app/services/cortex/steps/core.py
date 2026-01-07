@@ -146,15 +146,22 @@ class AnalyzeStep(PipelineStep):
             raise StepExecutionError(self.step_type, str(e), e)
 
     def _gather_input(self, context: PatientEventContext) -> str:
-        """Gather text from previous step outputs."""
+        """Gather text from previous step outputs or direct input."""
         parts = []
+
+        # v1.5.5: Check for direct text input (SESSION_NOTE entries)
+        input_data = context.get_output("input", "form_data")
+        if input_data and isinstance(input_data, dict):
+            text_content = input_data.get("text_content")
+            if text_content:
+                parts.append(f"## Nota de Sesión\n{text_content}")
 
         # Check for transcript from transcribe step
         transcript = context.get_output("transcribe", "transcript")
         if transcript:
             parts.append(f"## Transcripción\n{transcript}")
 
-        # Check for form data
+        # Check for form data from intake step
         form_data = context.get_output("intake", "form_text")
         if form_data:
             parts.append(f"## Datos del Formulario\n{form_data}")

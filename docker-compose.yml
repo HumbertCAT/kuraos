@@ -12,6 +12,8 @@ services:
       - POSTGRES_DB=therapistos
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      # Local dev: Use Gemini API instead of Vertex AI (no GCP credentials needed)
+      - VERTEX_AI_ENABLED=false
     depends_on:
       - db
     volumes:
