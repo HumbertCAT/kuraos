@@ -1,9 +1,9 @@
 # Journeys Architecture - Hybrid State Machine
 
-**Version:** v0.9.2+  
+**Version:** v1.4.14  
 **Status:** ✅ IMPLEMENTED  
 **Author:** Kura OS Core  
-**Last Updated:** 2025-12-26
+**Last Updated:** 2026-01-07
 
 ---
 
@@ -277,12 +277,37 @@ This requires manual therapist intervention to unblock.
 
 ---
 
-## 8. Future Enhancements (Roadmap)
+## 8. UI Components (Implemented)
 
-1. **Journey Template UI**: Visual editor for defining allowed stages and transitions
-2. **Transition Conditions**: Rules like "can only move to CONFIRMED if payment_succeeded"
-3. **Journey Dashboard**: Analytics showing conversion funnels and stagnation points
-4. **Patient Self-Service**: Allow patients to see their journey progress in public portal
+The following frontend components provide visual interaction with the Journeys system:
+
+### 8.1 Dashboard Widget: "Journeys Activos"
+- Location: Dashboard home page (right sidebar)
+- Shows total active journeys count
+- Lists patients with their current journey stage badges
+- Click to view full journey details
+
+### 8.2 Patient Journey View
+- Location: Patient profile page → "PATIENT JOURNEY" section
+- Visual progress bar showing stage progression
+- Stage states: Active, BLOQUEADO, Completed
+- "Revisar Bloqueo" action button for blocked patients
+- "Acción requerida" indicator
+
+### 8.3 Flow Builder (Logic & Flows)
+- Location: `/design-system` → Neural Circuit Components
+- Visual CUANDO/SI/ENTONCES node system
+- FlowNode.trigger (purple, AI icon)
+- FlowNode.condition (orange, diamond)
+- FlowNode.action (green, success)
+- Reusable for: Agent flows, Campaign funnels, Patient timelines
+
+---
+
+## 9. Future Enhancements (Roadmap)
+
+1. **Transition Conditions**: Rules like "can only move to CONFIRMED if payment_succeeded"
+2. **Journey Analytics Dashboard**: Conversion funnels and stagnation metrics
 
 ---
 
