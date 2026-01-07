@@ -152,9 +152,16 @@ export default function RoutingPage() {
                                             </div>
                                             <div className="flex items-center gap-2 flex-shrink-0">
                                                 {isFixed ? (
-                                                    <span className="px-3 py-1.5 bg-brand/10 text-brand border border-brand/20 rounded-lg text-sm font-medium whitespace-nowrap">
-                                                        🔗 {models.find(m => m.id === currentModel)?.name || taskInfo.suggestedModel}
-                                                    </span>
+                                                    <select
+                                                        value={currentModel}
+                                                        disabled
+                                                        className="px-3 py-1.5 bg-muted border border-border rounded-lg text-sm text-foreground min-w-[200px] opacity-60 cursor-not-allowed"
+                                                        title="Fixed model - cannot be changed"
+                                                    >
+                                                        <option value={currentModel}>
+                                                            {models.find(m => m.id === currentModel)?.name || taskInfo.suggestedModel}
+                                                        </option>
+                                                    </select>
                                                 ) : (
                                                     <select
                                                         value={currentModel}
