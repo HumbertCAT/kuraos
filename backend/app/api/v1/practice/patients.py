@@ -10,7 +10,7 @@ from app.db.base import get_db
 from app.db.models import Patient
 from app.api.deps import CurrentUser
 from app.schemas.common import PaginatedResponse, ListMetadata
-from app.api.v1.patient_schemas import (
+from .patient_schemas import (
     PatientCreate,
     PatientUpdate,
     PatientResponse,

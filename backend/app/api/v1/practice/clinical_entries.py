@@ -16,7 +16,7 @@ ENTRY_TYPE_TO_TASK: dict[EntryType, str] = {
     EntryType.AI_ANALYSIS: "clinical_analysis",  # fallback
 }
 from app.api.deps import CurrentUser, CurrentClinicalUser
-from app.api.v1.clinical_entry_schemas import (
+from .clinical_entry_schemas import (
     ClinicalEntryCreate,
     ClinicalEntryUpdate,
     ClinicalEntryResponse,

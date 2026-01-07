@@ -14,6 +14,32 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.6] - 2026-01-07 🛤️ AI GOVERNANCE ROUTES
+
+> **Theme:** Eliminación de flasheo vía arquitectura de rutas.
+
+### 🛤️ Route-Based Tab Architecture
+
+- **Layout refactor:** AI Governance tabs now use Next.js routing
+- **`shared.tsx`:** Extracted types, constants, utilities
+- **`layout.tsx`:** Link-based tab navigation (no re-render flash)
+- **5 Independent Pages:** routing, models, ledger, logs, run
+- **Code Splitting:** Each page loads only what it needs
+
+### 📁 Files Created
+
+| File | Purpose |
+|------|---------|
+| `aigov/shared.tsx` | Types, constants, MetricCard, TaskBadge |
+| `aigov/layout.tsx` | Tab navigation with Link components |
+| `aigov/routing/page.tsx` | Task-to-model mapping |
+| `aigov/models/page.tsx` | Available models table |
+| `aigov/ledger/page.tsx` | Financial metrics grid |
+| `aigov/logs/page.tsx` | Activity logs table |
+| `aigov/run/page.tsx` | Manual execution triggers |
+
+---
+
 ## [1.4.5] - 2026-01-07 🎛️ AI GOVERNANCE PRO
 
 > **Theme:** "Control de Vuelo" — Runtime AI configuration without redeploys.

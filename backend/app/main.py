@@ -10,36 +10,60 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.core.config import settings
 from app.core.logging import configure_logging
-from app.api.v1 import (
+
+# =============================================================================
+# v1.4.7: Modular Monolith API Imports (ADR-011)
+# =============================================================================
+
+# Core: System Identity (Auth, Admin, Config)
+from app.api.v1.core import (
     auth,
-    patients,
-    booking,
-    events,
-    forms,
-    public_forms,
-    analysis,
-    growth,
-    dashboard,
-    clinical_entries,
-    uploads,
     admin,
-    services,
-    availability,
-    payments,
+    admin_ai,
+    admin_backups,
+    monitoring,
+    uploads,
+)
+
+# Connect: Pilar I - ATRAER (Leads, Public Forms, Campaigns)
+from app.api.v1.connect import (
+    leads,
+    public_forms,
     public_booking,
     public_booking_manage,
-    schedules,
     integrations,
-    insights,
-    automations,
-    billing,
-    connect,
     twilio_webhook,
-    monitoring,
-    help,
-    leads,
+)
+
+# Practice: Pilar II - SERVIR (Patients, Bookings, Clinical) [HIPAA ZONE]
+from app.api.v1.practice import (
+    patients,
+    clinical_entries,
+    booking,
+    services,
+    availability,
+    schedules,
+    events,
     pending_actions,
+)
+
+# Grow: Pilar III - CRECER (Analytics, Referrals)
+from app.api.v1.grow import (
+    growth,
+    billing,
+    payments,
+    dashboard,
+)
+
+# Intelligence: The Brain (AletheIA, Insights)
+from app.api.v1.intelligence import (
     ai_governance,
+    insights,
+    analysis,
+    automations,
+    forms,
+    connect,
+    help,
 )
 
 # Configure structured logging
@@ -295,7 +319,7 @@ app.include_router(
 )
 
 # Admin Backups (Super Admin only)
-from app.api.v1 import admin_backups
+# admin_backups is already imported from core at top of file
 
 app.include_router(
     admin_backups.router,
@@ -304,7 +328,7 @@ app.include_router(
 )
 
 # AI Governance (Super Admin only)
-from app.api.v1 import admin_ai
+# admin_ai is already imported from core at top of file
 
 app.include_router(
     admin_ai.router,
