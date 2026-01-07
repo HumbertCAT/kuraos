@@ -361,9 +361,13 @@ export default function TimelineEntry({ entry, onDelete, onEdit, onUpdateContent
                 <div className="text-sm text-foreground/80 whitespace-pre-wrap">
                   <MarkdownRenderer
                     content={
-                      entry.entry_metadata.ai_insights.summary ||
-                      entry.entry_metadata.ai_insights.analysis_json?.raw_text ||
-                      JSON.stringify(entry.entry_metadata.ai_insights, null, 2)
+                      // v1.5.9: Structured SOAP Note
+                      (entry.entry_metadata.ai_insights.summary && entry.entry_metadata.ai_insights.observations) ?
+                        `**Resumen:** ${entry.entry_metadata.ai_insights.summary}\n\n**Observaciones:** ${entry.entry_metadata.ai_insights.observations}\n\n**Plan Terapéutico:** ${entry.entry_metadata.ai_insights.therapeutic_plan || 'N/A'}` :
+                        // Legacy formats
+                        entry.entry_metadata.ai_insights.summary ||
+                        entry.entry_metadata.ai_insights.analysis_json?.raw_text ||
+                        (typeof entry.entry_metadata.ai_insights === 'string' ? entry.entry_metadata.ai_insights : JSON.stringify(entry.entry_metadata.ai_insights, null, 2))
                     }
                   />
                 </div>

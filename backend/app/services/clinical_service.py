@@ -244,17 +244,58 @@ class ClinicalService:
         # Extract insights from pipeline outputs
         outputs = result.get("outputs", {})
 
-        # Store analysis results
+        # v1.5.9: Insight Splitter Logic (Cortex -> Sentinel Pulse)
         if "analyze" in outputs:
-            # For GHOST, only store sanitized insights (no raw data)
-            if is_ghost:
-                metadata["ai_insights"] = {
-                    "summary": outputs.get("analyze", {}).get("summary", ""),
-                    "ghost_mode": True,
-                    "redacted": True,
-                }
+            analysis_data = outputs.get("analyze", {})
+            # AnalyzeStep outputs analysis_json
+            analysis_json = analysis_data.get("analysis_json", {})
+
+            if isinstance(analysis_json, dict) and "soap_note" in analysis_json:
+                # 1. Timeline Update (Senses)
+                metadata["ai_insights"] = analysis_json["soap_note"]
+
+                # 2. Sentinel Pulse Update (Heart)
+                if "metrics" in analysis_json:
+                    metrics = analysis_json["metrics"]
+                    # Build insight object compatible with PatientInsightsResponse
+                    risk_score = metrics.get("risk_score", 0.0)
+                    risk_level = "NONE"
+                    if risk_score > 0.8:
+                        risk_level = "CRITICAL"
+                    elif risk_score > 0.6:
+                        risk_level = "HIGH"
+                    elif risk_score > 0.4:
+                        risk_level = "MEDIUM"
+                    elif risk_score > 0.2:
+                        risk_level = "LOW"
+
+                    patient.last_insight_json = {
+                        "summary": analysis_json["soap_note"].get("summary", ""),
+                        "alerts": [],  # Could be expanded later
+                        "suggestions": [
+                            analysis_json["soap_note"].get("therapeutic_plan", "")
+                        ],
+                        "engagement_score": int(
+                            metrics.get("engagement_score", 0.5) * 100
+                        ),
+                        "risk_level": risk_level,
+                        "risk_score": risk_score,
+                        "key_themes": [
+                            analysis_json["soap_note"].get("observations", "")
+                        ],
+                    }
+                    patient.last_insight_at = datetime.now(timezone.utc)
+                    logger.info(f"❤️ Sentinel Pulse updated for patient {patient.id}")
             else:
-                metadata["ai_insights"] = outputs.get("analyze", {})
+                # Fallback for non-structured or legacy outputs
+                if is_ghost:
+                    metadata["ai_insights"] = {
+                        "summary": analysis_data.get("summary", ""),
+                        "ghost_mode": True,
+                        "redacted": True,
+                    }
+                else:
+                    metadata["ai_insights"] = analysis_data
 
         # Store triage results if available
         if "triage" in outputs and not is_ghost:
@@ -271,15 +312,6 @@ class ClinicalService:
         entry.entry_metadata = metadata
         entry.processing_status = ProcessingStatus.COMPLETED
         entry.processing_error = None
-
-        # v1.5.8: Invalidate insights cache so panel regenerates with new data
-        # Don't directly set last_insight_json as Cortex format differs from PatientInsightsResponse schema
-        insights_data = metadata.get("ai_insights", {})
-        if insights_data:
-            # Clear cache to force regeneration on next request
-            patient.last_insight_json = None
-            patient.last_insight_at = None
-            logger.info(f"📊 Invalidated insights cache for patient {patient.id}")
 
         await self.db.flush()
         logger.info(
