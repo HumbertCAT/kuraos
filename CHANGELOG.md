@@ -14,6 +14,48 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-01-07 🧠 KURA CORTEX - THE COGNITIVE FOUNDATION
+
+> **Theme:** "Privacy-First Intelligence" — Restructuring AI processing with configurable data retention tiers.
+
+### 🔐 Privacy Tiers (HIPAA/GDPR Compliance)
+
+New `PrivacyTier` enum controls clinical data retention:
+
+| Tier | Behavior | Use Case |
+|------|----------|----------|
+| **GHOST** | RAM-only processing, delete raw + transcript | Ultra-sensitive sessions |
+| **STANDARD** | Keep transcript, delete raw audio | GDPR default (EU) |
+| **LEGACY** | Archive raw to cold storage | BAA-covered AI training (US) |
+
+**Waterfall Inheritance:** Patient Override → Organization Default → Country Default
+
+### 🏗️ Schema Updates
+
+- **Organization**: `country_code`, `default_privacy_tier`
+- **Patient**: `privacy_tier_override`
+- **AIPipelineConfig**: New model for DAG-based cognitive pipelines
+
+### 🧩 Cortex Engine (New Module)
+
+```
+services/cortex/
+├── context.py    # PatientEventContext (Blackboard pattern)
+├── privacy.py    # PrivacyResolver + PipelineFinalizer
+└── stages/       # Pipeline stages (v1.5.1)
+```
+
+- **PatientEventContext**: Pass-by-reference pattern for HIPAA compliance
+- **PrivacyResolver**: Waterfall inheritance with country defaults
+- **PipelineFinalizer**: Enforces data retention policies post-processing
+
+### ✅ Quality
+
+- **18 unit tests** covering privacy resolution and context management
+- Alembic migration with initial pipeline configs seeded
+
+---
+
 ## [1.4.15] - 2026-01-07 🎨 ORGANIC ATMOSPHERE
 
 > **Theme:** "Diffuse Polish" — Softer shadows, refined typography, and synchronized theming.
