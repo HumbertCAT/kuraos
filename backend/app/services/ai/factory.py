@@ -28,6 +28,7 @@ class ProviderFactory:
         temperature: float = None,
         max_output_tokens: int = None,
         safety_settings: dict = None,
+        response_schema: dict = None,  # v1.4.9 Crystal Mind: JSON mode
     ) -> "AIProvider":
         """
         Get AI provider instance for the given model specification.
@@ -38,6 +39,7 @@ class ProviderFactory:
             temperature: Generation temperature (v1.4.5)
             max_output_tokens: Max response tokens (v1.4.5)
             safety_settings: Vertex AI safety settings dict (v1.4.5)
+            response_schema: Pydantic schema dict for JSON mode (v1.4.9)
 
         Returns:
             Configured AIProvider instance
@@ -72,6 +74,7 @@ class ProviderFactory:
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
                 safety_settings=safety_settings,
+                response_schema=response_schema,  # v1.4.9 Crystal Mind
             )
 
         # Legacy path: Direct API via google-generativeai
@@ -238,6 +241,17 @@ class ProviderFactory:
             task_type, prompt_context, db_template=db_template
         )
 
+        # v1.4.9 Crystal Mind: Enable JSON mode for structured tasks
+        response_schema = None
+        if task_type == "triage":
+            from app.schemas.ai import SentinelResponse
+
+            response_schema = SentinelResponse.model_json_schema()
+        elif task_type == "audio_memo":
+            from app.schemas.ai import MemoResponse
+
+            response_schema = MemoResponse.model_json_schema()
+
         # v1.4.5: Pass temperature, max_tokens, safety_settings to provider
         return cls.get_provider(
             model_id,
@@ -245,6 +259,7 @@ class ProviderFactory:
             temperature=temperature,
             max_output_tokens=max_tokens,
             safety_settings=safety_settings,
+            response_schema=response_schema,  # v1.4.9 Crystal Mind
         )
 
     @classmethod

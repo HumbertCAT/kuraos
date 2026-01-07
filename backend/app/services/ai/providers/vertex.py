@@ -101,6 +101,7 @@ class VertexAIProvider(AIProvider):
         temperature: Optional[float] = None,
         max_output_tokens: Optional[int] = None,
         safety_settings: Optional[dict] = None,
+        response_schema: Optional[dict] = None,  # v1.4.9 Crystal Mind: JSON mode
     ):
         """
         Initialize Vertex AI provider with specified model.
@@ -111,6 +112,7 @@ class VertexAIProvider(AIProvider):
             temperature: Generation temperature (v1.4.5, default 0.7)
             max_output_tokens: Max response tokens (v1.4.5, default 2048)
             safety_settings: Dict mapping HarmCategory -> HarmBlockThreshold (v1.4.5)
+            response_schema: Pydantic schema dict for JSON mode (v1.4.9 Crystal Mind)
         """
         self._model_name = model_name
         self._system_instruction = system_instruction
@@ -119,6 +121,7 @@ class VertexAIProvider(AIProvider):
             max_output_tokens if max_output_tokens is not None else 2048
         )
         self._safety_settings = safety_settings  # Dict from ai_governance
+        self._response_schema = response_schema  # v1.4.9: JSON structured output
         self._model: Optional[GenerativeModel] = None
 
         # Initialize Vertex AI SDK once per process
@@ -160,15 +163,23 @@ class VertexAIProvider(AIProvider):
                     ),
                 ]
 
+            # v1.4.9: Build generation config with optional JSON mode
+            gen_config = {
+                "temperature": self._temperature,
+                "top_p": 0.95,
+                "max_output_tokens": self._max_output_tokens,
+            }
+
+            # Crystal Mind: Enable JSON structured output
+            if self._response_schema:
+                gen_config["response_mime_type"] = "application/json"
+                gen_config["response_schema"] = self._response_schema
+
             self._model = GenerativeModel(
                 model_name=self._model_name,
                 system_instruction=self._system_instruction,  # ADR-021: Native
                 safety_settings=safety_list,
-                generation_config={
-                    "temperature": self._temperature,
-                    "top_p": 0.95,
-                    "max_output_tokens": self._max_output_tokens,
-                },
+                generation_config=gen_config,
             )
         return self._model
 
