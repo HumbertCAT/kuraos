@@ -97,6 +97,8 @@ class PatientResponse(BaseModel):
     # Risk fields for AletheIA sidebar (extracted from last_insight_json)
     risk_level: Optional[str] = None
     risk_reason: Optional[str] = None
+    # v1.5.7: Ghost Protocol - Privacy tier override
+    privacy_tier_override: Optional[str] = None
 
     class Config:
         from_attributes = True

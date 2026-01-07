@@ -123,7 +123,7 @@ class ClinicalService:
             )
 
             # 6. Update entry with results (Content Gatekeeper)
-            await self._update_entry(entry, result, tier, pipeline)
+            await self._update_entry(entry, patient, result, tier, pipeline)
 
             return ProcessingResult(
                 success=True,
@@ -198,6 +198,7 @@ class ClinicalService:
     async def _update_entry(
         self,
         entry: ClinicalEntry,
+        patient: Patient,
         result: Dict[str, Any],
         tier: PrivacyTier,
         pipeline: str,
@@ -208,6 +209,8 @@ class ClinicalService:
         GEM Amendment - Content Gatekeeper:
         For GHOST tier, we NEVER store the transcript/content in the database.
         Instead, we use a placeholder and only store the final insights.
+
+        v1.5.7: Also updates patient.last_insight_json for timeline display.
         """
         is_ghost = tier == PrivacyTier.GHOST
 
@@ -268,6 +271,15 @@ class ClinicalService:
         entry.entry_metadata = metadata
         entry.processing_status = ProcessingStatus.COMPLETED
         entry.processing_error = None
+
+        # v1.5.7: Update patient.last_insight_json for timeline display
+        from datetime import datetime, timezone
+
+        insights_data = metadata.get("ai_insights", {})
+        if insights_data:
+            patient.last_insight_json = insights_data
+            patient.last_insight_at = datetime.now(timezone.utc)
+            logger.info(f"📊 Updated patient {patient.id} last_insight_json")
 
         await self.db.flush()
         logger.info(

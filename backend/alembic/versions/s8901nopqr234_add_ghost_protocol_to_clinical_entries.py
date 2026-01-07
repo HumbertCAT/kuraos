@@ -21,19 +21,26 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    """Add Ghost Protocol columns to clinical_entries."""
+    """Add Ghost Protocol columns to clinical_entries (IDEMPOTENT)."""
+    from sqlalchemy import inspect
+
+    conn = op.get_bind()
+    inspector = inspect(conn)
+    columns = [c["name"] for c in inspector.get_columns("clinical_entries")]
 
     # Add is_ghost flag (defaults to False for existing entries)
-    op.add_column(
-        "clinical_entries",
-        sa.Column("is_ghost", sa.Boolean(), nullable=False, server_default="false"),
-    )
+    if "is_ghost" not in columns:
+        op.add_column(
+            "clinical_entries",
+            sa.Column("is_ghost", sa.Boolean(), nullable=False, server_default="false"),
+        )
 
     # Add pipeline_name to track which Cortex pipeline was used
-    op.add_column(
-        "clinical_entries",
-        sa.Column("pipeline_name", sa.String(100), nullable=True),
-    )
+    if "pipeline_name" not in columns:
+        op.add_column(
+            "clinical_entries",
+            sa.Column("pipeline_name", sa.String(100), nullable=True),
+        )
 
 
 def downgrade() -> None:
