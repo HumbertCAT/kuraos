@@ -92,7 +92,7 @@ export const LEVEL_INFO: Record<TaskLevel, { name: string; description: string; 
 
 export const TASK_LABELS: Record<string, TaskMetadata> = {
     triage: {
-        label: 'AletheIA Sentinel',
+        label: 'Sentinel',
         description: 'Risk screening (critical)',
         extendedDescription: 'Active Security Monitor. Analyzes every interaction in real-time to detect critical risk markers.',
         level: 1,
@@ -100,7 +100,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         suggestedModel: 'Gemini 3 Pro',
     },
     clinical_analysis: {
-        label: 'AletheIA Oracle',
+        label: 'Oracle',
         description: 'Session notes & deep analysis',
         extendedDescription: 'Clinical Deduction Engine. Processes full session transcripts to extract latent themes and patterns.',
         level: 1,
@@ -108,7 +108,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         suggestedModel: 'Gemini 2.5 Pro'
     },
     briefing: {
-        label: 'AletheIA Now',
+        label: 'Now',
         description: 'Daily briefing & next actions',
         extendedDescription: 'Strategic Context Synthesizer. Cross-references patient history to generate daily briefings.',
         level: 1,
@@ -116,7 +116,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         suggestedModel: 'Gemini 2.5 Pro'
     },
     chat: {
-        label: 'AletheIA Pulse',
+        label: 'Pulse',
         description: 'Chat sentiment monitoring',
         extendedDescription: 'Emotional Temperature Sensor. Monitors tone and urgency in messaging channels.',
         level: 1,
@@ -124,7 +124,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         suggestedModel: 'Gemini 2.5 Flash'
     },
     transcription: {
-        label: 'AletheIA Scribe',
+        label: 'Scribe',
         description: 'Audio to verbatim text',
         extendedDescription: 'High-Fidelity Transcriber. Converts clinical audio into verbatim text with diarization.',
         level: 2,
@@ -132,7 +132,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         suggestedModel: 'Whisper v3',
     },
     audio_synthesis: {
-        label: 'AletheIA Voice',
+        label: 'Voice',
         description: 'Full session audio analysis',
         extendedDescription: 'Session Synthesis Engine. Analyzes long audio (≥15 min) for comprehensive clinical insights.',
         level: 2,
@@ -140,7 +140,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         suggestedModel: 'Gemini 2.5 Flash'
     },
     audio_memo: {
-        label: 'AletheIA Memo',
+        label: 'Memo',
         description: 'Quick audio notes (<15 min)',
         extendedDescription: 'Executive Notes Extractor. Processes short voice memos to extract action items, medications, and key data.',
         level: 2,
@@ -148,7 +148,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         suggestedModel: 'Gemini 2.5 Flash'
     },
     document_analysis: {
-        label: 'AletheIA Scan',
+        label: 'Scan',
         description: 'Document OCR & extraction',
         extendedDescription: 'Structured Data Processor. Extracts information from forms and documents.',
         level: 3,
@@ -164,7 +164,7 @@ export const TASK_LABELS: Record<string, TaskMetadata> = {
         suggestedModel: 'Gemini 2.5 Flash Lite'
     },
     help_bot: {
-        label: 'AletheIA Helper',
+        label: 'Helper',
         description: 'Platform support',
         extendedDescription: 'Platform Assistant. Resolves operational queries about Kura OS usage.',
         level: 3,
