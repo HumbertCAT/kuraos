@@ -22,10 +22,10 @@ stripe>=14.0.0
 sib-api-v3-sdk>=7.6.0
 apscheduler>=3.10.0
 openai>=1.0.0
-google-genai>=1.0.0
+google-genai==1.2.0
 google-auth>=2.0.0
 google-cloud-storage>=2.14.0
-google-cloud-aiplatform>=1.40.0
+google-cloud-aiplatform==1.115.0
 tenacity>=8.0.0
 # v1.4.1: ADR-019 Observability (X-Ray Vision)
 google-cloud-trace>=1.11.0
