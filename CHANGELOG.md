@@ -14,6 +14,36 @@ All notable changes to KURA OS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.7] - 2026-01-07 🏛️ MODULAR MONOLITH API
+
+> **Theme:** ADR-011 Implementation — Physical security boundaries by domain.
+
+### 🏛️ API Domain Reorganization
+
+35 API files reorganized into 5 domain modules:
+
+| Module | Purpose | Files |
+|--------|---------|-------|
+| `core/` | System Identity | auth, admin, admin_ai, admin_backups, monitoring, uploads |
+| `connect/` | Pilar I: ATRAER | leads, public_forms, public_booking, integrations, twilio_webhook |
+| `practice/` | Pilar II: SERVIR (HIPAA) | patients, clinical_entries, booking, services, availability, schedules, events |
+| `grow/` | Pilar III: CRECER | growth, billing, payments, dashboard |
+| `intelligence/` | The Brain | ai_governance, insights, analysis, automations, forms, connect, help |
+
+### 🔒 Security Benefits
+
+- **Physical Isolation:** `practice/` contains all HIPAA PHI data
+- **Import Rules:** Domain boundaries enforce data separation
+- **Audit Ready:** Middleware can target `practice/*` for access logging
+
+### 📝 Technical Notes
+
+- All public URLs preserved (no frontend changes needed)
+- Internal imports updated to relative paths within modules
+- Barrel exports via `__init__.py` for clean imports
+
+---
+
 ## [1.4.6] - 2026-01-07 🛤️ AI GOVERNANCE ROUTES
 
 > **Theme:** Eliminación de flasheo vía arquitectura de rutas.
