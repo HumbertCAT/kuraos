@@ -1,8 +1,8 @@
 # Design System
 
-> **Status**: Production (v1.1.20)  
+> **Status**: Production (v1.4.14)  
 > **Aesthetic**: Organic No-White / Cyber-Clinical  
-> **Last Updated**: 2026-01-03
+> **Last Updated**: 2026-01-07
 
 ---
 
@@ -181,14 +181,56 @@ className="flex flex-col md:flex-row"
 | **Cards** | `hover:bg-muted/50` for interactivity |
 | **Dark Borders** | `border-white/5` for glass effect |
 
-### Card Depth Standard (Sovereign Card v1.1.21)
+### Card Depth Standard (v1.4.14 - Diffuse Shadows)
 
-All cards use centralized shadow depth:
+All cards use the `.card` utility class with **super-diffuse shadows** that have no direction:
+
+```css
+/* Light Mode: Prominent diffuse shadow */
+:root .card {
+  box-shadow: 0 0 60px -15px rgba(0, 0, 0, 0.15),
+              0 0 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode: Subtle elevation glow */
+.dark .card {
+  box-shadow: 0 0 50px -20px rgba(0, 0, 0, 0.6);
+  border-color: rgba(var(--border), 0.4);
+}
+```
+
+### Interactive Cards
 
 ```tsx
-className="card"  // Uses .card utility class
-// OR
-className="bg-card border border-border rounded-xl shadow-sm"
+className="card card-hover"  // Adds cursor + hover effects
+```
+
+| State | Light Mode | Dark Mode |
+|:---|:---|:---|
+| Hover | `border-brand/50 shadow-md` | `border-brand/30` + brand glow |
+
+### Brand Button (`.btn-brand`)
+
+The primary CTA button with premium feel:
+
+```css
+.btn-brand {
+  @apply bg-brand text-white font-semibold;
+  @apply shadow-lg shadow-brand/25;
+  @apply hover:bg-brand/90 hover:shadow-xl hover:shadow-brand/30;
+  @apply hover:-translate-y-0.5; /* Lift on hover */
+  @apply active:scale-95; /* Clicky feel */
+}
+```
+
+### Focus Rings
+
+All inputs use brand-colored focus rings:
+
+```css
+input:focus-visible {
+  @apply ring-2 ring-brand/50 border-brand;
+}
 ```
 
 ---
