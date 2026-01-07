@@ -9,6 +9,23 @@ description: Process to publish a new version of KURA OS (docs, git, deploy)
 
 ---
 
+## 🐳 Phase 0: Requirements Sync Check (Two-Tier Docker)
+
+Verify that `requirements.txt` matches the concatenation of heavy + light:
+
+// turbo
+```bash
+# Check if requirements.txt is in sync with heavy + light
+cd backend && diff <(cat requirements-heavy.txt requirements-light.txt) <(tail -n +11 requirements.txt) && echo "✅ Requirements in sync" || echo "❌ DRIFT DETECTED: Run 'cat requirements-heavy.txt requirements-light.txt > requirements.txt'"
+```
+
+If adding a **new Google Cloud / heavy dependency**, you must:
+1. Add it to `requirements-heavy.txt`
+2. Rebuild base image: `./scripts/rebuild-base.sh v2`
+3. Commit updated `Dockerfile` with new tag
+
+---
+
 ## 🛡️ Phase 1: The Gatekeeper (Semantic & Type Audit)
 
 Before touching docs or git, verify System Integrity:
