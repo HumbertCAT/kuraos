@@ -9,6 +9,7 @@ Supports text analysis and native audio/multimodal processing.
 import asyncio
 import tempfile
 import os
+import logging
 from typing import Optional
 
 import google.auth
@@ -23,6 +24,9 @@ from vertexai.generative_models import (
 
 from app.services.ai.base import AIProvider, AIResponse
 from app.core.config import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 def _resolve_project_id() -> str:
@@ -411,9 +415,6 @@ Just output the exact words spoken."""
 
             # Routing Logic: > 15MB (approx 15 min at 128kbps) -> Switch to PRO
             if len(content) > 15 * 1024 * 1024 and "pro" not in self._model_name:
-                import logging
-
-                logger = logging.getLogger(__name__)
                 logger.info(
                     f"🔄 Routing long audio ({len(content)} bytes) to gemini-2.5-pro"
                 )
