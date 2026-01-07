@@ -691,6 +691,14 @@ export default function AiGovernance({ defaultSection = 'financials' }: AiGovern
                                                                 ))}
                                                             </select>
                                                         )}
+                                                        {/* v1.4.5: Configure button */}
+                                                        <button
+                                                            onClick={() => router.push(`/${locale}/admin/aigov/routing/${taskType}`)}
+                                                            className="p-2 bg-muted hover:bg-muted/80 border border-border rounded-lg transition-all active:scale-95"
+                                                            title="Configure task"
+                                                        >
+                                                            <Settings className="w-4 h-4" />
+                                                        </button>
                                                         {hasChange && <span className="text-xs text-brand">• Modified</span>}
                                                     </div>
                                                 </div>
