@@ -27,6 +27,8 @@ import {
     Shield,
     Thermometer,
     Hash,
+    BrainCircuit,
+    Cpu,
 } from 'lucide-react';
 
 // Task metadata (same as in AiGovernance.tsx)
@@ -269,10 +271,51 @@ export default function TaskDetailPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left: Configuration */}
                 <div className="lg:col-span-2 space-y-6">
+                    {/* SECTION 1: Process Definition */}
                     <div className="card p-6 space-y-6">
                         <h2 className="text-lg font-semibold flex items-center gap-2">
-                            <Zap className="w-5 h-5 text-brand" />
-                            Configuración del Modelo
+                            <BrainCircuit className="w-5 h-5 text-ai" />
+                            Definición del Proceso
+                        </h2>
+
+                        {/* v1.4.6: System Prompt Template */}
+                        <div>
+                            <label className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
+                                📝 System Prompt Template (Jinja2)
+                            </label>
+                            <textarea
+                                value={formData.system_prompt_template}
+                                onChange={(e) => setFormData({ ...formData, system_prompt_template: e.target.value })}
+                                className="w-full h-64 px-4 py-3 bg-muted border border-border rounded-xl text-foreground font-mono text-sm resize-y"
+                                placeholder="Escribe el prompt de sistema aquí..."
+                            />
+                            <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+                                <span>{formData.system_prompt_template.split('\n').length} líneas</span>
+                                {formData.system_prompt_template.includes('{{') && (
+                                    <span className="text-brand">Variables Jinja2 detectadas</span>
+                                )}
+                            </div>
+                            {/* Warning ONLY for tasks that require variables (help_bot) */}
+                            {['help_bot'].includes(taskType) && formData.system_prompt_template && !formData.system_prompt_template.includes('{{') && (
+                                <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-2 text-xs text-yellow-500">
+                                    <AlertTriangle className="w-4 h-4" />
+                                    <span>Esta tarea requiere variables (locale, user_name). Verifica el template.</span>
+                                </div>
+                            )}
+                            {/* Informational note for pure system instructions */}
+                            {!['help_bot'].includes(taskType) && (
+                                <div className="mt-2 text-xs text-muted-foreground italic">
+                                    ℹ️ Esta es una instrucción de sistema pura. Los datos del paciente se inyectan automáticamente vía User Message.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* SECTION 2: Inference Engine */}
+                    <div className="card p-6 space-y-6">
+                        <h2 className="text-lg font-semibold flex items-center gap-2">
+                            <Cpu className="w-5 h-5 text-brand" />
+                            Motor de Inferencia
                         </h2>
 
                         {/* Model Selection */}
@@ -374,38 +417,6 @@ export default function TaskDetailPage() {
                                     </button>
                                 ))}
                             </div>
-                        </div>
-
-                        {/* v1.4.6: System Prompt Template */}
-                        <div>
-                            <label className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-2">
-                                📝 System Prompt Template (Jinja2)
-                            </label>
-                            <textarea
-                                value={formData.system_prompt_template}
-                                onChange={(e) => setFormData({ ...formData, system_prompt_template: e.target.value })}
-                                className="w-full h-64 px-4 py-3 bg-muted border border-border rounded-xl text-foreground font-mono text-sm resize-y"
-                                placeholder="Escribe el prompt de sistema aquí..."
-                            />
-                            <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
-                                <span>{formData.system_prompt_template.split('\n').length} líneas</span>
-                                {formData.system_prompt_template.includes('{{') && (
-                                    <span className="text-brand">Variables Jinja2 detectadas</span>
-                                )}
-                            </div>
-                            {/* Warning ONLY for tasks that require variables (help_bot) */}
-                            {['help_bot'].includes(taskType) && formData.system_prompt_template && !formData.system_prompt_template.includes('{{') && (
-                                <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-2 text-xs text-yellow-500">
-                                    <AlertTriangle className="w-4 h-4" />
-                                    <span>Esta tarea requiere variables (locale, user_name). Verifica el template.</span>
-                                </div>
-                            )}
-                            {/* Informational note for pure system instructions */}
-                            {!['help_bot'].includes(taskType) && (
-                                <div className="mt-2 text-xs text-muted-foreground italic">
-                                    ℹ️ Esta es una instrucción de sistema pura. Los datos del paciente se inyectan automáticamente vía User Message.
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
