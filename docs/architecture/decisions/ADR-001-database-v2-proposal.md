@@ -1,9 +1,15 @@
 # ADR-001: Database v2.0 Architecture Proposal
 
-**Status:** 🟡 DEFERRED  
+**Status:** ⚫ SUPERSEDED  
 **Date:** 2025-12-24  
 **Decision Makers:** Humbert (Product), GAG (Engineering)  
 **Context:** Series-A Readiness Planning  
+**Superseded By:** ADR-023, ADR-024, ADR-025
+
+> ⚠️ **ARCHIVED**: This mega-ADR has been split into focused documents:
+> - [ADR-023: Insurance Billing & Hybrid Ledger](./ADR-023-insurance-billing.md)
+> - [ADR-024: PostgreSQL Row Level Security](./ADR-024-row-level-security.md)
+> - [ADR-025: Biomarkers Integration](./ADR-025-biomarkers-integration.md)  
 
 ---
 
