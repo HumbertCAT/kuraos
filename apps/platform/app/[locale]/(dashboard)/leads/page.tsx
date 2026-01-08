@@ -8,7 +8,8 @@ import { api } from '@/lib/api';
 import {
     UserPlus, Phone, MessageCircle, FileText, Users,
     ArrowRightCircle, XCircle, Clock, Plus, Search,
-    Filter, ChevronDown, Ghost, Link, Copy, Sparkles
+    Filter, ChevronDown, Ghost, Link as LinkIcon, Copy, Sparkles,
+    User, X, Edit
 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -423,8 +424,32 @@ export default function LeadsPage() {
                                                                 <Clock className="w-3 h-3" />
                                                                 <span>{formatTimeAgo(lead.created_at)}</span>
                                                                 {lead.sherlock_metrics?.total_score !== undefined && (
-                                                                    <div className="flex items-center gap-1 ml-auto">
-                                                                        <div className="w-1.5 h-1.5 rounded-full bg-brand" />
+                                                                    <div className="flex items-center gap-1.5 ml-auto">
+                                                                        {/* Quick Actions v1.6.2 */}
+                                                                        <Tooltip content="Editar detalles">
+                                                                            <button
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    setSelectedLead(lead);
+                                                                                }}
+                                                                                className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-brand transition-all active:scale-95"
+                                                                            >
+                                                                                <Edit className="w-3.5 h-3.5" />
+                                                                            </button>
+                                                                        </Tooltip>
+                                                                        <Tooltip content={`Convertir a ${terminology.singular}`}>
+                                                                            <button
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    handleConvert(lead.id);
+                                                                                }}
+                                                                                className="p-1.5 rounded-lg hover:bg-brand/10 text-muted-foreground hover:text-brand transition-all active:scale-95"
+                                                                            >
+                                                                                <ArrowRightCircle className="w-3.5 h-3.5" />
+                                                                            </button>
+                                                                        </Tooltip>
+
+                                                                        <div className="w-1.5 h-1.5 rounded-full bg-brand ml-1" />
                                                                         <span className="font-mono font-bold text-foreground">
                                                                             {lead.sherlock_metrics.total_score}
                                                                         </span>
@@ -661,247 +686,239 @@ function LeadDetailSheet({
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex justify-end z-50" onClick={onClose}>
-            <div
-                className="bg-card w-full max-w-lg h-full shadow-2xl animate-slide-in-right flex flex-col"
-                onClick={e => e.stopPropagation()}
-            >
-                {/* Header */}
-                <div className="bg-gradient-to-br from-brand via-brand/90 to-brand/80 px-6 py-5 text-white sticky top-0 z-10 shadow-lg border-b border-white/10">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="type-h2 font-bold transition-all">
-                                {lead.first_name} {lead.last_name}
-                            </h2>
-                            <p className="text-white/70 text-sm mt-0.5">{lead.email || 'Sin email'}</p>
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="p-2 hover:bg-white/10 active:scale-90 rounded-lg transition-all"
-                        >
-                            <XCircle className="w-5 h-5" />
-                        </button>
-                    </div>
-                    <div className="flex items-center justify-between mt-4">
-                        <div className="flex items-center gap-3">
-                            <span className="px-3 py-1 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-xs font-bold uppercase tracking-wider">
+        <div className="fixed top-0 bottom-0 right-0 xl:right-[320px] w-full max-w-lg bg-card shadow-2xl animate-slide-in-right flex flex-col z-[45] border-l border-border">
+            {/* Header */}
+            <div className="bg-gradient-to-br from-brand via-brand/90 to-brand/80 px-6 py-5 text-white sticky top-0 z-10 shadow-lg border-b border-white/10">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xl font-bold font-display tracking-tight flex items-center gap-2">
+                            <User className="w-5 h-5 opacity-80" />
+                            {firstName} {lastName}
+                        </h2>
+                        <div className="flex items-center gap-3 mt-1">
+                            <span className="px-3 py-1 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
                                 {lead.status}
                             </span>
-                            <span className="text-sm text-white/60">
+                            <span className="text-xs text-white/60 font-mono">
                                 vía {lead.source}
                             </span>
                         </div>
-                        {/* Quick Actions */}
-                        <div className="flex items-center gap-2">
-                            {lead.phone && (
-                                <Tooltip content={tt('sendWhatsApp')}>
-                                    <a
-                                        href={getWhatsAppUrl(lead)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-2 bg-white/10 hover:bg-white/20 active:scale-95 rounded-lg transition-all"
-                                    >
-                                        <MessageCircle className="w-4 h-4" />
-                                    </a>
-                                </Tooltip>
-                            )}
-                            <Tooltip content={tt('copyBookingLink')}>
-                                <button
-                                    onClick={() => {
-                                        const bookingUrl = `${window.location.origin}/book?email=${encodeURIComponent(lead.email || '')}&name=${encodeURIComponent(`${lead.first_name} ${lead.last_name}`)}`;
-                                        navigator.clipboard.writeText(bookingUrl);
-                                        alert('Link de reserva copiado al portapapeles');
-                                    }}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        {lead.phone && (
+                            <Tooltip content={tt('sendWhatsApp')}>
+                                <a
+                                    href={getWhatsAppUrl(lead)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="p-2 bg-white/10 hover:bg-white/20 active:scale-95 rounded-lg transition-all"
                                 >
-                                    <Link className="w-4 h-4" />
-                                </button>
+                                    <MessageCircle className="w-4 h-4" />
+                                </a>
                             </Tooltip>
-                        </div>
+                        )}
+                        <Tooltip content={tt('copyBookingLink')}>
+                            <button
+                                onClick={() => {
+                                    const bookingUrl = `${window.location.origin}/book?email=${encodeURIComponent(lead.email || '')}&name=${encodeURIComponent(`${lead.first_name} ${lead.last_name}`)}`;
+                                    navigator.clipboard.writeText(bookingUrl);
+                                    alert('Link de reserva copiado al portapapeles');
+                                }}
+                                className="p-2 bg-white/10 hover:bg-white/20 active:scale-95 rounded-lg transition-all"
+                            >
+                                <LinkIcon className="w-4 h-4" />
+                            </button>
+                        </Tooltip>
+                        <button
+                            onClick={onClose}
+                            className="p-2 hover:bg-white/10 active:scale-90 rounded-lg transition-all ml-2"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                {/* Content */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-8">
-                    {/* Editable Contact Info */}
-                    <div className="space-y-4">
-                        <h3 className="font-medium text-foreground">Información de Contacto</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm text-foreground/60 mb-1">Nombre</label>
-                                <input
-                                    type="text"
-                                    value={firstName}
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                    className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm text-foreground/60 mb-1">Apellido</label>
-                                <input
-                                    type="text"
-                                    value={lastName}
-                                    onChange={(e) => setLastName(e.target.value)}
-                                    className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
-                                />
-                            </div>
-                        </div>
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                {/* Editable Contact Info */}
+                <div className="space-y-4">
+                    <h3 className="font-medium text-foreground">Información de Contacto</h3>
+                    <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm text-foreground/60 mb-1">Email</label>
+                            <label className="block text-sm text-foreground/60 mb-1">Nombre</label>
                             <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
-                                placeholder="email@ejemplo.com"
+                                type="text"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm text-foreground/60 mb-1">Teléfono</label>
+                            <label className="block text-sm text-foreground/60 mb-1">Apellido</label>
                             <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
-                                placeholder="+34 600 000 000"
+                                type="text"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
                             />
                         </div>
                     </div>
-
-                    {/* Source Details */}
-                    {lead.source_details && (
-                        <div className="bg-muted/50 border border-border/50 rounded-xl p-4">
-                            <h3 className="type-ui font-bold text-brand uppercase tracking-widest text-[10px] mb-3">Origen del Lead</h3>
-                            <div className="space-y-2 text-sm">
-                                {Object.entries(lead.source_details).map(([key, value]) => (
-                                    <div key={key} className="flex items-center justify-between border-b border-border/30 pb-1 last:border-0">
-                                        <span className="text-muted-foreground/70 capitalize text-xs">{key.replace(/_/g, ' ')}</span>
-                                        <span className="text-foreground font-medium">{String(value)}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Created date */}
-                    <div className="type-ui text-[10px] text-muted-foreground/60 uppercase tracking-tight">
-                        Registrado el {new Date(lead.created_at).toLocaleDateString('es-ES', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                        })}
-                    </div>
-
-                    {/* Notes */}
                     <div>
-                        <h3 className="font-medium text-foreground mb-2">Notas</h3>
-                        <textarea
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            rows={5}
-                            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none transition-all"
-                            placeholder="Añade notas sobre este lead..."
+                        <label className="block text-sm text-foreground/60 mb-1">Email</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
+                            placeholder="email@ejemplo.com"
                         />
                     </div>
-
-                    {/* v1.6 CRM: Cortex Shadow Profile Widget */}
-                    {(lead.sherlock_metrics || lead.shadow_profile) && (
-                        <div className="bg-muted/30 border border-brand/10 rounded-xl p-5 space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                            <div className="flex items-center gap-2">
-                                <Sparkles className="w-4 h-4 text-brand animate-pulse" />
-                                <h3 className="text-xs font-mono font-bold text-brand uppercase tracking-widest">
-                                    Cortex Shadow Profile
-                                </h3>
-                            </div>
-
-                            {lead.sherlock_metrics && (
-                                <div className="grid grid-cols-4 gap-3">
-                                    {[
-                                        { label: 'R', full: 'Risk', val: lead.sherlock_metrics.r },
-                                        { label: 'N', full: 'Need', val: lead.sherlock_metrics.n },
-                                        { label: 'A', full: 'Authority', val: lead.sherlock_metrics.a },
-                                        { label: 'V', full: 'Velocity', val: lead.sherlock_metrics.v },
-                                    ].map(metric => {
-                                        const val = metric.val ?? 50;
-                                        const colorClass = val > 75 ? 'text-emerald-500' : val > 40 ? 'text-amber-500' : 'text-red-500';
-                                        return (
-                                            <div key={metric.label} className="bg-background rounded-lg p-2 text-center border border-border/50 shadow-sm">
-                                                <p className="text-[9px] text-muted-foreground uppercase font-medium">{metric.label}</p>
-                                                <p className={`font-mono font-bold text-lg ${colorClass}`}>
-                                                    {metric.val ?? '--'}
-                                                </p>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
-
-                            {lead.shadow_profile && (
-                                <div className="space-y-4 pt-2">
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Intención</span>
-                                        <p className="text-sm text-foreground/90 italic">"{lead.shadow_profile.intent}"</p>
-                                    </div>
-
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Estilo</span>
-                                        <p className="text-sm font-medium">{lead.shadow_profile.communication_style}</p>
-                                    </div>
-
-                                    {lead.shadow_profile.contact_suggestion && (
-                                        <div className="bg-brand/5 border border-brand/10 rounded-lg p-3 mt-2">
-                                            <span className="text-[10px] font-bold text-brand uppercase tracking-wider block mb-1">Sugerencia de Contacto</span>
-                                            <p className="text-xs text-foreground/80 leading-relaxed font-medium">
-                                                {lead.shadow_profile.contact_suggestion}
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Danger Zone */}
-                    <div className="pt-8 mt-8 border-t border-border/50">
-                        <button
-                            onClick={handleDelete}
-                            disabled={deleting}
-                            className="text-xs text-muted-foreground hover:text-risk transition-colors flex items-center gap-2 px-2"
-                        >
-                            <Ghost className="w-3 h-3" />
-                            {deleting ? 'Eliminando...' : 'Eliminar lead permanentemente'}
-                        </button>
+                    <div>
+                        <label className="block text-sm text-foreground/60 mb-1">Teléfono</label>
+                        <input
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
+                            placeholder="+34 600 000 000"
+                        />
                     </div>
                 </div>
 
-                {/* Sticky Footer Actions */}
-                <div className="p-6 bg-card border-t border-border flex flex-col gap-4 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
-                    {hasChanges && (
-                        <button
-                            onClick={handleSave}
-                            disabled={saving || !firstName || !lastName}
-                            className="w-full px-4 py-3 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-[0.98] transition-all font-bold disabled:opacity-50 shadow-md shadow-brand/10"
-                        >
-                            {saving ? 'Guardando...' : 'Guardar Cambios'}
-                        </button>
-                    )}
-
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={handleMarkLost}
-                            className="flex-1 px-4 py-3 border border-risk/20 text-risk rounded-xl hover:bg-risk/5 active:scale-95 transition-all font-bold type-ui"
-                        >
-                            <XCircle className="w-4 h-4 inline mr-2" />
-                            Perdido
-                        </button>
-                        <button
-                            onClick={onConvert}
-                            className="flex-1 px-4 py-3 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-95 transition-all font-bold type-ui shadow-lg shadow-brand/20"
-                        >
-                            <ArrowRightCircle className="w-4 h-4 inline mr-2" />
-                            Convertir a {terminology.singular}
-                        </button>
+                {/* Source Details */}
+                {lead.source_details && (
+                    <div className="bg-muted/50 border border-border/50 rounded-xl p-4">
+                        <h3 className="type-ui font-bold text-brand uppercase tracking-widest text-[10px] mb-3">Origen del Lead</h3>
+                        <div className="space-y-2 text-sm">
+                            {Object.entries(lead.source_details).map(([key, value]) => (
+                                <div key={key} className="flex items-center justify-between border-b border-border/30 pb-1 last:border-0">
+                                    <span className="text-muted-foreground/70 capitalize text-xs">{key.replace(/_/g, ' ')}</span>
+                                    <span className="text-foreground font-medium">{String(value)}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+                )}
+
+                {/* Registration Info */}
+                <div className="type-ui text-[10px] text-muted-foreground/60 uppercase tracking-tight">
+                    Registrado el {new Date(lead.created_at).toLocaleDateString('es-ES', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                    })}
+                </div>
+
+                {/* Notes */}
+                <div>
+                    <h3 className="font-medium text-foreground mb-2">Notas</h3>
+                    <textarea
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        rows={5}
+                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none transition-all text-foreground bg-background resize-none"
+                        placeholder="Añade notas sobre este lead..."
+                    />
+                </div>
+
+                {/* v1.6 CRM: Cortex Shadow Profile Widget */}
+                {(lead.sherlock_metrics || lead.shadow_profile) && (
+                    <div className="bg-muted/30 border border-brand/10 rounded-xl p-5 space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-brand animate-pulse" />
+                            <h3 className="text-xs font-mono font-bold text-brand uppercase tracking-widest">
+                                Cortex Shadow Profile
+                            </h3>
+                        </div>
+
+                        {lead.sherlock_metrics && (
+                            <div className="grid grid-cols-4 gap-3">
+                                {[
+                                    { label: 'R', full: 'Risk', val: lead.sherlock_metrics.r },
+                                    { label: 'N', full: 'Need', val: lead.sherlock_metrics.n },
+                                    { label: 'A', full: 'Authority', val: lead.sherlock_metrics.a },
+                                    { label: 'V', full: 'Velocity', val: lead.sherlock_metrics.v },
+                                ].map(metric => {
+                                    const val = metric.val ?? 50;
+                                    const colorClass = val > 75 ? 'text-emerald-500' : val > 40 ? 'text-amber-500' : 'text-red-500';
+                                    return (
+                                        <div key={metric.label} className="bg-background rounded-lg p-2 text-center border border-border/50 shadow-sm">
+                                            <p className="text-[9px] text-muted-foreground uppercase font-medium">{metric.label}</p>
+                                            <p className={`font-mono font-bold text-lg ${colorClass}`}>
+                                                {metric.val ?? '--'}
+                                            </p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        {lead.shadow_profile && (
+                            <div className="space-y-4 pt-2">
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Intención</span>
+                                    <p className="text-sm text-foreground/90 italic">"{lead.shadow_profile.intent}"</p>
+                                </div>
+
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Estilo</span>
+                                    <p className="text-sm font-medium">{lead.shadow_profile.communication_style}</p>
+                                </div>
+
+                                {lead.shadow_profile.contact_suggestion && (
+                                    <div className="bg-brand/5 border border-brand/10 rounded-lg p-3 mt-2">
+                                        <span className="text-[10px] font-bold text-brand uppercase tracking-wider block mb-1">Sugerencia de Contacto</span>
+                                        <p className="text-xs text-foreground/80 leading-relaxed font-medium">
+                                            {lead.shadow_profile.contact_suggestion}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Danger Zone */}
+                <div className="pt-8 mt-8 border-t border-border/50">
+                    <button
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="text-xs text-muted-foreground hover:text-risk transition-colors flex items-center gap-2 px-2"
+                    >
+                        <Ghost className="w-3 h-3" />
+                        {deleting ? 'Eliminando...' : 'Eliminar lead permanentemente'}
+                    </button>
+                </div>
+            </div>
+
+            {/* Sticky Footer Actions */}
+            <div className="p-6 bg-card border-t border-border flex flex-col gap-4 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
+                {hasChanges && (
+                    <button
+                        onClick={handleSave}
+                        disabled={saving || !firstName || !lastName}
+                        className="w-full px-4 py-3 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-[0.98] transition-all font-bold disabled:opacity-50 shadow-md shadow-brand/10"
+                    >
+                        {saving ? 'Guardando...' : 'Guardar Cambios'}
+                    </button>
+                )}
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleMarkLost}
+                        className="flex-1 px-4 py-3 border border-risk/20 text-risk rounded-xl hover:bg-risk/5 active:scale-95 transition-all font-bold type-ui"
+                    >
+                        <XCircle className="w-4 h-4 inline mr-2" />
+                        Perdido
+                    </button>
+                    <button
+                        onClick={onConvert}
+                        className="flex-1 px-4 py-3 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-95 transition-all font-bold type-ui shadow-lg shadow-brand/20"
+                    >
+                        <ArrowRightCircle className="w-4 h-4 inline mr-2" />
+                        Convertir a {terminology.singular}
+                    </button>
                 </div>
             </div>
         </div>

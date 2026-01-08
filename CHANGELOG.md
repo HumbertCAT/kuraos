@@ -15,6 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.6.2] - 2026-01-08
+
+### Fixed
+- **Connect Sidebar Overlap**: Refactored `LeadDetailSheet` to be a non-blocking sidebar, allowing side-by-side work with AletheIA Observatory.
+- **Kanban Flow**: Added quick-actions (Edit, Convert) directly to Kanban cards to reduce navigational friction.
+- **UI Physics**: Improved transition smoothness for the lead detail panel.
+
 ## [1.6.1] - 2026-01-08 🎣 THE BIO-LINK FUNNEL (Growth Phase)
 
 ### ✨ Growth Funnel (Direct Connect)
