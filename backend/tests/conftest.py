@@ -104,7 +104,8 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     """Create a test client with database override."""
     from fastapi import FastAPI
     from fastapi.middleware.cors import CORSMiddleware
-    from app.api.v1 import auth, patients
+    from app.api.v1.core import auth
+    from app.api.v1.practice import patients
 
     # Minimal test app without lifespan
     test_app = FastAPI(title="Test App")
