@@ -62,7 +62,7 @@ async def test_forgot_password_sends_email(
 
 
 @pytest.mark.asyncio
-async def test_password_reset_link_format(mailpit_client):
+async def test_password_reset_link_format():
     """
     Test that password reset links follow expected format.
 
