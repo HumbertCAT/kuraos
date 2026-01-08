@@ -229,6 +229,7 @@ async def create_public_booking(
         )
     )
     patient = patient_result.scalar_one_or_none()
+    created_lead = None  # Track if we created a lead for free bookings
 
     if not patient:
         # Check if there's an existing Lead that we can auto-convert
@@ -267,10 +268,31 @@ async def create_public_booking(
             lead.converted_patient_id = patient.id
             lead.converted_at = dt.utcnow()
         else:
-            # No Lead found - create Patient from scratch
+            # No Lead found - create Patient (and Lead for free services)
             name_parts = booking_data.patient_name.split(" ", 1)
             first_name = name_parts[0]
             last_name = name_parts[1] if len(name_parts) > 1 else ""
+
+            # For FREE services, create a Lead FIRST for CRM tracking
+            if service.price == 0:
+                created_lead = Lead(
+                    organization_id=therapist.organization_id,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=booking_data.patient_email,
+                    phone=booking_data.patient_phone,
+                    source=f"Booking: {service.title}",
+                    source_details={
+                        "booking_flow": "public_booking",
+                        "service_id": str(service.id),
+                        "service_title": service.title,
+                        "slot_start": slot_start.isoformat(),
+                    },
+                    notes=booking_data.patient_notes,
+                    status=LeadStatus.NEW,
+                )
+                db.add(created_lead)
+                await db.flush()  # Get lead.id
 
             patient = Patient(
                 organization_id=therapist.organization_id,
@@ -281,6 +303,14 @@ async def create_public_booking(
             )
             db.add(patient)
             await db.flush()  # Get patient.id
+
+            # Link Lead to Patient if we created one
+            if created_lead:
+                created_lead.converted_patient_id = patient.id
+                created_lead.converted_at = dt.utcnow()
+                created_lead.status = (
+                    LeadStatus.CONTACTED
+                )  # Moved to contacted since they booked
 
     # Calculate end time
     from datetime import timedelta
@@ -386,7 +416,7 @@ async def cancel_public_booking(
 
 
 @router.post(
-    "/bookings/{booking_id}/confirm",
+    "/{booking_id}/confirm",
     status_code=status.HTTP_200_OK,
     summary="Confirm a free booking",
 )

@@ -87,7 +87,7 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
             // Step 2: Handle payment based on service price
             if (service.price === 0) {
                 // Free service: Confirm booking directly
-                const confirmResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/public/bookings/${bookingResult.booking_id}/confirm`, {
+                const confirmResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/public/booking/${bookingResult.booking_id}/confirm`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

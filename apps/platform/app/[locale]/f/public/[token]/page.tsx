@@ -141,7 +141,7 @@ export default function PublicFormPage() {
     }
 
     // Parse schema fields (simplified - supports basic field types)
-    const fields: FormField[] = formData?.schema?.fields || [];
+    const fields: FormField[] = (formData?.schema?.fields as FormField[]) || [];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4">
