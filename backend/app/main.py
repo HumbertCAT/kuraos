@@ -383,7 +383,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/health", tags=["System"])
 async def health_check():
     """Health check endpoint for container orchestration."""
-    return {"status": "healthy", "version": "1.6.2"}
+    return {"status": "healthy", "version": "1.6.4"}
 
 
 @app.get("/", tags=["System"])
