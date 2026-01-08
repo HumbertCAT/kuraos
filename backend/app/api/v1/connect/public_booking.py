@@ -383,3 +383,60 @@ async def cancel_public_booking(
     await db.commit()
 
     return None
+
+
+@router.post(
+    "/bookings/{booking_id}/confirm",
+    status_code=status.HTTP_200_OK,
+    summary="Confirm a free booking",
+)
+async def confirm_free_booking(
+    booking_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Confirm a free booking (price = 0) without payment.
+
+    This endpoint skips the payment step for services with price 0€
+    and directly confirms the booking.
+    """
+    result = await db.execute(select(Booking).where(Booking.id == booking_id))
+    booking = result.scalar_one_or_none()
+
+    if not booking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found",
+        )
+
+    # Get service to verify it's actually free
+    service_result = await db.execute(
+        select(ServiceType).where(ServiceType.id == booking.service_type_id)
+    )
+    service = service_result.scalar_one_or_none()
+
+    if not service:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Service not found",
+        )
+
+    # Security check: Only allow confirming free bookings
+    if service.price > 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This endpoint is only for free bookings. Use payment flow for paid services.",
+        )
+
+    # Only allow confirming PENDING bookings
+    if booking.status != BookingStatus.PENDING:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only pending bookings can be confirmed",
+        )
+
+    # Confirm the booking
+    booking.status = BookingStatus.CONFIRMED
+    await db.commit()
+
+    return {"status": "confirmed", "booking_id": booking.id}

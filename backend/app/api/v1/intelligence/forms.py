@@ -512,7 +512,7 @@ async def list_template_assignments(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
 ):
-    """List all form assignments for a specific template (for submissions view)."""
+    """List all form assignments AND public leads for a specific template (unified submissions view)."""
     # Verify template belongs to user's organization
     template_result = await db.execute(
         select(FormTemplate).where(
@@ -520,32 +520,79 @@ async def list_template_assignments(
             FormTemplate.organization_id == current_user.organization_id,
         )
     )
-    if not template_result.scalar_one_or_none():
+    template = template_result.scalar_one_or_none()
+    if not template:
         raise HTTPException(status_code=404, detail="Template not found")
 
-    # Get assignments with patient info
-    result = await db.execute(
+    submissions = []
+
+    # 1. Get FormAssignments (existing patients)
+    assignment_result = await db.execute(
         select(FormAssignment, Patient)
         .join(Patient, FormAssignment.patient_id == Patient.id)
         .where(FormAssignment.template_id == template_id)
         .order_by(FormAssignment.created_at.desc())
     )
-    rows = result.all()
+    assignment_rows = assignment_result.all()
 
-    return TemplateAssignmentsResponse(
-        assignments=[
+    for assignment, patient in assignment_rows:
+        submissions.append(
             AssignmentWithPatient(
-                id=a.id,
-                patient_id=a.patient_id,
-                patient_name=f"{p.first_name} {p.last_name}".strip() or p.email,
-                status=a.status.value,
-                created_at=a.created_at.isoformat() if a.created_at else "",
-                completed_at=a.completed_at.isoformat() if a.completed_at else None,
+                id=assignment.id,
+                patient_id=assignment.patient_id,
+                patient_name=f"{patient.first_name} {patient.last_name}".strip()
+                or patient.email,
+                status=assignment.status.value,
+                created_at=assignment.created_at.isoformat()
+                if assignment.created_at
+                else "",
+                completed_at=assignment.completed_at.isoformat()
+                if assignment.completed_at
+                else None,
                 risk_level=None,  # TODO: Get from clinical entry if exists
             )
-            for a, p in rows
-        ]
+        )
+
+    # 2. Get Leads from public forms (NEW)
+    # Match leads by form title in source field
+    from app.db.models import Lead
+
+    lead_result = await db.execute(
+        select(Lead)
+        .where(Lead.organization_id == current_user.organization_id)
+        .where(Lead.source.ilike(f"%{template.title}%"))
+        .where(Lead.form_data.isnot(None))  # Only leads with form responses
+        .order_by(Lead.created_at.desc())
     )
+    leads = lead_result.scalars().all()
+
+    for lead in leads:
+        # Treat lead as a submission with status based on lead status
+        status_mapping = {
+            "NEW": "SENT",  # New lead = form was sent/submitted
+            "CONTACTED": "OPENED",  # Follow-up made
+            "QUALIFIED": "COMPLETED",  # Qualified = processed
+            "CONVERTED": "COMPLETED",
+            "LOST": "EXPIRED",
+        }
+
+        submissions.append(
+            AssignmentWithPatient(
+                id=lead.id,  # Use lead ID
+                patient_id=lead.id,  # Use lead ID (will link to /leads/{id} not /patients/{id})
+                patient_name=f"{lead.first_name} {lead.last_name}".strip()
+                or lead.email
+                or "Lead",
+                status=f"PUBLIC_{status_mapping.get(lead.status, 'SENT')}",  # Prefix to differentiate
+                created_at=lead.created_at.isoformat() if lead.created_at else "",
+                completed_at=lead.updated_at.isoformat()
+                if lead.status != "NEW"
+                else None,
+                risk_level=None,  # Leads don't have clinical risk
+            )
+        )
+
+    return TemplateAssignmentsResponse(assignments=submissions)
 
 
 # ============ Admin Template Management (Super Admin) ============

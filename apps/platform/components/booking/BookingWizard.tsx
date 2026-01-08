@@ -228,7 +228,14 @@ export function BookingWizard({ therapistId, locale }: BookingWizardProps) {
                         <StepForm
                             therapistId={therapistId}
                             locale={locale}
-                            onNext={() => goToStep('payment')}
+                            onNext={() => {
+                                // Skip payment for free services
+                                if (selectedService && selectedService.price === 0) {
+                                    goToStep('success');
+                                } else {
+                                    goToStep('payment');
+                                }
+                            }}
                             onBack={() => goToStep('slot')}
                         />
                     </>

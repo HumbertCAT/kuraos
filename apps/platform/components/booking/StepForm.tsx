@@ -84,26 +84,44 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                 patient_notes: notes || null,
             });
 
-            // Step 2: Create payment intent
-            const paymentResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/create-payment-intent`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ booking_id: bookingResult.booking_id }),
-            });
+            // Step 2: Handle payment based on service price
+            if (service.price === 0) {
+                // Free service: Confirm booking directly
+                const confirmResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/public/bookings/${bookingResult.booking_id}/confirm`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                });
 
-            if (!paymentResult.ok) {
-                const err = await paymentResult.json();
-                throw new Error(err.detail || 'Error al procesar el pago');
+                if (!confirmResult.ok) {
+                    throw new Error('Error al confirmar la reserva gratuita');
+                }
+
+                // No payment intent needed for free bookings
+                setPaymentIntent(bookingResult.booking_id, 'FREE_BOOKING');
+                onNext();
+            } else {
+                // Paid service: Create payment intent
+                const paymentResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/create-payment-intent`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ booking_id: bookingResult.booking_id }),
+                });
+
+                if (!paymentResult.ok) {
+                    const err = await paymentResult.json();
+                    throw new Error(err.detail || 'Error al procesar el pago');
+                }
+
+                const paymentData = await paymentResult.json();
+
+                // Store in Zustand
+                setPaymentIntent(bookingResult.booking_id, paymentData.client_secret);
+                setExpiration(BOOKING_EXPIRATION_MINUTES);
+
+                onNext();
             }
-
-            const paymentData = await paymentResult.json();
-
-            // Store in Zustand
-            setPaymentIntent(bookingResult.booking_id, paymentData.client_secret);
-            setExpiration(BOOKING_EXPIRATION_MINUTES);
-
-            onNext();
         } catch (err: any) {
             console.error('Booking error:', err);
             setError(err.message || 'Error al crear la reserva. Inténtalo de nuevo.');
@@ -244,7 +262,7 @@ export function StepForm({ therapistId, locale, onNext, onBack }: StepFormProps)
                             Procesando...
                         </>
                     ) : (
-                        'Continuar al pago'
+                        service?.price === 0 ? 'Confirmar reserva' : 'Continuar al pago'
                     )}
                 </button>
             </form>

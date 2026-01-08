@@ -15,15 +15,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
-## [1.6.3] - 2026-01-08 🔧 PUBLIC FORMS & AUTOMATION FIX
+## [1.6.3] - 2026-01-08 🔧💰 PUBLIC FORMS, AUTOMATION & FREE BOOKING
 
 ### ✨ Added
 - **Public Forms Page**: Created `/f/public/[token]` page for public form submissions, enabling lead generation from external links.
 - **Consulta Inicial Service**: New free 30-minute consultation service ("Consulta Inicial · Videollamada") with ES/EN i18n for lead onboarding.
 - **Dynamic Booking Links**: Concierge agent emails now generate smart booking links to "Consulta Inicial" service automatically.
+- **Free Booking Support**: Services with price `0€` now skip payment step entirely
+  - New endpoint: `POST /public/bookings/{id}/confirm` for confirming free bookings
+  - Booking wizard detects free services and goes directly from "Datos" → "Success"
+  - Button text changes dynamically: "Confirmar reserva" vs "Continuar al pago"
+- **Unified Submissions View**: `/forms/{id}/submissions` now shows both:
+  - FormAssignments (assigned to existing patients) with badge "👤 Patient"
+  - Public Leads (from public forms) with badge "🔗 Public"
+  - New "Source" column differentiates submission types
+  - Links route correctly: public leads → `/leads`, patients → `/patients/{id}`
 
 ### 🔧 Fixed
 - **Public Form → Lead Creation**: Corrected payload bug where `name` and `email` were nested incorrectly in `answers`, preventing lead creation from public forms.
+- **Form Submissions Empty State**: Form submission pages no longer show "0 responses" when leads were created from public forms.
+- **Service-Therapist Link**: "Consulta Inicial" service now properly linked to therapist for public booking visibility.
+- **Stripe 0€ Error**: Fixed fatal error when attempting to create Stripe PaymentIntent for free services.
 - **Automation Condition Operators**: Extended automation engine to support advanced operators:
   - String operators: `contains`, `starts_with`, `ends_with`
   - Numeric operators: `gte` (≥), `lte` (≤), `gt` (>), `lt` (<)
@@ -31,8 +43,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Lead Status Automation**: Leads now automatically transition to `CONTACTED` status after Concierge welcome email is sent.
 - **Sherlock Profiling (Partial)**: Refactored `connect_service.py` to use Model Garden routing for Vertex AI compatibility (requires `VERTEX_AI_ENABLED=True` in production).
 
-### 🗂️ Infrastructure
+### 🗂️ Backend
 - **Seed Scripts Updated**: Added "Consulta Inicial" service to both `reseed_demo_patients.py` and `reboot_local_universe_PREMIUM.py` for consistent demo environments.
+- Extended `GET /forms/assignments/template/{id}` to include Leads from public forms
+- Added `confirm_free_booking()` endpoint with security validation (only allows price=0)
+- Status mapping for public leads: NEW→SENT, CONTACTED→OPENED, QUALIFIED→COMPLETED
+
+### 🎨 Frontend
+- `BookingWizard.tsx`: Conditional payment step routing based on `service.price`
+- `StepForm.tsx`: Dual-path submission (free vs paid)
+- `submissions/page.tsx`: Unified table with source badges and smart routing
 
 ### 📝 Technical Notes
 - Sherlock profiling (Shadow Profile) works in production with Vertex AI but not in local development without the SDK.
