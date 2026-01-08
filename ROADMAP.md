@@ -37,39 +37,23 @@ Features prioritizadas por:
 
 > **Theme:** "Sovereignty by Design" — Hardening infrastructure for HIPAA/GDPR compliance.
 
-#### 1.5.1 API Trinity Refactor (Modular Monolith)
-**ADR:** [ADR-011](./docs/architecture/decisions/ADR-011-modular-monolith-api.md)  
-**Esfuerzo:** 1.5 semanas  
-**Impacto:** Security Boundaries + Developer Experience
-
-**Objetivo:** Eliminar el "Monolith Sprawl" y establecer fronteras físicas de seguridad.
-
-**Implementación:**
-- **Reestructuración de Dominios (`backend/app/api/v1`):**
-  - `core/` (Auth, Admin, Config) → Infraestructura Crítica
-  - `connect/` (Leads, Forms) → Zona Pública (Marketing)
-  - `practice/` (Patients, Clinical) → **Zona Blindada (HIPAA PHI)** 🔴
-  - `grow/` (Analytics, Finance) → Zona de Negocio
-  - `intelligence/` (AletheIA) → Motor Transversal
-- **Beneficio:** Permite aplicar *AuditMiddlewares* estrictos solo a la carpeta `practice/`.
-
-**Prioridad:** 🔴 CRITICAL (Bloqueante para Auditoría)
-
----
-
 #### 1.5.2 The Panopticon (HIPAA Access Logs)
+**ADR:** [ADR-022](./docs/architecture/decisions/ADR-022-the-panopticon.md)  
 **Esfuerzo:** 2 semanas  
 **Dependencia:** API Trinity Refactor  
-**Impacto:** Compliance Legal & Enterprise Sales
+**Impacto:** Compliance Legal & Enterprise Sales (BAA-Ready)
 
-**Contexto:** HIPAA exige registrar **accesos de lectura** (no solo escritura).
+**Contexto:** HIPAA exige registrar **accesos de lectura** (no solo escritura). Sin esto, no podemos firmar BAA (Business Associate Agreement) con clínicas de EEUU/Europa.
 
-**Implementación:**
-- Middleware de Auditoría aplicado exclusivamente al router `/practice`.
-- Tabla inmutable `access_logs`: `who` (user), `what` (resource:id), `intent` (route), `timestamp`.
-- Visor de auditoría en Admin Panel.
+**Implementación** (GEM's Panopticon):
+- **Modelo**: Tabla inmutable `access_logs` (WHO, WHAT, WHEN, HOW)
+- **Middleware**: `PanopticonMiddleware` - Intercepta SOLO `/api/v1/practice/*`
+- **Extracción**: Regex UUID para resource_id, inferencia de resource_type
+- **Non-Blocking**: FastAPI BackgroundTasks (sub-ms overhead)
+- **PHI-Blind**: NUNCA loguear response bodies, solo metadatos
+- **Admin Viewer**: `/admin/audit/logs` con filtros (user, date, resource)
 
-**Prioridad:** 🔴 CRITICAL
+**Prioridad:** 🔴 CRITICAL (Blocker for Hospital Sales)
 
 ---
 
@@ -344,6 +328,8 @@ Query → Embedding → Vector Search (50 candidates) → Reranker → Top 5 →
 | [ADR-016: Next-Gen Shield](./docs/architecture/decisions/ADR-016-content-safety-and-dlp.md) | 🆕 PROPOSED | Q1 |
 | [ADR-017: Model Distillation](./docs/architecture/decisions/ADR-017-supervised-fine-tuning.md) | 🆕 PROPOSED | Q1-Q2 |
 | [ADR-018: Clinical RAG](./docs/architecture/decisions/ADR-018-vector-search-memory.md) | 🆕 PROPOSED | Q1-Q2 |
+| [ADR-022: The Panopticon](./docs/architecture/decisions/ADR-022-the-panopticon.md) | 🆕 PROPOSED | Q1 (Tier 1.5.2) |
+| [ADR-026: The Observatory](./docs/architecture/decisions/ADR-026-the-observatory.md) | 🆕 PROPOSED | Q1-Q4 (Master Plan) |
 
 ---
 
