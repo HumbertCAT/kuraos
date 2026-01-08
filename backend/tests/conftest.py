@@ -105,8 +105,15 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     from fastapi import FastAPI
     from fastapi.middleware.cors import CORSMiddleware
     from app.api.v1.core import auth
-    from app.api.v1.practice import patients, clinical_entries
-    from app.api.v1.practice import booking
+    from app.api.v1.practice import (
+        patients,
+        clinical_entries,
+        booking,
+        services,
+        availability,
+        schedules,
+        pending_actions,
+    )
 
     # Test app with routers needed for tests
     test_app = FastAPI(title="Test App")
@@ -118,7 +125,10 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
         allow_headers=["*"],
     )
 
+    # Core
     test_app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
+
+    # Practice
     test_app.include_router(
         patients.router, prefix="/api/v1/patients", tags=["Patients"]
     )
@@ -126,6 +136,18 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
         clinical_entries.router, prefix="/api/v1/clinical-entries", tags=["Clinical"]
     )
     test_app.include_router(booking.router, prefix="/api/v1/booking", tags=["Booking"])
+    test_app.include_router(
+        services.router, prefix="/api/v1/services", tags=["Services"]
+    )
+    test_app.include_router(
+        availability.router, prefix="/api/v1/availability", tags=["Availability"]
+    )
+    test_app.include_router(
+        schedules.router, prefix="/api/v1/schedules", tags=["Schedules"]
+    )
+    test_app.include_router(
+        pending_actions.router, prefix="/api/v1/pending-actions", tags=["Actions"]
+    )
 
     @test_app.get("/health")
     async def health():
