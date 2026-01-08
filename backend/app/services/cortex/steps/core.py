@@ -49,7 +49,7 @@ class TranscribeStep(PipelineStep):
 
         try:
             # Get AI provider and transcribe
-            provider = ProviderFactory.get_provider("gemini:2.5-flash")
+            provider = ProviderFactory.get_provider("gemini-2.5-flash")
 
             # The provider handles GCS URIs directly under BAA
             result = await provider.transcribe_audio(audio_uri)
@@ -63,7 +63,7 @@ class TranscribeStep(PipelineStep):
 
             # v1.5.9-hf11: Record usage for telemetry
             context.record_usage({
-                "model_id": result.get("model_id", "gemini:2.5-flash"),
+                "model_id": result.get("model_id", "gemini-2.5-flash"),
                 "tokens_input": result.get("tokens_input", 0),
                 "tokens_output": result.get("tokens_output", 0),
                 "task_type": "transcription",
@@ -100,7 +100,7 @@ class AnalyzeStep(PipelineStep):
 
     def __init__(self, prompt_key: str = "clinical_analysis", model: str = None):
         self.prompt_key = prompt_key
-        self.model = model or "gemini:2.5-pro"
+        self.model = (model or "gemini-2.5-pro").replace(":", "-")
 
     async def execute(self, context: PatientEventContext) -> None:
         """Analyze clinical content and generate insights."""
@@ -119,7 +119,7 @@ class AnalyzeStep(PipelineStep):
         )
 
         try:
-            provider = ProviderFactory.get_provider(self.model)
+            provider = ProviderFactory.get_provider(self.model.replace(":", "-"))
 
             # Get prompt from centralized library
             from app.services.ai.prompts import get_prompt, PromptTask
@@ -204,9 +204,9 @@ class AnalyzeStep(PipelineStep):
             parts.append(f"## Datos del Formulario\n{form_data}")
 
         # Check for OCR text
-        ocr_text = context.get_output("ocr", "extracted_text")
+        ocr_text = context.get_output("ocr", "text_content")
         if ocr_text:
-            parts.append(f"## Texto Extraído\n{ocr_text}")
+            parts.append(f"## Texto Extraído (Foto/Documento)\n{ocr_text}")
 
         return "\n\n".join(parts)
 
@@ -244,14 +244,14 @@ class OCRStep(PipelineStep):
         logger.info(f"OCRStep: Processing {image_uri}")
 
         try:
-            provider = ProviderFactory.get_provider("gemini:2.5-flash")
+            provider = ProviderFactory.get_provider("gemini-2.5-flash")
 
             result = await provider.analyze_image(
                 image_uri=image_uri,
                 prompt="Extract all text from this clinical document. Preserve structure and formatting.",
             )
 
-            context.add_output(self.step_type, "extracted_text", result.get("text", ""))
+            context.add_output(self.step_type, "text_content", result.get("text", ""))
             context.add_output(
                 self.step_type, "document_type", result.get("document_type")
             )
@@ -261,7 +261,7 @@ class OCRStep(PipelineStep):
 
             # v1.5.9-hf11: Record usage for telemetry
             context.record_usage({
-                "model_id": result.get("model_id", "gemini:2.5-flash"),
+                "model_id": result.get("model_id", "gemini-2.5-flash"),
                 "tokens_input": result.get("tokens_input", 0),
                 "tokens_output": result.get("tokens_output", 0),
                 "task_type": "document_analysis",
@@ -310,7 +310,7 @@ class TriageStep(PipelineStep):
             from app.services.ai.factory import ProviderFactory
             from app.services.ai.prompts import get_prompt, PromptTask
 
-            provider = ProviderFactory.get_provider("gemini:2.5-flash")
+            provider = ProviderFactory.get_provider("gemini-2.5-flash")
             prompt = get_prompt(PromptTask.TRIAGE_FORM)
 
             # Build full prompt with content

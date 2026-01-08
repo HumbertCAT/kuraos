@@ -671,6 +671,13 @@ export const api = {
       });
       return handleResponse<any>(res);
     },
+    
+    getStats: async () => {
+      const res = await fetch(`${API_URL}/leads/stats/summary`, {
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
   },
 
   growth: {

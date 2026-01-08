@@ -15,6 +15,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.6.1] - 2026-01-08 🎣 THE BIO-LINK FUNNEL (Growth Phase)
+
+### ✨ Growth Funnel (Direct Connect)
+- **Conversion Metrics Widget**: Integrated a high-fidelity funnel widget directly into the Leads CRM header, visualizing `Views → Leads → Conversion` in real-time.
+- **Leads Magnet: Wellness Check**: Form templates now track `views_count` for automated funnel diagnostics.
+
+### 🛠️ Design System Forensic Repair
+- **Zero Lila Policy**: Purged all hardcoded purple and blue shades from `LeadsPage.tsx`, replacing them with semantic `brand` and `card` tokens.
+- **UI Physics**: Applied `active:scale-95 transition-all` across all interactive elements (CRM board, buttons, detail sheets).
+- **Sherlock Polish**: Refined the Shadow Profile display with improved typography (`.type-ui`) and tactile depth.
+- **API Integrity**: Unified conversion metrics fetching via `api.leads.getStats()`.
+
+### 🛠️ Maintenance
+- **JSX Total Repair**: Resolved a critical "div disaster" in `LeadsPage.tsx` that was blocking the build process.
+- **Cache Purge**: Performed a deep cleanup of `.next` and build caches to optimize disk space.
+
+---
+
+## [1.6.0] - 2026-01-08 🏛️ THE LIQUID CRM (Connect Phase)
+
+### ✨ Connect (Leads Intelligence)
+- **Sherlock Score (R.N.A.V.)**: Implemented a new intelligent profiling engine for Leads. Cortex now analyzes initial contact messages and form data to estimate Risk, Need, Authority, and Velocity.
+- **Shadow Profile**: Leads now have AI-generated insights, including detected intention, communication style, and contact suggestions in Spanish.
+- **Trinity Kanban**: Enhanced the leads board to support the new Connect pipeline, including "Cita Agendada" and visual density for AI metrics.
+- **Architect's Precision**: Scoring logic moved to Python to ensure mathematical accuracy (averaging metrics) as per the collective intelligence protocol.
+
+---
+
 ## [1.5.9-HF13] - 2026-01-08 📡 THE PIPE CLEANER
 
 ### ✨ Global Clinical Integrity

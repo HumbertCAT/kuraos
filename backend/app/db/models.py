@@ -202,8 +202,10 @@ class LeadStatus(str, enum.Enum):
     NEW = "NEW"
     CONTACTED = "CONTACTED"
     QUALIFIED = "QUALIFIED"
+    APPOINTMENT_SCHEDULED = "APPOINTMENT_SCHEDULED"
     CONVERTED = "CONVERTED"
     LOST = "LOST"
+    ARCHIVED = "ARCHIVED"
 
 
 class DatasetType(str, enum.Enum):
@@ -504,6 +506,12 @@ class Lead(Base):
     # Structured form data (JSONB) - clinical answers from intake forms
     # Separates PII (name, email in columns) from clinical data (here)
     form_data: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+
+    # v1.6 Liquid CRM: Shadow Profile & Sherlock Metrics
+    # shadow_profile: {"intent": "...", "communication_style": "...", "best_time": "..."}
+    shadow_profile: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    # sherlock_metrics: {"r": 80, "n": 90, "a": 50, "v": 70, "total_score": 72}
+    sherlock_metrics: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
     # Conversion tracking
     converted_patient_id: Mapped[Optional[uuid.UUID]] = mapped_column(
@@ -888,6 +896,7 @@ class FormTemplate(Base):
     config: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    views_count: Mapped[int] = mapped_column(Integer, default=0)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()

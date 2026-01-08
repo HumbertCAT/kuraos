@@ -240,6 +240,27 @@ class ClinicalService:
                     if not entry.content:
                         entry.content = transcript_data["transcript"]
 
+            # v1.5.9: Also check for OCR/Document text
+            if "ocr" in outputs:
+                ocr_data = outputs.get("ocr", {})
+                if isinstance(ocr_data, dict) and "text_content" in ocr_data:
+                    if not entry.content or entry.content == GHOST_CONTENT_PLACEHOLDER:
+                        entry.content = ocr_data["text_content"]
+
+            # v1.5.9: For regular Analyze results (if no transcript/ocr)
+            if "analyze" in outputs:
+                analysis_data = outputs.get("analyze", {})
+                if isinstance(analysis_data, dict) and "analysis_json" in analysis_data:
+                    # If we still don't have content, use summary as fallback content
+                    if not entry.content and not is_ghost:
+                        summary = (
+                            analysis_data["analysis_json"]
+                            .get("soap_note", {})
+                            .get("summary")
+                        )
+                        if summary:
+                            entry.content = summary
+
         # Store AI insights in metadata
         metadata = entry.entry_metadata or {}
 

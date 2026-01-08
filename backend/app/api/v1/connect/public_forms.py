@@ -112,6 +112,10 @@ async def get_public_form(
     )
     patient = patient_result.scalar_one()
 
+    # Increment views count (Architect mandate)
+    template.views_count += 1
+    await db.commit()
+
     return PublicFormResponse(
         title=template.title,
         description=template.description,
@@ -297,6 +301,10 @@ async def get_public_lead_form(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Form not found or is not active",
         )
+
+    # Increment views count
+    template.views_count += 1
+    await db.commit()
 
     return PublicFormResponse(
         title=template.title,

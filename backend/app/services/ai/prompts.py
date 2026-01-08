@@ -26,6 +26,7 @@ class PromptTask(str, Enum):
     TRIAGE_FORM = "triage_form"
     CHAT_ANALYSIS = "chat_analysis"
     HELP_SUPPORT = "help_support"
+    SALES_PROFILING = "sales_profiling"
 
 
 # ============================================================================

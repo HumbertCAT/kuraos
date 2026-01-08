@@ -44,6 +44,8 @@ class LeadUpdate(BaseModel):
     phone: Optional[str] = Field(None, max_length=50)
     status: Optional[LeadStatus] = None
     notes: Optional[str] = None
+    shadow_profile: Optional[dict] = None
+    sherlock_metrics: Optional[dict] = None
 
 
 class LeadResponse(BaseModel):
@@ -59,6 +61,8 @@ class LeadResponse(BaseModel):
     source: str
     source_details: Optional[dict] = None
     notes: Optional[str] = None
+    shadow_profile: Optional[dict] = None
+    sherlock_metrics: Optional[dict] = None
     converted_patient_id: Optional[UUID] = None
     converted_at: Optional[datetime] = None
     created_at: datetime
@@ -81,6 +85,15 @@ class LeadListResponse(BaseModel):
 
     leads: List[LeadResponse]
     total: int
+
+
+class LeadStatsResponse(BaseModel):
+    """Aggregation of growth funnel metrics for Connect domain."""
+
+    total_views: int
+    total_leads: int
+    converted_patients: int
+    conversion_rate: float
 
 
 # ============ ENDPOINTS ============
@@ -163,7 +176,18 @@ async def create_lead(
     await db.commit()
     await db.refresh(lead)
 
-    print(f"✅ Lead {lead.id} created, now emitting event...")
+    # v1.6 CRM Connect: Trigger intelligent profiling
+    try:
+        from app.services.connect_service import ConnectService
+
+        connect_service = ConnectService(db)
+        # Run in background via task if possible, but here we do it simple for the pilot
+        await connect_service.profile_lead(lead.id)
+    except Exception as e:
+        print(f"⚠️ Error in sales profiling for lead {lead.id}: {e}")
+        # We don't raise here to avoid blocking the main flow (User creation)
+
+    print(f"✅ Lead {lead.id} created and profiled, now emitting event...")
     import sys
 
     sys.stdout.flush()
@@ -364,3 +388,48 @@ async def delete_lead(
     await db.commit()
 
     return None
+
+
+@router.get("/stats/summary", response_model=LeadStatsResponse)
+async def get_lead_stats(
+    current_user: CurrentUser = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Get growth funnel performance for current organization."""
+    from app.db.models import FormTemplate, Lead, LeadStatus
+    from sqlalchemy import func
+
+    # 1. Get total views from form templates
+    # (Architect logic: track anonymous views of public lead forms)
+    views_query = select(func.sum(FormTemplate.views_count)).where(
+        FormTemplate.organization_id == current_user.organization_id
+    )
+    views_result = await db.execute(views_query)
+    total_views = views_result.scalar() or 0
+
+    # 2. Get total leads count
+    leads_query = select(func.count(Lead.id)).where(
+        Lead.organization_id == current_user.organization_id
+    )
+    leads_result = await db.execute(leads_query)
+    total_leads = leads_result.scalar() or 0
+
+    # 3. Get converted patients count
+    converted_query = select(func.count(Lead.id)).where(
+        Lead.organization_id == current_user.organization_id,
+        Lead.status == LeadStatus.CONVERTED,
+    )
+    converted_result = await db.execute(converted_query)
+    converted_patients = converted_result.scalar() or 0
+
+    # 4. Calculate conversion rate
+    conversion_rate = 0.0
+    if total_views > 0:
+        conversion_rate = (total_leads / total_views) * 100
+
+    return LeadStatsResponse(
+        total_views=total_views,
+        total_leads=total_leads,
+        converted_patients=converted_patients,
+        conversion_rate=round(conversion_rate, 1),
+    )

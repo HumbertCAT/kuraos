@@ -13,6 +13,10 @@ Run with:
 
 import asyncio
 import uuid
+import sys
+
+# Add /app to sys.path for internal imports
+sys.path.insert(0, "/app")
 
 # Form schemas with realistic fields
 FORM_TEMPLATES = [
@@ -353,6 +357,61 @@ FORM_TEMPLATES = [
             ],
         },
     },
+    # ===== 6. CHEQUEO DE BIENESTAR EMOCIONAL (LEAD MAGNET) =====
+    {
+        "title": "Chequeo de Bienestar Emocional",
+        "description": "¿Cómo te sientes hoy? Tómate 2 minutos para descubrir tu nivel actual de bienestar y recibe consejos personalizados.",
+        "risk_level": "LOW",
+        "therapy_type": "GENERAL",
+        "form_type": "INTAKE",
+        "target_entity": "LEAD",
+        "public_token": "bienestar-check",
+        "schema": {
+            "fields": [
+                {
+                    "id": "name",
+                    "type": "TEXT",
+                    "label": "¿Cómo te llamas?",
+                    "required": True,
+                    "placeholder": "Tu nombre",
+                },
+                {
+                    "id": "email",
+                    "type": "EMAIL",
+                    "label": "Tu mejor Email",
+                    "required": True,
+                    "placeholder": "tu@email.com",
+                },
+                {
+                    "id": "whatsapp",
+                    "type": "TEXT",
+                    "label": "WhatsApp (opcional, para enviarte el resultado)",
+                    "required": False,
+                    "placeholder": "+34...",
+                },
+                {
+                    "id": "main_concern",
+                    "type": "SELECT",
+                    "label": "¿Qué es lo que más te preocupa hoy?",
+                    "required": True,
+                    "options": [
+                        {"value": "anxiety", "label": "Ansiedad / Estrés"},
+                        {"value": "relationships", "label": "Relaciones / Pareja"},
+                        {"value": "work", "label": "Trabajo / Propósito"},
+                        {"value": "other", "label": "Otro"},
+                    ],
+                },
+                {
+                    "id": "urgency",
+                    "type": "SCALE",
+                    "label": "Nivel de urgencia (1 = Solo curiosidad, 10 = Necesito ayuda ya)",
+                    "required": True,
+                    "min": 1,
+                    "max": 10,
+                },
+            ],
+        },
+    },
 ]
 
 
@@ -400,6 +459,8 @@ async def main():
                 template.risk_level = risk_level
                 template.therapy_type = therapy_type
                 template.form_type = form_type
+                template.target_entity = tpl_data.get("target_entity", "PATIENT")
+                template.public_token = tpl_data.get("public_token")
                 updated += 1
                 print(f"📝 Updated: {tpl_data['title']}")
             else:
@@ -412,6 +473,8 @@ async def main():
                     risk_level=risk_level,
                     therapy_type=therapy_type,
                     form_type=form_type,
+                    target_entity=tpl_data.get("target_entity", "PATIENT"),
+                    public_token=tpl_data.get("public_token"),
                     is_active=True,
                 )
                 db.add(template)

@@ -138,6 +138,31 @@ PLAYBOOKS = [
         ],
         "priority": 60,  # Lower priority than immediate responses
     },
+    {
+        "name": "Recuperador de Leads (Ghost Detector)",
+        "description": "Detecta leads del Bio Link que no han agendado en 1 hora y les envía un WhatsApp de ayuda.",
+        "icon": "Ghost",
+        "trigger_event": TriggerEvent.LEAD_STAGED_TIMEOUT.value,
+        "conditions": {
+            "logic": "AND",
+            "rules": [
+                {"field": "source", "operator": "contains", "value": "bienestar-check"},
+                {"field": "hours_elapsed", "operator": "gte", "value": 1},
+            ],
+        },
+        "actions": [
+            {
+                "type": "send_email",
+                "params": {
+                    "template": "generic",
+                    "to": "lead",
+                    "subject": "¿Te puedo ayudar con algo?",
+                    "body": "Hola {first_name}, he visto que estabas completando el test de bienestar. Me gustaría enviarte un audio con un par de consejos rápidos sobre lo que te preocupa. ¿Te parece bien?",
+                },
+            }
+        ],
+        "priority": 70,
+    },
 ]
 
 

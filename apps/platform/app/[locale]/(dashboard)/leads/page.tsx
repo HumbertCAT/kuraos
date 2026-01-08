@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 import {
     UserPlus, Phone, MessageCircle, FileText, Users,
     ArrowRightCircle, XCircle, Clock, Plus, Search,
-    Filter, ChevronDown, Ghost, Link, Copy
+    Filter, ChevronDown, Ghost, Link, Copy, Sparkles
 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -24,12 +24,24 @@ interface Lead {
     source: string;
     source_details: Record<string, any> | null;
     notes: string | null;
+    shadow_profile: {
+        intent?: string;
+        communication_style?: string;
+        contact_suggestion?: string;
+    } | null;
+    sherlock_metrics: {
+        r?: number;
+        n?: number;
+        a?: number;
+        v?: number;
+        total_score?: number;
+    } | null;
     converted_patient_id: string | null;
     created_at: string;
     updated_at: string;
 }
 
-type LeadStatus = 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'CONVERTED' | 'LOST';
+type LeadStatus = 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'APPOINTMENT_SCHEDULED' | 'CONVERTED' | 'LOST' | 'ARCHIVED';
 
 interface Column {
     id: LeadStatus;
@@ -43,23 +55,30 @@ const COLUMNS: Column[] = [
     {
         id: 'NEW',
         title: 'Nuevos',
-        color: 'text-blue-600 dark:text-blue-400',
-        bgColor: 'bg-blue-50/50 dark:bg-muted/50',
-        borderColor: 'border-blue-200 dark:border-blue-500/30',
+        color: 'text-brand',
+        bgColor: 'bg-brand/5 dark:bg-muted/30',
+        borderColor: 'border-brand/20 dark:border-brand/10',
     },
     {
         id: 'CONTACTED',
         title: 'Contactados',
-        color: 'text-amber-700 dark:text-amber-400',
-        bgColor: 'bg-amber-50/50 dark:bg-muted/50',
-        borderColor: 'border-amber-200 dark:border-amber-500/30',
+        color: 'text-warning',
+        bgColor: 'bg-warning/5 dark:bg-muted/30',
+        borderColor: 'border-warning/20 dark:border-warning/10',
     },
     {
         id: 'QUALIFIED',
         title: 'Cualificados',
-        color: 'text-teal-700 dark:text-teal-400',
-        bgColor: 'bg-teal-50/50 dark:bg-muted/50',
-        borderColor: 'border-teal-200 dark:border-teal-500/30',
+        color: 'text-success',
+        bgColor: 'bg-success/5 dark:bg-muted/30',
+        borderColor: 'border-success/20 dark:border-success/10',
+    },
+    {
+        id: 'APPOINTMENT_SCHEDULED',
+        title: 'Cita Agendada',
+        color: 'text-ai',
+        bgColor: 'bg-ai/5 dark:bg-muted/30',
+        borderColor: 'border-ai/20 dark:border-ai/10',
     },
 ];
 
@@ -101,7 +120,7 @@ function getLeadUrgency(lead: Lead): {
     // Fresh (< 24h)
     if (diffHours < 24) {
         return {
-            borderClass: 'border-l-4 border-l-emerald-400',
+            borderClass: 'border-l-4 border-l-success',
             opacityClass: '',
             grayscale: false,
             isGhost: false,
@@ -111,7 +130,7 @@ function getLeadUrgency(lead: Lead): {
     // Warning (24-72h)
     if (diffHours < 72) {
         return {
-            borderClass: 'border-l-4 border-l-amber-400',
+            borderClass: 'border-l-4 border-l-warning',
             opacityClass: '',
             grayscale: false,
             isGhost: false,
@@ -121,7 +140,7 @@ function getLeadUrgency(lead: Lead): {
     // Cold (72h - 7d)
     if (diffDays < 7) {
         return {
-            borderClass: 'border-l-4 border-l-slate-300',
+            borderClass: 'border-l-4 border-l-muted-foreground/30',
             opacityClass: 'opacity-90',
             grayscale: false,
             isGhost: false,
@@ -130,8 +149,8 @@ function getLeadUrgency(lead: Lead): {
     }
     // Ghost (> 7 days)
     return {
-        borderClass: 'border-l-4 border-l-slate-200',
-        opacityClass: 'opacity-75',
+        borderClass: 'border-l-4 border-l-muted',
+        opacityClass: 'opacity-70',
         grayscale: true,
         isGhost: true,
         badge: null,
@@ -146,11 +165,13 @@ function getWhatsAppUrl(lead: Lead, userName: string = 'Tu terapeuta'): string {
 }
 
 import { API_URL } from '@/lib/api';
+import { MousePointerClick, TrendingUp, Zap } from 'lucide-react';
 
 export default function LeadsPage() {
     const terminology = useTerminology();
     const tt = useTranslations('Tooltips');
     const [leads, setLeads] = useState<Lead[]>([]);
+    const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -161,8 +182,12 @@ export default function LeadsPage() {
     const loadLeads = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await api.leads.list({ limit: 100 });
+            const [data, statsData] = await Promise.all([
+                api.leads.list({ limit: 100 }),
+                api.leads.getStats()
+            ]);
             setLeads(data.data || data.leads || []);
+            setStats(statsData);
         } catch (err) {
             console.error('Error loading leads:', err);
             setError('Error de conexión');
@@ -225,7 +250,10 @@ export default function LeadsPage() {
         }
     };
 
-    // Filter leads by search
+    // Group leads by column
+    const getColumnLeads = (status: LeadStatus) =>
+        filteredLeads.filter(lead => lead.status === status);
+
     const filteredLeads = (Array.isArray(leads) ? leads : []).filter(lead => {
         if (!searchQuery) return true;
         const q = searchQuery.toLowerCase();
@@ -237,14 +265,10 @@ export default function LeadsPage() {
         );
     });
 
-    // Group leads by column
-    const getColumnLeads = (status: LeadStatus) =>
-        filteredLeads.filter(lead => lead.status === status);
-
-    if (loading) {
+    if (loading && !leads.length) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
             </div>
         );
     }
@@ -269,14 +293,52 @@ export default function LeadsPage() {
                         placeholder="Buscar por nombre, email o teléfono..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground placeholder:text-muted-foreground"
+                        className="w-full pl-10 pr-4 py-2.5 bg-muted/50 border border-border/50 rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none text-foreground placeholder:text-muted-foreground transition-all"
                     />
                 </div>
             </PageHeader>
 
+            {/* Funnel Metrics Widget - v1.6.1 */}
+            {stats && (
+                <div className="flex items-center gap-8 p-6 bg-card border border-border/50 rounded-3xl shadow-sm animate-in fade-in slide-in-from-top-2 duration-500 overflow-x-auto">
+                    <div className="flex items-center gap-4 border-r border-border/50 pr-8">
+                        <div className="w-10 h-10 rounded-2xl bg-muted/50 flex items-center justify-center">
+                            <MousePointerClick className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="type-ui text-[10px] uppercase tracking-widest text-muted-foreground/70 font-bold mb-0.5">Visitas Link</span>
+                            <span className="font-mono font-bold text-2xl tracking-tighter">{stats.total_views}</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 border-r border-border/50 pr-8">
+                        <div className="w-10 h-10 rounded-2xl bg-brand/10 flex items-center justify-center">
+                            <Zap className="w-5 h-5 text-brand" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="type-ui text-[10px] uppercase tracking-widest text-muted-foreground/70 font-bold mb-0.5">Nuevos Leads</span>
+                            <span className="font-mono font-bold text-2xl tracking-tighter">{stats.total_leads}</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-2xl bg-success/10 flex items-center justify-center">
+                            <TrendingUp className="w-5 h-5 text-success" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="type-ui text-[10px] uppercase tracking-widest text-muted-foreground/70 font-bold mb-0.5">Conversión</span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="font-mono font-bold text-2xl tracking-tighter text-success">{stats.conversion_rate}</span>
+                                <span className="text-xs font-bold text-success/70">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Kanban Board */}
             <DragDropContext onDragEnd={handleDragEnd}>
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-4 gap-6">
                     {COLUMNS.map(column => (
                         <div
                             key={column.id}
@@ -360,10 +422,13 @@ export default function LeadsPage() {
                                                                 {urgency.isGhost && <Ghost className="w-3 h-3" />}
                                                                 <Clock className="w-3 h-3" />
                                                                 <span>{formatTimeAgo(lead.created_at)}</span>
-                                                                {lead.source !== 'Manual' && (
-                                                                    <span className="px-1.5 py-0.5 bg-muted rounded text-foreground/60">
-                                                                        {lead.source}
-                                                                    </span>
+                                                                {lead.sherlock_metrics?.total_score !== undefined && (
+                                                                    <div className="flex items-center gap-1 ml-auto">
+                                                                        <div className="w-1.5 h-1.5 rounded-full bg-brand" />
+                                                                        <span className="font-mono font-bold text-foreground">
+                                                                            {lead.sherlock_metrics.total_score}
+                                                                        </span>
+                                                                    </div>
                                                                 )}
                                                             </div>
                                                         </div>
@@ -496,7 +561,7 @@ function CreateLeadModal({
                             }
                         }}
                         disabled={!firstName || !lastName}
-                        className="px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors disabled:opacity-50"
+                        className="px-4 py-2 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-95 transition-all disabled:opacity-50"
                     >
                         Crear Lead
                     </button>
@@ -598,31 +663,31 @@ function LeadDetailSheet({
     return (
         <div className="fixed inset-0 bg-black/50 flex justify-end z-50" onClick={onClose}>
             <div
-                className="bg-card w-full max-w-lg h-full shadow-2xl animate-slide-in-right overflow-y-auto"
+                className="bg-card w-full max-w-lg h-full shadow-2xl animate-slide-in-right flex flex-col"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-5 text-white sticky top-0">
+                <div className="bg-gradient-to-br from-brand via-brand/90 to-brand/80 px-6 py-5 text-white sticky top-0 z-10 shadow-lg border-b border-white/10">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-xl font-bold">
+                            <h2 className="type-h2 font-bold transition-all">
                                 {lead.first_name} {lead.last_name}
                             </h2>
-                            <p className="text-purple-200 text-sm mt-0.5">{lead.email || 'Sin email'}</p>
+                            <p className="text-white/70 text-sm mt-0.5">{lead.email || 'Sin email'}</p>
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 hover:bg-card/10 rounded-lg transition-colors"
+                            className="p-2 hover:bg-white/10 active:scale-90 rounded-lg transition-all"
                         >
                             <XCircle className="w-5 h-5" />
                         </button>
                     </div>
                     <div className="flex items-center justify-between mt-4">
                         <div className="flex items-center gap-3">
-                            <span className="px-3 py-1 bg-card/20 rounded-full text-sm font-medium">
+                            <span className="px-3 py-1 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-xs font-bold uppercase tracking-wider">
                                 {lead.status}
                             </span>
-                            <span className="text-sm text-purple-200">
+                            <span className="text-sm text-white/60">
                                 vía {lead.source}
                             </span>
                         </div>
@@ -634,7 +699,7 @@ function LeadDetailSheet({
                                         href={getWhatsAppUrl(lead)}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-2 bg-card/10 hover:bg-card/20 rounded-lg transition-colors"
+                                        className="p-2 bg-white/10 hover:bg-white/20 active:scale-95 rounded-lg transition-all"
                                     >
                                         <MessageCircle className="w-4 h-4" />
                                     </a>
@@ -647,7 +712,7 @@ function LeadDetailSheet({
                                         navigator.clipboard.writeText(bookingUrl);
                                         alert('Link de reserva copiado al portapapeles');
                                     }}
-                                    className="p-2 bg-card/10 hover:bg-card/20 rounded-lg transition-colors"
+                                    className="p-2 bg-white/10 hover:bg-white/20 active:scale-95 rounded-lg transition-all"
                                 >
                                     <Link className="w-4 h-4" />
                                 </button>
@@ -657,7 +722,7 @@ function LeadDetailSheet({
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto p-6 space-y-8">
                     {/* Editable Contact Info */}
                     <div className="space-y-4">
                         <h3 className="font-medium text-foreground">Información de Contacto</h3>
@@ -704,14 +769,14 @@ function LeadDetailSheet({
                     </div>
 
                     {/* Source Details */}
-                    {lead.source_details && Object.keys(lead.source_details).length > 0 && (
-                        <div className="bg-blue-50/50 dark:bg-muted/50 rounded-xl p-4 border border-blue-100 dark:border-blue-500/30">
-                            <h3 className="font-medium text-blue-700 dark:text-blue-400 mb-2">Origen del Lead</h3>
-                            <div className="space-y-1 text-sm">
+                    {lead.source_details && (
+                        <div className="bg-muted/50 border border-border/50 rounded-xl p-4">
+                            <h3 className="type-ui font-bold text-brand uppercase tracking-widest text-[10px] mb-3">Origen del Lead</h3>
+                            <div className="space-y-2 text-sm">
                                 {Object.entries(lead.source_details).map(([key, value]) => (
-                                    <div key={key} className="flex items-center gap-2">
-                                        <span className="text-blue-500 dark:text-blue-400/70 capitalize">{key.replace(/_/g, ' ')}:</span>
-                                        <span className="text-blue-800 dark:text-blue-300">{String(value)}</span>
+                                    <div key={key} className="flex items-center justify-between border-b border-border/30 pb-1 last:border-0">
+                                        <span className="text-muted-foreground/70 capitalize text-xs">{key.replace(/_/g, ' ')}</span>
+                                        <span className="text-foreground font-medium">{String(value)}</span>
                                     </div>
                                 ))}
                             </div>
@@ -719,13 +784,11 @@ function LeadDetailSheet({
                     )}
 
                     {/* Created date */}
-                    <div className="text-sm text-muted-foreground">
-                        Creado: {new Date(lead.created_at).toLocaleDateString('es-ES', {
+                    <div className="type-ui text-[10px] text-muted-foreground/60 uppercase tracking-tight">
+                        Registrado el {new Date(lead.created_at).toLocaleDateString('es-ES', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
                         })}
                     </div>
 
@@ -736,53 +799,111 @@ function LeadDetailSheet({
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
                             rows={5}
-                            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none"
+                            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none transition-all"
                             placeholder="Añade notas sobre este lead..."
                         />
                     </div>
 
-                    {/* Save Changes Button */}
-                    {hasChanges && (
-                        <button
-                            onClick={handleSave}
-                            disabled={saving || !firstName || !lastName}
-                            className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors font-medium disabled:opacity-50"
-                        >
-                            {saving ? 'Guardando...' : 'Guardar Cambios'}
-                        </button>
+                    {/* v1.6 CRM: Cortex Shadow Profile Widget */}
+                    {(lead.sherlock_metrics || lead.shadow_profile) && (
+                        <div className="bg-muted/30 border border-brand/10 rounded-xl p-5 space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-brand animate-pulse" />
+                                <h3 className="text-xs font-mono font-bold text-brand uppercase tracking-widest">
+                                    Cortex Shadow Profile
+                                </h3>
+                            </div>
+
+                            {lead.sherlock_metrics && (
+                                <div className="grid grid-cols-4 gap-3">
+                                    {[
+                                        { label: 'R', full: 'Risk', val: lead.sherlock_metrics.r },
+                                        { label: 'N', full: 'Need', val: lead.sherlock_metrics.n },
+                                        { label: 'A', full: 'Authority', val: lead.sherlock_metrics.a },
+                                        { label: 'V', full: 'Velocity', val: lead.sherlock_metrics.v },
+                                    ].map(metric => {
+                                        const val = metric.val ?? 50;
+                                        const colorClass = val > 75 ? 'text-emerald-500' : val > 40 ? 'text-amber-500' : 'text-red-500';
+                                        return (
+                                            <div key={metric.label} className="bg-background rounded-lg p-2 text-center border border-border/50 shadow-sm">
+                                                <p className="text-[9px] text-muted-foreground uppercase font-medium">{metric.label}</p>
+                                                <p className={`font-mono font-bold text-lg ${colorClass}`}>
+                                                    {metric.val ?? '--'}
+                                                </p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            {lead.shadow_profile && (
+                                <div className="space-y-4 pt-2">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Intención</span>
+                                        <p className="text-sm text-foreground/90 italic">"{lead.shadow_profile.intent}"</p>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Estilo</span>
+                                        <p className="text-sm font-medium">{lead.shadow_profile.communication_style}</p>
+                                    </div>
+
+                                    {lead.shadow_profile.contact_suggestion && (
+                                        <div className="bg-brand/5 border border-brand/10 rounded-lg p-3 mt-2">
+                                            <span className="text-[10px] font-bold text-brand uppercase tracking-wider block mb-1">Sugerencia de Contacto</span>
+                                            <p className="text-xs text-foreground/80 leading-relaxed font-medium">
+                                                {lead.shadow_profile.contact_suggestion}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {/* Danger Zone */}
-                    <div className="border-t border-border pt-4">
+                    <div className="pt-8 mt-8 border-t border-border/50">
                         <button
                             onClick={handleDelete}
                             disabled={deleting}
-                            className="text-sm text-red-500 hover:text-red-700 transition-colors"
+                            className="text-xs text-muted-foreground hover:text-risk transition-colors flex items-center gap-2 px-2"
                         >
+                            <Ghost className="w-3 h-3" />
                             {deleting ? 'Eliminando...' : 'Eliminar lead permanentemente'}
                         </button>
                     </div>
                 </div>
 
-                {/* Actions */}
-                <div className="sticky bottom-0 bg-card border-t border-border p-4 flex items-center gap-3">
-                    <button
-                        onClick={handleMarkLost}
-                        className="flex-1 px-4 py-3 border border-red-200 text-red-600 rounded-xl hover:bg-red-500/10 dark:hover:bg-red-500/20 transition-colors font-medium"
-                    >
-                        <XCircle className="w-4 h-4 inline mr-2" />
-                        Perdido
-                    </button>
-                    <button
-                        onClick={onConvert}
-                        className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 transition-colors font-medium shadow-lg shadow-purple-200"
-                    >
-                        <ArrowRightCircle className="w-4 h-4 inline mr-2" />
-                        Convertir a {terminology.singular}
-                    </button>
+                {/* Sticky Footer Actions */}
+                <div className="p-6 bg-card border-t border-border flex flex-col gap-4 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
+                    {hasChanges && (
+                        <button
+                            onClick={handleSave}
+                            disabled={saving || !firstName || !lastName}
+                            className="w-full px-4 py-3 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-[0.98] transition-all font-bold disabled:opacity-50 shadow-md shadow-brand/10"
+                        >
+                            {saving ? 'Guardando...' : 'Guardar Cambios'}
+                        </button>
+                    )}
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleMarkLost}
+                            className="flex-1 px-4 py-3 border border-risk/20 text-risk rounded-xl hover:bg-risk/5 active:scale-95 transition-all font-bold type-ui"
+                        >
+                            <XCircle className="w-4 h-4 inline mr-2" />
+                            Perdido
+                        </button>
+                        <button
+                            onClick={onConvert}
+                            className="flex-1 px-4 py-3 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-95 transition-all font-bold type-ui shadow-lg shadow-brand/20"
+                        >
+                            <ArrowRightCircle className="w-4 h-4 inline mr-2" />
+                            Convertir a {terminology.singular}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
-

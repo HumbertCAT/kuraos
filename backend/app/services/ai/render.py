@@ -98,6 +98,7 @@ def get_system_prompt(
         "help_bot": "help_v1.jinja2",
         "briefing": "daily_briefing_v1.jinja2",  # Standardized v1.5.9
         "ai_enhancement": "clinical_v1.jinja2",
+        "sales_profiling": "sales_profiling_v1.jinja2",  # v1.6 CRM Connect
     }
 
     template_name = TASK_TEMPLATES.get(task_type, "clinical_v1.jinja2")
