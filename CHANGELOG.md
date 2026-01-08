@@ -15,7 +15,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
-## [1.5.9-HF12] - 2026-01-08 💎 THE FINAL STABILIZER
+## [1.5.9-HF13] - 2026-01-08 📡 THE PIPE CLEANER
+
+### ✨ Global Clinical Integrity
+- **Database Consistency**: Fixed `NotNullViolation` in `AiUsageLog` by ensuring `activity_type` is always populated across all AI service points.
+- **Pipeline Heartbeat**: Resolved silent stalls in clinical processing by fixing `logger` NameErrors and verifying `aiofiles` availability.
+- **Stable UI**: Successfully re-enabled display of AI Governance logs and token accounting.
+
+---
+
+## [1.5.9-HF12] - 2026-01-08 💎 THE FINAL STABILIZER (Legacy)
 
 ### ✨ AI Infrastructure
 - **Large File Stability**: Prioritized GCS references in clinical pipelines to prevent memory pressure on files > 20MB.
