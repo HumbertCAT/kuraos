@@ -401,12 +401,12 @@ Just output the exact words spoken."""
 
         # Check if GCS URI or local path
         if audio_uri.startswith("gs://"):
-            # v1.5.9-hf7: Large GCS File Routing
-            # For GCS files, we use Gemini 1.5 Pro to handle heavy context
-            logger.info(f"🚀 Processing GCS audio ({audio_uri}) via Gemini 1.5 Pro")
+            # v1.5.9-hf8: Large GCS File Routing
+            # For GCS files, we use Gemini 2.5 Pro to handle heavy context
+            logger.info(f"🚀 Processing GCS audio ({audio_uri}) via Gemini 2.5 Pro")
             from vertexai.generative_models import GenerativeModel
 
-            pro_model = GenerativeModel("gemini-1.5-pro")
+            pro_model = GenerativeModel("gemini-2.5-pro")
 
             # We override the default analyze_multimodal to use the specific pro_model instance
             # for this high-capacity request.
@@ -425,7 +425,7 @@ Just output the exact words spoken."""
                 tokens_output=getattr(
                     response.usage_metadata, "candidates_token_count", 0
                 ),
-                model_id="gemini-1.5-pro",
+                model_id="gemini-2.5-pro",
                 provider_id=self.provider_id,
             )
         else:

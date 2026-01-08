@@ -15,6 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.5.9-HF8] - 2026-01-08 💎💎 TRUE STABILITY
+
+### ✨ AI Model Alignment
+- **Gemini 2.5 Pro Routing**: Corrected the model version from `1.5` to `2.5 Pro` for high-capacity routing, aligning with the AletheIA 2.5 fleet standards.
+
+---
+
 ## [1.5.9-HF7] - 2026-01-08 💎 TOTAL STABILITY
 
 ### ✨ AI Routing & Morning Pulse
