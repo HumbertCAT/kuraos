@@ -5,9 +5,9 @@ interface PageProps {
 }
 
 /**
- * AIGov section root - redirects to financials (default sub-section)
+ * AIGov section root - redirects to ledger (default sub-section)
  */
 export default async function AiGovPage({ params }: PageProps) {
     const { locale } = await params;
-    redirect(`/${locale}/admin/aigov/financials`);
+    redirect(`/${locale}/admin/aigov/ledger`);
 }

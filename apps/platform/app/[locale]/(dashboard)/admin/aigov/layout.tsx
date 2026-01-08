@@ -12,10 +12,10 @@ import Link from 'next/link';
 import { Brain, Activity, Settings, TrendingUp, Play, Route } from 'lucide-react';
 
 const TABS = [
-    { id: 'routing', label: 'Routing', icon: Route, path: 'routing' },
-    { id: 'models', label: 'Models', icon: Brain, path: 'models' },
     { id: 'ledger', label: 'Ledger', icon: TrendingUp, path: 'ledger' },
+    { id: 'routing', label: 'Routing', icon: Route, path: 'routing' },
     { id: 'logs', label: 'Logs', icon: Activity, path: 'logs' },
+    { id: 'models', label: 'Models', icon: Brain, path: 'models' },
     { id: 'run', label: 'Run', icon: Play, path: 'run' },
 ];
 
@@ -25,7 +25,7 @@ export default function AiGovLayout({ children }: { children: React.ReactNode })
     const locale = params.locale as string || 'es';
 
     // Determine active tab from pathname
-    const activeTab = TABS.find(tab => pathname.includes(`/aigov/${tab.path}`))?.id || 'routing';
+    const activeTab = TABS.find(tab => pathname.includes(`/aigov/${tab.path}`))?.id || 'ledger';
 
     return (
         <div className="space-y-6">
@@ -53,8 +53,8 @@ export default function AiGovLayout({ children }: { children: React.ReactNode })
                             key={tab.id}
                             href={`/${locale}/admin/aigov/${tab.path}`}
                             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${isActive
-                                    ? 'bg-card text-foreground shadow-sm'
-                                    : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
+                                ? 'bg-card text-foreground shadow-sm'
+                                : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
                                 }`}
                         >
                             <Icon className="w-4 h-4" />
