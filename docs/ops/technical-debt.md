@@ -1,9 +1,9 @@
 # Technical Debt Register
 
 > [!NOTE]
-> **Status**: Living Document (v1.3.9.5)  
+> **Status**: Living Document (v1.6.4)  
 > **Purpose**: Active technical debt tracking for KURA OS  
-> **Last Updated**: 2026-01-06 (v1.3.9.5 The Immune System)
+> **Last Updated**: 2026-01-08 (v1.6.4 The Identity Vault)
 
 This document tracks **actionable** technical debt that requires resolution. Resolved items belong in the [CHANGELOG](../../CHANGELOG.md).
 
@@ -11,9 +11,61 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ## 🔴 CRITICAL (Active Debt)
 
-*No critical debt items at this time.*
+### TD-86: CI Innate Pipeline Broken
+**File**: `.github/workflows/ci-innate.yml`  
+**Symptom**: All GitHub Actions runs failing since v1.5.9-HF9+  
+**Impact**: No automated backend tests running on push  
+**Risk**: Regressions can slip into production undetected  
+**Action**: Investigate failure cause, fix pipeline, re-enable green builds  
 
 ---
+
+## 🟠 MEDIUM (Should Fix Soon)
+
+### TD-81: Identity Vault Missing Composite Index
+**File**: `backend/alembic/versions/e6766c8a25d4...py`  
+**Issue**: No composite index on `(org_id, email, phone)` for faster lookups  
+**Impact**: Slower identity resolution at scale (>10k identities)  
+**Action**: Add migration with composite index
+
+### TD-82: Contacts 360 Page No Pagination
+**File**: `apps/platform/app/[locale]/(dashboard)/contacts/[id]/page.tsx`  
+**Issue**: Loads ALL leads + patients for an identity without pagination  
+**Impact**: Slow load for high-volume contacts (>50 records)  
+**Action**: Add pagination or lazy loading to timeline
+
+---
+
+## 🟡 LOW (When Convenient)
+
+### TD-80: Health Endpoint Version Hardcoded
+**File**: `backend/app/main.py:386`  
+**Issue**: Version string manually updated each release  
+**Impact**: Easy to forget, causes confusion about deployed version  
+**Action**: Read version from `pyproject.toml` or env var
+
+### TD-83: Lead `is_prospect` Flag Deferred
+**Origin**: v1.6.4 planning  
+**Issue**: Leads lack `is_prospect` boolean for qualified-but-not-converted tracking  
+**Impact**: Cannot distinguish "warm lead" from "cold lead" in CRM  
+**Action**: Add column + migration when CRM v2 prioritized
+
+### TD-84: Identity Backfill Script Manual
+**File**: `backend/scripts/backfill_identities.py`  
+**Issue**: Requires manual execution after migration  
+**Impact**: New deployments need extra step  
+**Action**: Integrate into migration or post-migrate hook
+
+---
+
+## ✅ Recently Resolved (v1.6.x)
+
+| ID | Description | Resolved In |
+|----|-------------|-------------|
+| TD-69 | Action Interpolation missing | v1.6.2 |
+| TD-73 | Email Placeholders hardcoded | v1.6.2 |
+| TD-75 | Form Submissions Blindness | v1.6.3 |
+| TD-77 | Sherlock Score not updating | v1.6.2 |
 
 ---
 
