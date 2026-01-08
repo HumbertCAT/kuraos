@@ -423,38 +423,42 @@ export default function LeadsPage() {
                                                                 {urgency.isGhost && <Ghost className="w-3 h-3" />}
                                                                 <Clock className="w-3 h-3" />
                                                                 <span>{formatTimeAgo(lead.created_at)}</span>
-                                                                {lead.sherlock_metrics?.total_score !== undefined && (
-                                                                    <div className="flex items-center gap-1.5 ml-auto">
-                                                                        {/* Quick Actions v1.6.2 */}
-                                                                        <Tooltip content="Editar detalles">
-                                                                            <button
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation();
-                                                                                    setSelectedLead(lead);
-                                                                                }}
-                                                                                className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-brand transition-all active:scale-95"
-                                                                            >
-                                                                                <Edit className="w-3.5 h-3.5" />
-                                                                            </button>
-                                                                        </Tooltip>
-                                                                        <Tooltip content={`Convertir a ${terminology.singular}`}>
-                                                                            <button
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation();
-                                                                                    handleConvert(lead.id);
-                                                                                }}
-                                                                                className="p-1.5 rounded-lg hover:bg-brand/10 text-muted-foreground hover:text-brand transition-all active:scale-95"
-                                                                            >
-                                                                                <ArrowRightCircle className="w-3.5 h-3.5" />
-                                                                            </button>
-                                                                        </Tooltip>
 
-                                                                        <div className="w-1.5 h-1.5 rounded-full bg-brand ml-1" />
-                                                                        <span className="font-mono font-bold text-foreground">
-                                                                            {lead.sherlock_metrics.total_score}
-                                                                        </span>
-                                                                    </div>
-                                                                )}
+                                                                {/* Quick Actions v1.6.2-HF1 - Always visible */}
+                                                                <div className="flex items-center gap-1.5 ml-auto">
+                                                                    <Tooltip content="Editar detalles">
+                                                                        <button
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                setSelectedLead(lead);
+                                                                            }}
+                                                                            className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-brand transition-all active:scale-95"
+                                                                        >
+                                                                            <Edit className="w-3.5 h-3.5" />
+                                                                        </button>
+                                                                    </Tooltip>
+                                                                    <Tooltip content={`Convertir a ${terminology.singular}`}>
+                                                                        <button
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                handleConvert(lead.id);
+                                                                            }}
+                                                                            className="p-1.5 rounded-lg hover:bg-brand/10 text-muted-foreground hover:text-brand transition-all active:scale-95"
+                                                                        >
+                                                                            <ArrowRightCircle className="w-3.5 h-3.5" />
+                                                                        </button>
+                                                                    </Tooltip>
+
+                                                                    {/* Sherlock Score - Only if available */}
+                                                                    {lead.sherlock_metrics?.total_score !== undefined && (
+                                                                        <>
+                                                                            <div className="w-1.5 h-1.5 rounded-full bg-brand ml-1" />
+                                                                            <span className="font-mono font-bold text-foreground">
+                                                                                {lead.sherlock_metrics.total_score}
+                                                                            </span>
+                                                                        </>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     );
