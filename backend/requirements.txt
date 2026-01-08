@@ -7,7 +7,7 @@
 # =============================================================================
 
 # Google Cloud - AI (large, rarely changes)
-google-genai==1.2.0
+google-genai>=1.37.0,<2.0.0
 google-generativeai==0.8.6
 google-cloud-aiplatform==1.132.0
 google-cloud-speech==2.35.0
