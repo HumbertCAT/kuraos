@@ -15,6 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.5.9-HF9] - 2026-01-08 💎💎💎 FINAL POLISH
+
+### ✨ AI Infrastructure
+- **Unified Pro Routing**: Fixed a Python shadowing bug (`UnboundLocalError`) that affected local file routing.
+- **Data Coherence**: Unified the return types for transcription pipelines to ensure 100% telemetry accuracy.
+
+---
+
 ## [1.5.9-HF8] - 2026-01-08 💎💎 TRUE STABILITY
 
 ### ✨ AI Model Alignment

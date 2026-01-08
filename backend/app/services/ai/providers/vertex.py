@@ -401,17 +401,9 @@ Just output the exact words spoken."""
 
         # Check if GCS URI or local path
         if audio_uri.startswith("gs://"):
-            # v1.5.9-hf8: Large GCS File Routing
-            # For GCS files, we use Gemini 2.5 Pro to handle heavy context
+            # v1.5.9-hf9: Unified Pro Routing
             logger.info(f"🚀 Processing GCS audio ({audio_uri}) via Gemini 2.5 Pro")
-            from vertexai.generative_models import GenerativeModel
-
             pro_model = GenerativeModel("gemini-2.5-pro")
-
-            # We override the default analyze_multimodal to use the specific pro_model instance
-            # for this high-capacity request.
-            from vertexai.generative_models import Part
-
             media_part = Part.from_uri(uri=audio_uri, mime_type=mime_type)
 
             response = await pro_model.generate_content_async([
@@ -419,15 +411,18 @@ Just output the exact words spoken."""
                 media_part,
             ])
 
-            return AIResponse(
-                text=response.text,
-                tokens_input=getattr(response.usage_metadata, "prompt_token_count", 0),
-                tokens_output=getattr(
+            return {
+                "text": response.text,
+                "duration": None,
+                "language": language,
+                "model_id": "gemini-2.5-pro",
+                "tokens_input": getattr(
+                    response.usage_metadata, "prompt_token_count", 0
+                ),
+                "tokens_output": getattr(
                     response.usage_metadata, "candidates_token_count", 0
                 ),
-                model_id="gemini-2.5-pro",
-                provider_id=self.provider_id,
-            )
+            }
         else:
             # Local path: Read bytes via helper
             content = await self._read_local_file(audio_uri)
@@ -437,9 +432,8 @@ Just output the exact words spoken."""
                 logger.info(
                     f"🔄 Routing long audio ({len(content)} bytes) to gemini-2.5-pro"
                 )
-                from vertexai.generative_models import GenerativeModel
+                pro_model = GenerativeModel("gemini-2.5-pro")
 
-                # v1.5.9-hf1: Model Fallback (Pro -> Flash) for Quota/Capacity issues
                 try:
                     media_part = Part.from_data(data=content, mime_type=mime_type)
                     resp = await pro_model.generate_content_async([
@@ -451,7 +445,13 @@ Just output the exact words spoken."""
                         "text": resp.text,
                         "duration": None,
                         "language": language,
-                        "routed_model": "gemini-2.5-pro",
+                        "model_id": "gemini-2.5-pro",
+                        "tokens_input": getattr(
+                            resp.usage_metadata, "prompt_token_count", 0
+                        ),
+                        "tokens_output": getattr(
+                            resp.usage_metadata, "candidates_token_count", 0
+                        ),
                     }
                 except Exception as e:
                     logger.warning(
