@@ -103,6 +103,7 @@ def log_ai_usage_background(
             provider="vertex_ai",
             model_id=model_id,
             task_type="help_bot",
+            activity_type="help_bot",  # v1.5.9-hf13: Fix NotNullViolation
             tokens_input=tokens_in,
             tokens_output=tokens_out,
             cost_provider_usd=float(cost_provider),

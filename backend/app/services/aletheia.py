@@ -152,6 +152,7 @@ class AletheIA:
                 provider="vertex-google",
                 model_id=model_id,
                 task_type=task_type,
+                activity_type=task_type,  # v1.5.9-hf13: Fix NotNullViolation
                 tokens_input=tokens_in,
                 tokens_output=tokens_out,
                 cost_provider_usd=float(cost_provider),

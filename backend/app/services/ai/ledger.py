@@ -19,6 +19,9 @@ from sqlalchemy import select
 
 from app.services.ai.base import AIResponse
 from app.core.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -208,6 +211,7 @@ class CostLedger:
             provider=response.provider_id,
             model_id=response.model_id,
             task_type=task_type,
+            activity_type=task_type,  # v1.5.9-hf12: Fix NotNullViolation
             tokens_input=costs["tokens_input"],
             tokens_output=costs["tokens_output"],
             cost_provider_usd=costs["cost_provider_usd"],  # EUR, legacy column name

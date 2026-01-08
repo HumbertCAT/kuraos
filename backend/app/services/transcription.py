@@ -75,6 +75,7 @@ async def log_whisper_usage(
             provider="openai",
             model_id="whisper-1",
             task_type="transcription",
+            activity_type="transcription",  # v1.5.9-hf13: Fix NotNullViolation
             tokens_input=audio_duration_seconds,  # Using seconds as "tokens"
             tokens_output=0,
             cost_provider_usd=float(cost_provider),

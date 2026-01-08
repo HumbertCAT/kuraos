@@ -50,6 +50,7 @@ async def grant_referral_credits(
         id=uuid.uuid4(),
         organization_id=organization_id,
         task_type="referral_reward",
+        activity_type="referral_reward",  # v1.5.9-hf13: Fix NotNullViolation
         provider="kura-growth",
         model_id="mycelium-v1",
         tokens_input=0,
