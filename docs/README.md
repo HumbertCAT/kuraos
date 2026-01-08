@@ -19,6 +19,8 @@ Core system documentation for understanding how Kura OS works.
 |:---|:---|
 | [aletheia-system.md](./architecture/aletheia-system.md) | AI engine, risk detection, automation agents |
 | [journeys-engine.md](./architecture/journeys-engine.md) | Patient stages, lifecycle transitions |
+| [**trinity-crm.md**](./architecture/trinity-crm.md) | **The Trinity: CONNECT/PRACTICE/GROW pillars** |
+| [**identity-vault.md**](./architecture/identity-vault.md) | **Universal Contact ID (UUID deduplication)** |
 | [decisions/](./architecture/decisions/) | Architecture Decision Records (ADRs) |
 
 ---

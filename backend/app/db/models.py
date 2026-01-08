@@ -451,6 +451,11 @@ class Patient(Base):
         DateTime(timezone=True), nullable=True
     )
 
+    # The Identity Vault: Universal contact ID across domains
+    identity_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("identities.id"), nullable=True, index=True
+    )
+
     # Kura Cortex v1.5: Patient-level privacy override
     # If set, takes precedence over organization default
     privacy_tier_override: Mapped[Optional[PrivacyTier]] = mapped_column(
@@ -513,6 +518,11 @@ class Lead(Base):
     # sherlock_metrics: {"r": 80, "n": 90, "a": 50, "v": 70, "total_score": 72}
     sherlock_metrics: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
+    # The Identity Vault: Universal contact ID across domains
+    identity_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("identities.id"), nullable=True, index=True
+    )
+
     # Conversion tracking
     converted_patient_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("patients.id"), nullable=True
@@ -534,6 +544,61 @@ class Lead(Base):
     converted_patient: Mapped[Optional["Patient"]] = relationship()
 
     __table_args__ = (Index("ix_leads_org_status", "organization_id", "status"),)
+
+
+class Identity(Base):
+    """Universal Contact Identity - The Identity Vault.
+
+    Deduplicates contacts across Lead/Patient/Follower domains using
+    email and phone normalization. Enables 360° contact view and
+    cross-domain timeline tracking while maintaining HIPAA separation.
+
+    Architecture: GEM's hybrid approach (pragmatic + scalable)
+    - Primary identifiers: email + phone (normalized)
+    - Waterfall matching: email → phone → create new
+    - Future: Merge support for discovered duplicates
+
+    v1.6.4: Phase 1 - Basic deduplication
+    v2.0: Phase 2 - Full contact_identifiers table for multiple emails/phones
+    """
+
+    __tablename__ = "identities"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"))
+
+    # Normalized identifiers (IdentityResolver handles normalization)
+    primary_email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    primary_phone: Mapped[Optional[str]] = mapped_column(
+        String(20), nullable=True
+    )  # E.164 format
+
+    # Timestamps
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), onupdate=func.now(), server_default=func.now()
+    )
+
+    # Merge/Deduplication support (future)
+    merged_with: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("identities.id"), nullable=True
+    )
+    is_merged: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    # Relationships
+    organization: Mapped["Organization"] = relationship()
+
+    __table_args__ = (
+        # Unique constraints (one email/phone per org)
+        Index("uq_identity_org_email", "organization_id", "primary_email", unique=True),
+        Index("uq_identity_org_phone", "organization_id", "primary_phone", unique=True),
+        # Performance indexes
+        Index("idx_identities_email", "organization_id", "primary_email"),
+        Index("idx_identities_phone", "organization_id", "primary_phone"),
+        Index("idx_identities_merged", "is_merged"),
+    )
 
 
 class Event(Base):

@@ -128,17 +128,22 @@ async def get_available_slots(
 ```
 
 ### Anti-Collision: Transactional Locking
-**File**: `backend/app/api/v1/public_booking.py` (lines 290-320)
+
+**Problema**: Previene **dobles bookings** cuando dos usuarios intentan reservar el último slot disponible simultáneamente (condición de carrera "Phantom Read").
+
+**Mecanismo**: Bloqueo pesimista de base de datos que serializa las reservas por terapeuta.
+
+**File**: `backend/app/api/v1/public_booking.py` (lines 320-350)
 
 ```python
-# Lock the therapist record to serialize concurrent requests
+# 1. Lock the therapist record to serialize concurrent requests
 await db.execute(
     select(User.id)
     .where(User.id == therapist_id)
-    .with_for_update()
+    .with_for_update()  # PostgreSQL: SELECT FOR UPDATE
 )
 
-# Count overlapping bookings atomically
+# 2. Count overlapping bookings atomically
 overlapping = await db.execute(
     select(func.count(Booking.id)).where(
         Booking.therapist_id == therapist_id,
@@ -148,9 +153,12 @@ overlapping = await db.execute(
     )
 )
 
+# 3. Verify capacity
 if overlapping >= service.capacity:
     raise HTTPException(409, "Slot fully booked")
 ```
+
+**Resultado**: La segunda petición espera a que la primera complete. Si el slot se llenó, recibe **HTTP 409 Conflict**. Garantiza 0% de overbooking.
 
 ---
 

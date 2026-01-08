@@ -15,6 +15,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.6.4] - 2026-01-08
+
+### 🔐 The Identity Vault - Universal Contact Deduplication
+
+**Added**:
+- **Identity Resolution System**: Universal contact ID across Lead/Patient/Follower domains
+  - New `identities` table with normalized email/phone (E.164 format)
+  - `IdentityResolver` service (GEM architecture v1)
+    - Robust E.164 phone normalization using `phonenumbers` library
+    - Waterfall matching: email → phone → create new
+    - Automatic enrichment of missing contact data
+    - IntegrityError handling for race conditions
+    - Comprehensive logging for audit trail
+  - `identity_id` FK added to `leads` and `patients` tables
+  - Performance indexes for email/phone lookups
+- **API Endpoints** (Contacts-360):
+  - `GET /contacts/{identity_id}` - Unified 360° timeline view
+  - `GET /contacts/{identity_id}/leads` - All leads for identity
+  - `GET /contacts/{identity_id}/patients` - All patients for identity
+  - `GET /contacts?email=X&phone=Y` - Search/deduplication check
+- **Frontend UI**:
+  - `/contacts/[id]` page with unified timeline
+  - Stats cards (Lead count + Patient count)
+  - Contact info banner (email, phone, first contact, total interactions)
+  - Chronological timeline merging Leads and Patients
+  - Navigation links to Lead/Patient detail views
+
+**Changed**:
+- `create_public_booking` endpoint: Now resolves universal identity before creating Lead/Patient
+- `create_lead` endpoint: Integrates IdentityResolver for deduplication
+- `Patient` and `Lead` models: Added `identity_id` foreign key
+
+**Infrastructure**:
+- Alembic migration `e6766c8a25d4_add_identities_table_and_fks`
+- Added `phonenumbers==8.13.27` to requirements (strict E.164 validation)
+- Backfill script executed: 1 lead + 9 patients linked to identities
+- Deduplication working: Juan Pérez has same identity_id across Lead + Patient
+
+---
+
 ## [1.6.3] - 2026-01-08 🔧💰 PUBLIC FORMS, AUTOMATION & FREE BOOKING
 
 ### ✨ Added
@@ -60,7 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.6.2] - 2026-01-08
+## [1.6.2] - 2026-01-08 🎯 RESOLVED: SHERLOCK BLINDNESS & PUBLIC 404
 
 ### Fixed
 - **Connect Sidebar Overlap**: Refactored `LeadDetailSheet` to be a non-blocking sidebar, allowing side-by-side work with AletheIA Observatory.

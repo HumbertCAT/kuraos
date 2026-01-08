@@ -160,8 +160,20 @@ async def create_lead(
     db: AsyncSession = Depends(get_db),
 ):
     """Create a new lead manually."""
+    # IDENTITY VAULT: Resolve universal identity
+    from app.services.identity_resolver import IdentityResolver
+
+    resolver = IdentityResolver(db, current_user.organization_id)
+    identity = await resolver.resolve_identity(
+        email=data.email,
+        phone=data.phone,
+        name=f"{data.first_name} {data.last_name}",
+        source="manual",
+    )
+
     lead = Lead(
         organization_id=current_user.organization_id,
+        identity_id=identity.id,  # Link to universal identity
         first_name=data.first_name,
         last_name=data.last_name,
         email=data.email,

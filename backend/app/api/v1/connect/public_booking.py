@@ -217,10 +217,25 @@ async def create_public_booking(
             detail="Selected slot is no longer available",
         )
 
-    # Find or create patient
-    # FEATURE: Discovery Auto-Conversion - check if email exists as Lead
+    # IDENTITY VAULT: Resolve universal identity first
+    from app.services.identity_resolver import IdentityResolver
     from app.db.models import Lead, LeadStatus
     from datetime import datetime as dt
+
+    # Step 1: Resolve identity (email + phone matching)
+    resolver = IdentityResolver(db, therapist.organization_id)
+    name_parts = booking_data.patient_name.split(" ", 1)
+    first_name = name_parts[0]
+    last_name = name_parts[1] if len(name_parts) > 1 else ""
+
+    identity = await resolver.resolve_identity(
+        email=booking_data.patient_email,
+        phone=booking_data.patient_phone,
+        name=booking_data.patient_name,
+        source="public_booking",
+    )
+
+    # Step 2: Find or create patient (linked to identity)
 
     patient_result = await db.execute(
         select(Patient).where(
@@ -277,6 +292,7 @@ async def create_public_booking(
             if service.price == 0:
                 created_lead = Lead(
                     organization_id=therapist.organization_id,
+                    identity_id=identity.id,  # Link to universal identity
                     first_name=first_name,
                     last_name=last_name,
                     email=booking_data.patient_email,
@@ -296,6 +312,7 @@ async def create_public_booking(
 
             patient = Patient(
                 organization_id=therapist.organization_id,
+                identity_id=identity.id,  # Link to universal identity
                 first_name=first_name,
                 last_name=last_name,
                 email=booking_data.patient_email,

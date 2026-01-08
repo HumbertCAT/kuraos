@@ -46,3 +46,4 @@ aiofiles==24.1.0
 # Testing (keep for local dev)
 pytest==7.4.4
 pytest-asyncio==0.23.3
+phonenumbers==8.13.27

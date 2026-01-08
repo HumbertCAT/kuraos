@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.6.1-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.6.4-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 
 ---
@@ -193,6 +193,8 @@ cd backend && .venv/bin/pip install -r requirements-test.txt
 ### 🧠 Architecture
 | Document | Description |
 |:---|:---|
+| [trinity-crm.md](docs/architecture/trinity-crm.md) | **The Trinity: CONNECT/PRACTICE/GROW pillars** |
+| [identity-vault.md](docs/architecture/identity-vault.md) | **Universal Contact ID (UUID deduplication)** |
 | [aletheia-system.md](docs/architecture/aletheia-system.md) | AI engine, risk detection, automation agents |
 | [journeys-engine.md](docs/architecture/journeys-engine.md) | Patient stages, lifecycle transitions |
 | [decisions/](docs/architecture/decisions/) | Architecture Decision Records (ADRs) |

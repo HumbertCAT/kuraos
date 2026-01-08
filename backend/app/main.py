@@ -36,6 +36,7 @@ from app.api.v1.connect import (
     public_booking_manage,
     integrations,
     twilio_webhook,
+    contacts,
 )
 
 # Practice: Pilar II - SERVIR (Patients, Bookings, Clinical) [HIPAA ZONE]
@@ -210,6 +211,11 @@ app.include_router(
     patients.router, prefix=f"{settings.API_V1_STR}/patients", tags=["Patients"]
 )
 app.include_router(leads.router, prefix=settings.API_V1_STR, tags=["CRM"])
+app.include_router(
+    contacts.router,
+    prefix=f"{settings.API_V1_STR}/contacts",
+    tags=["Contacts-360"],
+)
 app.include_router(
     booking.router, prefix=f"{settings.API_V1_STR}/booking", tags=["Booking"]
 )
