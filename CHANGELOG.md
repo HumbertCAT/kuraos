@@ -15,6 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.5.9-HF10] - 2026-01-08 🏆 THE HOLY GRAIL (CIGARRITO FIX)
+
+### ✨ Production Persistence
+- **GCS Persistence**: Clinical attachments and files are now explicitly uploaded to Google Cloud Storage in production.
+- **Cross-Deploy Integrity**: Uploads now survive scaling events and new deployments. No more 404s after a restart.
+
+---
+
 ## [1.5.9-HF9] - 2026-01-08 💎💎💎 FINAL POLISH
 
 ### ✨ AI Infrastructure

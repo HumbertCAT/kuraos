@@ -229,6 +229,25 @@ class StorageService:
         blob.upload_from_string(data, content_type=content_type)
         return f"gs://{self.bucket_name}/{blob_path}"
 
+    def upload_file(
+        self, data: bytes, filename: str, content_type: str, prefix: str = "uploads"
+    ) -> str:
+        """Upload a file to a specific prefix (default: uploads/).
+
+        Args:
+            data: Raw bytes of the file
+            filename: Name of the file
+            content_type: MIME type
+            prefix: GCS folder prefix
+
+        Returns:
+            GCS URI (gs://bucket/prefix/filename)
+        """
+        blob_path = f"{prefix}/{filename}"
+        blob = self.bucket.blob(blob_path)
+        blob.upload_from_string(data, content_type=content_type)
+        return f"gs://{self.bucket_name}/{blob_path}"
+
 
 # Singleton instance for the vault (lazy - no client created until first use)
 vault_storage = StorageService(VAULT_BUCKET)

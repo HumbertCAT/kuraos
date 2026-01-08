@@ -5,6 +5,8 @@ import uuid
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
 
 from app.api.deps import CurrentUser
+from app.services.storage import StorageService, MEDIA_BUCKET
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -55,9 +57,34 @@ async def upload_file(
     with open(file_path, "wb") as f:
         f.write(content)
 
+    # v1.5.9-hf10: Production GCS Persistence
+    # In Cloud Run, local disk is ephemeral. We MUST use GCS.
+    gcs_uri = None
+    if settings.GCS_BUCKET_NAME and not settings.FRONTEND_URL.startswith(
+        "http://localhost"
+    ):
+        try:
+            media_storage = StorageService(settings.GCS_BUCKET_NAME)
+            gcs_uri = media_storage.upload_file(
+                data=content,
+                filename=unique_name,
+                content_type=file.content_type,
+                prefix="uploads",
+            )
+            import logging
+
+            logging.info(f"☁️ File uploaded to GCS: {gcs_uri}")
+        except Exception as e:
+            import logging
+
+            logging.error(f"❌ Failed to upload to GCS: {e}")
+
     # Return URL path
+    # For now, we still return the local static path, but we'll ensure
+    # the backend can serve it from GCS if missing (Proxy/Redirect).
     return {
         "url": f"/static/uploads/{unique_name}",
+        "gcs_uri": gcs_uri,
         "filename": file.filename,
         "size": len(content),
         "content_type": file.content_type,

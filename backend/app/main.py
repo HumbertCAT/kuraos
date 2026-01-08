@@ -3,10 +3,12 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, RedirectResponse
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+import os
 
 from app.core.config import settings
 from app.core.logging import configure_logging
@@ -349,7 +351,26 @@ app.include_router(
 )
 
 
-# Mount static files for serving uploads
+# Hybrid Static Server: Local -> GCS Fallback
+@app.get("/static/uploads/{filename}", tags=["System"])
+async def serve_upload(filename: str):
+    """
+    Serve uploads with GCS fallback.
+    Cloud Run local disk is ephemeral; files not on disk are fetched from GCS.
+    """
+    local_path = os.path.join("static", "uploads", filename)
+    if os.path.exists(local_path):
+        return FileResponse(local_path)
+
+    # Fallback to GCS
+    # Assuming the file was uploaded to the 'uploads/' prefix in MEDIA_BUCKET
+    gcs_url = (
+        f"https://storage.googleapis.com/{settings.GCS_BUCKET_NAME}/uploads/{filename}"
+    )
+    return RedirectResponse(gcs_url)
+
+
+# Mount remaining static files (briefings, etc.)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
