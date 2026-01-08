@@ -105,9 +105,10 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     from fastapi import FastAPI
     from fastapi.middleware.cors import CORSMiddleware
     from app.api.v1.core import auth
-    from app.api.v1.practice import patients
+    from app.api.v1.practice import patients, clinical_entries
+    from app.api.v1.practice import booking
 
-    # Minimal test app without lifespan
+    # Test app with routers needed for tests
     test_app = FastAPI(title="Test App")
     test_app.add_middleware(
         CORSMiddleware,
@@ -121,6 +122,10 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     test_app.include_router(
         patients.router, prefix="/api/v1/patients", tags=["Patients"]
     )
+    test_app.include_router(
+        clinical_entries.router, prefix="/api/v1/clinical-entries", tags=["Clinical"]
+    )
+    test_app.include_router(booking.router, prefix="/api/v1/booking", tags=["Booking"])
 
     @test_app.get("/health")
     async def health():

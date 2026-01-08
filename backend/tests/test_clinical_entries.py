@@ -4,7 +4,6 @@ import pytest
 from httpx import AsyncClient
 
 
-@pytest.mark.skip(reason="TD-88: clinical-entries router not in minimal test app")
 class TestClinicalEntryEndpoints:
     """Test suite for /api/v1/clinical-entries endpoints."""
 
