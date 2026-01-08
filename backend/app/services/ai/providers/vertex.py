@@ -308,6 +308,9 @@ class VertexAIProvider(AIProvider):
             "text": response.text,
             "document_type": "clinical_document",
             "confidence": 0.95,
+            "tokens_input": response.tokens_input,
+            "tokens_output": response.tokens_output,
+            "model_id": self._model_name,
         }
 
     async def analyze_multimodal(

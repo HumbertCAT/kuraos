@@ -134,7 +134,15 @@ class CostLedger:
         TODO v1.4: Rename column to cost_provider_eur.
         """
         credit_rate = credit_rate or Decimal("1000")
-        pricing = cls.PRICING.get(response.model_id, cls.DEFAULT_PRICING)
+
+        # v1.5.9-hf12: Try to get dynamic pricing from Auditor first
+        from app.services.pricing_auditor import get_cached_pricing
+
+        dynamic_pricing = get_cached_pricing()
+
+        pricing = dynamic_pricing.get(response.model_id) or cls.PRICING.get(
+            response.model_id, cls.DEFAULT_PRICING
+        )
 
         # Calculate provider cost (per 1M tokens) - EUR pricing
         cost_input = (Decimal(response.tokens_input) / Decimal("1000000")) * pricing[

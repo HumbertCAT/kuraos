@@ -2,7 +2,7 @@
 
 > **The Operating System for Conscious Practitioners**
 
-[![Version](https://img.shields.io/badge/version-1.5.9-HF11-purple.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.9-HF12-purple.svg)](CHANGELOG.md)
 [![Status](https://img.shields.io/badge/status-Production-green.svg)](https://app.kuraos.ai)
 
 ---

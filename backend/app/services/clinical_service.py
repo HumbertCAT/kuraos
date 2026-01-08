@@ -184,9 +184,10 @@ class ClinicalService:
         # Check for file in metadata
         metadata = entry.entry_metadata or {}
         file_url = metadata.get("file_url")
+        gcs_uri = metadata.get("gcs_uri")  # v1.5.9-hf12: Prioritize GCS
 
-        # Prioritize explicit file_path, then metadata
-        actual_path = file_path or file_url
+        # Rule: GCS URI > Explicit file_path > Metadata file_url
+        actual_path = gcs_uri or file_path or file_url
 
         if actual_path:
             if entry.entry_type == EntryType.AUDIO:
