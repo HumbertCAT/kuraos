@@ -43,7 +43,8 @@ jobs:
       working-directory: backend
       env:
         # Testcontainers will spawn PostgreSQL via Docker
-        # These are fallback vars, actual DB comes from conftest.py
+        # DATABASE_URL is just for initial pydantic validation
+        DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test
         SECRET_KEY: test-secret-key-for-ci-only
         ALGORITHM: HS256
         # Skip slow tests in CI
