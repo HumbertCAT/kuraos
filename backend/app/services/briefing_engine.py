@@ -227,7 +227,6 @@ Output: Spanish script (~50 words)."""
 
             response = await provider.analyze_text(
                 content=content,
-                task_type="briefing",
                 context={"briefing_data": content},
             )
 

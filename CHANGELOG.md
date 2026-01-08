@@ -15,12 +15,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
-## [1.5.9-HF6] - 2026-01-08 🛑 CRISIS MANAGEMENT
+## [1.5.9-HF7] - 2026-01-08 💎 TOTAL STABILITY
 
-### 🐛 Critical Fixes
-- **NameError Fix**: Resolved `name 'datetime' is not defined` in `clinical_service.py` by adding missing imports. This fix restores the text analysis pipeline.
+### ✨ AI Routing & Morning Pulse
+- **Large Audio Routing (GCS)**: Forced high-capacity routing to `gemini-1.5-pro` for Cloud Storage URIs, ensuring robust processing of +20MB files without empty results.
+- **Briefing Engine Fix**: Resolved a `task_type` NameError in `BriefingEngine` to restore the Morning Pulse functionality.
+- **Audit Compliance**: Verified all AI entry points (Focus Card, Sentinel, Briefing, Timeline) are aligned with the Universal JSON Mandate.
 
 ---
+
+## [1.5.9-HF6] - 2026-01-08 🛑 CRISIS MANAGEMENT [DEPLOYED]
 
 ## [1.5.9-HF5] - 2026-01-08 🤺 OPERATION GRAND SLAM [DEPLOYED]
 

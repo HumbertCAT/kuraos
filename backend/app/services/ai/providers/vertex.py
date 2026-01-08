@@ -401,13 +401,32 @@ Just output the exact words spoken."""
 
         # Check if GCS URI or local path
         if audio_uri.startswith("gs://"):
-            # GCS: For now we default to provided model as we can't check size easily
-            target_model = self.model
-            response = await self.analyze_multimodal(
-                content=None,
-                mime_type=mime_type,
-                prompt=transcription_prompt,
-                gcs_uri=audio_uri,
+            # v1.5.9-hf7: Large GCS File Routing
+            # For GCS files, we use Gemini 1.5 Pro to handle heavy context
+            logger.info(f"🚀 Processing GCS audio ({audio_uri}) via Gemini 1.5 Pro")
+            from vertexai.generative_models import GenerativeModel
+
+            pro_model = GenerativeModel("gemini-1.5-pro")
+
+            # We override the default analyze_multimodal to use the specific pro_model instance
+            # for this high-capacity request.
+            from vertexai.generative_models import Part
+
+            media_part = Part.from_uri(uri=audio_uri, mime_type=mime_type)
+
+            response = await pro_model.generate_content_async([
+                transcription_prompt,
+                media_part,
+            ])
+
+            return AIResponse(
+                text=response.text,
+                tokens_input=getattr(response.usage_metadata, "prompt_token_count", 0),
+                tokens_output=getattr(
+                    response.usage_metadata, "candidates_token_count", 0
+                ),
+                model_id="gemini-1.5-pro",
+                provider_id=self.provider_id,
             )
         else:
             # Local path: Read bytes via helper
