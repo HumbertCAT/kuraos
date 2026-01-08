@@ -15,6 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.5.9-HF11] - 2026-01-08 📡 TELEMETRY RESTORED
+
+### ✨ AI Infrastructure
+- **Cortex Telemetry**: Restored full token accounting and logging for the V1.5 Cognitive Engine.
+- **AIGov Visibility**: AI Governance logs now correctly reflect usage, costs, and model IDs for all clinical pipelines.
+
+---
+
 ## [1.5.9-HF10] - 2026-01-08 🏆 THE HOLY GRAIL (CIGARRITO FIX)
 
 ### ✨ Production Persistence

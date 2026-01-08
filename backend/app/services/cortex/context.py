@@ -10,9 +10,9 @@ HIPAA Compliance:
 - Application code only sees references and outputs
 """
 
-import uuid
+from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any
+import uuid
 
 from app.db.models import PrivacyTier
 
@@ -65,6 +65,9 @@ class PatientEventContext:
     # Execution metadata
     pipeline_name: Optional[str] = None
     started_at: Optional[str] = None
+
+    # Telemetry: List of AI usage records (model, tokens, etc.)
+    ai_usage: List[Dict[str, Any]] = field(default_factory=list)
 
     def add_evidence(self, key: str, gcs_uri: str) -> None:
         """
@@ -149,3 +152,7 @@ class PatientEventContext:
     def get_output(self, stage: str, key: str, default: Any = None) -> Any:
         """Get output from a specific stage."""
         return self.outputs.get(stage, {}).get(key, default)
+
+    def record_usage(self, response_data: Dict[str, Any]) -> None:
+        """Record AI usage for telemetry and cost accounting."""
+        self.ai_usage.append(response_data)

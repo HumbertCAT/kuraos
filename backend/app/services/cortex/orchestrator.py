@@ -209,6 +209,38 @@ class CortexOrchestrator:
         if execution_error:
             raise execution_error
 
+        # 5.1 Persist AI Usage (v1.5.9-hf11: Restoration of AIGov Logs)
+        if context.ai_usage:
+            try:
+                from app.services.ai.ledger import CostLedger
+                from app.services.ai.base import AIResponse
+
+                for usage in context.ai_usage:
+                    # Map context usage dict to AIResponse for CostLedger
+                    response = AIResponse(
+                        text="",  # Not needed for logging
+                        tokens_input=usage.get("tokens_input", 0),
+                        tokens_output=usage.get("tokens_output", 0),
+                        model_id=usage.get("model_id", "error"),
+                        provider_id=usage.get("provider_id", "vertex-google"),
+                    )
+
+                    await CostLedger.log_usage(
+                        db=self.db,
+                        response=response,
+                        organization_id=str(organization.id),
+                        task_type=usage.get("task_type", "clinical_analysis"),
+                        user_id=None,  # System context usually
+                        patient_id=str(patient.id),
+                        clinical_entry_id=clinical_entry_id,
+                    )
+                logger.info(
+                    f"📊 Cortex: Persisted {len(context.ai_usage)} AI usage records"
+                )
+            except Exception as e:
+                logger.error(f"Failed to persist AI usage logs: {e}")
+                # Don't fail the pipeline for telemetry errors
+
         # 6. Build result
         elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
 

@@ -61,6 +61,15 @@ class TranscribeStep(PipelineStep):
             )
             context.add_output(self.step_type, "language", result.get("language", "es"))
 
+            # v1.5.9-hf11: Record usage for telemetry
+            context.record_usage({
+                "model_id": result.get("model_id", "gemini:2.5-flash"),
+                "tokens_input": result.get("tokens_input", 0),
+                "tokens_output": result.get("tokens_output", 0),
+                "task_type": "transcription",
+                "provider_id": "vertex-google",
+            })
+
             # Store transcript as new resource for downstream steps
             if result.get("text"):
                 context.add_evidence(
@@ -149,6 +158,15 @@ class AnalyzeStep(PipelineStep):
             # Write structured outputs
             context.add_output(self.step_type, "analysis_json", result)
             context.add_output(self.step_type, "prompt_key", self.prompt_key)
+
+            # v1.5.9-hf11: Record usage for telemetry
+            context.record_usage({
+                "model_id": response.model_id,
+                "tokens_input": response.tokens_input,
+                "tokens_output": response.tokens_output,
+                "task_type": "clinical_analysis",
+                "provider_id": response.provider_id,
+            })
 
             # Extract key fields if present
             if isinstance(result, dict):
@@ -240,6 +258,15 @@ class OCRStep(PipelineStep):
             context.add_output(
                 self.step_type, "confidence", result.get("confidence", 0.0)
             )
+
+            # v1.5.9-hf11: Record usage for telemetry
+            context.record_usage({
+                "model_id": result.get("model_id", "gemini:2.5-flash"),
+                "tokens_input": result.get("tokens_input", 0),
+                "tokens_output": result.get("tokens_output", 0),
+                "task_type": "document_analysis",
+                "provider_id": "vertex-google",
+            })
 
             logger.info(f"OCRStep: Extracted {len(result.get('text', ''))} chars")
 
