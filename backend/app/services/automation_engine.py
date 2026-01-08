@@ -380,14 +380,63 @@ class AutomationEngine:
                 f"   📊 Condition check: {field} {operator} {value} (actual: {actual_value})"
             )
 
-            # Equality/inequality check (support multiple operator formats)
-            if operator in ("=", "eq", "=="):
-                results.append(str(actual_value) == str(value))
-            elif operator in ("!=", "neq", "<>"):
-                results.append(str(actual_value) != str(value))
+            # Evaluate condition based on operator
+            result = False
+
+            # Equality operators
+            if operator in ("=", "eq", "==", "equals"):
+                result = str(actual_value) == str(value)
+            elif operator in ("!=", "neq", "<>", "not_equals"):
+                result = str(actual_value) != str(value)
+
+            # String operators
+            elif operator == "contains":
+                result = (
+                    str(value).lower() in str(actual_value).lower()
+                    if actual_value
+                    else False
+                )
+            elif operator == "starts_with":
+                result = (
+                    str(actual_value).lower().startswith(str(value).lower())
+                    if actual_value
+                    else False
+                )
+            elif operator == "ends_with":
+                result = (
+                    str(actual_value).lower().endswith(str(value).lower())
+                    if actual_value
+                    else False
+                )
+
+            # Numeric comparison operators
+            elif operator in ("gte", ">="):
+                try:
+                    result = float(actual_value) >= float(value)
+                except (ValueError, TypeError):
+                    result = False
+            elif operator in ("lte", "<="):
+                try:
+                    result = float(actual_value) <= float(value)
+                except (ValueError, TypeError):
+                    result = False
+            elif operator in ("gt", ">"):
+                try:
+                    result = float(actual_value) > float(value)
+                except (ValueError, TypeError):
+                    result = False
+            elif operator in ("lt", "<"):
+                try:
+                    result = float(actual_value) < float(value)
+                except (ValueError, TypeError):
+                    result = False
+
             else:
                 print(f"   ⚠️ Unknown operator: {operator}")
-                results.append(False)
+                result = False
+
+            print(f"   → Result: {result}")
+            results.append(result)
 
         if logic == "AND":
             return all(results) if results else True
@@ -431,6 +480,31 @@ class AutomationEngine:
                         print(f"❌ Lead {lead_id} not found")
                         continue
 
+                    # Enrich template params with lead data
+                    from app.core.config import settings
+                    from app.db.models import ServiceType
+
+                    # Find "Consulta Inicial" service for booking link
+                    service_result = await self.db.execute(
+                        select(ServiceType)
+                        .where(ServiceType.organization_id == organization_id)
+                        .where(ServiceType.title.ilike("%consulta inicial%"))
+                        .where(ServiceType.is_active == True)
+                    )
+                    consultation_service = service_result.scalar_one_or_none()
+
+                    # Generate booking link
+                    if consultation_service:
+                        booking_link = f"{settings.FRONTEND_URL}/booking/{consultation_service.id}?lead={lead_id}"
+                    else:
+                        booking_link = f"{settings.FRONTEND_URL}/contact"  # Fallback
+
+                    enriched_params = params.copy()
+                    enriched_params["first_name"] = lead.first_name or "Lead"
+                    enriched_params["last_name"] = lead.last_name or ""
+                    enriched_params["email"] = lead.email
+                    enriched_params["booking_link"] = booking_link
+
                     # Create draft
                     draft = PendingAction(
                         organization_id=organization_id,
@@ -441,7 +515,7 @@ class AutomationEngine:
                         recipient_name=f"{lead.first_name or ''} {lead.last_name or ''}".strip()
                         or "Lead",
                         recipient_email=lead.email,
-                        draft_content=params,  # Original template params
+                        draft_content=enriched_params,
                         status="PENDING",
                     )
                     self.db.add(draft)
@@ -452,15 +526,57 @@ class AutomationEngine:
 
                 else:
                     # AUTO_SEND mode - send immediately
+                    # Get lead data for template substitution
+                    lead_id = payload.get("lead_id")
+                    lead = None
+                    if lead_id:
+                        lead_result = await self.db.execute(
+                            select(Lead).where(Lead.id == UUID(lead_id))
+                        )
+                        lead = lead_result.scalar_one_or_none()
+
                     to_email = params.get("to")
                     subject = params.get("subject", "Notificación")
                     body = params.get("body", "")
 
-                    # TODO: Enhance with AI if tone is set
+                    # Template substitution
+                    if lead:
+                        from app.core.config import settings
+                        from app.db.models import ServiceType
+
+                        # Find "Consulta Inicial" service for booking link
+                        service_result = await self.db.execute(
+                            select(ServiceType)
+                            .where(ServiceType.organization_id == organization_id)
+                            .where(ServiceType.title.ilike("%consulta inicial%"))
+                            .where(ServiceType.is_active == True)
+                        )
+                        consultation_service = service_result.scalar_one_or_none()
+
+                        # Generate booking link
+                        if consultation_service:
+                            booking_link = f"{settings.FRONTEND_URL}/booking/{consultation_service.id}?lead={lead_id}"
+                        else:
+                            booking_link = (
+                                f"{settings.FRONTEND_URL}/contact"  # Fallback
+                            )
+
+                        body = body.replace("{first_name}", lead.first_name or "Lead")
+                        body = body.replace("{last_name}", lead.last_name or "")
+                        body = body.replace("{email}", lead.email or "")
+                        body = body.replace("{booking_link}", booking_link)
+                        # TODO: Link to service
+
+                        # Update lead status to CONTACTED after sending welcome email
+                        if rule.trigger_event == "LEAD_CREATED":
+                            lead.status = "CONTACTED"
+                            await self.db.commit()
 
                     await email_service.send_automation_email(
-                        to_email=to_email,
-                        to_name=params.get("to_name", ""),
+                        to_email=to_email
+                        if to_email != "lead"
+                        else (lead.email if lead else ""),
+                        to_name=lead.first_name if lead else params.get("to_name", ""),
                         subject=subject,
                         template_type="generic",
                         context={"body": body},

@@ -55,23 +55,24 @@ class ConnectService:
             "context": f"Source: {lead.source}",
         }
 
-        # 3. Get System Prompt & AI Provider
-        # Using Gemini 2.5 Flash as the default sales concierge
-        system_instruction = get_system_prompt("sales_profiling", context)
-        provider = ProviderFactory.get_provider(
-            "gemini:2.5-flash", system_instruction=system_instruction
-        )
-
         try:
-            # 4. Run AI Analysis
-            # We pass an empty prompt because the instructions are in the system prompt
-            response = await provider.analyze_multimodal(
-                prompt="Analiza este lead según tus instrucciones de sistema.",
-                content=None,
+            # 3. Get AI Provider via Model Garden (v1.5+)
+            # Uses get_provider_for_task which routes to Vertex AI when enabled
+            provider = await ProviderFactory.get_provider_for_task(
+                task_type="sales_profiling",
+                db_session=self.db,
+                prompt_context=context,
+            )
+
+            # 4. Run AI Analysis - render system prompt directly for legacy provider compatibility
+            system_prompt = get_system_prompt("sales_profiling", context)
+            response = await provider.analyze_text(
+                content="Genera el análisis Sherlock para este lead.",
+                system_prompt=system_prompt,
             )
 
             # 5. Parse JSON Result
-            raw_text = response.get("text", "{}")
+            raw_text = response.text if hasattr(response, "text") else str(response)
             # Clean possible markdown artifacts
             if "```json" in raw_text:
                 raw_text = raw_text.split("```json")[1].split("```")[0]
@@ -104,5 +105,11 @@ class ConnectService:
             logger.error(f"❌ Error profiling lead {lead_id}: {e}")
             import traceback
 
-            traceback.print_exc()
+            error_trace = traceback.format_exc()
+            logger.error(f"❌ Full traceback: {error_trace}")
+            print(f"❌ SHERLOCK ERROR for lead {lead_id}: {e}")
+            print(f"❌ Full traceback:\n{error_trace}")
+            import sys
+
+            sys.stdout.flush()
             return {"success": False, "error": str(e)}

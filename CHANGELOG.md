@@ -15,6 +15,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.6.3] - 2026-01-08 🔧 PUBLIC FORMS & AUTOMATION FIX
+
+### ✨ Added
+- **Public Forms Page**: Created `/f/public/[token]` page for public form submissions, enabling lead generation from external links.
+- **Consulta Inicial Service**: New free 30-minute consultation service ("Consulta Inicial · Videollamada") with ES/EN i18n for lead onboarding.
+- **Dynamic Booking Links**: Concierge agent emails now generate smart booking links to "Consulta Inicial" service automatically.
+
+### 🔧 Fixed
+- **Public Form → Lead Creation**: Corrected payload bug where `name` and `email` were nested incorrectly in `answers`, preventing lead creation from public forms.
+- **Automation Condition Operators**: Extended automation engine to support advanced operators:
+  - String operators: `contains`, `starts_with`, `ends_with`
+  - Numeric operators: `gte` (≥), `lte` (≤), `gt` (>), `lt` (<)
+- **Concierge Email Templates**: Fixed `{first_name}` and `{booking_link}` variable substitution in automated welcome emails.
+- **Lead Status Automation**: Leads now automatically transition to `CONTACTED` status after Concierge welcome email is sent.
+- **Sherlock Profiling (Partial)**: Refactored `connect_service.py` to use Model Garden routing for Vertex AI compatibility (requires `VERTEX_AI_ENABLED=True` in production).
+
+### 🗂️ Infrastructure
+- **Seed Scripts Updated**: Added "Consulta Inicial" service to both `reseed_demo_patients.py` and `reboot_local_universe_PREMIUM.py` for consistent demo environments.
+
+### 📝 Technical Notes
+- Sherlock profiling (Shadow Profile) works in production with Vertex AI but not in local development without the SDK.
+- Public forms now support dynamic field extraction for `name` and `email` from schema.
+
+---
+
 ## [1.6.2] - 2026-01-08
 
 ### Fixed

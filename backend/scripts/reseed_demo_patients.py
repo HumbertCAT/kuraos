@@ -77,6 +77,16 @@ DEMO_AVATARS = {
 
 SEED_SERVICES = [
     {
+        "title": "Consulta Inicial · Videollamada",
+        "description": "Llamada gratuita de 30 minutos para conocernos y explorar cómo puedo acompañarte. / Free 30-minute video call to get to know each other and explore how I can support you.",
+        "price": 0.00,
+        "currency": "EUR",
+        "duration_minutes": 30,
+        "kind": "ONE_ON_ONE",
+        "scheduling_type": "CALENDAR",
+        "is_active": True,
+    },
+    {
         "title": "The Sovereign Mind: Leadership Immersion",
         "description": "7-day intensive psilocybin-assisted protocol for high-performance executives. Includes medical screening, prep, and integration.",
         "price": 4800.00,
