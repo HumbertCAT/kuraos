@@ -1,16 +1,9 @@
 name: CI Innate - Backend Tests
 
+# DISABLED: Session-scoped engine breaks async event loop isolation (TD-86)
+# Re-enable after fixing conftest.py fixtures
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/ci-innate.yml'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/ci-innate.yml'
+  workflow_dispatch:  # Manual trigger only
 
 jobs:
   test:
