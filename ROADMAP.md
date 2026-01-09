@@ -52,16 +52,21 @@ Revenue: 0 · Compliance: 5 · Unlocks: 1 · Effort: 2 · BlockedBy: 0
 - [ ] Admin viewer `/admin/audit/logs`
 
 ---
-**Score: 28** · Size: M · Status: 🟡 READY  
+**Score: 28** · Size: M · Status: 🟢 IN PROGRESS  
 Revenue: 2 · Compliance: 0 · Unlocks: 2 · Effort: 2 · BlockedBy: 0
 
 ### WU-004 · Meta Cloud API
 
 **ADR:** [ADR-004](./docs/architecture/decisions/ADR-004-meta-cloud-api-integration.md)
 
-- [ ] Unified webhook gateway `/webhooks/meta`
-- [ ] Message normalization layer
-- [ ] Twilio fallback handler
+**Completed (v1.6.5-v1.6.6):**
+- [x] Phase 1: Unified webhook gateway `/webhooks/meta`
+- [x] Phase 2: Chronos Logic (session windows, identity resolution, MessageLog)
+
+**Remaining:**
+- [ ] Phase 3: Deep Listening (Audio download → GCS → SCRIBE/VOICE transcription)
+- [ ] Phase 4: The Voice (AletheIA outbound + Safety Switch for high-risk)
+- [ ] Phase 5: Visual Interface (Chat Bubble UI, "Take Control" button)
 
 ---
 **Score: 24** · Size: XL · Status: 🔵 BACKLOG  
