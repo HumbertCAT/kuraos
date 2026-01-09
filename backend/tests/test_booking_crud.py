@@ -49,8 +49,9 @@ class TestBookingCRUD:
         if me_resp.status_code != 200:
             return None
         user_data = me_resp.json()
-        org_id = uuid.UUID(user_data["organization_id"])
-        user_id = uuid.UUID(user_data["id"])
+        # /me returns {user: {...}, organization: {...}}
+        org_id = uuid.UUID(user_data["user"]["organization_id"])
+        user_id = uuid.UUID(user_data["user"]["id"])
 
         # Create patient
         patient = Patient(
