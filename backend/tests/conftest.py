@@ -46,22 +46,22 @@ def database_url(postgres_container) -> str:
 
 
 # =============================================================================
-# FUNCTION-Scoped Engine (created fresh for each test in test's loop)
+# SESSION-Scoped Engine (created once for all tests)
 # =============================================================================
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture(scope="session")
 async def engine(database_url: str) -> AsyncGenerator[AsyncEngine, None]:
     """
-    Create fresh engine for each test in the TEST's event loop.
-    This ensures all DB operations happen in the same loop.
+    Create engine once for entire test session.
+    Tables are created once, then truncated between tests for isolation.
     """
-    engine = create_async_engine(database_url, echo=False, pool_size=1, max_overflow=0)
+    engine = create_async_engine(database_url, echo=False, pool_size=5, max_overflow=10)
 
     # Inject into app's lazy loading system
     set_engine(engine)
 
-    # Create all tables
+    # Create all tables ONCE
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
