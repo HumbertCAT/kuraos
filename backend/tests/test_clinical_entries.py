@@ -207,6 +207,9 @@ class TestClinicalEntryEndpoints:
         assert data["entry_metadata"]["anxiety_level"] == 7
         assert data["entry_metadata"]["depression_level"] == 3
 
+    @pytest.mark.skip(
+        reason="TD-90: requires async pipeline setup + connection pool tuning"
+    )
     @pytest.mark.asyncio
     async def test_analyze_stale_entry_allowed(self, client: AsyncClient):
         """Test that stale PENDING/PROCESSING entries can be re-analyzed after 5 min timeout."""
