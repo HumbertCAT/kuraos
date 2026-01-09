@@ -15,6 +15,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.6.8] - 2026-01-09
+
+### 🗣️ Meta Cloud API Migration - Phase 4 (The Voice)
+
+**Added**:
+- **OutboundService** (`backend/app/services/connect/outbound_service.py`):
+  - `OutboundDecision` enum: SEND, BLOCK_HIGH_RISK, BLOCK_WINDOW_CLOSED, BLOCK_DRAFT_MODE
+  - `evaluate_outbound_safety()` - The Safety Switch (blocks HIGH/CRITICAL risk)
+  - `send_aletheia_response()` - Main entry point for AI responses
+  - `create_human_review_task()` - Creates review task when blocked
+- **Send API** (`backend/app/api/v1/connect/send.py`):
+  - `POST /api/v1/connect/send` - Send message with Safety Switch
+  - Default DRAFT mode (human approval required)
+  - Auto-mode for trusted agents
+
+**Technical Notes**:
+- Safety Switch prevents auto-responses for HIGH/CRITICAL SENTINEL risk
+- Draft mode saves messages for human review
+- Window check prevents free-form messages to CLOSED sessions
+
+**Known Issues (TD-89/TD-90)**:
+- Meta webhook audio processing not logging (debugging in progress)
+- META_APP_SECRET was missing a character (fixed mid-session)
+
+---
+
 ## [1.6.7] - 2026-01-09
 
 ### 🎧 Meta Cloud API Migration - Phase 3 (Deep Listening)

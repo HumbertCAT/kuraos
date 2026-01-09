@@ -7,6 +7,7 @@ from . import integrations
 from . import twilio_webhook
 from . import meta_webhook
 from . import contacts
+from . import send  # v1.6.8: The Voice - Outbound messaging
 
 __all__ = [
     "leads",
@@ -17,4 +18,5 @@ __all__ = [
     "twilio_webhook",
     "meta_webhook",
     "contacts",
+    "send",
 ]

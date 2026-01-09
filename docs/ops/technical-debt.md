@@ -28,6 +28,23 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
+### TD-89: Meta Audio Processing Logs Not Appearing
+**File**: `backend/app/api/v1/connect/meta_webhook.py`  
+**Origin**: v1.6.7/v1.6.8 debugging session  
+**Symptom**: Webhook POST returns 200 OK, but `🎤 Audio...` logs never appear in Cloud Logging  
+**Impact**: Cannot verify if audio is being downloaded/transcribed  
+**Root Cause**: Unknown - added DEBUG logging (line 209) to diagnose  
+**Action**: Send test audio, verify message type detection, check if `is_audio_message()` is correct  
+
+### TD-90: META_APP_SECRET Typo Hazard
+**File**: Google Secret Manager `META_APP_SECRET`  
+**Origin**: v1.6.8 debugging - secret had 3 'a's instead of 4  
+**Symptom**: All Meta webhook POSTs returned 403 Forbidden  
+**Resolution**: Fixed manually via `gcloud secrets versions add`  
+**Action**: Add Secret Manager verification script to deployment workflow  
+
+---
+
 ## 🟠 MEDIUM (Should Fix Soon)
 
 ### TD-81: Identity Vault Missing Composite Index

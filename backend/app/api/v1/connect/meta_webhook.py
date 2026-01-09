@@ -206,6 +206,11 @@ async def process_meta_message(
     wa_id = message.get("from", "")  # Phone number in E.164 format
     timestamp = message.get("timestamp", "")
 
+    # DEBUG: Log raw message for troubleshooting
+    logger.warning(
+        f"🔍 DEBUG: Raw message type={msg_type}, id={msg_id}, from={wa_id}, keys={list(message.keys())}"
+    )
+
     # v1.6.7: Media handling variables
     media_id = None
     media_url = None  # GCS URI

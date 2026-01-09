@@ -38,6 +38,7 @@ from app.api.v1.connect import (
     twilio_webhook,
     meta_webhook,
     contacts,
+    send,  # v1.6.8: The Voice
 )
 
 # Practice: Pilar II - SERVIR (Patients, Bookings, Clinical) [HIPAA ZONE]
@@ -216,6 +217,11 @@ app.include_router(
     contacts.router,
     prefix=f"{settings.API_V1_STR}/contacts",
     tags=["Contacts-360"],
+)
+app.include_router(
+    send.router,
+    prefix=f"{settings.API_V1_STR}",
+    tags=["Connect-Send"],
 )
 app.include_router(
     booking.router, prefix=f"{settings.API_V1_STR}/booking", tags=["Booking"]
