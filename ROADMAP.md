@@ -59,14 +59,43 @@ Revenue: 2 · Compliance: 0 · Unlocks: 2 · Effort: 2 · BlockedBy: 0
 
 **ADR:** [ADR-004](./docs/architecture/decisions/ADR-004-meta-cloud-api-integration.md)
 
-**Completed (v1.6.5-v1.6.6):**
-- [x] Phase 1: Unified webhook gateway `/webhooks/meta`
-- [x] Phase 2: Chronos Logic (session windows, identity resolution, MessageLog)
+**✅ Completed:**
+- [x] Phase 1: Unified webhook gateway `/webhooks/meta` (v1.6.5)
+- [x] Phase 2: Chronos Logic - session windows, identity resolution, MessageLog (v1.6.6)
+- [x] Phase 3: Deep Listening - Audio download → GCS → Whisper transcription (v1.6.7)
+- [x] Phase 4: The Voice - OutboundService + Safety Switch + `/connect/send` API (v1.6.8)
 
-**Remaining:**
-- [ ] Phase 3: Deep Listening (Audio download → GCS → SCRIBE/VOICE transcription)
-- [ ] Phase 4: The Voice (AletheIA outbound + Safety Switch for high-risk)
-- [ ] Phase 5: Visual Interface (Chat Bubble UI, "Take Control" button)
+**🎯 NEXT: Phase 5 - The Visual Interface (v1.6.9)**
+
+El terapeuta necesita VER los mensajes, no tenerlos enterrados en DB.
+
+**Implementación:**
+
+1. **API Extension** (`apps/platform/lib/api.ts`):
+   - `connect.getHistory(identityId)` - MessageLogs ordenados
+   - `connect.sendMessage(payload)` - Llama POST `/connect/send`
+   - `connect.approveDraft(msgId)` - Liberar mensajes bloqueados
+
+2. **ChatWidget** (`components/connect/ChatWidget.tsx`):
+   - Layout: Tab "Conversación" en LeadSheet/PatientProfile
+   - `ChatBubble`: INBOUND (izq/blanco) vs OUTBOUND (der/verde-brand)
+   - Audio: `<audio controls src={media_url} />` para reproducir `.ogg`
+   - Estados: Enviado, Leído, Bloqueado (candado rojo)
+   - Window Status: Verde=ABIERTA, Gris=CERRADA (24h)
+
+3. **Input Area:**
+   - Textarea auto-expandible + Botón "Enviar"
+   - Si ventana CERRADA: input deshabilitado, tooltip "Usa template"
+
+4. **Integration:**
+   - `leads/page.tsx` → Tab "Conversación" con ChatWidget
+   - `patients/[id]/page.tsx` → Panel derecho o nueva tab "Connect"
+
+**Criterios de Éxito:**
+- [ ] Abrir Lead → Ver historial de mensajes
+- [ ] Reproducir audio desde UI
+- [ ] Escribir respuesta → Aparece en UI + llega a WhatsApp
+- [ ] Mensajes bloqueados visibles con badge de seguridad
 
 ---
 **Score: 24** · Size: XL · Status: 🔵 BACKLOG  
