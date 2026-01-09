@@ -265,3 +265,28 @@ Permitir editar `billing_info` del paciente para facturas personalizadas.
 - [WeasyPrint Docs](https://weasyprint.org/)
 - [GCS Signed URLs](https://cloud.google.com/storage/docs/access-control/signed-urls)
 - ADR-023: Insurance Billing (alcance diferente - aseguradoras)
+
+---
+
+## 💡 Notas de Antigravity (para comentar con Arquitecto)
+
+### Lo que me gusta
+
+1. **Es necesario y de alto valor** - La facturación es una necesidad real para terapeutas autónomos en España. Stripe genera recibos, pero no son facturas fiscales válidas.
+
+2. **El diseño JSONB es inteligente** - La flexibilidad para diferentes formatos internacionales (`billing_info` como JSONB) es forward-thinking. Evita migraciones futuras.
+
+3. **El `billing_snapshot` es crítico** - Congelar los datos fiscales al momento de emisión es la decisión correcta para compliance. Muchos sistemas fallan aquí.
+
+### Consideraciones
+
+1. **WeasyPrint añade ~100MB al container** - Tiene dependencias de sistema (Cairo, Pango). Aumenta tiempo de build. Pero quedará en caché, no es crítico.
+
+2. **¿Stripe Invoicing como alternativa temporal?** - Ya tenemos Stripe integrado. Podría ser un "quick win" sin construir todo el módulo. Pero es más caro para el terapeuta, así que Sovereign Billing tiene sentido a largo plazo.
+
+3. **Priorización sugerida** - Fase 1+2 primero (backend). La UI de Settings puede esperar - los primeros usuarios pueden configurar por soporte técnico.
+
+### TL;DR
+
+Es un buen diseño técnico. La inversión de ~12h está justificada porque Stripe Invoicing añade costes al terapeuta que queremos evitar. El `billing_snapshot` y la numeración atómica son los puntos más importantes - no tomar atajos ahí.
+

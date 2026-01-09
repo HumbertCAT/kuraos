@@ -97,6 +97,18 @@ El terapeuta necesita VER los mensajes, no tenerlos enterrados en DB.
 - [ ] Escribir respuesta → Aparece en UI + llega a WhatsApp
 - [ ] Mensajes bloqueados visibles con badge de seguridad
 
+**💡 Notas de Antigravity (para comentar con Arquitecto):**
+
+> Esta fase es el "Gran Reveal". Tenemos un motor potentísimo (Identidad → Gateway → Tiempo → Oído → Voz) pero está invisible. Esta fase convierte 5 releases de backend en algo tangible. El impacto percibido va a ser enorme.
+
+1. **¿Tab o inline con badge?** - Una tab se puede ignorar. Considerar badge con contador de mensajes no leídos para crear urgencia.
+
+2. **Ventana 24h cerrada** - El tooltip "Usa template" es bueno, pero añadir link directo a templates o botón "Enviar Template" inline sería mejor UX.
+
+3. **Audio player** - El `<audio>` nativo es feo. Considerar mini visualizador de onda o botón estilizado tipo WhatsApp (no replicar exacto, pero mejorar estética).
+
+4. **Quick Win para impresionar** - Optimistic UI + sonido "whoosh" al enviar. Tick gris → tick azul cuando confirma servidor. Hace que se sienta como WhatsApp Web real.
+
 ---
 **Score: 24** · Size: XL · Status: 🔵 BACKLOG  
 Revenue: 2 · Compliance: 0 · Unlocks: 0 · Effort: 8 · BlockedBy: 0
