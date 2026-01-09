@@ -15,6 +15,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.6.5] - 2026-01-09
+
+### 📡 Meta Cloud API Migration - Phase 1 (The Unified Gateway)
+
+**Added**:
+- **Meta Webhook Endpoint** (`/api/v1/webhooks/meta`):
+  - GET handler for Meta verification challenge (hub.mode, hub.verify_token, hub.challenge)
+  - POST handler for inbound WhatsApp/Instagram messages
+  - HMAC-SHA256 signature validation (X-Hub-Signature-256)
+  - Normalized message parsing from Meta's nested JSON structure
+  - Support for text, image, audio, video, document, location message types
+- **Configuration**:
+  - `META_APP_SECRET`, `META_ACCESS_TOKEN`, `META_VERIFY_TOKEN`, `META_PHONE_NUMBER_ID` settings
+  - Secrets created in Google Secret Manager
+  - Cloud Run service updated with Meta secrets mapping
+
+**Technical Notes**:
+- Phase 1 focuses on inbound message logging only (no storage/routing yet)
+- Identity Resolution deferred to Phase 2 (requires org context lookup by phone)
+- Replaces Twilio as primary WhatsApp provider (legacy retained for migration)
+
+---
+
 ## [1.6.4] - 2026-01-08
 
 ### 🔐 The Identity Vault - Universal Contact Deduplication

@@ -36,6 +36,7 @@ from app.api.v1.connect import (
     public_booking_manage,
     integrations,
     twilio_webhook,
+    meta_webhook,
     contacts,
 )
 
@@ -304,6 +305,11 @@ app.include_router(
 )
 app.include_router(
     twilio_webhook.router,
+    prefix=settings.API_V1_STR,
+    tags=["Webhooks"],
+)
+app.include_router(
+    meta_webhook.router,
     prefix=settings.API_V1_STR,
     tags=["Webhooks"],
 )

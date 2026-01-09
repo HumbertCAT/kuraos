@@ -5,6 +5,8 @@ from . import public_booking
 from . import public_booking_manage
 from . import integrations
 from . import twilio_webhook
+from . import meta_webhook
+from . import contacts
 
 __all__ = [
     "leads",
@@ -13,4 +15,6 @@ __all__ = [
     "public_booking_manage",
     "integrations",
     "twilio_webhook",
+    "meta_webhook",
+    "contacts",
 ]

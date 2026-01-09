@@ -62,10 +62,17 @@ class Settings(BaseSettings):
     # Google Cloud Storage (media files - audio, transcriptions)
     GCS_BUCKET_NAME: str = "kura-production-media"
 
-    # Twilio WhatsApp
+    # Twilio WhatsApp (Legacy - being replaced by Meta Cloud API)
     TWILIO_ACCOUNT_SID: Optional[str] = None
     TWILIO_AUTH_TOKEN: Optional[str] = None
     TWILIO_WHATSAPP_NUMBER: Optional[str] = None
+
+    # Meta Cloud API (WhatsApp Business / Instagram Direct)
+    # v1.6.5: Direct integration replacing Twilio
+    META_APP_SECRET: Optional[str] = None  # For HMAC-SHA256 signature validation
+    META_ACCESS_TOKEN: Optional[str] = None  # For outbound Graph API calls
+    META_VERIFY_TOKEN: Optional[str] = None  # For webhook verification challenge
+    META_PHONE_NUMBER_ID: Optional[str] = None  # WhatsApp Business phone number ID
 
     # Tier Commission Fees (static business constants)
     TIER_FEE_BUILDER: float = 0.05  # 5% platform fee for free tier
