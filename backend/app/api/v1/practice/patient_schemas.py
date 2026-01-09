@@ -99,6 +99,8 @@ class PatientResponse(BaseModel):
     risk_reason: Optional[str] = None
     # v1.5.7: Ghost Protocol - Privacy tier override
     privacy_tier_override: Optional[str] = None
+    # v1.6.4: Identity Vault - Universal Contact ID
+    identity_id: Optional[uuid.UUID] = None
 
     class Config:
         from_attributes = True

@@ -723,4 +723,40 @@ export const api = {
       }>(res);
     },
   },
+
+  // v1.6.4: Identity Vault - Contacts API
+  contacts: {
+    /**
+     * Check if an identity exists for given email/phone (duplicate detection)
+     */
+    check: async (email?: string, phone?: string) => {
+      const params = new URLSearchParams();
+      if (email) params.set('email', email);
+      if (phone) params.set('phone', phone);
+      const res = await fetch(`${API_URL}/contacts/check?${params}`, {
+        credentials: 'include',
+      });
+      return handleResponse<{
+        found: boolean;
+        identity_id?: string;
+        primary_email?: string | null;
+        primary_phone?: string | null;
+        linked_entity?: {
+          type: 'lead' | 'patient';
+          name: string;
+          id: string;
+        } | null;
+      }>(res);
+    },
+
+    /**
+     * Get unified 360° contact view
+     */
+    get: async (identityId: string) => {
+      const res = await fetch(`${API_URL}/contacts/${identityId}`, {
+        credentials: 'include',
+      });
+      return handleResponse<any>(res);
+    },
+  },
 };

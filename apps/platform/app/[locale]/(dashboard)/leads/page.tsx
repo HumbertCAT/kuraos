@@ -9,10 +9,12 @@ import {
     UserPlus, Phone, MessageCircle, FileText, Users,
     ArrowRightCircle, XCircle, Clock, Plus, Search,
     Filter, ChevronDown, Ghost, Link as LinkIcon, Copy, Sparkles,
-    User, X, Edit
+    User, X, Edit, Fingerprint
 } from 'lucide-react';
+import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import { Tooltip } from '@/components/ui/tooltip';
+import DuplicateWarningModal from '@/components/DuplicateWarningModal';
 
 // Types
 interface Lead {
@@ -38,6 +40,7 @@ interface Lead {
         total_score?: number;
     } | null;
     converted_patient_id: string | null;
+    identity_id: string | null;  // v1.6.4: Universal Contact ID
     created_at: string;
     updated_at: string;
 }
@@ -496,6 +499,19 @@ export default function LeadsPage() {
     );
 }
 
+// Duplicate detection response type
+interface DuplicateInfo {
+    found: boolean;
+    identity_id?: string;
+    primary_email?: string | null;
+    primary_phone?: string | null;
+    linked_entity?: {
+        type: 'lead' | 'patient';
+        name: string;
+        id: string;
+    } | null;
+}
+
 // Create Lead Modal Component
 function CreateLeadModal({
     onClose,
@@ -509,96 +525,147 @@ function CreateLeadModal({
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [notes, setNotes] = useState('');
+    const [checking, setChecking] = useState(false);
+    const [duplicateInfo, setDuplicateInfo] = useState<DuplicateInfo | null>(null);
+
+    async function handleCreate() {
+        if (!firstName || !lastName) return;
+
+        const payload = {
+            first_name: firstName,
+            last_name: lastName,
+            email: email || undefined,
+            phone: phone || undefined,
+            notes: notes || undefined,
+        };
+
+        // v1.6.4: Check for duplicates before creating
+        if (email || phone) {
+            setChecking(true);
+            try {
+                const check = await api.contacts.check(email || undefined, phone || undefined);
+                if (check.found) {
+                    setDuplicateInfo(check as DuplicateInfo);
+                    setChecking(false);
+                    return;
+                }
+            } catch (err) {
+                // If check fails, proceed with creation anyway
+                console.warn('Duplicate check failed:', err);
+            }
+            setChecking(false);
+        }
+
+        // No duplicate found - proceed with creation
+        onCreate(payload);
+    }
+
+    function handleCreateAnyway() {
+        setDuplicateInfo(null);
+        onCreate({
+            first_name: firstName,
+            last_name: lastName,
+            email: email || undefined,
+            phone: phone || undefined,
+            notes: notes || undefined,
+        });
+    }
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
-            <div className="bg-card rounded-2xl p-6 w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
-                <h2 className="text-xl font-bold text-foreground mb-4">Nuevo Lead</h2>
+        <>
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
+                <div className="bg-card rounded-2xl p-6 w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+                    <h2 className="text-xl font-bold text-foreground mb-4">Nuevo Lead</h2>
 
-                <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-foreground/70 mb-1">Nombre *</label>
+                                <input
+                                    type="text"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-muted-foreground"
+                                    placeholder="Juan"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-foreground/70 mb-1">Apellido *</label>
+                                <input
+                                    type="text"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-muted-foreground"
+                                    placeholder="Pérez"
+                                />
+                            </div>
+                        </div>
                         <div>
-                            <label className="block text-sm font-medium text-foreground/70 mb-1">Nombre *</label>
+                            <label className="block text-sm font-medium text-foreground/70 mb-1">Email</label>
                             <input
-                                type="text"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-muted-foreground"
-                                placeholder="Juan"
+                                placeholder="juan@ejemplo.com"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-foreground/70 mb-1">Apellido *</label>
+                            <label className="block text-sm font-medium text-foreground/70 mb-1">Teléfono</label>
                             <input
-                                type="text"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
+                                type="tel"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
                                 className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-muted-foreground"
-                                placeholder="Pérez"
+                                placeholder="+34 600 000 000"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-foreground/70 mb-1">Notas</label>
+                            <textarea
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                                rows={3}
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none text-foreground placeholder:text-muted-foreground"
+                                placeholder="Interesado en retiro de Ibiza..."
                             />
                         </div>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-foreground/70 mb-1">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-muted-foreground"
-                            placeholder="juan@ejemplo.com"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-foreground/70 mb-1">Teléfono</label>
-                        <input
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-foreground placeholder:text-muted-foreground"
-                            placeholder="+34 600 000 000"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-foreground/70 mb-1">Notas</label>
-                        <textarea
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            rows={3}
-                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none text-foreground placeholder:text-muted-foreground"
-                            placeholder="Interesado en retiro de Ibiza..."
-                        />
-                    </div>
-                </div>
 
-                <div className="flex justify-end gap-3 mt-6">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-xl transition-colors"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        onClick={() => {
-                            if (firstName && lastName) {
-                                onCreate({
-                                    first_name: firstName,
-                                    last_name: lastName,
-                                    email: email || undefined,
-                                    phone: phone || undefined,
-                                    notes: notes || undefined,
-                                });
-                            }
-                        }}
-                        disabled={!firstName || !lastName}
-                        className="px-4 py-2 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-95 transition-all disabled:opacity-50"
-                    >
-                        Crear Lead
-                    </button>
+                    <div className="flex justify-end gap-3 mt-6">
+                        <button
+                            onClick={onClose}
+                            className="px-4 py-2 text-foreground/70 hover:bg-accent rounded-xl transition-colors active:scale-95"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={handleCreate}
+                            disabled={!firstName || !lastName || checking}
+                            className="px-4 py-2 bg-brand text-white rounded-xl hover:bg-brand/90 active:scale-95 transition-all disabled:opacity-50"
+                        >
+                            {checking ? 'Verificando...' : 'Crear Lead'}
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            {/* v1.6.4: Duplicate Warning Modal */}
+            {duplicateInfo && (
+                <DuplicateWarningModal
+                    duplicate={duplicateInfo as Required<DuplicateInfo>}
+                    onViewExisting={() => {
+                        setDuplicateInfo(null);
+                        onClose();
+                    }}
+                    onCreateAnyway={handleCreateAnyway}
+                    onCancel={() => setDuplicateInfo(null)}
+                />
+            )}
+        </>
     );
 }
+
 
 // Lead Detail Sheet Component
 function LeadDetailSheet({
@@ -703,6 +770,17 @@ function LeadDetailSheet({
                             <span className="px-3 py-1 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
                                 {lead.status}
                             </span>
+                            {/* v1.6.4: Identity Badge */}
+                            {lead.identity_id && (
+                                <Link
+                                    href={`/contacts/${lead.identity_id}`}
+                                    className="px-2 py-0.5 bg-white/15 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider hover:bg-white/25 transition-colors flex items-center gap-1"
+                                    title="Ver Contacto 360°"
+                                >
+                                    <Fingerprint className="w-3 h-3" />
+                                    ID
+                                </Link>
+                            )}
                             <span className="text-xs text-white/60 font-mono">
                                 vía {lead.source}
                             </span>

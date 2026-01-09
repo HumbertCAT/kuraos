@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Link } from '@/i18n/navigation';
-import { Mail, Phone, MessageCircle, Edit, Calendar, Activity, TrendingUp } from 'lucide-react';
+import { Mail, Phone, MessageCircle, Edit, Calendar, Activity, TrendingUp, Fingerprint } from 'lucide-react';
 import { getButtonClasses } from '@/components/ui/CyberButton';
 import PrivacyTierBadge from '@/components/patient/PrivacyTierBadge';
 
@@ -26,6 +26,7 @@ interface PatientHeroProps {
         profile_image_url?: string | null;
         created_at?: string;
         privacy_tier_override?: 'GHOST' | 'STANDARD' | 'LEGACY' | null;
+        identity_id?: string | null;  // v1.6.4: Universal Contact ID
     };
     orgDefaultTier?: 'GHOST' | 'STANDARD' | 'LEGACY';
     stats?: {
@@ -77,6 +78,17 @@ export default function PatientHero({ patient, orgDefaultTier, stats, onContact,
                                 onTierChange={onPrivacyChange ? (tier) => onPrivacyChange(patient.id, tier) : undefined}
                             />
                         </div>
+                        {/* v1.6.4: Identity Badge - Link to Contacts 360° */}
+                        {patient.identity_id && (
+                            <Link
+                                href={`/contacts/${patient.identity_id}`}
+                                className="badge badge-brand gap-1 font-mono hover:bg-brand/20 transition-colors"
+                                title="Ver Contacto 360° - Historial unificado"
+                            >
+                                <Fingerprint className="w-3 h-3" />
+                                ID
+                            </Link>
+                        )}
                     </div>
                     {memberSince && (
                         <p className="type-body text-muted-foreground mt-1">

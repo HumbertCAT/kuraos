@@ -20,6 +20,14 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
+### TD-87: Duplicate Warning Modal Not Triggering
+**File**: `apps/platform/app/[locale]/(dashboard)/leads/page.tsx`  
+**Issue**: `DuplicateWarningModal` created but not triggering on Lead/Patient creation  
+**Impact**: Duplicate contacts can still be created without warning  
+**Action**: Debug API call timing in `CreateLeadModal.handleCreate()`, verify frontend hot reload  
+
+---
+
 ## 🟠 MEDIUM (Should Fix Soon)
 
 ### TD-81: Identity Vault Missing Composite Index

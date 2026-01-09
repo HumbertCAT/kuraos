@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { api } from '@/lib/api';
+import DuplicateWarningModal from '@/components/DuplicateWarningModal';
 
 // Top languages for therapy context
 const LANGUAGES = [
@@ -30,11 +31,27 @@ const LANGUAGES = [
   { code: 'FI', label: 'Suomi' },
 ];
 
+// Duplicate detection response type
+interface DuplicateInfo {
+  found: boolean;
+  identity_id?: string;
+  primary_email?: string | null;
+  primary_phone?: string | null;
+  linked_entity?: {
+    type: 'lead' | 'patient';
+    name: string;
+    id: string;
+  } | null;
+}
+
 export default function NewPatientPage() {
   const t = useTranslations('PatientForm');
   const router = useRouter();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [duplicateInfo, setDuplicateInfo] = useState<DuplicateInfo | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const pendingPayloadRef = useRef<any>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,6 +67,30 @@ export default function NewPatientPage() {
       language: formData.get('language') as string || null,
     };
 
+    // Store payload for potential use after duplicate check
+    pendingPayloadRef.current = payload;
+
+    try {
+      // v1.6.4: Check for duplicates before creating
+      if (payload.email || payload.phone) {
+        const check = await api.contacts.check(payload.email || undefined, payload.phone || undefined);
+        if (check.found) {
+          // Show duplicate warning modal instead of creating
+          setDuplicateInfo(check as DuplicateInfo);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // No duplicate found - proceed with creation
+      await createPatient(payload);
+    } catch (err: any) {
+      setError(err.message || 'Failed to create patient');
+      setLoading(false);
+    }
+  }
+
+  async function createPatient(payload: any) {
     try {
       const patient = await api.patients.create(payload);
 
@@ -62,8 +103,16 @@ export default function NewPatientPage() {
       router.push(`/patients/${patient.id}`);
     } catch (err: any) {
       setError(err.message || 'Failed to create patient');
-    } finally {
       setLoading(false);
+    }
+  }
+
+  // Handle "Create Anyway" from duplicate warning modal
+  function handleCreateAnyway() {
+    setDuplicateInfo(null);
+    if (pendingPayloadRef.current) {
+      setLoading(true);
+      createPatient(pendingPayloadRef.current);
     }
   }
 
@@ -77,7 +126,7 @@ export default function NewPatientPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4 bg-card p-6 rounded-lg border border-border">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 bg-card p-6 rounded-lg border border-border">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-muted-foreground mb-1">
@@ -140,19 +189,29 @@ export default function NewPatientPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-primary text-primary-foreground p-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-primary text-primary-foreground p-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors active:scale-95"
           >
             {loading ? t('creating') : t('create')}
           </button>
           <button
             type="button"
             onClick={() => router.push('/patients')}
-            className="px-6 py-3 border border-border rounded-lg hover:bg-accent transition-colors text-muted-foreground"
+            className="px-6 py-3 border border-border rounded-lg hover:bg-accent transition-colors text-muted-foreground active:scale-95"
           >
             {t('cancel')}
           </button>
         </div>
       </form>
+
+      {/* v1.6.4: Duplicate Warning Modal */}
+      {duplicateInfo && (
+        <DuplicateWarningModal
+          duplicate={duplicateInfo as Required<DuplicateInfo>}
+          onViewExisting={() => setDuplicateInfo(null)}
+          onCreateAnyway={handleCreateAnyway}
+          onCancel={() => setDuplicateInfo(null)}
+        />
+      )}
     </div>
   );
 }

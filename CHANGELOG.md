@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Contact info banner (email, phone, first contact, total interactions)
   - Chronological timeline merging Leads and Patients
   - Navigation links to Lead/Patient detail views
+  - **Identity Badge**: Visual "ID" badge in `PatientHero` and `LeadDetailSheet` linking to 360° view
+  - `DuplicateWarningModal` component (foundation for duplicate detection)
+- **API Endpoints** (New):
+  - `GET /contacts/check?email=X&phone=Y` - Duplicate detection for create forms
 
 **Changed**:
 - `create_public_booking` endpoint: Now resolves universal identity before creating Lead/Patient
