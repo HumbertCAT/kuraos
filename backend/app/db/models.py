@@ -1743,6 +1743,17 @@ class MessageLog(Base):
         DateTime(timezone=True), server_default=func.now(), index=True
     )
 
+    # v1.6.7 Deep Listening: Media storage for audio/images
+    media_id: Mapped[Optional[str]] = mapped_column(
+        String(100), nullable=True
+    )  # Meta media_id for deduplication
+    media_url: Mapped[Optional[str]] = mapped_column(
+        String(512), nullable=True
+    )  # GCS URI (gs://bucket/path)
+    mime_type: Mapped[Optional[str]] = mapped_column(
+        String(50), nullable=True
+    )  # audio/ogg, image/jpeg, etc.
+
     # Composite index for daily batch queries
     __table_args__ = (
         Index("ix_message_logs_patient_timestamp", "patient_id", "timestamp"),

@@ -7,6 +7,10 @@ from app.services.connect.meta_service import (
     update_session,
     send_message,
 )
+from app.services.connect.meta_media import (
+    MetaMediaService,
+    meta_media_service,
+)
 
 __all__ = [
     "WindowStatus",
@@ -14,4 +18,6 @@ __all__ = [
     "get_window_status",
     "update_session",
     "send_message",
+    "MetaMediaService",
+    "meta_media_service",
 ]

@@ -15,6 +15,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.6.7] - 2026-01-09
+
+### 🎧 Meta Cloud API Migration - Phase 3 (Deep Listening)
+
+**Added**:
+- **MetaMediaService** (`backend/app/services/connect/meta_media.py`):
+  - `get_media_url()` - Get temporary URL from Graph API (expires in 5min)
+  - `download_media()` - Download audio/image bytes before URL expires
+  - Authenticated via `META_ACCESS_TOKEN` Bearer token
+- **MessageLog Media Fields**:
+  - `media_id` - Meta's media ID for deduplication
+  - `media_url` - GCS URI for permanent storage (`gs://kura-production-vault/...`)
+  - `mime_type` - Content type (audio/ogg, image/jpeg, etc.)
+  - Alembic migration `917138307f56`
+
+**Changed**:
+- **Transcription Service** (`transcription.py` - Adapter Pattern):
+  - Now accepts both `str` (URL - Twilio legacy) and `bytes` (Meta new)
+  - Backward compatible with existing Twilio webhook
+- **Meta Webhook** now handles audio messages:
+  - Downloads audio immediately (5min URL expiry!)
+  - Stores in GCS: `connect/meta/{date}/{media_id}.ogg`
+  - Transcribes via OpenAI Whisper
+  - Prefixes content with `[🎤 AUDIO]: {transcription}`
+
+**Technical Notes**:
+- "Adapt & Reuse" strategy: No new transcription logic, just adapted input
+- Audio stored permanently in `kura-production-vault`
+- Images also downloaded and stored (no OCR yet)
+
+---
+
 ## [1.6.6] - 2026-01-09
 
 ### ⏰ Meta Cloud API Migration - Phase 2 (The Chronos Logic)

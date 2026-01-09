@@ -13,9 +13,10 @@ v1.6.6: Phase 2 - The Chronos Logic
 - MessageLog storage with patient context
 - Session window tracking (24h WhatsApp / 7d Instagram)
 
-Supports:
-- Text messages
-- Media messages (future: transcription)
+v1.6.7: Phase 3 - Deep Listening
+- Download ephemeral media (audio/image) before URL expires
+- Store in GCS (The Vault)
+- Transcribe audio via Whisper
 """
 
 import hashlib
@@ -35,6 +36,9 @@ from app.core.config import settings
 from app.db.models import Identity, Patient, Lead, MessageLog, MessageDirection
 from app.services.identity_resolver import IdentityResolver
 from app.services.connect.meta_service import update_session
+from app.services.connect.meta_media import meta_media_service
+from app.services.transcription import transcribe_audio, is_audio_message
+from app.services.storage import vault_storage
 
 logger = logging.getLogger(__name__)
 
@@ -179,7 +183,7 @@ async def process_meta_message(
     object_type: str,
     db: AsyncSession,
 ):
-    """Process a single Meta message (v1.6.6 Chronos Logic).
+    """Process a single Meta message (v1.6.7 Deep Listening).
 
     Args:
         message: Message object from Meta
@@ -189,10 +193,12 @@ async def process_meta_message(
 
     Flow:
         1. Extract message details
-        2. Global phone lookup → find Identity
-        3. Find linked Patient (for MessageLog context)
-        4. Store in MessageLog
-        5. Update session window (last_meta_interaction_at)
+        2. If audio/image: Download immediately (5min expiry!)
+        3. Store media in GCS
+        4. Transcribe audio
+        5. Global phone lookup → find Identity
+        6. Store in MessageLog with media_url
+        7. Update session window
     """
     # Extract message details
     msg_id = message.get("id", "")
@@ -200,14 +206,75 @@ async def process_meta_message(
     wa_id = message.get("from", "")  # Phone number in E.164 format
     timestamp = message.get("timestamp", "")
 
-    # Get message content based on type
+    # v1.6.7: Media handling variables
+    media_id = None
+    media_url = None  # GCS URI
+    mime_type = None
     content = ""
+
+    # Process based on message type
     if msg_type == "text":
         content = message.get("text", {}).get("body", "")
-    elif msg_type == "image":
-        content = "[📷 Image]"
+
     elif msg_type == "audio":
-        content = "[🎤 Audio]"  # Future: Whisper transcription
+        # v1.6.7 Deep Listening: Download and transcribe
+        media_id = message.get("audio", {}).get("id")
+        if media_id:
+            try:
+                logger.info(f"🎤 Audio message received, downloading immediately...")
+
+                # Step 1: Download from Meta (URL expires in 5min!)
+                audio_bytes, mime_type = await meta_media_service.download_media(
+                    media_id
+                )
+
+                # Step 2: Store in GCS (permanent)
+                date_str = datetime.utcnow().strftime("%Y-%m-%d")
+                ext = ".ogg" if "ogg" in mime_type else ".mp3"
+                gcs_filename = f"connect/meta/{date_str}/{media_id}{ext}"
+                media_url = vault_storage.upload_file(
+                    audio_bytes, gcs_filename, mime_type, prefix=""
+                )
+                logger.info(f"📦 Stored in GCS: {media_url}")
+
+                # Step 3: Transcribe with Whisper
+                content = await transcribe_audio(
+                    source=audio_bytes,
+                    content_type=mime_type,
+                )
+                logger.info(f"📝 Transcription: {content[:100]}...")
+
+            except Exception as e:
+                logger.error(f"❌ Audio processing failed: {e}")
+                content = f"[🎤 AUDIO SIN TRANSCRIBIR] (Error: {str(e)[:50]})"
+        else:
+            content = "[🎤 Audio] (no media_id)"
+
+    elif msg_type == "image":
+        media_id = message.get("image", {}).get("id")
+        if media_id:
+            try:
+                logger.info(f"📷 Image message received, downloading...")
+
+                # Download and store
+                image_bytes, mime_type = await meta_media_service.download_media(
+                    media_id
+                )
+                date_str = datetime.utcnow().strftime("%Y-%m-%d")
+                ext = ".jpg" if "jpeg" in mime_type else ".png"
+                gcs_filename = f"connect/meta/{date_str}/{media_id}{ext}"
+                media_url = vault_storage.upload_file(
+                    image_bytes, gcs_filename, mime_type, prefix=""
+                )
+                logger.info(f"📦 Stored image in GCS: {media_url}")
+                content = "[📷 Image]"
+
+            except Exception as e:
+                logger.error(f"❌ Image download failed: {e}")
+                content = "[📷 Image] (download failed)"
+        else:
+            content = "[📷 Image]"
+
     elif msg_type == "video":
         content = "[🎬 Video]"
     elif msg_type == "document":
@@ -238,7 +305,6 @@ async def process_meta_message(
     )
 
     # v1.6.6: Global phone lookup to find Identity
-    # Use a dummy org_id since find_by_phone_global ignores it
     resolver = IdentityResolver(db, UUID("00000000-0000-0000-0000-000000000000"))
     identity = await resolver.find_by_phone_global(phone_formatted)
 
@@ -253,7 +319,7 @@ async def process_meta_message(
         patient_result = await db.execute(
             select(Patient)
             .where(Patient.identity_id == identity.id)
-            .order_by(Patient.created_at.desc())  # Most recent patient
+            .order_by(Patient.created_at.desc())
             .limit(1)
         )
         patient = patient_result.scalar_one_or_none()
@@ -291,6 +357,10 @@ async def process_meta_message(
             content=content,
             provider_id=msg_id,
             status="RECEIVED",
+            # v1.6.7 Deep Listening fields
+            media_id=media_id,
+            media_url=media_url,
+            mime_type=mime_type,
         )
         db.add(message_log)
         await db.commit()

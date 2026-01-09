@@ -116,19 +116,23 @@ def _estimate_audio_duration(file_size_bytes: int, content_type: str) -> int:
 
 
 async def transcribe_audio(
-    media_url: str,
+    source: "str | bytes",
     twilio_auth: tuple = None,
+    content_type: str = "audio/ogg",
     db=None,
     organization_id: str = None,
     user_id: str = None,
     patient_id: str = None,
 ) -> str:
     """
-    Download audio from Twilio and transcribe using OpenAI Whisper.
+    Transcribe audio using OpenAI Whisper.
+
+    v1.6.7: Refactored to support both Twilio URLs and Meta bytes (Adapter Pattern)
 
     Args:
-        media_url: URL to the audio file from Twilio
-        twilio_auth: Optional (account_sid, auth_token) for authenticated download
+        source: URL to audio file (Twilio) OR raw bytes (Meta)
+        twilio_auth: Optional (account_sid, auth_token) for Twilio download
+        content_type: MIME type (used when source is bytes)
         db: Optional database session for logging usage
         organization_id: Optional org UUID for logging
         user_id: Optional user UUID for logging
@@ -138,32 +142,42 @@ async def transcribe_audio(
         Transcribed text with [🎤 AUDIO] prefix, or error message
     """
     try:
-        # Download audio from Twilio
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            logger.info(f"📥 Downloading audio from Twilio...")
-            logger.info(f"📍 URL: {media_url}")
-            logger.info(f"🔐 Auth provided: {twilio_auth is not None}")
+        # v1.6.7 Adapter: Determine if source is URL or bytes
+        if isinstance(source, bytes):
+            # Meta path: already have bytes
+            logger.info(f"📥 Processing audio bytes directly ({len(source)} bytes)")
+            audio_data = source
+        else:
+            # Twilio legacy path: download from URL
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                logger.info(f"📥 Downloading audio from Twilio...")
+                logger.info(f"📍 URL: {source}")
+                logger.info(f"🔐 Auth provided: {twilio_auth is not None}")
 
-            # Twilio media always requires Basic Auth
-            if twilio_auth:
-                auth = httpx.BasicAuth(twilio_auth[0], twilio_auth[1])
-                logger.info(f"🔐 Using auth with SID: {twilio_auth[0][:10]}...")
-                response = await client.get(media_url, auth=auth, follow_redirects=True)
-            else:
-                logger.warning("⚠️ No Twilio auth provided, trying without...")
-                response = await client.get(media_url, follow_redirects=True)
+                # Twilio media always requires Basic Auth
+                if twilio_auth:
+                    auth = httpx.BasicAuth(twilio_auth[0], twilio_auth[1])
+                    logger.info(f"🔐 Using auth with SID: {twilio_auth[0][:10]}...")
+                    response = await client.get(
+                        source, auth=auth, follow_redirects=True
+                    )
+                else:
+                    logger.warning("⚠️ No Twilio auth provided, trying without...")
+                    response = await client.get(source, follow_redirects=True)
 
-            logger.info(f"📊 Response status: {response.status_code}")
+                logger.info(f"📊 Response status: {response.status_code}")
 
-            if response.status_code != 200:
-                logger.warning(f"Failed to download audio: HTTP {response.status_code}")
-                logger.warning(
-                    f"Response body: {response.text[:200] if response.text else 'empty'}"
-                )
-                return f"[🎤 AUDIO SIN TRANSCRIBIR] (Error de descarga: {response.status_code})"
+                if response.status_code != 200:
+                    logger.warning(
+                        f"Failed to download audio: HTTP {response.status_code}"
+                    )
+                    logger.warning(
+                        f"Response body: {response.text[:200] if response.text else 'empty'}"
+                    )
+                    return f"[🎤 AUDIO SIN TRANSCRIBIR] (Error de descarga: {response.status_code})"
 
-            audio_data = response.content
-            content_type = response.headers.get("content-type", "audio/ogg")
+                audio_data = response.content
+                content_type = response.headers.get("content-type", "audio/ogg")
 
         # Estimate duration for cost tracking
         audio_duration = _estimate_audio_duration(len(audio_data), content_type)
