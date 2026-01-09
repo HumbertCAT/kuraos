@@ -587,6 +587,15 @@ class Identity(Base):
     )
     is_merged: Mapped[bool] = mapped_column(Boolean, default=False)
 
+    # v1.6.6 Meta Cloud API session tracking (Chronos Logic)
+    # Used for 24h messaging window enforcement
+    last_meta_interaction_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    meta_provider: Mapped[Optional[str]] = mapped_column(
+        String(20), nullable=True
+    )  # "whatsapp" | "instagram"
+
     # Relationships
     organization: Mapped["Organization"] = relationship()
 

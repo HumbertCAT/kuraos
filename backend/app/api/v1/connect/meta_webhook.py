@@ -7,7 +7,11 @@ v1.6.5: Phase 1 - Unified Gateway
 - Webhook verification challenge (GET)
 - Inbound message processing (POST)
 - HMAC-SHA256 signature validation
-- Identity resolution via IdentityResolver
+
+v1.6.6: Phase 2 - The Chronos Logic
+- Global phone lookup via IdentityResolver
+- MessageLog storage with patient context
+- Session window tracking (24h WhatsApp / 7d Instagram)
 
 Supports:
 - Text messages
@@ -19,16 +23,18 @@ import hmac
 import logging
 from datetime import datetime
 from typing import Optional
+from uuid import UUID
 
 from fastapi import APIRouter, Query, Request, HTTPException, Depends
 from fastapi.responses import PlainTextResponse, JSONResponse
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db
 from app.core.config import settings
-
-# v1.6.5 Phase 1: MessageLog and IdentityResolver imports removed
-# Will be added back in Phase 2 when we implement patient lookup by phone
+from app.db.models import Identity, Patient, Lead, MessageLog, MessageDirection
+from app.services.identity_resolver import IdentityResolver
+from app.services.connect.meta_service import update_session
 
 logger = logging.getLogger(__name__)
 
@@ -173,13 +179,20 @@ async def process_meta_message(
     object_type: str,
     db: AsyncSession,
 ):
-    """Process a single Meta message.
+    """Process a single Meta message (v1.6.6 Chronos Logic).
 
     Args:
         message: Message object from Meta
         contacts: Contact info array
         object_type: "whatsapp_business_account" or "instagram"
         db: Database session
+
+    Flow:
+        1. Extract message details
+        2. Global phone lookup → find Identity
+        3. Find linked Patient (for MessageLog context)
+        4. Store in MessageLog
+        5. Update session window (last_meta_interaction_at)
     """
     # Extract message details
     msg_id = message.get("id", "")
@@ -213,18 +226,75 @@ async def process_meta_message(
         logger.warning("⚠️ Empty message received, skipping")
         return
 
-    # Determine source
-    source = "whatsapp_meta" if "whatsapp" in object_type else "instagram"
+    # Determine provider
+    provider = "instagram" if "instagram" in object_type.lower() else "whatsapp"
 
-    # v1.6.5 Phase 1: Log message (Identity Resolution deferred to Phase 2)
-    # Phase 2 will lookup patient by phone across all orgs and resolve identity
+    # Format phone for lookup
     phone_formatted = f"+{wa_id}" if not wa_id.startswith("+") else wa_id
 
     logger.info(
-        f"📩 Meta Message via {source} from [{phone_formatted}]: "
+        f"📩 Meta Message via {provider} from [{phone_formatted}]: "
         f"type={msg_type}, len={len(content)} chars"
     )
 
-    # TODO Phase 2: Lookup patient by phone, resolve identity, store in MessageLog
-    # For now, just acknowledge receipt
-    logger.info(f"📝 Message logged (Phase 1 - no storage): {phone_formatted}")
+    # v1.6.6: Global phone lookup to find Identity
+    # Use a dummy org_id since find_by_phone_global ignores it
+    resolver = IdentityResolver(db, UUID("00000000-0000-0000-0000-000000000000"))
+    identity = await resolver.find_by_phone_global(phone_formatted)
+
+    patient = None
+    organization_id = None
+
+    if identity:
+        # Update session window (Chronos Logic)
+        await update_session(identity, provider, db)
+
+        # Try to find linked Patient for MessageLog context
+        patient_result = await db.execute(
+            select(Patient)
+            .where(Patient.identity_id == identity.id)
+            .order_by(Patient.created_at.desc())  # Most recent patient
+            .limit(1)
+        )
+        patient = patient_result.scalar_one_or_none()
+
+        if patient:
+            organization_id = patient.organization_id
+            logger.info(
+                f"📇 Resolved: Identity[{identity.id}] → "
+                f"Patient[{patient.id}] in Org[{organization_id}]"
+            )
+        else:
+            # Check for Lead
+            lead_result = await db.execute(
+                select(Lead)
+                .where(Lead.identity_id == identity.id)
+                .order_by(Lead.created_at.desc())
+                .limit(1)
+            )
+            lead = lead_result.scalar_one_or_none()
+            if lead:
+                organization_id = lead.organization_id
+                logger.info(
+                    f"📇 Resolved: Identity[{identity.id}] → "
+                    f"Lead[{lead.id}] in Org[{organization_id}] (no patient)"
+                )
+    else:
+        logger.info(f"📝 Unknown sender: {phone_formatted} (no identity found)")
+
+    # Store message in MessageLog if we have patient context
+    if patient and organization_id:
+        message_log = MessageLog(
+            organization_id=organization_id,
+            patient_id=patient.id,
+            direction=MessageDirection.INBOUND,
+            content=content,
+            provider_id=msg_id,
+            status="RECEIVED",
+        )
+        db.add(message_log)
+        await db.commit()
+        logger.info(f"✅ Stored in MessageLog for Patient[{patient.id}]")
+    else:
+        # Log for audit but don't store (no patient context)
+        logger.info(f"📝 Message logged (no patient context): {phone_formatted}")

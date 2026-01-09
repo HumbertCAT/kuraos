@@ -15,6 +15,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.6.6] - 2026-01-09
+
+### ⏰ Meta Cloud API Migration - Phase 2 (The Chronos Logic)
+
+**Added**:
+- **Session Window Tracking** (`Identity` model):
+  - `last_meta_interaction_at` - Timestamp of last customer message
+  - `meta_provider` - "whatsapp" or "instagram"
+  - Alembic migration `830bda45abc2`
+- **Meta Service** (`backend/app/services/connect/meta_service.py`):
+  - `WindowStatus` enum: OPEN (WhatsApp 24h), IG_EXTENDED (Instagram 7d), CLOSED
+  - `get_window_status()` - Check if messaging window is open
+  - `update_session()` - Refresh window on inbound message
+  - `send_message()` - Outbound with window validation (skeleton)
+- **Global Phone Lookup** (`IdentityResolver.find_by_phone_global()`):
+  - Cross-organization identity resolution for webhooks
+  - Returns oldest identity if phone exists in multiple orgs
+
+**Changed**:
+- **Meta Webhook** now implements full identity resolution:
+  - Lookup identity by phone → Find linked Patient/Lead → Get org context
+  - Store messages in `MessageLog` with patient context
+  - Update session window on each inbound message
+
+**Technical Notes**:
+- WhatsApp: 24-hour Customer Service Window
+- Instagram: 7-day Human Agent Tag window
+- Outside window: Must use pre-approved template messages (Phase 4)
+
+---
+
 ## [1.6.5] - 2026-01-09
 
 ### 📡 Meta Cloud API Migration - Phase 1 (The Unified Gateway)

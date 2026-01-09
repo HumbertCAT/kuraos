@@ -238,6 +238,49 @@ class IdentityResolver:
             # Still not found? Re-raise
             raise
 
+    async def find_by_phone_global(self, phone: str) -> Optional[Identity]:
+        """Find identity by phone across ALL organizations (webhook use case).
+
+        v1.6.6: Used by Meta webhook to find patient context for incoming messages.
+        This bypasses the organization_id filter for global lookup.
+
+        Args:
+            phone: Phone number (raw or E.164 format)
+
+        Returns:
+            Identity if found, None otherwise
+
+        Note:
+            Returns the first match found. In multi-tenant scenarios where
+            the same phone exists in multiple orgs, this returns the oldest.
+        """
+        norm_phone = self.normalize_phone(phone)
+
+        if not norm_phone:
+            logger.warning(f"Invalid phone for global lookup: {phone}")
+            return None
+
+        result = await self.db.execute(
+            select(Identity)
+            .where(
+                Identity.primary_phone == norm_phone,
+                Identity.is_merged == False,
+            )
+            .order_by(Identity.created_at)  # Return oldest (first created)
+            .limit(1)
+        )
+        identity = result.scalar_one_or_none()
+
+        if identity:
+            logger.info(
+                f"Global phone lookup: found Identity[{identity.id}] "
+                f"in Org[{identity.organization_id}] for {norm_phone}"
+            )
+        else:
+            logger.info(f"Global phone lookup: no identity found for {norm_phone}")
+
+        return identity
+
     async def get_unified_timeline(self, identity_id: uuid.UUID) -> dict:
         """Get 360° contact view: all interactions across domains.
 
