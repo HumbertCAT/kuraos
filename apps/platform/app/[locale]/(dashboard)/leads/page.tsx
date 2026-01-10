@@ -182,6 +182,8 @@ export default function LeadsPage() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    // Mobile: Which column tab is active (for segmented control)
+    const [mobileActiveTab, setMobileActiveTab] = useState<LeadStatus>('NEW');
 
     // Load leads
     const loadLeads = useCallback(async () => {
@@ -341,9 +343,39 @@ export default function LeadsPage() {
                 </div>
             )}
 
-            {/* Kanban Board */}
+            {/* Mobile: Segmented Tab Control */}
+            <div className="md:hidden flex overflow-x-auto gap-1 p-1 bg-muted/50 rounded-xl mb-4">
+                {COLUMNS.filter(c => c.id !== 'CONVERTED' && c.id !== 'LOST').map(column => (
+                    <button
+                        key={column.id}
+                        onClick={() => setMobileActiveTab(column.id)}
+                        className={`flex-1 min-w-[80px] px-3 py-2 rounded-lg text-sm font-medium transition-all ${mobileActiveTab === column.id
+                                ? 'bg-card shadow-sm text-foreground'
+                                : 'text-muted-foreground hover:text-foreground'
+                            }`}
+                    >
+                        {column.title}
+                        <span className={`ml-1.5 px-1.5 py-0.5 text-xs rounded-full ${mobileActiveTab === column.id ? column.bgColor + ' ' + column.color : 'bg-muted'
+                            }`}>
+                            {getColumnLeads(column.id).length}
+                        </span>
+                    </button>
+                ))}
+            </div>
+
+            {/* Mobile: FAB for New Lead */}
+            <button
+                onClick={() => setShowCreateModal(true)}
+                className="md:hidden fixed bottom-20 right-4 z-40 w-14 h-14 bg-brand text-white rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+                style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+            >
+                <Plus className="w-6 h-6" />
+            </button>
+
+            {/* Kanban Board - Desktop: 4 cols, Mobile: 1 col filtered */}
             <DragDropContext onDragEnd={handleDragEnd}>
-                <div className="grid grid-cols-4 gap-6">
+                {/* Desktop: Full Kanban */}
+                <div className="hidden md:grid md:grid-cols-4 gap-6">
                     {COLUMNS.map(column => (
                         <div
                             key={column.id}
@@ -475,6 +507,63 @@ export default function LeadsPage() {
                             </Droppable>
                         </div>
                     ))}
+                </div>
+
+                {/* Mobile: Single Column (Filtered by Tab) */}
+                <div className="md:hidden space-y-3">
+                    {getColumnLeads(mobileActiveTab).map((lead) => {
+                        const urgency = getLeadUrgency(lead);
+                        return (
+                            <div
+                                key={lead.id}
+                                onClick={() => setSelectedLead(lead)}
+                                className={`bg-card rounded-xl p-4 border border-border cursor-pointer active:scale-[0.98] transition-all ${urgency.borderClass} ${urgency.opacityClass}`}
+                            >
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <p className="font-medium text-foreground">
+                                            {lead.first_name} {lead.last_name}
+                                        </p>
+                                        {lead.email && (
+                                            <p className="text-sm text-muted-foreground truncate max-w-[200px]">
+                                                {lead.email}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {lead.phone && (
+                                            <a
+                                                href={getWhatsAppUrl(lead)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600"
+                                            >
+                                                <MessageCircle className="w-4 h-4" />
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
+                                    <Clock className="w-3 h-3" />
+                                    <span>{formatTimeAgo(lead.created_at)}</span>
+                                    {lead.sherlock_metrics?.total_score !== undefined && (
+                                        <>
+                                            <div className="w-1 h-1 rounded-full bg-brand ml-auto" />
+                                            <span className="font-mono font-bold text-foreground">
+                                                {lead.sherlock_metrics.total_score}
+                                            </span>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                    {getColumnLeads(mobileActiveTab).length === 0 && (
+                        <div className="text-center py-12 text-muted-foreground">
+                            No hay leads en esta categoría
+                        </div>
+                    )}
                 </div>
             </DragDropContext>
 

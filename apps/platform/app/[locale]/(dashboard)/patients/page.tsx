@@ -287,13 +287,15 @@ export default function PatientsPage() {
               </p>
             </div>
           </div>
-          <table className="w-full">
+
+          {/* Desktop: Table View */}
+          <table className="hidden md:table w-full">
             <thead className="bg-gradient-to-r from-brand/15 to-transparent">
               <tr className="border-b border-border">
                 <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">{terminology.singular.toUpperCase()}</th>
                 <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">ESTADO</th>
-                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider hidden md:table-cell">ÚLTIMA SESIÓN</th>
-                <th className="px-4 py-3 text-center type-ui text-muted-foreground tracking-wider hidden sm:table-cell">SALUD</th>
+                <th className="px-4 py-3 text-left type-ui text-muted-foreground tracking-wider">ÚLTIMA SESIÓN</th>
+                <th className="px-4 py-3 text-center type-ui text-muted-foreground tracking-wider">SALUD</th>
                 <th className="px-4 py-3 text-right type-ui text-muted-foreground tracking-wider">ACCIONES</th>
               </tr>
             </thead>
@@ -341,14 +343,14 @@ export default function PatientsPage() {
                     </td>
 
                     {/* Last Session */}
-                    <td className="px-4 py-3 hidden md:table-cell">
+                    <td className="px-4 py-3">
                       <span className="type-ui font-mono text-xs text-muted-foreground uppercase">
                         Reciente
                       </span>
                     </td>
 
                     {/* Health Dot */}
-                    <td className="px-4 py-3 hidden sm:table-cell">
+                    <td className="px-4 py-3">
                       <div className="flex justify-center">
                         <HealthDot journeyStatus={patient.journey_status} />
                       </div>
@@ -387,8 +389,68 @@ export default function PatientsPage() {
               })}
             </tbody>
           </table>
+
+          {/* Mobile: Card Roster View */}
+          <div className="md:hidden p-4 space-y-3">
+            {patients.map((patient) => {
+              const { initials, gradient } = getAvatarProps(patient);
+              const badge = getStatusBadge(patient);
+
+              return (
+                <div
+                  key={patient.id}
+                  onClick={() => handleRowClick(patient.id)}
+                  className="bg-background border border-border rounded-xl p-4 cursor-pointer active:scale-[0.98] transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Avatar */}
+                    {patient.profile_image_url ? (
+                      <img
+                        src={patient.profile_image_url}
+                        alt={`${patient.first_name} ${patient.last_name}`}
+                        className="w-11 h-11 rounded-full object-cover border border-border flex-shrink-0"
+                      />
+                    ) : (
+                      <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-sm font-semibold flex-shrink-0`}>
+                        {initials}
+                      </div>
+                    )}
+
+                    {/* Name and status */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-foreground truncate">
+                        {patient.first_name} {patient.last_name}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={badge.className}>{badge.label}</span>
+                        <HealthDot journeyStatus={patient.journey_status} />
+                      </div>
+                    </div>
+
+                    {/* Quick action */}
+                    <Link
+                      href={`/patients/${patient.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-2 text-muted-foreground hover:text-foreground"
+                    >
+                      <Eye className="w-5 h-5" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
+
+      {/* Mobile: FAB for New Patient */}
+      <Link
+        href="/patients/new"
+        className="md:hidden fixed bottom-20 right-4 z-40 w-14 h-14 bg-brand text-white rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <UserPlus className="w-6 h-6" />
+      </Link>
       {/* Pagination Footer */}
       {meta && meta.filtered > 0 && (
         <PaginationToolbar

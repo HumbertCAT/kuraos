@@ -15,6 +15,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.7.2] - 2026-01-10
+
+### 📱 Page Adaptation — "The Core Pages"
+
+> **Theme:** Adaptar las páginas principales para experiencia móvil nativa.
+
+**Phase 3: Page Adaptation**
+- [x] **`/leads`**: Kanban → Segmented tabs + Card stack
+  - Tabs móviles: Nuevos / Contactados / Cita
+  - FAB para crear lead
+  - Cards con WhatsApp y Sherlock Score
+- [x] **`/patients`**: Table → Card roster
+  - Cards con avatar, nombre, estado, salud
+  - FAB para nuevo paciente
+  - Vista tabla completa en desktop
+
+---
+
 ## [1.7.1] - 2026-01-10
 
 ### 📦 Pattern Library — "The Foundation Blocks"
