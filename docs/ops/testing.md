@@ -71,20 +71,41 @@ cd backend
 
 **Key features:**
 - Testcontainers PostgreSQL (ephemeral per run)
-- Function-scoped engines (avoid event loop conflicts)
+- **Function-scoped engines** (critical for async event loop isolation)
 - Factory-Boy for test data generation
+- Lazy imports in `conftest.py` to avoid import-time DB validation
 
-**Example test:**
+> [!IMPORTANT]
+> **TD-86 Lesson:** Always use function-scoped async fixtures. Session-scoped engines cause `RuntimeError: Task got Future attached to a different loop`.
+
+**Core Fixtures:**
 ```python
-@pytest.mark.asyncio
-async def test_create_patient(db_session, authenticated_user):
-    user, org = authenticated_user
-    
-    patient = PatientFactory(organization_id=org.id)
-    db_session.add(patient)
-    await db_session.commit()
-    
-    assert patient.id is not None
+# conftest.py - Function-scoped for loop isolation
+@pytest_asyncio.fixture(scope="function")
+async def engine(database_url):
+    """Create isolated engine per test."""
+    engine = create_async_engine(database_url)
+    yield engine
+    await engine.dispose()
+
+@pytest_asyncio.fixture(scope="function")
+async def test_db(engine):
+    """Create isolated session per test."""
+    # Each test gets fresh session
+    async with AsyncSession(engine) as session:
+        yield session
+```
+
+**Auth Fixtures (must use same org):**
+```python
+# ✅ Correct: Use test_org with test_user
+async def my_test(test_db, test_user, test_org, auth_headers):
+    patient = Patient(organization_id=test_org.id)
+    # auth_headers uses test_user which belongs to test_org
+
+# ❌ Wrong: Mixing authenticated_user with test_org
+async def my_test(test_db, authenticated_user, auth_headers):
+    # authenticated_user creates DIFFERENT org than auth_headers!
 ```
 
 ### Layer 2: Adaptive Immunity (Frontend)
@@ -211,14 +232,28 @@ def test_password_reset_email(client, mailpit_client):
 
 ### GitHub Actions (PR Checks)
 
-**Trigger:** Pull requests  
-**Runs:**  Phase 1 (Innate) only  
-**Speed:** < 10 minutes
+**Trigger:** Push to `main` or PRs affecting `backend/**`  
+**Runs:** Innate Immunity (backend tests)  
+**Speed:** ~55 seconds
 
 ```yaml
 # .github/workflows/ci-innate.yml
-- run: pytest tests/ --verbose
+- run: |
+    python -m pytest tests/ \
+      -v -x \
+      --ignore=tests/generated \
+      --ignore=tests/ai \
+      --ignore=tests/test_emails.py \
+      --ignore=tests/test_whatsapp_monitoring.py \
+      --ignore=tests/test_group_booking.py
 ```
+
+**Current Status (v1.6.9+):**
+| Metric | Value |
+|--------|-------|
+| Tests Passing | **61+** |
+| Tests Skipped | 4 |
+| Run Time | ~55s |
 
 ### Cloud Build (Main Pipeline)
 
@@ -281,16 +316,34 @@ Via GitHub Actions workflow_dispatch
 **Cause:** No credentials  
 **Fix:** `export GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json`
 
+### "RuntimeError: Task got Future attached to a different loop"
+
+**Cause:** Session-scoped async engine shared across tests  
+**Fix:** Use `scope="function"` for all async fixtures (TD-86)
+
 ---
 
-## 📊 Test Coverage Goals
+## 📊 Test Coverage Status
 
-| Layer | Current | Target |
-|-------|---------|--------|
-| Backend | 10+ tests | 50+ |
-| Frontend | 7 E2E | 20+ |
-| Email | 4 tests | 10+ |
-| AI Eval | 3 cases | 10+ |
+| Layer | Current | Target | Status |
+|-------|---------|--------|--------|
+| Backend (CI) | **61 tests** | 80+ | ✅ Passing |
+| Backend Ignored | 10 tests | 0 | 🔧 TD-89 |
+| Frontend | 7 E2E | 20+ | ⚠️ Manual |
+| Email | 4 tests | 10+ | 🔧 Needs Mailpit |
+| AI Eval | 3 cases | 10+ | ⚠️ Manual |
+
+---
+
+## ⚠️ Known Issues (TD-89)
+
+The following tests are **temporarily ignored** in CI pending infrastructure work:
+
+| Test File | Issue | Fix Required |
+|-----------|-------|-------------|
+| `test_emails.py` | Missing `mailpit_client` fixture | Add Mailpit testcontainer |
+| `test_whatsapp_monitoring.py` | Auth fixture creates wrong org | Unify to `test_org` pattern |
+| `test_group_booking.py` | Business logic mismatch (202 vs 409) | Update test expectations |
 
 ---
 
