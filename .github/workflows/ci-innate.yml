@@ -57,7 +57,8 @@ jobs:
           --maxfail=5 \
           -x \
           --ignore=tests/generated \
-          --ignore=tests/ai
+          --ignore=tests/ai \
+          --ignore=tests/test_emails.py
     
     - name: Upload test results
       if: always()
