@@ -65,7 +65,7 @@ Revenue: 2 · Compliance: 0 · Unlocks: 2 · Effort: 2 · BlockedBy: 0
 - [x] Phase 3: Deep Listening - Audio download → GCS → Whisper transcription (v1.6.7)
 - [x] Phase 4: The Voice - OutboundService + Safety Switch + `/connect/send` API (v1.6.8)
 
-**🎯 NEXT: Phase 5 - The Visual Interface (v1.6.9)**
+**🎯 NEXT: Phase 5 - The Visual Interface (v1.7.0)**
 
 El terapeuta necesita VER los mensajes, no tenerlos enterrados en DB.
 
