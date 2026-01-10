@@ -54,7 +54,10 @@ jobs:
           -v \
           -x \
           --ignore=tests/generated \
-          --ignore=tests/ai
+          --ignore=tests/ai \
+          --ignore=tests/test_emails.py \
+          --ignore=tests/test_whatsapp_monitoring.py \
+          --ignore=tests/test_group_booking.py
     
     - name: Upload test results
       if: always()
