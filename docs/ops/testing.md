@@ -243,17 +243,8 @@ def test_password_reset_email(client, mailpit_client):
       -v -x \
       --ignore=tests/generated \
       --ignore=tests/ai \
-      --ignore=tests/test_emails.py \
-      --ignore=tests/test_whatsapp_monitoring.py \
-      --ignore=tests/test_group_booking.py
+      --ignore=tests/test_emails.py
 ```
-
-**Current Status (v1.6.9+):**
-| Metric | Value |
-|--------|-------|
-| Tests Passing | **61+** |
-| Tests Skipped | 4 |
-| Run Time | ~55s |
 
 ### Cloud Build (Main Pipeline)
 
@@ -323,27 +314,29 @@ Via GitHub Actions workflow_dispatch
 
 ---
 
-## 📊 Test Coverage Status
+## 📊 Test Coverage
 
-| Layer | Current | Target | Status |
-|-------|---------|--------|--------|
-| Backend (CI) | **61 tests** | 80+ | ✅ Passing |
-| Backend Ignored | 10 tests | 0 | 🔧 TD-89 |
-| Frontend | 7 E2E | 20+ | ⚠️ Manual |
-| Email | 4 tests | 10+ | 🔧 Needs Mailpit |
-| AI Eval | 3 cases | 10+ | ⚠️ Manual |
+| Layer | Technology | Notes |
+|-------|------------|-------|
+| Backend (Innate) | Pytest + testcontainers | Core business logic |
+| Frontend (Adaptive) | Playwright | User flows, E2E |
+| Email (Communication) | Mailpit | SMTP capture |
+| AI (Cognitive) | Vertex AI | Semantic quality |
+
+Run `./scripts/test.sh all` to see current coverage.
 
 ---
 
-## ⚠️ Known Issues (TD-89)
+## ⚠️ Common Fixture Gotchas
 
-The following tests are **temporarily ignored** in CI pending infrastructure work:
+When writing new tests, watch out for:
 
-| Test File | Issue | Fix Required |
-|-----------|-------|-------------|
-| `test_emails.py` | Missing `mailpit_client` fixture | Add Mailpit testcontainer |
-| `test_whatsapp_monitoring.py` | Auth fixture creates wrong org | Unify to `test_org` pattern |
-| `test_group_booking.py` | Business logic mismatch (202 vs 409) | Update test expectations |
+| Issue | Symptom | Fix |
+|-------|---------|-----|
+| Wrong auth method | 401 Unauthorized | Use `auth_client` (cookies), not `auth_headers` |
+| Timezone filters | Empty query results | Set explicit `effective_from` in past |
+| Missing schedule link | 0 slots returned | Add `schedule_id` to `ServiceType` |
+| Session scope | Event loop errors | Use `scope="function"` for async fixtures |
 
 ---
 
