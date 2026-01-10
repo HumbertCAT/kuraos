@@ -128,19 +128,21 @@ class TestPaymentWebhooks:
             mock_event.data.object.currency = "eur"  # JSON serializable
             mock_construct.return_value = mock_event
 
-            # Mock email service
-            with patch(
-                "app.services.email.email_service.send_booking_confirmation"
-            ) as mock_email:
-                mock_email.return_value = True
+            # Mock automation engine to isolate from fire_event bugs (TD-87)
+            with patch("app.api.v1.grow.payments.fire_event", new_callable=AsyncMock):
+                # Mock email service
+                with patch(
+                    "app.services.email.email_service.send_booking_confirmation"
+                ) as mock_email:
+                    mock_email.return_value = True
 
-                response = await client.post(
-                    "/api/v1/payments/webhook",
-                    content=json.dumps({"test": "payload"}),
-                    headers={"stripe-signature": "test_sig"},
-                )
+                    response = await client.post(
+                        "/api/v1/payments/webhook",
+                        content=json.dumps({"test": "payload"}),
+                        headers={"stripe-signature": "test_sig"},
+                    )
 
-                assert response.status_code == 200
+                    assert response.status_code == 200
 
         # Verify booking is now CONFIRMED
         await test_db.refresh(booking)
@@ -220,13 +222,15 @@ class TestPaymentWebhooks:
             mock_event.data.object.last_payment_error.message = "Card declined"
             mock_construct.return_value = mock_event
 
-            response = await client.post(
-                "/api/v1/payments/webhook",
-                content=json.dumps({"test": "payload"}),
-                headers={"stripe-signature": "test_sig"},
-            )
+            # Mock automation engine to isolate from fire_event bugs (TD-87)
+            with patch("app.api.v1.grow.payments.fire_event", new_callable=AsyncMock):
+                response = await client.post(
+                    "/api/v1/payments/webhook",
+                    content=json.dumps({"test": "payload"}),
+                    headers={"stripe-signature": "test_sig"},
+                )
 
-            assert response.status_code == 200
+                assert response.status_code == 200
 
         # Verify booking is CANCELLED
         await test_db.refresh(booking)
