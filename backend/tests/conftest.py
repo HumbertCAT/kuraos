@@ -119,9 +119,17 @@ async def client(test_db) -> AsyncGenerator:
 
     from app.api.deps import get_db
     from app.api.v1.core import auth
-    from app.api.v1.practice import patients
+    from app.api.v1.practice import (
+        patients,
+        clinical_entries,
+        booking,
+        services,
+        availability,
+        schedules,
+        pending_actions,
+    )
 
-    # Minimal test app - only include what's needed for tests
+    # Test app with all routers needed for existing tests
     test_app = FastAPI(title="Kura OS Test App")
     test_app.add_middleware(
         CORSMiddleware,
@@ -133,8 +141,26 @@ async def client(test_db) -> AsyncGenerator:
 
     # Core routes
     test_app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
+
+    # Practice routes
     test_app.include_router(
         patients.router, prefix="/api/v1/patients", tags=["Patients"]
+    )
+    test_app.include_router(
+        clinical_entries.router, prefix="/api/v1/clinical-entries", tags=["Clinical"]
+    )
+    test_app.include_router(booking.router, prefix="/api/v1/booking", tags=["Booking"])
+    test_app.include_router(
+        services.router, prefix="/api/v1/services", tags=["Services"]
+    )
+    test_app.include_router(
+        availability.router, prefix="/api/v1/availability", tags=["Availability"]
+    )
+    test_app.include_router(
+        schedules.router, prefix="/api/v1/schedules", tags=["Schedules"]
+    )
+    test_app.include_router(
+        pending_actions.router, prefix="/api/v1/pending-actions", tags=["Actions"]
     )
 
     @test_app.get("/health")
