@@ -32,10 +32,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed `ServiceType.schedule_id` for slot generation
   - Added "Common Fixture Gotchas" documentation in `docs/ops/testing.md`
 
+- [x] **TD-90**: Fixed META_APP_SECRET typo in Google Secret Manager (extra `a` character)
+
 **🔴 Critical Debt (Pending):**
 - [ ] TD-87: Duplicate Warning Modal no dispara
 - [ ] TD-89: Meta Audio Processing logs no aparecen
-- [ ] TD-90: META_APP_SECRET typo hazard
 
 ---
 
