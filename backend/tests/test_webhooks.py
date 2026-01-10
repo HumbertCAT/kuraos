@@ -119,15 +119,14 @@ class TestPaymentWebhooks:
 
         # Mock Stripe webhook signature verification
         with patch("stripe.Webhook.construct_event") as mock_construct:
-            mock_construct.return_value = MagicMock(
-                type="payment_intent.succeeded",
-                data=MagicMock(
-                    object=MagicMock(
-                        id="pi_test_123",
-                        metadata={"booking_id": str(booking_id)},
-                    )
-                ),
-            )
+            # Use proper values instead of MagicMock to avoid JSON serialization issues
+            mock_event = MagicMock()
+            mock_event.type = "payment_intent.succeeded"
+            mock_event.data.object.id = "pi_test_123"
+            mock_event.data.object.metadata = {"booking_id": str(booking_id)}
+            mock_event.data.object.amount = 10000  # JSON serializable
+            mock_event.data.object.currency = "eur"  # JSON serializable
+            mock_construct.return_value = mock_event
 
             # Mock email service
             with patch(
