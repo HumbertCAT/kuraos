@@ -759,4 +759,55 @@ export const api = {
       return handleResponse<any>(res);
     },
   },
+
+  // v1.7.0: Phase 5 - Connect Chat
+  connect: {
+    /**
+     * Get chat history for an identity
+     */
+    getHistory: async (identityId: string, limit = 50) => {
+      const res = await fetch(`${API_URL}/connect/messages/${identityId}?limit=${limit}`, {
+        credentials: 'include',
+      });
+      return handleResponse<{
+        messages: Array<{
+          id: string;
+          direction: 'INBOUND' | 'OUTBOUND';
+          content: string;
+          status: string;
+          timestamp: string;
+          media_url?: string;
+          mime_type?: string;
+        }>;
+        unread_count: number;
+        window_status: 'OPEN' | 'CLOSED' | 'UNKNOWN';
+        patient_id?: string;
+        identity_phone?: string;
+      }>(res);
+    },
+
+    /**
+     * Send a message via Meta WhatsApp
+     */
+    sendMessage: async (data: {
+      patient_id: string;
+      message: string;
+      risk_level?: string;
+      auto_mode?: boolean;
+    }) => {
+      const res = await fetch(`${API_URL}/connect/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      return handleResponse<{
+        decision: string;
+        sent: boolean;
+        message_id?: string;
+        error?: string;
+        draft_saved: boolean;
+      }>(res);
+    },
+  },
 };

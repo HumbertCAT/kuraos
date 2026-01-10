@@ -8,6 +8,7 @@ from . import twilio_webhook
 from . import meta_webhook
 from . import contacts
 from . import send  # v1.6.8: The Voice - Outbound messaging
+from . import messages  # v1.7.0: Phase 5 - Chat history
 
 __all__ = [
     "leads",
@@ -19,4 +20,5 @@ __all__ = [
     "meta_webhook",
     "contacts",
     "send",
+    "messages",
 ]

@@ -15,6 +15,7 @@ import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import { Tooltip } from '@/components/ui/tooltip';
 import DuplicateWarningModal from '@/components/DuplicateWarningModal';
+import { ChatWidget } from '@/components/connect/ChatWidget';
 
 // Types
 interface Lead {
@@ -682,6 +683,7 @@ function LeadDetailSheet({
     onUpdate: () => void;
 }) {
     const tt = useTranslations('Tooltips');
+    const [activeTab, setActiveTab] = useState<'info' | 'chat'>('info');
     const [firstName, setFirstName] = useState(lead.first_name);
     const [lastName, setLastName] = useState(lead.last_name);
     const [email, setEmail] = useState(lead.email || '');
@@ -821,158 +823,188 @@ function LeadDetailSheet({
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-8">
-                {/* Editable Contact Info */}
-                <div className="space-y-4">
-                    <h3 className="font-medium text-foreground">Información de Contacto</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm text-foreground/60 mb-1">Nombre</label>
-                            <input
-                                type="text"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm text-foreground/60 mb-1">Apellido</label>
-                            <input
-                                type="text"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-sm text-foreground/60 mb-1">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
-                            placeholder="email@ejemplo.com"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm text-foreground/60 mb-1">Teléfono</label>
-                        <input
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
-                            placeholder="+34 600 000 000"
-                        />
-                    </div>
-                </div>
-
-                {/* Source Details */}
-                {lead.source_details && (
-                    <div className="bg-muted/50 border border-border/50 rounded-xl p-4">
-                        <h3 className="type-ui font-bold text-brand uppercase tracking-widest text-[10px] mb-3">Origen del Lead</h3>
-                        <div className="space-y-2 text-sm">
-                            {Object.entries(lead.source_details).map(([key, value]) => (
-                                <div key={key} className="flex items-center justify-between border-b border-border/30 pb-1 last:border-0">
-                                    <span className="text-muted-foreground/70 capitalize text-xs">{key.replace(/_/g, ' ')}</span>
-                                    <span className="text-foreground font-medium">{String(value)}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Registration Info */}
-                <div className="type-ui text-[10px] text-muted-foreground/60 uppercase tracking-tight">
-                    Registrado el {new Date(lead.created_at).toLocaleDateString('es-ES', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                    })}
-                </div>
-
-                {/* Notes */}
-                <div>
-                    <h3 className="font-medium text-foreground mb-2">Notas</h3>
-                    <textarea
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        rows={5}
-                        className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none transition-all text-foreground bg-background resize-none"
-                        placeholder="Añade notas sobre este lead..."
-                    />
-                </div>
-
-                {/* v1.6 CRM: Cortex Shadow Profile Widget */}
-                {(lead.sherlock_metrics || lead.shadow_profile) && (
-                    <div className="bg-muted/30 border border-brand/10 rounded-xl p-5 space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                        <div className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-brand animate-pulse" />
-                            <h3 className="text-xs font-mono font-bold text-brand uppercase tracking-widest">
-                                Cortex Shadow Profile
-                            </h3>
-                        </div>
-
-                        {lead.sherlock_metrics && (
-                            <div className="grid grid-cols-4 gap-3">
-                                {[
-                                    { label: 'R', full: 'Risk', val: lead.sherlock_metrics.r },
-                                    { label: 'N', full: 'Need', val: lead.sherlock_metrics.n },
-                                    { label: 'A', full: 'Authority', val: lead.sherlock_metrics.a },
-                                    { label: 'V', full: 'Velocity', val: lead.sherlock_metrics.v },
-                                ].map(metric => {
-                                    const val = metric.val ?? 50;
-                                    const colorClass = val > 75 ? 'text-emerald-500' : val > 40 ? 'text-amber-500' : 'text-red-500';
-                                    return (
-                                        <div key={metric.label} className="bg-background rounded-lg p-2 text-center border border-border/50 shadow-sm">
-                                            <p className="text-[9px] text-muted-foreground uppercase font-medium">{metric.label}</p>
-                                            <p className={`font-mono font-bold text-lg ${colorClass}`}>
-                                                {metric.val ?? '--'}
-                                            </p>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {lead.shadow_profile && (
-                            <div className="space-y-4 pt-2">
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Intención</span>
-                                    <p className="text-sm text-foreground/90 italic">"{lead.shadow_profile.intent}"</p>
-                                </div>
-
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Estilo</span>
-                                    <p className="text-sm font-medium">{lead.shadow_profile.communication_style}</p>
-                                </div>
-
-                                {lead.shadow_profile.contact_suggestion && (
-                                    <div className="bg-brand/5 border border-brand/10 rounded-lg p-3 mt-2">
-                                        <span className="text-[10px] font-bold text-brand uppercase tracking-wider block mb-1">Sugerencia de Contacto</span>
-                                        <p className="text-xs text-foreground/80 leading-relaxed font-medium">
-                                            {lead.shadow_profile.contact_suggestion}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* Danger Zone */}
-                <div className="pt-8 mt-8 border-t border-border/50">
+            {/* Tabs */}
+            {lead.identity_id && (
+                <div className="flex border-b border-border bg-muted/30">
                     <button
-                        onClick={handleDelete}
-                        disabled={deleting}
-                        className="text-xs text-muted-foreground hover:text-risk transition-colors flex items-center gap-2 px-2"
+                        onClick={() => setActiveTab('info')}
+                        className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === 'info' ? 'border-b-2 border-brand text-brand' : 'text-muted-foreground hover:text-foreground'}`}
                     >
-                        <Ghost className="w-3 h-3" />
-                        {deleting ? 'Eliminando...' : 'Eliminar lead permanentemente'}
+                        Información
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('chat')}
+                        className={`flex-1 px-4 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${activeTab === 'chat' ? 'border-b-2 border-brand text-brand' : 'text-muted-foreground hover:text-foreground'}`}
+                    >
+                        <MessageCircle className="w-4 h-4" />
+                        Conversación
                     </button>
                 </div>
-            </div>
+            )}
+
+            {/* Content */}
+            {activeTab === 'info' ? (
+                <div className="flex-1 overflow-y-auto p-6 space-y-8">
+                    {/* Editable Contact Info */}
+                    <div className="space-y-4">
+                        <h3 className="font-medium text-foreground">Información de Contacto</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm text-foreground/60 mb-1">Nombre</label>
+                                <input
+                                    type="text"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-foreground/60 mb-1">Apellido</label>
+                                <input
+                                    type="text"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm text-foreground/60 mb-1">Email</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
+                                placeholder="email@ejemplo.com"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm text-foreground/60 mb-1">Teléfono</label>
+                            <input
+                                type="tel"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                className="w-full px-3 py-2 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 outline-none text-foreground bg-background"
+                                placeholder="+34 600 000 000"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Source Details */}
+                    {lead.source_details && (
+                        <div className="bg-muted/50 border border-border/50 rounded-xl p-4">
+                            <h3 className="type-ui font-bold text-brand uppercase tracking-widest text-[10px] mb-3">Origen del Lead</h3>
+                            <div className="space-y-2 text-sm">
+                                {Object.entries(lead.source_details).map(([key, value]) => (
+                                    <div key={key} className="flex items-center justify-between border-b border-border/30 pb-1 last:border-0">
+                                        <span className="text-muted-foreground/70 capitalize text-xs">{key.replace(/_/g, ' ')}</span>
+                                        <span className="text-foreground font-medium">{String(value)}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Registration Info */}
+                    <div className="type-ui text-[10px] text-muted-foreground/60 uppercase tracking-tight">
+                        Registrado el {new Date(lead.created_at).toLocaleDateString('es-ES', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                        })}
+                    </div>
+
+                    {/* Notes */}
+                    <div>
+                        <h3 className="font-medium text-foreground mb-2">Notas</h3>
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            rows={5}
+                            className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-brand/50 focus:border-brand outline-none transition-all text-foreground bg-background resize-none"
+                            placeholder="Añade notas sobre este lead..."
+                        />
+                    </div>
+
+                    {/* v1.6 CRM: Cortex Shadow Profile Widget */}
+                    {(lead.sherlock_metrics || lead.shadow_profile) && (
+                        <div className="bg-muted/30 border border-brand/10 rounded-xl p-5 space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-brand animate-pulse" />
+                                <h3 className="text-xs font-mono font-bold text-brand uppercase tracking-widest">
+                                    Cortex Shadow Profile
+                                </h3>
+                            </div>
+
+                            {lead.sherlock_metrics && (
+                                <div className="grid grid-cols-4 gap-3">
+                                    {[
+                                        { label: 'R', full: 'Risk', val: lead.sherlock_metrics.r },
+                                        { label: 'N', full: 'Need', val: lead.sherlock_metrics.n },
+                                        { label: 'A', full: 'Authority', val: lead.sherlock_metrics.a },
+                                        { label: 'V', full: 'Velocity', val: lead.sherlock_metrics.v },
+                                    ].map(metric => {
+                                        const val = metric.val ?? 50;
+                                        const colorClass = val > 75 ? 'text-emerald-500' : val > 40 ? 'text-amber-500' : 'text-red-500';
+                                        return (
+                                            <div key={metric.label} className="bg-background rounded-lg p-2 text-center border border-border/50 shadow-sm">
+                                                <p className="text-[9px] text-muted-foreground uppercase font-medium">{metric.label}</p>
+                                                <p className={`font-mono font-bold text-lg ${colorClass}`}>
+                                                    {metric.val ?? '--'}
+                                                </p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            {lead.shadow_profile && (
+                                <div className="space-y-4 pt-2">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Intención</span>
+                                        <p className="text-sm text-foreground/90 italic">"{lead.shadow_profile.intent}"</p>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-bold text-muted-foreground/70 uppercase tracking-tight">Estilo</span>
+                                        <p className="text-sm font-medium">{lead.shadow_profile.communication_style}</p>
+                                    </div>
+
+                                    {lead.shadow_profile.contact_suggestion && (
+                                        <div className="bg-brand/5 border border-brand/10 rounded-lg p-3 mt-2">
+                                            <span className="text-[10px] font-bold text-brand uppercase tracking-wider block mb-1">Sugerencia de Contacto</span>
+                                            <p className="text-xs text-foreground/80 leading-relaxed font-medium">
+                                                {lead.shadow_profile.contact_suggestion}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Danger Zone */}
+                    <div className="pt-8 mt-8 border-t border-border/50">
+                        <button
+                            onClick={handleDelete}
+                            disabled={deleting}
+                            className="text-xs text-muted-foreground hover:text-risk transition-colors flex items-center gap-2 px-2"
+                        >
+                            <Ghost className="w-3 h-3" />
+                            {deleting ? 'Eliminando...' : 'Eliminar lead permanentemente'}
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                /* Chat Tab */
+                <div className="flex-1 overflow-hidden p-4">
+                    <ChatWidget
+                        identityId={lead.identity_id!}
+                        patientId={lead.converted_patient_id || undefined}
+                        className="h-full"
+                    />
+                </div>
+            )}
 
             {/* Sticky Footer Actions */}
             <div className="p-6 bg-card border-t border-border flex flex-col gap-4 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">

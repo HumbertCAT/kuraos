@@ -39,6 +39,7 @@ from app.api.v1.connect import (
     meta_webhook,
     contacts,
     send,  # v1.6.8: The Voice
+    messages,  # v1.7.0: Phase 5 Chat History
 )
 
 # Practice: Pilar II - SERVIR (Patients, Bookings, Clinical) [HIPAA ZONE]
@@ -222,6 +223,11 @@ app.include_router(
     send.router,
     prefix=f"{settings.API_V1_STR}",
     tags=["Connect-Send"],
+)
+app.include_router(
+    messages.router,
+    prefix=f"{settings.API_V1_STR}",
+    tags=["Connect-Messages"],
 )
 app.include_router(
     booking.router, prefix=f"{settings.API_V1_STR}/booking", tags=["Booking"]
