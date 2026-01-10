@@ -18,6 +18,117 @@ from app.services.identity_resolver import IdentityResolver
 router = APIRouter()
 
 
+# IMPORTANT: Static routes MUST come before parameterized routes
+# Otherwise /{identity_id} captures "check" as a UUID and fails
+@router.get(
+    "/check",
+    summary="Check if identity exists (duplicate detection)",
+    description="Quick check for duplicate prevention in create forms",
+)
+async def check_identity_exists(
+    email: Optional[str] = None,
+    phone: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Check if an identity exists for the given email/phone.
+
+    Returns a simple found/not-found response with entity details
+    for use in duplicate warning modals.
+
+    Response:
+        {
+            "found": true,
+            "identity_id": "uuid...",
+            "primary_email": "john@example.com",
+            "primary_phone": "+34600123456",
+            "linked_entity": {
+                "type": "patient" | "lead",
+                "name": "John Doe",
+                "id": "uuid..."
+            }
+        }
+    """
+    if not email and not phone:
+        return {"found": False}
+
+    # Normalize search criteria
+    resolver = IdentityResolver(db, current_user.organization_id)
+    norm_email = resolver.normalize_email(email) if email else None
+    norm_phone = resolver.normalize_phone(phone) if phone else None
+
+    # Search for existing identity
+    from sqlalchemy import or_
+
+    query = select(Identity).where(
+        Identity.organization_id == current_user.organization_id,
+        Identity.is_merged == False,
+    )
+
+    if norm_email and norm_phone:
+        query = query.where(
+            or_(
+                Identity.primary_email == norm_email,
+                Identity.primary_phone == norm_phone,
+            )
+        )
+    elif norm_email:
+        query = query.where(Identity.primary_email == norm_email)
+    elif norm_phone:
+        query = query.where(Identity.primary_phone == norm_phone)
+    else:
+        return {"found": False}
+
+    result = await db.execute(query)
+    identity = result.scalar_one_or_none()
+
+    if not identity:
+        return {"found": False}
+
+    # Find the most relevant linked entity (patient takes priority over lead)
+    linked_entity = None
+
+    # Check for patient first (more important)
+    patient_result = await db.execute(
+        select(Patient)
+        .where(Patient.identity_id == identity.id)
+        .order_by(Patient.created_at.desc())
+        .limit(1)
+    )
+    patient = patient_result.scalar_one_or_none()
+
+    if patient:
+        linked_entity = {
+            "type": "patient",
+            "name": f"{patient.first_name} {patient.last_name}",
+            "id": str(patient.id),
+        }
+    else:
+        # Check for lead
+        lead_result = await db.execute(
+            select(Lead)
+            .where(Lead.identity_id == identity.id)
+            .order_by(Lead.created_at.desc())
+            .limit(1)
+        )
+        lead = lead_result.scalar_one_or_none()
+
+        if lead:
+            linked_entity = {
+                "type": "lead",
+                "name": f"{lead.first_name} {lead.last_name}",
+                "id": str(lead.id),
+            }
+
+    return {
+        "found": True,
+        "identity_id": str(identity.id),
+        "primary_email": identity.primary_email,
+        "primary_phone": identity.primary_phone,
+        "linked_entity": linked_entity,
+    }
+
+
 @router.get(
     "/{identity_id}",
     summary="Get unified contact view (360°)",
@@ -216,113 +327,4 @@ async def search_identities(
         "query": {"email": norm_email, "phone": norm_phone},
         "results": identities,
         "count": len(identities),
-    }
-
-
-@router.get(
-    "/check",
-    summary="Check if identity exists (duplicate detection)",
-    description="Quick check for duplicate prevention in create forms",
-)
-async def check_identity_exists(
-    email: Optional[str] = None,
-    phone: Optional[str] = None,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    """Check if an identity exists for the given email/phone.
-
-    Returns a simple found/not-found response with entity details
-    for use in duplicate warning modals.
-
-    Response:
-        {
-            "found": true,
-            "identity_id": "uuid...",
-            "primary_email": "john@example.com",
-            "primary_phone": "+34600123456",
-            "linked_entity": {
-                "type": "patient" | "lead",
-                "name": "John Doe",
-                "id": "uuid..."
-            }
-        }
-    """
-    if not email and not phone:
-        return {"found": False}
-
-    # Normalize search criteria
-    resolver = IdentityResolver(db, current_user.organization_id)
-    norm_email = resolver.normalize_email(email) if email else None
-    norm_phone = resolver.normalize_phone(phone) if phone else None
-
-    # Search for existing identity
-    from sqlalchemy import or_
-
-    query = select(Identity).where(
-        Identity.organization_id == current_user.organization_id,
-        Identity.is_merged == False,
-    )
-
-    if norm_email and norm_phone:
-        query = query.where(
-            or_(
-                Identity.primary_email == norm_email,
-                Identity.primary_phone == norm_phone,
-            )
-        )
-    elif norm_email:
-        query = query.where(Identity.primary_email == norm_email)
-    elif norm_phone:
-        query = query.where(Identity.primary_phone == norm_phone)
-    else:
-        return {"found": False}
-
-    result = await db.execute(query)
-    identity = result.scalar_one_or_none()
-
-    if not identity:
-        return {"found": False}
-
-    # Find the most relevant linked entity (patient takes priority over lead)
-    linked_entity = None
-
-    # Check for patient first (more important)
-    patient_result = await db.execute(
-        select(Patient)
-        .where(Patient.identity_id == identity.id)
-        .order_by(Patient.created_at.desc())
-        .limit(1)
-    )
-    patient = patient_result.scalar_one_or_none()
-
-    if patient:
-        linked_entity = {
-            "type": "patient",
-            "name": f"{patient.first_name} {patient.last_name}",
-            "id": str(patient.id),
-        }
-    else:
-        # Check for lead
-        lead_result = await db.execute(
-            select(Lead)
-            .where(Lead.identity_id == identity.id)
-            .order_by(Lead.created_at.desc())
-            .limit(1)
-        )
-        lead = lead_result.scalar_one_or_none()
-
-        if lead:
-            linked_entity = {
-                "type": "lead",
-                "name": f"{lead.first_name} {lead.last_name}",
-                "id": str(lead.id),
-            }
-
-    return {
-        "found": True,
-        "identity_id": str(identity.id),
-        "primary_email": identity.primary_email,
-        "primary_phone": identity.primary_phone,
-        "linked_entity": linked_entity,
     }
