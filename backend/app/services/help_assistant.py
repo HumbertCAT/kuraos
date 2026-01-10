@@ -72,7 +72,7 @@ class HelpAssistant:
             from app.services.ai import ProviderFactory
 
             # Get provider for help_bot task (routes through Vertex AI)
-            provider = ProviderFactory.get_provider_for_task("help_bot")
+            provider = await ProviderFactory.get_provider_for_task("help_bot")
 
             # Build system prompt with context
             system_prompt = SYSTEM_PROMPT.format(
