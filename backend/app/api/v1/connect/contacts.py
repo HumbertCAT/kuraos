@@ -25,10 +25,17 @@ router = APIRouter()
 )
 async def get_contact_timeline(
     identity_id: uuid.UUID,
+    limit: int = 50,
+    offset: int = 0,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """Get 360° contact view: unified timeline across all domains.
+
+    Args:
+        identity_id: UUID of the contact identity
+        limit: Maximum items per page (default 50, max 100)
+        offset: Items to skip for pagination (default 0)
 
     Returns:
         {
@@ -39,9 +46,14 @@ async def get_contact_timeline(
             "patients": [...],
             "total_interactions": 5,
             "first_contact": "2026-01-01T00:00:00Z",
-            "last_activity": "2026-01-08T12:00:00Z"
+            "last_activity": "2026-01-08T12:00:00Z",
+            "pagination": {"limit": 50, "offset": 0, "has_more": false}
         }
     """
+    # Validate pagination params
+    limit = min(max(1, limit), 100)  # Clamp between 1 and 100
+    offset = max(0, offset)
+
     # Fetch identity
     result = await db.execute(
         select(Identity).where(
@@ -57,9 +69,11 @@ async def get_contact_timeline(
             detail=f"Identity {identity_id} not found",
         )
 
-    # Use IdentityResolver to get timeline
+    # Use IdentityResolver to get paginated timeline
     resolver = IdentityResolver(db, current_user.organization_id)
-    timeline = await resolver.get_unified_timeline(identity_id)
+    timeline = await resolver.get_unified_timeline(
+        identity_id, limit=limit, offset=offset
+    )
 
     # Add identity metadata
     return {

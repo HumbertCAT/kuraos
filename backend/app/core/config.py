@@ -2,9 +2,12 @@ from typing import List, Optional, Union
 from pydantic import AnyHttpUrl, PostgresDsn, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from app.core.version import APP_VERSION
+
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Kura OS"
+    APP_VERSION: str = APP_VERSION  # TD-80: Read from CHANGELOG.md at startup
     API_V1_STR: str = "/api/v1"
 
     # Database - using str to support Cloud SQL Unix socket format

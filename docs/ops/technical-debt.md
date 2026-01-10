@@ -1,9 +1,9 @@
 # Technical Debt Register
 
 > [!NOTE]
-> **Status**: Living Document (v1.6.4)  
+> **Status**: Living Document (v1.6.9)  
 > **Purpose**: Active technical debt tracking for KURA OS  
-> **Last Updated**: 2026-01-08 (v1.6.4 The Identity Vault)
+> **Last Updated**: 2026-01-10 (v1.6.9 Bugs, Fixes & Debt)
 
 This document tracks **actionable** technical debt that requires resolution. Resolved items belong in the [CHANGELOG](../../CHANGELOG.md).
 
@@ -47,46 +47,15 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ## 🟠 MEDIUM (Should Fix Soon)
 
-### TD-81: Identity Vault Missing Composite Index
-**File**: `backend/alembic/versions/e6766c8a25d4...py`  
-**Issue**: No composite index on `(org_id, email, phone)` for faster lookups  
-**Impact**: Slower identity resolution at scale (>10k identities)  
-**Action**: Add migration with composite index
-
-### TD-82: Contacts 360 Page No Pagination
-**File**: `apps/platform/app/[locale]/(dashboard)/contacts/[id]/page.tsx`  
-**Issue**: Loads ALL leads + patients for an identity without pagination  
-**Impact**: Slow load for high-volume contacts (>50 records)  
-**Action**: Add pagination or lazy loading to timeline
-
----
-
-## 🟡 LOW (When Convenient)
-
-### TD-80: Health Endpoint Version Hardcoded
-**File**: `backend/app/main.py:386`  
-**Issue**: Version string manually updated each release  
-**Impact**: Easy to forget, causes confusion about deployed version  
-**Action**: Read version from `pyproject.toml` or env var
-
-### TD-83: Lead `is_prospect` Flag Deferred
-**Origin**: v1.6.4 planning  
-**Issue**: Leads lack `is_prospect` boolean for qualified-but-not-converted tracking  
-**Impact**: Cannot distinguish "warm lead" from "cold lead" in CRM  
-**Action**: Add column + migration when CRM v2 prioritized
-
-### TD-84: Identity Backfill Script Manual
-**File**: `backend/scripts/backfill_identities.py`  
-**Issue**: Requires manual execution after migration  
-**Impact**: New deployments need extra step  
-**Action**: Integrate into migration or post-migrate hook
-
 ---
 
 ## ✅ Recently Resolved (v1.6.x)
 
 | ID | Description | Resolved In |
 |----|-------------|-------------|
+| TD-80 | Health endpoint version hardcoded | v1.6.9 |
+| TD-81 | Identity Vault missing composite index | v1.6.9 |
+| TD-82 | Contacts 360 no pagination | v1.6.9 |
 | TD-69 | Action Interpolation missing | v1.6.2 |
 | TD-73 | Email Placeholders hardcoded | v1.6.2 |
 | TD-75 | Form Submissions Blindness | v1.6.3 |

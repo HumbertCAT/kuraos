@@ -1,9 +1,17 @@
 name: CI Innate - Backend Tests
 
-# DISABLED: Session-scoped engine breaks async event loop isolation (TD-86)
-# Re-enable after fixing conftest.py fixtures
+# TD-86: Re-enabled after fixing async event loop isolation
 on:
-  workflow_dispatch:  # Manual trigger only
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-innate.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  workflow_dispatch:  # Manual trigger
 
 jobs:
   test:
@@ -36,7 +44,7 @@ jobs:
       working-directory: backend
       env:
         # Testcontainers will spawn PostgreSQL via Docker
-        # DATABASE_URL is just for initial pydantic validation
+        # DATABASE_URL set in conftest.py before imports
         DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test
         SECRET_KEY: test-secret-key-for-ci-only
         ALGORITHM: HS256

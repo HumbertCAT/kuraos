@@ -1,30 +1,27 @@
 """
 Pytest configuration and fixtures for KURA OS backend tests.
 
-Phase 1: Innate Immunity - The Immune System QA Architecture
+v1.6.9 TD-86: Fixed async event loop isolation + import-time DATABASE_URL issue.
 
 Strategy:
-- Session-scoped testcontainers PostgreSQL (ephemeral per test run)
-- Function-scoped engine to ensure same event loop for all DB ops
-- Minimal test FastAPI app to avoid scheduler interference
+- Lazy imports to avoid DATABASE_URL validation at import time
+- Function-scoped async engine for proper event loop isolation
+- Testcontainers PostgreSQL for ephemeral test database
 """
 
+import os
 from typing import AsyncGenerator
 import uuid
 
 import pytest
 import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine
-from sqlalchemy.orm import sessionmaker
 
-from testcontainers.postgres import PostgresContainer
-from testcontainers.core.generic import DockerContainer
-import requests
-
-from app.db.base import Base, get_db, set_engine, reset_engine
-from app.db.models import Organization, User
-from app.core.security import create_access_token
+# Set dummy DATABASE_URL BEFORE any app imports to pass pydantic validation
+# The real URL comes from testcontainers at runtime
+os.environ.setdefault(
+    "DATABASE_URL", "postgresql+asyncpg://test:test@localhost:5432/test"
+)
+os.environ.setdefault("SECRET_KEY", "test-secret-key-for-testing-only")
 
 
 # =============================================================================
@@ -34,7 +31,9 @@ from app.core.security import create_access_token
 
 @pytest.fixture(scope="session")
 def postgres_container():
-    """Start postgres container for the session."""
+    """Start postgres container for the entire test session."""
+    from testcontainers.postgres import PostgresContainer
+
     with PostgresContainer("postgres:15-alpine") as postgres:
         yield postgres
 
@@ -46,30 +45,44 @@ def database_url(postgres_container) -> str:
 
 
 # =============================================================================
-# SESSION-Scoped Engine (created once for all tests)
+# Function-Scoped Engine (new event loop per test)
 # =============================================================================
 
 
-@pytest_asyncio.fixture(scope="session")
-async def engine(database_url: str) -> AsyncGenerator[AsyncEngine, None]:
+@pytest_asyncio.fixture(scope="function")
+async def engine(database_url: str):
     """
-    Create engine once for entire test session.
-    Tables are created once, then truncated between tests for isolation.
+    Create engine for each test function.
+
+    TD-86 FIX: Function scope ensures each test gets its own event loop,
+    avoiding the "attached to a different loop" errors.
     """
-    engine = create_async_engine(database_url, echo=False, pool_size=5, max_overflow=10)
+    from sqlalchemy.ext.asyncio import create_async_engine
+    from app.db.base import Base, set_engine, reset_engine
+
+    test_engine = create_async_engine(
+        database_url,
+        echo=False,
+        pool_size=5,
+        max_overflow=10,
+        pool_pre_ping=True,
+    )
 
     # Inject into app's lazy loading system
-    set_engine(engine)
+    set_engine(test_engine)
 
-    # Create all tables ONCE
-    async with engine.begin() as conn:
+    # Create all tables
+    async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    yield engine
+    yield test_engine
 
-    # Cleanup
+    # Cleanup: drop all tables and dispose
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
     reset_engine()
-    await engine.dispose()
+    await test_engine.dispose()
 
 
 # =============================================================================
@@ -78,8 +91,11 @@ async def engine(database_url: str) -> AsyncGenerator[AsyncEngine, None]:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def test_db(engine: AsyncEngine) -> AsyncGenerator[AsyncSession, None]:
+async def test_db(engine) -> AsyncGenerator:
     """Create an isolated database session for each test."""
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from sqlalchemy.orm import sessionmaker
+
     async_session_factory = sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False
     )
@@ -88,11 +104,6 @@ async def test_db(engine: AsyncEngine) -> AsyncGenerator[AsyncSession, None]:
         yield session
         await session.rollback()
 
-    # Truncate all tables after test
-    async with engine.begin() as conn:
-        for table in reversed(Base.metadata.sorted_tables):
-            await conn.execute(table.delete())
-
 
 # =============================================================================
 # FastAPI Test Client (minimal app, no scheduler)
@@ -100,23 +111,18 @@ async def test_db(engine: AsyncEngine) -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
+async def client(test_db) -> AsyncGenerator:
     """Create a test client with database override."""
+    from httpx import AsyncClient, ASGITransport
     from fastapi import FastAPI
     from fastapi.middleware.cors import CORSMiddleware
-    from app.api.v1.core import auth
-    from app.api.v1.practice import (
-        patients,
-        clinical_entries,
-        booking,
-        services,
-        availability,
-        schedules,
-        pending_actions,
-    )
 
-    # Test app with routers needed for tests
-    test_app = FastAPI(title="Test App")
+    from app.api.deps import get_db
+    from app.api.v1.core import auth
+    from app.api.v1.practice import patients
+
+    # Minimal test app - only include what's needed for tests
+    test_app = FastAPI(title="Kura OS Test App")
     test_app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -125,28 +131,10 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
         allow_headers=["*"],
     )
 
-    # Core
+    # Core routes
     test_app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
-
-    # Practice
     test_app.include_router(
         patients.router, prefix="/api/v1/patients", tags=["Patients"]
-    )
-    test_app.include_router(
-        clinical_entries.router, prefix="/api/v1/clinical-entries", tags=["Clinical"]
-    )
-    test_app.include_router(booking.router, prefix="/api/v1/booking", tags=["Booking"])
-    test_app.include_router(
-        services.router, prefix="/api/v1/services", tags=["Services"]
-    )
-    test_app.include_router(
-        availability.router, prefix="/api/v1/availability", tags=["Availability"]
-    )
-    test_app.include_router(
-        schedules.router, prefix="/api/v1/schedules", tags=["Schedules"]
-    )
-    test_app.include_router(
-        pending_actions.router, prefix="/api/v1/pending-actions", tags=["Actions"]
     )
 
     @test_app.get("/health")
@@ -157,7 +145,7 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     async def root():
         return {"message": "Welcome to Kura OS API", "docs": "/docs"}
 
-    # Override get_db
+    # Override get_db to use test session
     async def override_get_db():
         yield test_db
 
@@ -174,8 +162,10 @@ async def client(test_db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def test_org(test_db: AsyncSession) -> Organization:
+async def test_org(test_db):
     """Create a test organization."""
+    from app.db.models import Organization
+
     org = Organization(
         id=uuid.uuid4(),
         name="Test Organization",
@@ -188,8 +178,10 @@ async def test_org(test_db: AsyncSession) -> Organization:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def test_user(test_db: AsyncSession, test_org: Organization) -> User:
+async def test_user(test_db, test_org):
     """Create a test user in the test organization."""
+    from app.db.models import User
+
     user = User(
         id=uuid.uuid4(),
         email=f"test_{uuid.uuid4().hex[:8]}@kuraos.test",
@@ -204,116 +196,16 @@ async def test_user(test_db: AsyncSession, test_org: Organization) -> User:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def authenticated_user(test_db: AsyncSession) -> tuple[User, Organization]:
-    """Create an authenticated test user and organization."""
-    org = Organization(
-        id=uuid.uuid4(),
-        name="Auth Test Org",
-        referral_code=f"AUTH{uuid.uuid4().hex[:6].upper()}",
-    )
-    test_db.add(org)
-
-    user = User(
-        id=uuid.uuid4(),
-        email=f"auth_{uuid.uuid4().hex[:8]}@kuraos.test",
-        hashed_password="$2b$12$test_hash_placeholder",
-        full_name="Authenticated User",
-        organization_id=org.id,
-    )
-    test_db.add(user)
-    await test_db.commit()
-
-    return user, org
-
-
-@pytest_asyncio.fixture(scope="function")
-async def auth_headers(authenticated_user: tuple[User, Organization]) -> dict:
+async def auth_headers(test_user):
     """Generate auth headers with a valid JWT token."""
-    user, _ = authenticated_user
-    token = create_access_token(subject=str(user.id))
+    from app.core.security import create_access_token
+
+    token = create_access_token(subject=str(test_user.id))
     return {"Authorization": f"Bearer {token}"}
 
 
 @pytest_asyncio.fixture(scope="function")
-async def auth_client(
-    client: AsyncClient, auth_headers: dict
-) -> AsyncGenerator[AsyncClient, None]:
+async def auth_client(client, auth_headers) -> AsyncGenerator:
     """Authenticated client with headers pre-set."""
     client.headers.update(auth_headers)
     yield client
-
-
-# =============================================================================
-# Phase 5: Communication Immunity - Mailpit Email Testing
-# =============================================================================
-
-
-@pytest.fixture(scope="session")
-def mailpit_container():
-    """
-    Start Mailpit container for email testing.
-
-    Mailpit captures SMTP emails and provides REST API for inspection.
-    Ports are dynamically mapped by testcontainers - use get_mapped_port().
-    """
-    mailpit = DockerContainer("axllent/mailpit:latest")
-    mailpit.with_exposed_ports(1025, 8025)  # SMTP and API
-
-    with mailpit:
-        yield mailpit
-
-
-@pytest.fixture(scope="session")
-def mailpit_smtp_port(mailpit_container) -> int:
-    """Get dynamically mapped SMTP port for mailpit."""
-    return mailpit_container.get_exposed_port(1025)
-
-
-@pytest.fixture(scope="session")
-def mailpit_api_url(mailpit_container) -> str:
-    """
-    Get Mailpit API URL with dynamically mapped port.
-
-    CRITICAL: Do NOT hardcode port 8025.
-    Testcontainers assigns random ports (e.g. 32768) to avoid conflicts.
-    """
-    api_port = mailpit_container.get_exposed_port(8025)
-    return f"http://localhost:{api_port}"
-
-
-@pytest.fixture(scope="function")
-def mailpit_client(mailpit_api_url: str):
-    """
-    REST API client for querying captured emails.
-
-    Usage:
-        emails = mailpit_client.get_messages()
-        assert len(emails) == 1
-        assert emails[0]['Subject'] == 'Password Reset'
-    """
-
-    class MailpitClient:
-        def __init__(self, base_url: str):
-            self.base_url = base_url
-
-        def get_messages(self) -> list:
-            """Get all captured messages."""
-            response = requests.get(f"{self.base_url}/api/v1/messages")
-            response.raise_for_status()
-            data = response.json()
-            return data.get("messages", [])
-
-        def get_message(self, message_id: str) -> dict:
-            """Get a specific message by ID with full body."""
-            response = requests.get(f"{self.base_url}/api/v1/message/{message_id}")
-            response.raise_for_status()
-            return response.json()
-
-        def delete_all(self):
-            """Clear all messages (cleanup)."""
-            requests.delete(f"{self.base_url}/api/v1/messages")
-
-    client = MailpitClient(mailpit_api_url)
-    client.delete_all()  # Start clean
-    yield client
-    client.delete_all()  # Cleanup after test

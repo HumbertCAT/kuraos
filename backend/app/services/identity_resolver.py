@@ -281,17 +281,24 @@ class IdentityResolver:
 
         return identity
 
-    async def get_unified_timeline(self, identity_id: uuid.UUID) -> dict:
+    async def get_unified_timeline(
+        self,
+        identity_id: uuid.UUID,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> dict:
         """Get 360° contact view: all interactions across domains.
 
-        Returns all Leads and Patients linked to this identity,
-        sorted by creation date for unified timeline.
+        Returns Leads and Patients linked to this identity with pagination.
+        TD-82: Added pagination to prevent slow loads for high-volume contacts.
 
         Args:
             identity_id: UUID of the identity
+            limit: Maximum items to return (default 50)
+            offset: Number of items to skip (default 0)
 
         Returns:
-            Dict with leads, patients lists, and counts
+            Dict with leads, patients lists, counts, and pagination metadata
 
         Example:
             {
@@ -300,24 +307,51 @@ class IdentityResolver:
                 "patients": [...],
                 "total_interactions": 5,
                 "first_contact": "2026-01-01T00:00:00Z",
-                "last_activity": "2026-01-08T12:00:00Z"
+                "last_activity": "2026-01-08T12:00:00Z",
+                "pagination": {"limit": 50, "offset": 0, "has_more": false}
             }
         """
         from app.db.models import Lead, Patient
 
-        # Get all leads
+        from sqlalchemy import func
+
+        # Get total counts first (for pagination metadata)
+        leads_count_result = await self.db.execute(
+            select(func.count())
+            .select_from(Lead)
+            .where(Lead.identity_id == identity_id)
+        )
+        total_leads = leads_count_result.scalar() or 0
+
+        patients_count_result = await self.db.execute(
+            select(func.count())
+            .select_from(Patient)
+            .where(Patient.identity_id == identity_id)
+        )
+        total_patients = patients_count_result.scalar() or 0
+
+        total_interactions = total_leads + total_patients
+
+        # Get paginated leads
         leads_result = await self.db.execute(
             select(Lead)
             .where(Lead.identity_id == identity_id)
-            .order_by(Lead.created_at)
+            .order_by(Lead.created_at.desc())
+            .limit(limit)
+            .offset(offset)
         )
         leads = list(leads_result.scalars().all())
 
-        # Get all patients
+        # Get paginated patients (using remaining limit after leads)
+        remaining_limit = max(0, limit - len(leads))
+        patients_offset = max(0, offset - total_leads)
+
         patients_result = await self.db.execute(
             select(Patient)
             .where(Patient.identity_id == identity_id)
-            .order_by(Patient.created_at)
+            .order_by(Patient.created_at.desc())
+            .limit(remaining_limit if offset < total_leads else limit)
+            .offset(patients_offset if offset >= total_leads else 0)
         )
         patients = list(patients_result.scalars().all())
 
@@ -330,7 +364,14 @@ class IdentityResolver:
             "identity_id": str(identity_id),
             "leads": leads,
             "patients": patients,
-            "total_interactions": len(leads) + len(patients),
+            "total_leads": total_leads,
+            "total_patients": total_patients,
+            "total_interactions": total_interactions,
             "first_contact": min(all_dates).isoformat() if all_dates else None,
             "last_activity": max(all_dates).isoformat() if all_dates else None,
+            "pagination": {
+                "limit": limit,
+                "offset": offset,
+                "has_more": (offset + limit) < total_interactions,
+            },
         }
