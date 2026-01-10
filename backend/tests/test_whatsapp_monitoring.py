@@ -21,10 +21,13 @@ from app.core.security import create_access_token
 
 @pytest_asyncio.fixture
 async def patient_with_messages(
-    test_db: AsyncSession, authenticated_user: tuple[User, Organization]
+    test_db: AsyncSession, test_user: User, test_org: Organization
 ) -> Patient:
-    """Create a patient with WhatsApp messages for testing."""
-    user, org = authenticated_user
+    """Create a patient with WhatsApp messages for testing.
+
+    Uses test_user/test_org to match auth_headers fixture for proper authorization.
+    """
+    org = test_org
 
     patient = Patient(
         id=uuid.uuid4(),
@@ -134,11 +137,11 @@ class TestMonitoringEndpoints:
         self,
         client: AsyncClient,
         auth_headers: dict,
-        authenticated_user: tuple[User, Organization],
+        test_org: Organization,
         test_db: AsyncSession,
     ):
         """Test that analyses endpoint returns empty for patient without data."""
-        user, org = authenticated_user
+        org = test_org
 
         # Create patient with no messages
         patient = Patient(
