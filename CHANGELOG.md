@@ -15,6 +15,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.7.3] - 2026-01-10
+
+### 📱 Dashboard & Calendar Adaptation
+
+> **Theme:** Finalizar adaptación de páginas principales para experiencia móvil completa.
+
+**Dashboard:**
+- Grid vertical en mobile (stack completo)
+- Financial cards en 2 columnas en mobile (antes 1)
+- Eliminado padding innecesario (layout ya lo provee)
+
+**Calendar:**
+- Day-view por defecto en mobile (< 768px)
+- Week-view por defecto en desktop
+- Añadida vista "Day" al selector de vistas
+- Auto-detección de cambio de tamaño de pantalla
+
+---
+
 ## [1.7.2] - 2026-01-10
 
 ### 📱 Page Adaptation — "The Core Pages"

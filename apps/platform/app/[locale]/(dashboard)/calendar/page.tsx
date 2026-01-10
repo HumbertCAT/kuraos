@@ -76,7 +76,16 @@ export default function CalendarPage() {
   // Tab state
   const [activeTab, setActiveTab] = useState<'availability' | 'bookings'>('availability');
 
-  // Calendar state
+  // Mobile detection for Day-view default
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Calendar state - Day view on mobile, Week on desktop
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState<typeof Views[keyof typeof Views]>(Views.WEEK);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -113,6 +122,11 @@ export default function CalendarPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+  // Set Day view on mobile, Week on desktop
+  useEffect(() => {
+    setCurrentView(isMobile ? Views.DAY : Views.WEEK);
+  }, [isMobile]);
 
   useEffect(() => {
     // Build calendar events based on active tab
@@ -678,7 +692,7 @@ export default function CalendarPage() {
               startAccessor="start"
               endAccessor="end"
               style={{ height: 500 }}
-              views={[Views.WEEK, Views.MONTH]}
+              views={[Views.DAY, Views.WEEK, Views.MONTH]}
               view={currentView}
               onView={setCurrentView}
               date={currentDate}

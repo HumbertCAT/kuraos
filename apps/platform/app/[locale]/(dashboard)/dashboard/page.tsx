@@ -193,7 +193,7 @@ export default function DashboardPage() {
     const firstName = user?.full_name?.split(' ')[0] || 'Usuario';
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="space-y-6">
             {/* ========== HEADER: Greeting ========== */}
             <header className="pb-2">
                 <h1 className="type-h1 text-foreground">{getGreeting()}</h1>
@@ -202,10 +202,10 @@ export default function DashboardPage() {
             {/* ========== ONBOARDING PROTOCOL (v1.1.8 - Temporarily disabled) ========== */}
             {/* <ActivationWidget /> */}
 
-            {/* ========== MAIN LAYOUT: 2/3 + 1/3 ========== */}
-            <div className="grid grid-cols-12 gap-6">
-                {/* LEFT COLUMN (2/3): Oracle + Focus + Financials + Pipeline stacked */}
-                <div className="col-span-12 lg:col-span-8 space-y-6">
+            {/* ========== MAIN LAYOUT: Stack on mobile, 2/3 + 1/3 on desktop ========== */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* LEFT COLUMN: Oracle + Focus + Financials + Pipeline stacked */}
+                <div className="lg:col-span-8 space-y-6">
                     {/* The Oracle - Briefing Player */}
                     <BriefingPlayer />
 
@@ -215,8 +215,8 @@ export default function DashboardPage() {
                         onViewFullAgenda={() => router.push('/calendar')}
                     />
 
-                    {/* Financial Cards - 3 columns on desktop */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Financial Cards - 2 cols on mobile, 3 on desktop */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                         <VitalSignCard
                             label={t('vitalSigns.monthlyIncome')}
                             value={`€${data.monthlyRevenue.toFixed(0)}`}
@@ -257,8 +257,8 @@ export default function DashboardPage() {
                     <PipelineVelocity stages={data.pipelineStages} />
                 </div>
 
-                {/* RIGHT COLUMN (1/3): Journeys + Kura Credits + Referral stacked */}
-                <div className="col-span-12 lg:col-span-4 space-y-6">
+                {/* RIGHT COLUMN: Journeys + Kura Credits + Referral stacked */}
+                <div className="lg:col-span-4 space-y-6">
                     {/* Active Journeys */}
                     <ActiveJourneysWidget journeys={data.activeJourneys} />
 
