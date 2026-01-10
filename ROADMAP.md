@@ -67,47 +67,40 @@ Revenue: 2 · Compliance: 0 · Unlocks: 2 · Effort: 2 · BlockedBy: 0
 
 **🎯 NEXT: Phase 5 - The Visual Interface (v1.7.0)**
 
-El terapeuta necesita VER los mensajes, no tenerlos enterrados en DB.
+> "Premium UX Edition" — Backend listo (v1.6.8). Falta la UI con sensación nativa ("WhatsApp Feel").
+
+**UX Requirements (APPROVED):**
+1. **Optimistic UI:** Mensaje aparece INMEDIATAMENTE (estado temporal)
+2. **Message Ticks:** 🕒 Enviando → ✓ Sent (gris) → ✓✓ Read (azul)
+3. **Urgency Badge:** Contador `(N)` de mensajes no leídos
+4. **Custom Audio:** NO `<audio>` nativo → `ChatAudioPlayer` (Play/Pause + Progress)
 
 **Implementación:**
 
-1. **API Extension** (`apps/platform/lib/api.ts`):
-   - `connect.getHistory(identityId)` - MessageLogs ordenados
-   - `connect.sendMessage(payload)` - Llama POST `/connect/send`
-   - `connect.approveDraft(msgId)` - Liberar mensajes bloqueados
+1. **Data Fetching** (`lib/api/connect.ts`):
+   - `useChatHistory(identityId)` - Hook SWR con polling 5s
+   - `connect.sendMessage(payload)` - POST `/connect/send`
+   - `connect.approveDraft(msgId)` - Liberar bloqueados
 
 2. **ChatWidget** (`components/connect/ChatWidget.tsx`):
-   - Layout: Tab "Conversación" en LeadSheet/PatientProfile
-   - `ChatBubble`: INBOUND (izq/blanco) vs OUTBOUND (der/verde-brand)
-   - Audio: `<audio controls src={media_url} />` para reproducir `.ogg`
-   - Estados: Enviado, Leído, Bloqueado (candado rojo)
-   - Window Status: Verde=ABIERTA, Gris=CERRADA (24h)
+   - Container: Altura fija, scroll, `bg-muted/30`
+   - Window CLOSED: Input deshabilitado + banner "Ventana 24h cerrada"
+   - Optimistic: `onSend` → añadir local → API → update status
 
-3. **Input Area:**
-   - Textarea auto-expandible + Botón "Enviar"
-   - Si ventana CERRADA: input deshabilitado, tooltip "Usa template"
+3. **ChatBubble** (`components/connect/ChatBubble.tsx`):
+   - Layout: User (Green/Right), Patient (White/Left)
+   - Audio: `<ChatAudioPlayer src={media_url} />`
+   - Metadata: Hora + Ticks (solo outbound)
+   - BLOCKED_SAFETY: Borde rojo + Botón "Aprobar Envío"
 
 4. **Integration:**
-   - `leads/page.tsx` → Tab "Conversación" con ChatWidget
-   - `patients/[id]/page.tsx` → Panel derecho o nueva tab "Connect"
+   - `LeadDetailSheet` + `PatientProfile` → Widget + Badge no leídos
 
 **Criterios de Éxito:**
-- [ ] Abrir Lead → Ver historial de mensajes
-- [ ] Reproducir audio desde UI
-- [ ] Escribir respuesta → Aparece en UI + llega a WhatsApp
-- [ ] Mensajes bloqueados visibles con badge de seguridad
-
-**💡 Notas de Antigravity (para comentar con Arquitecto):**
-
-> Esta fase es el "Gran Reveal". Tenemos un motor potentísimo (Identidad → Gateway → Tiempo → Oído → Voz) pero está invisible. Esta fase convierte 5 releases de backend en algo tangible. El impacto percibido va a ser enorme.
-
-1. **¿Tab o inline con badge?** - Una tab se puede ignorar. Considerar badge con contador de mensajes no leídos para crear urgencia.
-
-2. **Ventana 24h cerrada** - El tooltip "Usa template" es bueno, pero añadir link directo a templates o botón "Enviar Template" inline sería mejor UX.
-
-3. **Audio player** - El `<audio>` nativo es feo. Considerar mini visualizador de onda o botón estilizado tipo WhatsApp (no replicar exacto, pero mejorar estética).
-
-4. **Quick Win para impresionar** - Optimistic UI + sonido "whoosh" al enviar. Tick gris → tick azul cuando confirma servidor. Hace que se sienta como WhatsApp Web real.
+- [ ] Cero latencia percibida al enviar (Optimistic UI)
+- [ ] Audio player premium (no nativo)
+- [ ] Ventana cerrada → Feedback visual claro
+- [ ] Mensajes bloqueados visibles con Safety badge
 
 ---
 **Score: 24** · Size: XL · Status: 🔵 BACKLOG  
