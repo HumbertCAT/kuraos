@@ -210,15 +210,15 @@ class TestPaymentWebhooks:
         await test_db.commit()
 
         with patch("stripe.Webhook.construct_event") as mock_construct:
-            mock_construct.return_value = MagicMock(
-                type="payment_intent.payment_failed",
-                data=MagicMock(
-                    object=MagicMock(
-                        id="pi_failed_123",
-                        metadata={"booking_id": str(booking_id)},
-                    )
-                ),
-            )
+            # Use proper values to avoid JSON serialization issues
+            mock_event = MagicMock()
+            mock_event.type = "payment_intent.payment_failed"
+            mock_event.data.object.id = "pi_failed_123"
+            mock_event.data.object.metadata = {"booking_id": str(booking_id)}
+            # Provide serializable last_payment_error
+            mock_event.data.object.last_payment_error = MagicMock()
+            mock_event.data.object.last_payment_error.message = "Card declined"
+            mock_construct.return_value = mock_event
 
             response = await client.post(
                 "/api/v1/payments/webhook",
