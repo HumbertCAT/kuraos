@@ -217,3 +217,54 @@ Revenue: 3 · Compliance: 0 · Unlocks: 0 · Effort: 4 · BlockedBy: 0
 - [ ] TimeCapsule model
 - [ ] Scheduler job
 - [ ] Reveal page con animación
+
+---
+**Score: 28** · Size: M · Status: 🟢 APPROVED  
+Revenue: 3 · Compliance: 0 · Unlocks: 2 · Effort: 3 · BlockedBy: 0
+
+### WU-024 · Mobile Native Evolution
+
+**Theme:** "Native Shell" — Transform mobile experience from unusable to native-feel.
+
+**Diagnóstico:** Sidebar actual ocupa 50% del viewport en móvil. CRM Kanban ilegible.
+
+**Estrategia:** Bottom Navigation + View Transformation + AletheIA Mobile Sheet.
+
+**Phase 1: The Shell**
+- [ ] `MobileNavBar.tsx`: Bottom nav (`Home | Leads | Patients | Agenda | Menu`)
+- [ ] `DashboardLayout`: Hide sidebar (`hidden md:flex`), show MobileNavBar (`flex md:hidden`)
+- [ ] Safe area padding (`pb-safe` for iPhone home indicator)
+
+**Phase 2: View Transformation**
+- [ ] Leads: Segmented Control tabs + vertical list + FAB
+- [ ] Patients: `PatientMobileCard` replacing table
+- [ ] Dashboard: Force `grid-cols-1` on mobile
+
+**Phase 3: Clinical Sovereignty**
+- [ ] AletheIA Observatory → Mobile trigger (Brain icon in header)
+- [ ] Bottom Sheet with Risk Score + Sentinel Pulse
+- [ ] Search icon → Full-screen Omni-Search (`⌘K` logic)
+
+---
+**Score: 18** · Size: S · Status: 🟢 APPROVED  
+Revenue: 0 · Compliance: 0 · Unlocks: 1 · Effort: 1 · BlockedBy: 0
+
+### WU-025 · The Locust Swarm (Meta Webhook Load Test)
+
+**Theme:** Verificar que la DB aguanta tráfico simulado de WhatsApp.
+
+**Objetivo:** Script de carga con Locust simulando mensajes entrantes.
+
+**Implementación:**
+- [ ] `backend/tests/load/locust_meta.py`:
+  - `generate_signature(payload, secret)` - HMAC-SHA256 para bypass seguridad
+  - `MetaUser(HttpUser)` con task `send_whatsapp_message`
+  - Payloads válidos de Meta (entry → changes → value → messages)
+- [ ] `backend/scripts/run_load_test.sh`: Cargar env + ejecutar Locust
+
+**Criterios de Éxito:**
+- [ ] 200 OK (no 403) en peticiones
+- [ ] RPS ≥ 20-30 estable
+- [ ] Latencia media < 200ms
+- [ ] 0 errores durante smoke test (50 usuarios, spawn 5/seg)
+
