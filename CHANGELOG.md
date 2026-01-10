@@ -15,6 +15,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.7.0] - 2026-01-10
+
+### 📱 Mobile-First Architecture — "The Native Pivot"
+
+> **Theme:** Transformar Kura OS en una experiencia móvil nativa sin mantener codebase separado.
+
+**Phase 0: PWA Foundation**
+- [x] Instalado `next-pwa` para Progressive Web App
+- [x] Creado `manifest.json` con branding Kura OS
+- [x] Generados iconos de app (192x192, 512x512)
+- [x] Configurado `next.config.ts` con wrapper PWA
+- [x] Service Worker auto-generado en producción
+
+**Phase 1: Layout Shell (The Golden Gate)**
+- [x] **`MobileNavBar.tsx`**: Bottom navigation con 5 tabs (Home, Leads, Patients, Agenda, Menu)
+  - Safe Area padding para iPhone Home Indicator
+  - Touch targets mínimo 44px
+- [x] **`MobileHeader.tsx`**: Top bar con back, title, search, observatory triggers
+- [x] **`DashboardLayout.tsx`** refactorizado:
+  - `TrinityNav` oculto en mobile (`hidden md:flex`)
+  - `AletheiaObservatory` oculto bajo XL (`hidden xl:block`)
+  - Viewport dinámico (`100dvh`) para iOS Safari
+  - Bottom padding para nav bar (`pb-24 md:pb-6`)
+
+**Architect's Warnings Incorporated:**
+- ⚠️ Safe Areas implementados en Phase 1 (no 4)
+- ⚠️ Virtual Keyboard handling planificado
+- ⚠️ Calendar Day-view-only strategy definida
+
+---
+
 ## [1.6.9] - 2026-01-10
 
 ### 🔧 Bugs, Fixes & Debt
