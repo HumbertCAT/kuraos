@@ -190,3 +190,32 @@ async def auth_client(client, auth_headers) -> AsyncGenerator:
     """Authenticated client with headers pre-set."""
     client.headers.update(auth_headers)
     yield client
+
+
+@pytest_asyncio.fixture(scope="function")
+async def authenticated_user(test_db) -> tuple:
+    """Create an authenticated test user and organization.
+
+    Returns:
+        tuple: (user, organization)
+    """
+    from app.db.models import Organization, User
+
+    org = Organization(
+        id=uuid.uuid4(),
+        name="Auth Test Org",
+        referral_code=f"AUTH{uuid.uuid4().hex[:6].upper()}",
+    )
+    test_db.add(org)
+
+    user = User(
+        id=uuid.uuid4(),
+        email=f"auth_{uuid.uuid4().hex[:8]}@kuraos.test",
+        hashed_password="$2b$12$test_hash_placeholder",
+        full_name="Authenticated User",
+        organization_id=org.id,
+    )
+    test_db.add(user)
+    await test_db.commit()
+
+    return user, org
