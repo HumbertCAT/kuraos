@@ -58,13 +58,14 @@ class TestGroupBooking:
         """Test that slots allow multiple bookings up to capacity."""
         org, therapist, schedule = await self.create_fixtures(test_db)
 
-        # 1. Create Service with capacity = 2
+        # 1. Create Service with capacity = 2, linked to schedule
         service = ServiceType(
             organization_id=org.id,
             title="Group Therapy",
             duration_minutes=60,
             price=50.0,
             capacity=2,  # IMPORTANT
+            schedule_id=schedule.id,  # Link to schedule for slot generation
             is_active=True,
         )
         test_db.add(service)
@@ -172,6 +173,7 @@ class TestGroupBooking:
             title="Retreat",
             duration_minutes=60,
             price=100.0,
+            schedule_id=schedule.id,  # Link to schedule
             is_active=True,
         )
         test_db.add(service)

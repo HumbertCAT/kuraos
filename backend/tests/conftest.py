@@ -141,6 +141,76 @@ async def client(test_db) -> AsyncGenerator:
 
 
 # =============================================================================
+# Mailpit Email Testing Fixtures
+# =============================================================================
+
+
+class MailpitClient:
+    """Simple client for Mailpit REST API."""
+
+    def __init__(self, base_url: str):
+        self.base_url = base_url
+
+    def get_messages(self) -> list:
+        """Get all messages from Mailpit."""
+        import httpx
+
+        response = httpx.get(f"{self.base_url}/api/v1/messages")
+        if response.status_code == 200:
+            return response.json().get("messages", [])
+        return []
+
+    def get_message(self, message_id: str) -> dict:
+        """Get a specific message by ID."""
+        import httpx
+
+        response = httpx.get(f"{self.base_url}/api/v1/message/{message_id}")
+        if response.status_code == 200:
+            return response.json()
+        return {}
+
+    def clear(self):
+        """Clear all messages."""
+        import httpx
+
+        httpx.delete(f"{self.base_url}/api/v1/messages")
+
+
+@pytest.fixture(scope="session")
+def mailpit_container():
+    """Start Mailpit container for email testing.
+
+    Mailpit exposes:
+    - Port 1025: SMTP server
+    - Port 8025: Web UI and API
+    """
+    from testcontainers.core.container import DockerContainer
+
+    with DockerContainer("axllent/mailpit:latest") as container:
+        container.with_exposed_ports(1025, 8025)
+        container.start()
+        yield container
+
+
+@pytest.fixture(scope="function")
+def mailpit_smtp_port(mailpit_container) -> int:
+    """Get the mapped SMTP port."""
+    return int(mailpit_container.get_exposed_port(1025))
+
+
+@pytest.fixture(scope="function")
+def mailpit_client(mailpit_container) -> MailpitClient:
+    """Get a Mailpit API client that clears messages before each test."""
+    host = mailpit_container.get_container_host_ip()
+    api_port = mailpit_container.get_exposed_port(8025)
+    base_url = f"http://{host}:{api_port}"
+
+    client = MailpitClient(base_url)
+    client.clear()  # Clean before each test
+    return client
+
+
+# =============================================================================
 # Pre-Built Test Data Fixtures
 # =============================================================================
 

@@ -73,19 +73,21 @@ async def patient_with_messages(
 
 
 class TestMonitoringEndpoints:
-    """Test suite for patient monitoring endpoints."""
+    """Test suite for patient monitoring endpoints.
+
+    NOTE: These tests require the monitoring router to be included in the test app.
+    The patient must belong to the same organization as the authenticated user.
+    """
 
     @pytest.mark.asyncio
     async def test_get_patient_analyses(
         self,
-        client: AsyncClient,
-        auth_headers: dict,
+        auth_client: AsyncClient,
         patient_with_messages: Patient,
     ):
         """Test fetching patient analyses."""
-        response = await client.get(
+        response = await auth_client.get(
             f"/api/v1/patients/{patient_with_messages.id}/monitoring/analyses",
-            headers=auth_headers,
         )
         assert response.status_code == 200
         data = response.json()
@@ -97,14 +99,12 @@ class TestMonitoringEndpoints:
     @pytest.mark.asyncio
     async def test_get_patient_messages(
         self,
-        client: AsyncClient,
-        auth_headers: dict,
+        auth_client: AsyncClient,
         patient_with_messages: Patient,
     ):
-        """Test fetching patient messages."""
-        response = await client.get(
+        """Test fetching patient message history."""
+        response = await auth_client.get(
             f"/api/v1/patients/{patient_with_messages.id}/monitoring/messages",
-            headers=auth_headers,
         )
         assert response.status_code == 200
         data = response.json()
@@ -114,19 +114,16 @@ class TestMonitoringEndpoints:
     @pytest.mark.asyncio
     async def test_get_organization_risk_alerts(
         self,
-        client: AsyncClient,
-        auth_headers: dict,
+        auth_client: AsyncClient,
         patient_with_messages: Patient,
     ):
-        """Test fetching organization-wide risk alerts for dashboard."""
-        response = await client.get(
-            "/api/v1/monitoring/risk-alerts?hours=48",
-            headers=auth_headers,
+        """Test fetching organization-wide risk alerts."""
+        response = await auth_client.get(
+            "/api/v1/monitoring/risk-alerts",
         )
         assert response.status_code == 200
         data = response.json()
         assert "alerts" in data
-        # Should find our patient with risks
         assert len(data["alerts"]) >= 1
         alert = data["alerts"][0]
         assert alert["patient_name"] == "Test Patient"
@@ -135,8 +132,7 @@ class TestMonitoringEndpoints:
     @pytest.mark.asyncio
     async def test_analyses_returns_empty_for_no_data(
         self,
-        client: AsyncClient,
-        auth_headers: dict,
+        auth_client: AsyncClient,
         test_org: Organization,
         test_db: AsyncSession,
     ):
@@ -153,9 +149,8 @@ class TestMonitoringEndpoints:
         test_db.add(patient)
         await test_db.commit()
 
-        response = await client.get(
+        response = await auth_client.get(
             f"/api/v1/patients/{patient.id}/monitoring/analyses",
-            headers=auth_headers,
         )
         assert response.status_code == 200
         data = response.json()
@@ -186,9 +181,9 @@ class TestTwilioWebhook:
         test_db.add(patient)
         await test_db.commit()
 
-        # Simulate Twilio webhook
+        # Simulate Twilio webhook (note: /connect/webhooks/ prefix)
         response = await client.post(
-            "/api/v1/webhooks/twilio/whatsapp",
+            "/api/v1/connect/webhooks/twilio/whatsapp",
             data={
                 "From": "whatsapp:+34611111111",
                 "Body": "Hola, me siento mejor hoy",
@@ -207,7 +202,7 @@ class TestTwilioWebhook:
     ):
         """Test that webhook handles messages from unknown numbers."""
         response = await client.post(
-            "/api/v1/webhooks/twilio/whatsapp",
+            "/api/v1/connect/webhooks/twilio/whatsapp",
             data={
                 "From": "whatsapp:+34699999999",
                 "Body": "Test from unknown",

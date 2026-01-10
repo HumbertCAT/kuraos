@@ -12,13 +12,6 @@ import re
 import pytest
 from httpx import AsyncClient
 
-# Skip all tests in this module if mailpit fixtures not available
-# This happens in CI where Mailpit container is not configured
-pytestmark = pytest.mark.skipif(
-    os.environ.get("CI") == "true",
-    reason="Mailpit container not configured in CI (TD-89)",
-)
-
 
 @pytest.mark.asyncio
 async def test_forgot_password_sends_email(
@@ -60,8 +53,8 @@ async def test_forgot_password_sends_email(
 
     email_body = full_message.get("HTML", "") or full_message.get("Text", "")
 
-    # Look for reset link pattern
-    reset_link_pattern = r"https?://[^\\s]+/reset-password\\?token=[\\w-]+"
+    # Look for reset link pattern (proper escape for raw string)
+    reset_link_pattern = r"https?://[^\s]+/reset-password\?token=[\w-]+"
     links = re.findall(reset_link_pattern, email_body)
 
     assert len(links) >= 1, "Expected at least one reset link in email body"
@@ -84,7 +77,8 @@ async def test_password_reset_link_format():
     <a href="https://app.kuraos.ai/reset-password?token=abc123-def456-ghi789">Reset Password</a>
     """
 
-    reset_link_pattern = r"https?://[^\\s]+/reset-password\\?token=[\\w-]+"
+    # Proper regex escape for raw string
+    reset_link_pattern = r"https?://[^\s]+/reset-password\?token=[\w-]+"
     links = re.findall(reset_link_pattern, sample_html)
 
     assert len(links) == 1
