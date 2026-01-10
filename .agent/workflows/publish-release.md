@@ -100,14 +100,37 @@ git push origin main --tags
 
 ---
 
-## 🚢 Phase 5: Deploy
+## 🚢 Phase 5: Deploy (Sequential - Backend First)
+
+> **CRITICAL**: Deploy order matters. Backend MUST succeed before Frontend.
+
+### Step 1: Backend (Cloud Run)
 
 // turbo
 ```bash
 ./scripts/deploy.sh
 ```
 
-Frontend (Vercel): Auto-triggers on git push. Monitor Vercel dashboard.
+Wait for success message: `🎉 DEPLOYMENT COMPLETE!`
+
+### Step 2: Verify Backend Health
+
+// turbo
+```bash
+curl -s https://api.kuraos.ai/health | jq .
+```
+
+Expected: `{"status": "healthy", "version": "X.Y.Z"}`
+
+### Step 3: Frontend (Vercel) - MANUAL
+
+> **NOTE**: Vercel auto-deploy is DISABLED. Deploy manually after backend is healthy.
+
+```bash
+cd apps/platform && vercel --prod
+```
+
+This ensures frontend never calls endpoints that don't exist yet.
 
 ---
 
