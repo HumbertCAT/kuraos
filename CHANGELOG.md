@@ -15,6 +15,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.7.1] - 2026-01-10
+
+### 📦 Pattern Library — "The Foundation Blocks"
+
+> **Theme:** Componentes reutilizables para construir interfaces mobile-first automáticamente.
+
+**Phase 2: Pattern Library**
+- [x] **`ResponsiveTable`**: Table en desktop, Cards en mobile
+  - Mapeo automático de columnas a campos de card
+  - Loading skeleton adaptativo
+  - Estados vacíos consistentes
+- [x] **`MobileDetailSheet`**: Slide-over en desktop, Full-screen en mobile
+  - Portal para z-index correcto
+  - Safe areas para iPhone notch/home indicator
+  - Animaciones CSS (`slide-in-from-right`, `slide-in-from-bottom`)
+
+---
+
 ## [1.7.0] - 2026-01-10
 
 ### 📱 Mobile-First Architecture — "The Native Pivot"
