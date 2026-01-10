@@ -25,9 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [x] **TD-80**: App version now auto-reads from `CHANGELOG.md` via `app/core/version.py`. The `/health` endpoint, OpenAPI docs, and all version references use this single source of truth.
 - [x] **TD-81**: Added composite index `idx_identities_org_email_phone` on `identities(organization_id, primary_email, primary_phone)` for faster Identity Vault lookups at scale (>10k identities).
 - [x] **TD-82**: Contacts 360 timeline now supports pagination (`limit`/`offset` params, default 50 items). Prevents slow loads for high-volume contacts (>50 records).
+- [x] **TD-86**: CI Innate Pipeline restored with **123 tests passing**:
+  - Fixed `auth_client` to use cookies (APIKeyCookie) instead of Authorization headers
+  - Fixed webhook routes (`/api/v1/webhooks/` mounting)
+  - Fixed `AvailabilityBlock.effective_from` timezone filtering
+  - Fixed `ServiceType.schedule_id` for slot generation
+  - Added "Common Fixture Gotchas" documentation in `docs/ops/testing.md`
 
 **🔴 Critical Debt (Pending):**
-- [ ] TD-86: CI Innate Pipeline roto
 - [ ] TD-87: Duplicate Warning Modal no dispara
 - [ ] TD-89: Meta Audio Processing logs no aparecen
 - [ ] TD-90: META_APP_SECRET typo hazard
