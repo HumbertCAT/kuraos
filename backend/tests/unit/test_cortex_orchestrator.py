@@ -177,7 +177,7 @@ class TestCortexOrchestrator:
         )
 
         assert result["pipeline_name"] == "test_pipeline"
-        assert result["privacy_tier"] == "STANDARD"  # ES country default
+        assert result["privacy_tier"] == "LEGACY"  # v1.5.9-hf1: All countries default to LEGACY
         assert result["stages_executed"] == 2
         assert "outputs" in result
         assert "intake" in result["outputs"]
