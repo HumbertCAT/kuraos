@@ -75,14 +75,15 @@ class TestPrivacyResolver:
         assert result == PrivacyTier.LEGACY
 
     def test_country_default_spain(self, mock_patient, mock_organization):
-        """Spain should default to STANDARD (GDPR)."""
+        """Spain defaults to LEGACY per v1.5.9-hf1 (all countries use LEGACY)."""
         mock_patient.privacy_tier_override = None
         mock_organization.default_privacy_tier = None
         mock_organization.country_code = "ES"
 
         result = PrivacyResolver.resolve(mock_patient, mock_organization)
 
-        assert result == PrivacyTier.STANDARD
+        # v1.5.9-hf1: Changed from STANDARD to LEGACY for all countries
+        assert result == PrivacyTier.LEGACY
 
     def test_country_default_usa(self, mock_patient, mock_organization):
         """USA should default to LEGACY (BAA permits)."""
@@ -95,26 +96,26 @@ class TestPrivacyResolver:
         assert result == PrivacyTier.LEGACY
 
     def test_country_default_germany(self, mock_patient, mock_organization):
-        """Germany should default to STANDARD (GDPR)."""
+        """Germany defaults to LEGACY per v1.5.9-hf1 (all countries use LEGACY)."""
         mock_patient.privacy_tier_override = None
         mock_organization.default_privacy_tier = None
         mock_organization.country_code = "DE"
 
         result = PrivacyResolver.resolve(mock_patient, mock_organization)
 
-        assert result == PrivacyTier.STANDARD
+        # v1.5.9-hf1: Changed from STANDARD to LEGACY for all countries
+        assert result == PrivacyTier.LEGACY
 
-    def test_unknown_country_defaults_to_standard(
-        self, mock_patient, mock_organization
-    ):
-        """Unknown countries should default to STANDARD (conservative)."""
+    def test_unknown_country_defaults_to_legacy(self, mock_patient, mock_organization):
+        """Unknown countries default to LEGACY per v1.5.9-hf1."""
         mock_patient.privacy_tier_override = None
         mock_organization.default_privacy_tier = None
         mock_organization.country_code = "ZZ"  # Unknown
 
         result = PrivacyResolver.resolve(mock_patient, mock_organization)
 
-        assert result == PrivacyTier.STANDARD
+        # v1.5.9-hf1: Changed from STANDARD to LEGACY for all countries
+        assert result == PrivacyTier.LEGACY
 
     def test_explain_returns_detailed_info(self, mock_patient, mock_organization):
         """Explain should return complete resolution context."""
