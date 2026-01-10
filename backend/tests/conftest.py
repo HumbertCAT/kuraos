@@ -106,80 +106,35 @@ async def test_db(engine) -> AsyncGenerator:
 
 
 # =============================================================================
-# FastAPI Test Client (minimal app, no scheduler)
+# FastAPI Test Client (full app, no lifespan)
 # =============================================================================
 
 
 @pytest_asyncio.fixture(scope="function")
 async def client(test_db) -> AsyncGenerator:
-    """Create a test client with database override."""
+    """Create a test client using the full app with database override.
+
+    Uses the production app but overrides get_db dependency to use test session.
+    This ensures all routes are available for testing.
+    """
     from httpx import AsyncClient, ASGITransport
-    from fastapi import FastAPI
-    from fastapi.middleware.cors import CORSMiddleware
-
     from app.api.deps import get_db
-    from app.api.v1.core import auth
-    from app.api.v1.practice import (
-        patients,
-        clinical_entries,
-        booking,
-        services,
-        availability,
-        schedules,
-        pending_actions,
-    )
 
-    # Test app with all routers needed for existing tests
-    test_app = FastAPI(title="Kura OS Test App")
-    test_app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
-    # Core routes
-    test_app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
-
-    # Practice routes
-    test_app.include_router(
-        patients.router, prefix="/api/v1/patients", tags=["Patients"]
-    )
-    test_app.include_router(
-        clinical_entries.router, prefix="/api/v1/clinical-entries", tags=["Clinical"]
-    )
-    test_app.include_router(booking.router, prefix="/api/v1/booking", tags=["Booking"])
-    test_app.include_router(
-        services.router, prefix="/api/v1/services", tags=["Services"]
-    )
-    test_app.include_router(
-        availability.router, prefix="/api/v1/availability", tags=["Availability"]
-    )
-    test_app.include_router(
-        schedules.router, prefix="/api/v1/schedules", tags=["Schedules"]
-    )
-    test_app.include_router(
-        pending_actions.router, prefix="/api/v1/pending-actions", tags=["Actions"]
-    )
-
-    @test_app.get("/health")
-    async def health():
-        return {"status": "healthy", "version": "test"}
-
-    @test_app.get("/")
-    async def root():
-        return {"message": "Welcome to Kura OS API", "docs": "/docs"}
+    # Import the full app (this includes all routers)
+    from app.main import app as production_app
 
     # Override get_db to use test session
     async def override_get_db():
         yield test_db
 
-    test_app.dependency_overrides[get_db] = override_get_db
+    production_app.dependency_overrides[get_db] = override_get_db
 
-    transport = ASGITransport(app=test_app)
+    transport = ASGITransport(app=production_app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
+
+    # Cleanup: remove the override
+    production_app.dependency_overrides.pop(get_db, None)
 
 
 # =============================================================================
