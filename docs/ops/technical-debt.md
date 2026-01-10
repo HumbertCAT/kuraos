@@ -47,6 +47,16 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ## 🟠 MEDIUM (Should Fix Soon)
 
+### TD-112: Deploy Order Hazard (Vercel antes de Cloud Run)
+**Origin**: v1.7.0 Phase 5  
+**Issue**: Vercel auto-deploya al hacer `git push`, pero Cloud Run requiere `./scripts/deploy.sh` manual  
+**Risk**: Frontend puede llamar a endpoints que aún no existen en producción  
+**Impact**: Errores 404/500 para usuarios durante ventana de desincronización  
+**Solution**: 
+1. Desactivar Vercel auto-deploy
+2. Crear GitHub Action que: Cloud Run deploy → success → trigger Vercel deploy
+3. O usar `vercel --prod` solo después de confirmar Cloud Run healthy
+
 ---
 
 ## ✅ Recently Resolved (v1.6.x)
