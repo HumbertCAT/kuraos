@@ -47,10 +47,10 @@ class TestPatientEndpoints:
         response = await client.get("/api/v1/patients/")
         assert response.status_code == 200
         data = response.json()
-        assert "patients" in data
-        assert "total" in data
-        assert len(data["patients"]) > 0
-        assert data["page"] == 1
+        assert "data" in data
+        assert "meta" in data
+        assert len(data["data"]) > 0
+        assert data["meta"]["page"] == 1
 
     @pytest.mark.asyncio
     async def test_get_patient_detail(self, client: AsyncClient):
@@ -113,7 +113,7 @@ class TestPatientEndpoints:
 
         # 4. Try to list (should not see Patient A)
         list_response = await client.get("/api/v1/patients/")
-        patients = list_response.json()["patients"]
+        patients = list_response.json()["data"]
         ids = [p["id"] for p in patients]
         assert patient_a_id not in ids
 
