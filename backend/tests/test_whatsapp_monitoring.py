@@ -181,9 +181,9 @@ class TestTwilioWebhook:
         test_db.add(patient)
         await test_db.commit()
 
-        # Simulate Twilio webhook (note: /connect/webhooks/ prefix)
+        # Simulate Twilio webhook (mounted at /api/v1 + /webhooks prefix)
         response = await client.post(
-            "/api/v1/connect/webhooks/twilio/whatsapp",
+            "/api/v1/webhooks/twilio/whatsapp",
             data={
                 "From": "whatsapp:+34611111111",
                 "Body": "Hola, me siento mejor hoy",
@@ -202,7 +202,7 @@ class TestTwilioWebhook:
     ):
         """Test that webhook handles messages from unknown numbers."""
         response = await client.post(
-            "/api/v1/connect/webhooks/twilio/whatsapp",
+            "/api/v1/webhooks/twilio/whatsapp",
             data={
                 "From": "whatsapp:+34699999999",
                 "Body": "Test from unknown",

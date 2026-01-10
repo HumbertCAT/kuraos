@@ -251,7 +251,10 @@ async def test_user(test_db, test_org):
 
 @pytest_asyncio.fixture(scope="function")
 async def auth_headers(test_user):
-    """Generate auth headers with a valid JWT token."""
+    """Generate auth headers with a valid JWT token.
+
+    NOTE: This is for legacy tests. New tests should use auth_client with cookies.
+    """
     from app.core.security import create_access_token
 
     token = create_access_token(subject=str(test_user.id))
@@ -259,9 +262,16 @@ async def auth_headers(test_user):
 
 
 @pytest_asyncio.fixture(scope="function")
-async def auth_client(client, auth_headers) -> AsyncGenerator:
-    """Authenticated client with headers pre-set."""
-    client.headers.update(auth_headers)
+async def auth_client(client, test_user) -> AsyncGenerator:
+    """Authenticated client with access_token cookie set.
+
+    The app uses cookie-based auth (APIKeyCookie), not Authorization headers.
+    This fixture sets the access_token cookie for all requests.
+    """
+    from app.core.security import create_access_token
+
+    token = create_access_token(subject=str(test_user.id))
+    client.cookies.set("access_token", token)
     yield client
 
 

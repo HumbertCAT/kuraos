@@ -77,6 +77,8 @@ class TestGroupBooking:
             day_of_week=0,  # Monday
             start_time="09:00",
             end_time="10:00",
+            effective_from=datetime.utcnow()
+            - timedelta(days=1),  # Start from yesterday
         )
         test_db.add(block)
         await test_db.commit()
