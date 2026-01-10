@@ -91,7 +91,7 @@ class TestHelpChat:
     @pytest.mark.asyncio
     async def test_detect_topic_patients(self):
         """Topic detection identifies patient-related queries."""
-        from app.api.v1.help import detect_topic
+        from app.api.v1.intelligence.help import detect_topic
 
         assert detect_topic("Como creo un paciente nuevo?") == "patients"
         assert detect_topic("Quiero editar el perfil de un cliente") == "patients"
@@ -99,7 +99,7 @@ class TestHelpChat:
     @pytest.mark.asyncio
     async def test_detect_topic_billing(self):
         """Topic detection identifies billing-related queries."""
-        from app.api.v1.help import detect_topic
+        from app.api.v1.intelligence.help import detect_topic
 
         assert detect_topic("Cuanto cuesta el plan pro?") == "billing"
         assert detect_topic("Necesito mi factura") == "billing"
@@ -107,7 +107,7 @@ class TestHelpChat:
     @pytest.mark.asyncio
     async def test_detect_topic_bookings(self):
         """Topic detection identifies booking-related queries."""
-        from app.api.v1.help import detect_topic
+        from app.api.v1.intelligence.help import detect_topic
 
         assert detect_topic("Como agendo una cita?") == "bookings"
         assert detect_topic("Necesito configurar el calendario") == "bookings"
@@ -115,13 +115,13 @@ class TestHelpChat:
     @pytest.mark.asyncio
     async def test_detect_topic_audio(self):
         """Topic detection identifies audio-related queries."""
-        from app.api.v1.help import detect_topic
+        from app.api.v1.intelligence.help import detect_topic
 
         assert detect_topic("Como grabo una nota de voz?") == "audio"
 
     @pytest.mark.asyncio
     async def test_detect_topic_none(self):
         """Topic detection returns None for unrecognized queries."""
-        from app.api.v1.help import detect_topic
+        from app.api.v1.intelligence.help import detect_topic
 
         assert detect_topic("This is random text") is None
