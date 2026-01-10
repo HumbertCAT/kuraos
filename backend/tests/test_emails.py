@@ -3,11 +3,21 @@ Email Testing - Phase 5: Communication Immunity
 
 Tests email flows (password reset, invitations) using Mailpit SMTP sink.
 No real emails sent, all captured and inspected via REST API.
+
+NOTE: These tests require Mailpit container. Skip in CI until TD-89 adds it.
 """
 
+import os
 import re
 import pytest
 from httpx import AsyncClient
+
+# Skip all tests in this module if mailpit fixtures not available
+# This happens in CI where Mailpit container is not configured
+pytestmark = pytest.mark.skipif(
+    os.environ.get("CI") == "true",
+    reason="Mailpit container not configured in CI (TD-89)",
+)
 
 
 @pytest.mark.asyncio

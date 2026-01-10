@@ -54,9 +54,14 @@ class TestContentGatekeeper:
         entry.entry_metadata = {}
         entry.content = "Real transcript that should be deleted"
 
+        patient = MagicMock()
+        patient.id = uuid.uuid4()
+        patient.last_insight_json = None
+        patient.last_insight_at = None
+
         service = ClinicalService(db)
 
-        # Call _update_entry with GHOST tier
+        # Call _update_entry with GHOST tier (requires patient since v1.5.7)
         result = {
             "outputs": {
                 "transcribe": {"transcript": "Secret content"},
@@ -67,7 +72,7 @@ class TestContentGatekeeper:
         }
 
         await service._update_entry(
-            entry, result, PrivacyTier.GHOST, "ghost_session_v1"
+            entry, patient, result, PrivacyTier.GHOST, "ghost_session_v1"
         )
 
         # Assert content is replaced
@@ -86,6 +91,11 @@ class TestContentGatekeeper:
         entry.entry_metadata = {}
         entry.content = None  # No content yet
 
+        patient = MagicMock()
+        patient.id = uuid.uuid4()
+        patient.last_insight_json = None
+        patient.last_insight_at = None
+
         service = ClinicalService(db)
 
         result = {
@@ -98,7 +108,7 @@ class TestContentGatekeeper:
         }
 
         await service._update_entry(
-            entry, result, PrivacyTier.STANDARD, "audio_session_v1"
+            entry, patient, result, PrivacyTier.STANDARD, "audio_session_v1"
         )
 
         # Assert content contains transcript

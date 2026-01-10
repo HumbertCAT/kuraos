@@ -22,6 +22,9 @@ os.environ.setdefault(
     "DATABASE_URL", "postgresql+asyncpg://test:test@localhost:5432/test"
 )
 os.environ.setdefault("SECRET_KEY", "test-secret-key-for-testing-only")
+# Stripe test secrets (needed to pass validation checks in webhook endpoints)
+os.environ.setdefault("STRIPE_SECRET_KEY", "sk_test_dummy_key_for_testing")
+os.environ.setdefault("STRIPE_WEBHOOK_SECRET", "whsec_test_dummy_webhook_secret")
 
 
 # =============================================================================

@@ -34,6 +34,8 @@ async def patient_with_messages(
         phone="+34600000000",
     )
     test_db.add(patient)
+    # Commit patient first to satisfy FK constraint on DailyConversationAnalysis
+    await test_db.flush()
 
     # Add some messages
     for i in range(3):
@@ -48,7 +50,7 @@ async def patient_with_messages(
         )
         test_db.add(msg)
 
-    # Add a daily analysis with risks
+    # Add a daily analysis with risks (patient must exist first)
     analysis = DailyConversationAnalysis(
         id=uuid.uuid4(),
         organization_id=org.id,

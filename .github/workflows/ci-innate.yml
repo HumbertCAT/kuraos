@@ -43,25 +43,18 @@ jobs:
     - name: Run pytest with testcontainers
       working-directory: backend
       env:
-        # Testcontainers will spawn PostgreSQL via Docker
-        # DATABASE_URL set in conftest.py before imports
+        CI: true
+        TESTCONTAINERS_RYUK_DISABLED: "false"
         DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/test
         SECRET_KEY: test-secret-key-for-ci-only
         ALGORITHM: HS256
-        # Skip slow tests in CI
         PYTEST_ADDOPTS: "-m 'not slow'"
       run: |
-        pytest tests/ \
-          --verbose \
-          --tb=short \
-          --maxfail=5 \
+        python -m pytest tests/ \
+          -v \
           -x \
           --ignore=tests/generated \
-          --ignore=tests/ai \
-          --ignore=tests/test_emails.py \
-          --ignore=tests/test_webhooks.py \
-          --ignore=tests/test_whatsapp_monitoring.py \
-          --ignore=tests/unit/test_ghost_protocol.py
+          --ignore=tests/ai
     
     - name: Upload test results
       if: always()
