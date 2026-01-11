@@ -1,32 +1,15 @@
 # Technical Debt Register
 
 > [!NOTE]
-> **Status**: Living Document (v1.6.9)  
+> **Status**: Living Document (v1.7.5)  
 > **Purpose**: Active technical debt tracking for KURA OS  
-> **Last Updated**: 2026-01-10 (v1.6.9 Bugs, Fixes & Debt)
+> **Last Updated**: 2026-01-11 (v1.7.5 Maintenance)
 
 This document tracks **actionable** technical debt that requires resolution. Resolved items belong in the [CHANGELOG](../../CHANGELOG.md).
 
 ---
 
 ## 🔴 CRITICAL (Active Debt)
-
-### TD-86: CI Innate Pipeline Broken
-**File**: `.github/workflows/ci-innate.yml`  
-**Symptom**: All GitHub Actions runs failing since v1.5.9-HF9+  
-**Impact**: No automated backend tests running on push  
-**Risk**: Regressions can slip into production undetected  
-**Action**: Investigate failure cause, fix pipeline, re-enable green builds  
-
----
-
-### TD-87: Duplicate Warning Modal Not Triggering
-**File**: `apps/platform/app/[locale]/(dashboard)/leads/page.tsx`  
-**Issue**: `DuplicateWarningModal` created but not triggering on Lead/Patient creation  
-**Impact**: Duplicate contacts can still be created without warning  
-**Action**: Debug API call timing in `CreateLeadModal.handleCreate()`, verify frontend hot reload  
-
----
 
 ### TD-89: Meta Audio Processing Logs Not Appearing
 **File**: `backend/app/api/v1/connect/meta_webhook.py`  
@@ -36,12 +19,15 @@ This document tracks **actionable** technical debt that requires resolution. Res
 **Root Cause**: Unknown - added DEBUG logging (line 209) to diagnose  
 **Action**: Send test audio, verify message type detection, check if `is_audio_message()` is correct  
 
-### TD-90: META_APP_SECRET Typo Hazard
-**File**: Google Secret Manager `META_APP_SECRET`  
-**Origin**: v1.6.8 debugging - secret had 3 'a's instead of 4  
-**Symptom**: All Meta webhook POSTs returned 403 Forbidden  
-**Resolution**: Fixed manually via `gcloud secrets versions add`  
-**Action**: Add Secret Manager verification script to deployment workflow  
+---
+
+### TD-113: Meta Webhook Not Receiving Messages
+**File**: `backend/app/api/v1/connect/meta_webhook.py`  
+**Origin**: v1.7.5 investigation  
+**Symptom**: No POST requests from Meta reaching Cloud Run (only GET verification)  
+**Impact**: WhatsApp messages from +34670374665 not being received  
+**Root Cause**: Unknown - likely Meta webhook configuration or phone number not linked  
+**Action**: Verify Meta Business Suite webhook setup, check phone number is linked to WABA  
 
 ---
 
@@ -59,10 +45,21 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
-## ✅ Recently Resolved (v1.6.x)
+### TD-114: Vercel Auto-Deploy Not Triggering for kura-platform
+**Origin**: v1.7.5 debugging  
+**Symptom**: kura-platform deploys don't auto-trigger on push (marketing works fine)  
+**Impact**: Manual intervention needed to deploy platform changes  
+**Action**: Check Vercel Git integration, may need to re-link project  
+
+---
+
+## ✅ Recently Resolved (v1.6.x - v1.7.x)
 
 | ID | Description | Resolved In |
 |----|-------------|-------------|
+| TD-86 | CI Innate Pipeline Broken | v1.6.9 (123 tests passing) |
+| TD-87 | Duplicate Warning Modal Not Triggering | v1.6.9 |
+| TD-90 | META_APP_SECRET Typo Hazard | v1.6.8 |
 | TD-80 | Health endpoint version hardcoded | v1.6.9 |
 | TD-81 | Identity Vault missing composite index | v1.6.9 |
 | TD-82 | Contacts 360 no pagination | v1.6.9 |

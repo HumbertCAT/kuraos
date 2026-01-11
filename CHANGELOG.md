@@ -15,6 +15,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.7.5] - 2026-01-11
+
+### 🔧 Maintenance & Documentation
+
+> **Theme:** Limpieza, documentación y estabilización post-v1.7.4.
+
+**Technical Debt:**
+- TD-86, TD-87, TD-90: Moved to resolved (CI Innate, Duplicate Modal, META_APP_SECRET)
+- TD-113: Registered - Meta webhook not receiving POST messages
+- TD-114: Registered - Vercel auto-deploy not triggering for kura-platform
+
+**PWA Optimization:**
+- `apple-touch-icon.png` optimized to 180x180 for iOS
+
+**Documentation:**
+- `docs/architecture/clinical-stream-design.md` — Deferred design for patient page redesign
+- Technical Debt register updated to v1.7.5
+
+**Investigated:**
+- WhatsApp webhook: No POST messages reaching Cloud Run (GET verification working)
+- Root cause: Meta webhook configuration or phone number linkage
+
+---
+
 ## [1.7.4] - 2026-01-11
 
 ### 📱 Mobile-First — "The Native Experience"
