@@ -36,13 +36,19 @@
 
 ### Component Summary
 
-| Component | GCP Service | Spec |
-|:---|:---|:---|
-| API Server | Cloud Run | `kura-backend`, port 8000, unauthenticated |
-| Database | Cloud SQL | Postgres 15, `db-f1-micro`, SSD 10GB, europe-southwest1 |
-| Container Registry | Artifact Registry | `cloud-run-source-deploy` (auto-created by gcloud run deploy) |
-| Secrets | Secret Manager | 17 secrets (see below) |
-| Migrations | Cloud Run Job | `kura-migrator` |
+| Component | GCP Service | Region | Spec |
+|:---|:---|:---|:---|
+| API Server | Cloud Run | `europe-west1` (Belgium) | `kura-backend`, port 8000 |
+| Database | Cloud SQL | `europe-southwest1` (Madrid) | Postgres 15, `db-f1-micro`, SSD 10GB |
+| Container Registry | Artifact Registry | `europe-west1` | `cloud-run-source-deploy` |
+| Secrets | Secret Manager | Global | 17 secrets (see below) |
+| Migrations | Cloud Run Job | `europe-west1` | `kura-migrator` |
+
+> [!WARNING]
+> **Cross-Region Latency**: Cloud Run (Belgium) and Cloud SQL (Madrid) are in different regions.
+> This adds ~5-15ms per database query. At current scale, this is acceptable.
+> If latency becomes an issue, consider migrating Cloud Run to `europe-southwest1`.
+
 
 ### 1.1 Vercel Frontend Deployment
 
