@@ -40,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Metadata de manifest en layout para prompt de instalación
 - `appleWebApp` config para iOS
 - Viewport optimizado (`userScalable: false`, `maximumScale: 1`)
+- `apple-touch-icon.png` para icono en home screen iOS
+- **Middleware fix**: Excluir `/manifest.json`, `/icons/`, `/apple-touch-icon` del redirect a login
+- ✅ **Verificado funcional en iPhone** — Modo standalone sin barra de Safari
 
 ---
 
