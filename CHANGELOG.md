@@ -15,6 +15,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.7.4] - 2026-01-11
+
+### 📱 Mobile-First — "The Native Experience"
+
+> **Theme:** Completar la experiencia móvil nativa con navegación adaptativa.
+
+**Layout Architecture:**
+- `TrinityNav`: Ahora con `hidden lg:flex` para ocultar en móvil
+- `MobileNavBar`: Barra de navegación fija al pie (Dashboard, Pacientes, Calendario, Más)
+- Padding adaptativo `pb-24 lg:pb-6` para contenido principal
+
+**New Components:**
+- `MobileNavBar.tsx` — Bottom navigation para móvil con iconos Trinity
+- `MobileHeader.tsx` — Header móvil compacto
+- `/more` page — Hub de navegación con grid de secciones Trinity
+- `mobile-skeleton.tsx` — Skeleton loaders optimizados para móvil
+- `mobile-detail-sheet.tsx` — Bottom sheet para detalles móvil
+
+**Hooks:**
+- `use-scroll-direction.ts` — Detecta dirección y posición de scroll
+
+**PWA Foundation:**
+- Metadata de manifest en layout para prompt de instalación
+- `appleWebApp` config para iOS
+- Viewport optimizado (`userScalable: false`, `maximumScale: 1`)
+
+---
+
+## [1.7.0 - 1.7.3] - 2026-01-10
+
+### 📱 Mobile-First Architecture Foundation
+
+> **Theme:** El gran pivot hacia experiencia móvil nativa.
+
+**v1.7.3 - Dashboard & Calendar Adaptation:**
+- Grid vertical en mobile para dashboard
+- Day-view por defecto en calendar móvil
+
+**v1.7.2 - Page Adaptation Phase:**
+- Patients page con card view móvil
+- Leads page con FAB flotante
+
+**v1.7.1 - Layout Shell:**
+- `100dvh` para keyboard-aware viewport
+- Removed inner padding conflicts
+
+**v1.7.0 - PWA Foundation:**
+- PWA manifest y service worker config
+- Touch targets verificados ≥ 44px
+- Tactile feedback (`active:scale-95`)
+
+---
+
 ## [1.6.9] - 2026-01-10
 
 ### 🔧 Bugs, Fixes & Debt
