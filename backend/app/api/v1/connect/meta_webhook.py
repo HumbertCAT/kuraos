@@ -357,7 +357,9 @@ async def process_meta_message(
     if patient and organization_id:
         message_log = MessageLog(
             organization_id=organization_id,
+            identity_id=identity.id if identity else None,  # TD-115: Identity anchor
             patient_id=patient.id,
+            lead_id=None,  # Patient exists, no need for lead_id
             direction=MessageDirection.INBOUND,
             content=content,
             provider_id=msg_id,
@@ -370,6 +372,38 @@ async def process_meta_message(
         db.add(message_log)
         await db.commit()
         logger.info(f"✅ Stored in MessageLog for Patient[{patient.id}]")
+
+    # TD-115: Store for Lead-only (no patient yet)
+    elif identity and organization_id:
+        # Find the Lead linked to this identity
+        lead_result = await db.execute(
+            select(Lead)
+            .where(Lead.identity_id == identity.id)
+            .order_by(Lead.created_at.desc())
+            .limit(1)
+        )
+        lead = lead_result.scalar_one_or_none()
+
+        if lead:
+            message_log = MessageLog(
+                organization_id=organization_id,
+                identity_id=identity.id,  # TD-115: Identity anchor
+                patient_id=None,  # TD-115: Lead-only, no patient yet
+                lead_id=lead.id,  # TD-115: Link to Lead
+                direction=MessageDirection.INBOUND,
+                content=content,
+                provider_id=msg_id,
+                status="RECEIVED",
+                # v1.6.7 Deep Listening fields
+                media_id=media_id,
+                media_url=media_url,
+                mime_type=mime_type,
+            )
+            db.add(message_log)
+            await db.commit()
+            logger.info(f"✅ Stored in MessageLog for Lead[{lead.id}] (TD-115)")
+        else:
+            logger.info(f"📝 Message logged (no patient or lead): {phone_formatted}")
     else:
-        # Log for audit but don't store (no patient context)
-        logger.info(f"📝 Message logged (no patient context): {phone_formatted}")
+        # Log for audit but don't store (unknown identity)
+        logger.info(f"📝 Message logged (no identity resolved): {phone_formatted}")

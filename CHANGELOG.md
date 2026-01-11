@@ -17,14 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.7.5] - 2026-01-11
 
-### 🔧 Maintenance & Documentation
+### 🔧 WhatsApp Integration Fixes & Maintenance
 
-> **Theme:** Limpieza, documentación y estabilización post-v1.7.4.
+> **Theme:** Corrección de integración WhatsApp y estabilización post-v1.7.4.
+
+**Fixes:**
+- ✅ **TD-116**: Lead→Patient conversion now preserves `identity_id` (Identity Vault link)
+- ✅ **TD-117**: MonitoringTab shows raw WhatsApp messages immediately (no need to wait for AletheIA analysis)
+- ⏸️ **TD-115**: Deferred — MessageLog storage for Leads requires schema migration
 
 **Technical Debt:**
 - TD-86, TD-87, TD-90: Moved to resolved (CI Innate, Duplicate Modal, META_APP_SECRET)
-- TD-113: Registered - Meta webhook not receiving POST messages
-- TD-114: Registered - Vercel auto-deploy not triggering for kura-platform
+- TD-113: ✅ Resolved — Meta webhook now receiving POST messages correctly
+- TD-114: Registered — Vercel auto-deploy not triggering (manual deploy required)
 
 **PWA Optimization:**
 - `apple-touch-icon.png` optimized to 180x180 for iOS
@@ -33,9 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/architecture/clinical-stream-design.md` — Deferred design for patient page redesign
 - Technical Debt register updated to v1.7.5
 
-**Investigated:**
-- WhatsApp webhook: No POST messages reaching Cloud Run (GET verification working)
-- Root cause: Meta webhook configuration or phone number linkage
+**Investigated & Fixed:**
+- WhatsApp webhook: POST messages now reaching Cloud Run ✅
+- Identity routing: Multi-org patient lookup working correctly
 
 ---
 

@@ -1712,8 +1712,11 @@ class MessageDirection(str, enum.Enum):
 class MessageLog(Base):
     """Stores WhatsApp messages for analysis.
 
-    Raw message data from Twilio webhook, linked to patients.
+    Raw message data from Meta/Twilio webhook.
     Indexed for efficient daily batch processing by AletheIA.
+
+    TD-115 (v1.7.5): Identity-anchored design following Identity Vault pattern.
+    Messages are anchored to identity_id, with optional resolution to patient_id or lead_id.
     """
 
     __tablename__ = "message_logs"
@@ -1722,8 +1725,20 @@ class MessageLog(Base):
     organization_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"), index=True
     )
-    patient_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("patients.id", ondelete="CASCADE"), index=True
+
+    # TD-115: Identity Vault pattern - identity is the universal anchor
+    identity_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("identities.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+
+    # TD-115: Patient reference (nullable - may be Lead-only)
+    patient_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("patients.id", ondelete="CASCADE"), nullable=True, index=True
+    )
+
+    # TD-115: Lead reference (nullable - may be Patient-only)
+    lead_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("leads.id", ondelete="CASCADE"), nullable=True, index=True
     )
 
     # Message content
@@ -1732,10 +1747,10 @@ class MessageLog(Base):
     )
     content: Mapped[str] = mapped_column(Text)
 
-    # Twilio metadata
+    # Provider metadata (Twilio/Meta)
     provider_id: Mapped[Optional[str]] = mapped_column(
         String(100), unique=True, nullable=True
-    )  # Twilio MessageSid
+    )  # Twilio MessageSid or Meta msg_id
     status: Mapped[str] = mapped_column(String(20), default="RECEIVED")
 
     # Timestamps
@@ -1757,6 +1772,7 @@ class MessageLog(Base):
     # Composite index for daily batch queries
     __table_args__ = (
         Index("ix_message_logs_patient_timestamp", "patient_id", "timestamp"),
+        Index("ix_message_logs_identity_timestamp", "identity_id", "timestamp"),
     )
 
 

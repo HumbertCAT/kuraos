@@ -151,8 +151,14 @@ async def get_patient_messages(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    """Get raw WhatsApp messages for a patient."""
-    # Verify patient belongs to org
+    """Get raw WhatsApp messages for a patient.
+
+    TD-115: Also includes messages linked to patient's identity_id,
+    which covers pre-conversion Lead messages.
+    """
+    from sqlalchemy import or_
+
+    # Verify patient belongs to org and get identity_id
     patient_result = await db.execute(
         select(Patient).where(
             and_(
@@ -161,16 +167,24 @@ async def get_patient_messages(
             )
         )
     )
-    if not patient_result.scalar_one_or_none():
+    patient = patient_result.scalar_one_or_none()
+    if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
 
     # Get messages from last N days
     since = datetime.utcnow() - timedelta(days=days)
+
+    # TD-115: Query by patient_id OR identity_id (for Lead history)
+    # IMPORTANT: Only add identity_id clause if patient has one to prevent NULL matches
+    clauses = [MessageLog.patient_id == patient_id]
+    if patient.identity_id:
+        clauses.append(MessageLog.identity_id == patient.identity_id)
+
     result = await db.execute(
         select(MessageLog)
         .where(
             and_(
-                MessageLog.patient_id == patient_id,
+                or_(*clauses),
                 MessageLog.timestamp >= since,
             )
         )
