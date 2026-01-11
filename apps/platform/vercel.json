@@ -1,8 +1,9 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "git": {
-        "deploymentEnabled": false
+        "deploymentEnabled": true
     },
+    "ignoreCommand": "git diff HEAD^ HEAD --quiet -- .",
     "framework": "nextjs",
     "buildCommand": "pnpm run build",
     "devCommand": "pnpm dev",

@@ -1,10 +1,9 @@
 # Infrastructure & Deployment Manual
 
-> **Status**: Production (v1.4.14)  
-> **Platform**: Google Cloud (europe-southwest1)  
-> **Last Updated**: 2026-01-07
+> **Status**: Production (v1.7.5)  
+> **Platform**: Google Cloud (europe-southwest1) + Vercel  
+> **Last Updated**: 2026-01-11
 
----
 
 ## 1. Cloud Architecture
 
@@ -45,7 +44,51 @@
 | Secrets | Secret Manager | 17 secrets (see below) |
 | Migrations | Cloud Run Job | `kura-migrator` |
 
+### 1.1 Vercel Frontend Deployment
+
+KURA OS uses a **monorepo** with two Vercel-deployed Next.js apps:
+
+| App | Directory | Domain | Auto-Deploy |
+|:----|:----------|:-------|:------------|
+| **Platform** | `apps/platform/` | kura-platform.vercel.app | ✅ Enabled (v1.7.5) |
+| **Marketing** | `apps/marketing/` | kura-marketing.vercel.app | ✅ Enabled |
+
+#### Monorepo Optimization
+
+Each app uses **Ignored Build Step** to avoid unnecessary rebuilds:
+
+```json
+// apps/platform/vercel.json
+{
+  "git": { "deploymentEnabled": true },
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet -- ."
+}
+```
+
+**Effect**: Vercel skips build if no files changed in the app's directory.
+
+#### Deploy Order (TD-112)
+
+> [!WARNING]
+> **Hazard**: Vercel auto-deploys on `git push`, but Cloud Run requires `./scripts/deploy.sh`.
+> Frontend may call endpoints that don't exist yet during desync window.
+
+**Recommended order:**
+1. `./scripts/deploy.sh` (Backend + migrations)
+2. Wait for Cloud Run healthy
+3. Push to trigger Vercel (or use Vercel CLI)
+
+#### Manual Vercel Deploy
+
+```bash
+# From apps/platform/
+vercel --prod
+
+# Or trigger via Vercel dashboard: Deployments → Create Deployment
+```
+
 ---
+
 
 ## 2. The Safe Deployment Pipeline
 
