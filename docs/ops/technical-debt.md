@@ -21,13 +21,46 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
-### TD-113: Meta Webhook Not Receiving Messages
+### TD-113: Meta Webhook — Partial Flow Working
 **File**: `backend/app/api/v1/connect/meta_webhook.py`  
 **Origin**: v1.7.5 investigation  
-**Symptom**: No POST requests from Meta reaching Cloud Run (only GET verification)  
-**Impact**: WhatsApp messages from +34670374665 not being received  
-**Root Cause**: Unknown - likely Meta webhook configuration or phone number not linked  
-**Action**: Verify Meta Business Suite webhook setup, check phone number is linked to WABA  
+**Status**: Partially resolved  
+**Findings**:
+- Webhook receives test messages from Meta console (16315551181) ✅
+- Personal number (+34670374665) replies don't arrive in Dev Mode (expected)
+- Messages only stored if Patient exists (not Lead)
+**Action**: Consider Live Mode for production testing
+
+---
+
+### TD-115: MessageLog Should Store Lead Messages
+**File**: `backend/app/api/v1/connect/meta_webhook.py`  
+**Origin**: v1.7.5 WhatsApp testing  
+**Symptom**: Webhook receives message but doesn't store if sender is Lead (not Patient)  
+**Impact**: CRM leads sending WhatsApp messages aren't logged  
+**Root Cause**: Line 357 only stores if `patient and organization_id`  
+**Action**: Extend to also store messages when only `lead` context exists  
+
+---
+
+### TD-116: Lead→Patient Conversion Loses Identity Link
+**Origin**: v1.7.5 WhatsApp testing  
+**Symptom**: Converting Lead to Patient via UI doesn't copy `identity_id`  
+**Impact**: Patient loses phone/email link, WhatsApp messages won't be stored  
+**Root Cause**: Conversion logic doesn't preserve identity relationship  
+**Action**: Fix conversion to copy `identity_id` from Lead to new Patient  
+**Priority**: 🔴 CRITICAL — breaks WhatsApp flow for converted leads
+
+---
+
+### TD-117: MonitoringTab Not Displaying MessageLog Data
+**Files**: `apps/platform/components/MonitoringTab.tsx`, `backend/app/api/v1/core/monitoring.py`  
+**Origin**: v1.7.5 WhatsApp testing  
+**Symptom**: MonitoringTab shows "Sin datos de WhatsApp" despite message_logs having data  
+**Impact**: Therapists can't see WhatsApp conversation history  
+**Root Cause**: Unknown — needs full review of monitoring API and frontend  
+**Action**: Review entire monitoring flow from webhook → message_logs → API → frontend  
+**Priority**: 🟠 MEDIUM — data is stored, just not displayed
 
 ---
 

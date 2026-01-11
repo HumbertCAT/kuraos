@@ -125,18 +125,45 @@ echo -n "new_value" | gcloud secrets versions add SECRET_NAME --data-file=-
 
 ## 4. Database Operations
 
-### Connection via Cloud SQL Proxy
+### Connection via Cloud SQL Proxy (Production)
 
 ```bash
-# Install proxy
-gcloud components install cloud-sql-proxy
-
-# Start proxy (in separate terminal)
+# Step 1: Start Cloud SQL Proxy in a separate terminal
 cloud-sql-proxy kura-os:europe-southwest1:kura-primary
 
-# Connect via psql
+# Step 2: Get password from Secret Manager
+export PGPASSWORD=$(gcloud secrets versions access latest --secret=DB_PASSWORD)
+
+# Step 3: Connect via psql
 psql "host=127.0.0.1 port=5432 user=kura_app dbname=kuraosbd"
 ```
+
+**One-liner for quick queries:**
+```bash
+PGPASSWORD=$(gcloud secrets versions access latest --secret=DB_PASSWORD) \
+  psql "host=127.0.0.1 port=5432 user=kura_app dbname=kuraosbd" \
+  -c "SELECT * FROM patients LIMIT 5;"
+```
+
+> [!NOTE]
+> Requires `cloud-sql-proxy` running in background. Install: `gcloud components install cloud-sql-proxy`
+
+### Connection to Local Development DB
+
+```bash
+# Docker must be running (./scripts/start-dev.sh)
+docker exec -it kuraos-db-1 psql -U postgres -d therapistos
+```
+
+### Key Tables Reference
+
+| Table | Purpose |
+|:---|:---|
+| `identities` | Identity Vault (phone/email dedup) |
+| `patients` | Clinical patients |
+| `leads` | CRM leads |
+| `message_logs` | WhatsApp/Instagram messages |
+| `clinical_entries` | Session notes |
 
 ### Backup System
 
