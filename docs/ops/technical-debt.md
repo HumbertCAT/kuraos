@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Status**: Living Document (v1.7.5)  
 > **Purpose**: Active technical debt tracking for KURA OS  
-> **Last Updated**: 2026-01-11 (v1.7.5 TD-115/116/117 Resolved)
+> **Last Updated**: 2026-01-11 (v1.7.5 TD-112/114/115/116/117 Resolved)
 
 This document tracks **actionable** technical debt that requires resolution. Resolved items belong in the [CHANGELOG](../../CHANGELOG.md).
 
@@ -21,38 +21,16 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
-##  MEDIUM (Should Fix Soon)
-
-### TD-112: Deploy Order Hazard (Vercel antes de Cloud Run)
-**Origin**: v1.7.0 Phase 5  
-**Issue**: Vercel auto-deploya al hacer `git push`, pero Cloud Run requiere `./scripts/deploy.sh` manual  
-**Risk**: Frontend puede llamar a endpoints que aún no existen en producción  
-**Impact**: Errores 404/500 para usuarios durante ventana de desincronización  
-**Solution**: 
-1. Desactivar Vercel auto-deploy
-2. Crear GitHub Action que: Cloud Run deploy → success → trigger Vercel deploy
-3. O usar `vercel --prod` solo después de confirmar Cloud Run healthy
-
----
-
-### TD-114: Vercel Auto-Deploy Not Triggering for kura-platform
-**Origin**: v1.7.5 debugging  
-**Symptom**: kura-platform deploys don't auto-trigger on push (marketing works fine)  
-**Impact**: Manual intervention needed to deploy platform changes  
-**Action**: Check Vercel Git integration, may need to re-link project  
-
----
-
 ## ✅ Recently Resolved (v1.6.x - v1.7.x)
 
 | ID | Description | Resolved In |
 |----|-------------|-------------|
+| TD-112 | Deploy order hazard (documented in infrastructure.md) | v1.7.5 |
 | TD-114 | Vercel auto-deploy not triggering for platform | v1.7.5 |
 | TD-115 | MessageLog Lead persistence (identity-anchored) | v1.7.5 |
 | TD-116 | Lead→Patient conversion loses identity_id | v1.7.5 |
 | TD-117 | MonitoringTab not displaying MessageLog data | v1.7.5 |
 | TD-113 | Meta Webhook partial flow | v1.7.5 |
-
 | TD-86 | CI Innate Pipeline Broken | v1.6.9 (123 tests passing) |
 | TD-87 | Duplicate Warning Modal Not Triggering | v1.6.9 |
 | TD-90 | META_APP_SECRET Typo Hazard | v1.6.8 |
