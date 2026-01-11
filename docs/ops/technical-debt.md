@@ -38,8 +38,9 @@ This document tracks **actionable** technical debt that requires resolution. Res
 **Origin**: v1.7.5 WhatsApp testing  
 **Symptom**: Webhook receives message but doesn't store if sender is Lead (not Patient)  
 **Impact**: CRM leads sending WhatsApp messages aren't logged  
-**Root Cause**: Line 357 only stores if `patient and organization_id`  
-**Action**: Extend to also store messages when only `lead` context exists  
+**Root Cause**: `MessageLog.patient_id` is NOT NULL constraint; line 357 only stores if patient exists  
+**Action**: Requires schema change to make `patient_id` nullable + add `lead_id` FK  
+**Priority**: 🟡 LOW — workaround is to convert leads to patients first  
 
 ---
 

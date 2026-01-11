@@ -311,6 +311,7 @@ async def convert_lead_to_patient(
 
     patient = Patient(
         organization_id=current_user.organization_id,
+        identity_id=lead.identity_id,  # TD-116 FIX: Preserve Identity Vault link
         first_name=lead.first_name,
         last_name=lead.last_name,
         email=lead.email,

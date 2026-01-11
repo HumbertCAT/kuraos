@@ -160,15 +160,58 @@ export default function MonitoringTab({ patientId }: MonitoringTabProps) {
             {/* Main content */}
             {(analyses.length > 0 || messages.length > 0) && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Sentiment Chart */}
-                    <div className="lg:col-span-2">
-                        <SentimentChart analyses={analyses} />
-                    </div>
+                    {/* Sentiment Chart - only if analyses exist */}
+                    {analyses.length > 0 && (
+                        <div className="lg:col-span-2">
+                            <SentimentChart analyses={analyses} />
+                        </div>
+                    )}
 
-                    {/* Daily Insights Feed */}
-                    <div className="lg:col-span-2">
-                        <DailyInsightsFeed analyses={analyses} messages={messages} />
-                    </div>
+                    {/* Daily Insights Feed - only if analyses exist */}
+                    {analyses.length > 0 && (
+                        <div className="lg:col-span-2">
+                            <DailyInsightsFeed analyses={analyses} messages={messages} />
+                        </div>
+                    )}
+
+                    {/* TD-117 FIX: Raw Messages Fallback when no analyses yet */}
+                    {analyses.length === 0 && messages.length > 0 && (
+                        <div className="lg:col-span-2 bg-card rounded-2xl border border-border p-5">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Activity className="w-5 h-5 text-ai" />
+                                <h3 className="text-lg font-semibold text-foreground">
+                                    Chat Original
+                                </h3>
+                                <span className="text-sm text-muted-foreground">
+                                    ({messages.length} mensajes)
+                                </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Los análisis de AletheIA se generarán a las 8:00 AM.
+                            </p>
+                            <div className="space-y-2 max-h-96 overflow-y-auto">
+                                {messages.map((msg) => (
+                                    <div
+                                        key={msg.id}
+                                        className={`p-3 rounded-xl text-sm ${msg.direction === 'INBOUND'
+                                                ? 'bg-muted border border-border mr-12'
+                                                : 'bg-ai/10 text-ai-foreground ml-12 border border-ai/20'
+                                            }`}
+                                    >
+                                        <p className="text-foreground">{msg.content}</p>
+                                        <p className="text-xs text-muted-foreground mt-2">
+                                            {new Date(msg.timestamp).toLocaleString('es-ES', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
