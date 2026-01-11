@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Status**: Living Document (v1.7.5)  
 > **Purpose**: Active technical debt tracking for KURA OS  
-> **Last Updated**: 2026-01-11 (v1.7.5 Maintenance)
+> **Last Updated**: 2026-01-11 (v1.7.5 TD-115/116/117 Resolved)
 
 This document tracks **actionable** technical debt that requires resolution. Resolved items belong in the [CHANGELOG](../../CHANGELOG.md).
 
@@ -21,51 +21,7 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 ---
 
-### TD-113: Meta Webhook — Partial Flow Working
-**File**: `backend/app/api/v1/connect/meta_webhook.py`  
-**Origin**: v1.7.5 investigation  
-**Status**: Partially resolved  
-**Findings**:
-- Webhook receives test messages from Meta console (16315551181) ✅
-- Personal number (+34670374665) replies don't arrive in Dev Mode (expected)
-- Messages only stored if Patient exists (not Lead)
-**Action**: Consider Live Mode for production testing
-
----
-
-### TD-115: MessageLog Should Store Lead Messages
-**File**: `backend/app/api/v1/connect/meta_webhook.py`  
-**Origin**: v1.7.5 WhatsApp testing  
-**Symptom**: Webhook receives message but doesn't store if sender is Lead (not Patient)  
-**Impact**: CRM leads sending WhatsApp messages aren't logged  
-**Root Cause**: `MessageLog.patient_id` is NOT NULL constraint; line 357 only stores if patient exists  
-**Action**: Requires schema change to make `patient_id` nullable + add `lead_id` FK  
-**Priority**: 🟡 LOW — workaround is to convert leads to patients first  
-
----
-
-### TD-116: Lead→Patient Conversion Loses Identity Link
-**Origin**: v1.7.5 WhatsApp testing  
-**Symptom**: Converting Lead to Patient via UI doesn't copy `identity_id`  
-**Impact**: Patient loses phone/email link, WhatsApp messages won't be stored  
-**Root Cause**: Conversion logic doesn't preserve identity relationship  
-**Action**: Fix conversion to copy `identity_id` from Lead to new Patient  
-**Priority**: 🔴 CRITICAL — breaks WhatsApp flow for converted leads
-
----
-
-### TD-117: MonitoringTab Not Displaying MessageLog Data
-**Files**: `apps/platform/components/MonitoringTab.tsx`, `backend/app/api/v1/core/monitoring.py`  
-**Origin**: v1.7.5 WhatsApp testing  
-**Symptom**: MonitoringTab shows "Sin datos de WhatsApp" despite message_logs having data  
-**Impact**: Therapists can't see WhatsApp conversation history  
-**Root Cause**: Unknown — needs full review of monitoring API and frontend  
-**Action**: Review entire monitoring flow from webhook → message_logs → API → frontend  
-**Priority**: 🟠 MEDIUM — data is stored, just not displayed
-
----
-
-## 🟠 MEDIUM (Should Fix Soon)
+##  MEDIUM (Should Fix Soon)
 
 ### TD-112: Deploy Order Hazard (Vercel antes de Cloud Run)
 **Origin**: v1.7.0 Phase 5  
@@ -91,6 +47,10 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 | ID | Description | Resolved In |
 |----|-------------|-------------|
+| TD-115 | MessageLog Lead persistence (identity-anchored) | v1.7.5 |
+| TD-116 | Lead→Patient conversion loses identity_id | v1.7.5 |
+| TD-117 | MonitoringTab not displaying MessageLog data | v1.7.5 |
+| TD-113 | Meta Webhook partial flow | v1.7.5 |
 | TD-86 | CI Innate Pipeline Broken | v1.6.9 (123 tests passing) |
 | TD-87 | Duplicate Warning Modal Not Triggering | v1.6.9 |
 | TD-90 | META_APP_SECRET Typo Hazard | v1.6.8 |

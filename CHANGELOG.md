@@ -22,20 +22,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > **Theme:** Corrección de integración WhatsApp y estabilización post-v1.7.4.
 
 **Fixes:**
+- ✅ **TD-115**: MessageLog now supports Lead messages (identity-anchored design)
+  - Migration `cada03c9385f`: patient_id nullable, added identity_id + lead_id
+  - Backfill script: `scripts/ops/backfill_messages_identity.py`
 - ✅ **TD-116**: Lead→Patient conversion now preserves `identity_id` (Identity Vault link)
 - ✅ **TD-117**: MonitoringTab shows raw WhatsApp messages immediately (no need to wait for AletheIA analysis)
-- ⏸️ **TD-115**: Deferred — MessageLog storage for Leads requires schema migration
 
-**Technical Debt:**
-- TD-86, TD-87, TD-90: Moved to resolved (CI Innate, Duplicate Modal, META_APP_SECRET)
-- TD-113: ✅ Resolved — Meta webhook now receiving POST messages correctly
-- TD-114: Registered — Vercel auto-deploy not triggering (manual deploy required)
+**Technical Debt Resolved:**
+- TD-113: ✅ Resolved — Meta webhook receiving POST messages correctly
+- TD-115: ✅ Resolved — Identity-anchored MessageLog schema
+- TD-116: ✅ Resolved — Conversion preserves identity link
+- TD-117: ✅ Resolved — Raw messages display fallback
 
 **PWA Optimization:**
 - `apple-touch-icon.png` optimized to 180x180 for iOS
 
 **Documentation:**
 - `docs/architecture/clinical-stream-design.md` — Deferred design for patient page redesign
+- `docs/history/walkthroughs/v1.7.5_whatsapp_integration_fixes.md` — Archived
 - Technical Debt register updated to v1.7.5
 
 **Investigated & Fixed:**
