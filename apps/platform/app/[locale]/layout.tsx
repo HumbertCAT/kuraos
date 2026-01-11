@@ -4,7 +4,27 @@ import { Inter, Space_Grotesk, JetBrains_Mono, Playfair_Display } from "next/fon
 import { AuthProvider } from "@/context/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
 import { HydrationMarker } from "@/components/HydrationMarker";
+import type { Metadata, Viewport } from 'next';
 import "../globals.css";
+
+export const metadata: Metadata = {
+  title: 'Kura OS',
+  description: 'Plataforma clínica inteligente para profesionales de salud mental',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Kura OS',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#10b981',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 // Body text - Clean, readable
 const inter = Inter({
