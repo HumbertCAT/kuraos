@@ -11,10 +11,15 @@ export const metadata: Metadata = {
   title: 'Kura OS',
   description: 'Plataforma clínica inteligente para profesionales de salud mental',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'Kura OS',
+    startupImage: '/icons/icon-512.png',
   },
 };
 
