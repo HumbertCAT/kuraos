@@ -121,7 +121,7 @@ export function TrinityNav() {
 
     return (
         <aside
-            className={`h-screen flex flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 ease-in-out ${isCollapsed ? 'w-16' : 'w-64'
+            className={`h-screen hidden lg:flex flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 ease-in-out ${isCollapsed ? 'w-16' : 'w-64'
                 }`}
         >
             {/* Header: Logo */}
