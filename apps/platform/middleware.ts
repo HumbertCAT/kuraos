@@ -10,6 +10,18 @@ const intlMiddleware = createMiddleware({
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
+  // Skip middleware for static files (PWA assets, icons, etc.)
+  if (
+    pathname.startsWith('/manifest') ||
+    pathname.startsWith('/icons/') ||
+    pathname.startsWith('/apple-touch-icon') ||
+    pathname.startsWith('/favicon') ||
+    pathname.startsWith('/sw.js') ||
+    pathname.startsWith('/_next/')
+  ) {
+    return NextResponse.next();
+  }
+  
   // Skip middleware for API routes (including NextAuth)
   if (pathname.startsWith('/api/')) {
     return NextResponse.next();
