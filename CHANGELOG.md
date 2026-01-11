@@ -43,30 +43,92 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.7.0 - 1.7.3] - 2026-01-10
+## [1.7.3] - 2026-01-10
 
-### 📱 Mobile-First Architecture Foundation
+### 📱 Mobile-First — Dashboard & Calendar Adaptation
 
-> **Theme:** El gran pivot hacia experiencia móvil nativa.
+> **Theme:** Adaptar las páginas core para experiencia móvil óptima.
 
-**v1.7.3 - Dashboard & Calendar Adaptation:**
-- Grid vertical en mobile para dashboard
-- Day-view por defecto en calendar móvil
-
-**v1.7.2 - Page Adaptation Phase:**
-- Patients page con card view móvil
-- Leads page con FAB flotante
-
-**v1.7.1 - Layout Shell:**
-- `100dvh` para keyboard-aware viewport
+**Dashboard Page:**
+- Grid vertical en mobile (`grid-cols-1` < lg)
+- Financial cards en 2 columnas móvil
 - Removed inner padding conflicts
+- Stats cards apilados verticalmente
 
-**v1.7.0 - PWA Foundation:**
-- PWA manifest y service worker config
-- Touch targets verificados ≥ 44px
-- Tactile feedback (`active:scale-95`)
+**Calendar Page:**
+- Default view `Views.DAY` en móvil (vs Week en desktop)
+- `useEffect` detecta pantalla y cambia vista automáticamente
+- Mejor legibilidad de slots en pantallas pequeñas
 
 ---
+
+## [1.7.2] - 2026-01-10
+
+### 📱 Mobile-First — Page Adaptation Phase
+
+> **Theme:** Adaptación de páginas de listado con patrones móvil-nativos.
+
+**Patients Page:**
+- Card view alternativo para móvil (vs tabla desktop)
+- FAB flotante para "Nuevo Paciente" en móvil
+- Cards con avatar, nombre, estado y acciones rápidas
+
+**Leads Page:**
+- Mismo patrón de card view móvil
+- FAB para "Nuevo Lead"
+- Swipe-ready layout (preparado para gestos futuros)
+
+**responsive-table.tsx:**
+- Componente reutilizable para tablas adaptativas
+
+---
+
+## [1.7.1] - 2026-01-10
+
+### 📱 Mobile-First — Zero-Dependency Pattern Library
+
+> **Theme:** Establecer patrones de componentes sin dependencias externas.
+
+**Layout Shell:**
+- `100dvh` para viewport keyboard-aware en iOS
+- Removed inner padding conflicts entre shell y páginas
+- Safe area insets considerados
+
+**Pattern Library Foundation:**
+- Responsive breakpoints estandarizados (`sm`, `md`, `lg`, `xl`)
+- Mobile-first CSS (base = mobile, override = desktop)
+- Touch target mínimo 44px verificado
+
+---
+
+## [1.7.0] - 2026-01-10
+
+### 📱 Mobile-First Architecture Foundation — "The Native Pivot"
+
+> **Theme:** El gran pivot hacia experiencia móvil nativa con PWA.
+
+**PWA Foundation:**
+- `manifest.json` con iconos 192x192 y 512x512
+- `next-pwa` configurado para service worker
+- Metadata en layout para prompt de instalación iOS/Android
+
+**UI Physics (Tactile Quality):**
+- `active:scale-95` en botones para feedback táctil
+- `transition-all` para animaciones suaves
+- Hover states que funcionan en móvil (no solo desktop)
+
+**Ergonomic Standards — "The 44px Rule":**
+- Touch targets mínimo 44x44px
+- Padding generoso en elementos interactivos
+- Spacing apropiado para dedos (no mouse)
+
+**Architecture Decision:**
+- Mobile-first CSS: estilos base = mobile
+- Desktop como override (`lg:`, `xl:`)
+- Adaptive layout (no responsive genérico)
+
+---
+
 
 ## [1.6.9] - 2026-01-10
 
