@@ -61,11 +61,15 @@ Each app uses **Ignored Build Step** to avoid unnecessary rebuilds:
 // apps/platform/vercel.json
 {
   "git": { "deploymentEnabled": true },
-  "ignoreCommand": "git diff HEAD^ HEAD --quiet -- ."
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet -- . ../../pnpm-lock.yaml"
 }
 ```
 
-**Effect**: Vercel skips build if no files changed in the app's directory.
+**Effect**: Vercel skips build if no files changed in the app's directory **and** no dependency changes in lockfile.
+
+> [!IMPORTANT]
+> The `../../pnpm-lock.yaml` path is critical — without it, new dependencies won't trigger a rebuild.
+
 
 #### Deploy Order (TD-112)
 

@@ -261,3 +261,26 @@ Revenue: 0 · Compliance: 0 · Unlocks: 1 · Effort: 1 · BlockedBy: 0
 - [ ] Latencia media < 200ms
 - [ ] 0 errores durante smoke test (50 usuarios, spawn 5/seg)
 
+---
+**Score: 15** · Size: S · Status: 🔵 BACKLOG  
+Revenue: 0 · Compliance: 0 · Unlocks: 2 · Effort: 1 · BlockedBy: 0
+
+### WU-026 · Turborepo Integration
+
+**Theme:** Monorepo Build Optimization — Remote Caching + Dependency Graph Awareness.
+
+**Why:** Current Vercel setup uses simple `ignoreCommand` (v1.7.5). Turborepo provides proper monorepo orchestration with remote caching.
+
+**Impact:** Reduce CI build times from ~3m to <1m.
+
+**Implementación:**
+- [ ] Install Turborepo: `pnpm add turbo -D -w`
+- [ ] Create `turbo.json` with tasks (build, dev, lint, test)
+- [ ] Configure remote caching via Vercel integration
+- [ ] Update Vercel projects to use `npx turbo-ignore`
+- [ ] Enable Vercel Remote Caching in dashboard
+
+**Criterios de Éxito:**
+- [ ] Cache hits visible in Vercel dashboard
+- [ ] Build time <60s on cache hit
+- [ ] Automatic skip when no changes in app or dependencies

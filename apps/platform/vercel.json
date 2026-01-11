@@ -3,7 +3,7 @@
     "git": {
         "deploymentEnabled": true
     },
-    "ignoreCommand": "git diff HEAD^ HEAD --quiet -- .",
+    "ignoreCommand": "git diff HEAD^ HEAD --quiet -- . ../../pnpm-lock.yaml",
     "framework": "nextjs",
     "buildCommand": "pnpm run build",
     "devCommand": "pnpm dev",

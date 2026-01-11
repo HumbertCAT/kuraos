@@ -47,10 +47,12 @@ This document tracks **actionable** technical debt that requires resolution. Res
 
 | ID | Description | Resolved In |
 |----|-------------|-------------|
+| TD-114 | Vercel auto-deploy not triggering for platform | v1.7.5 |
 | TD-115 | MessageLog Lead persistence (identity-anchored) | v1.7.5 |
 | TD-116 | Lead→Patient conversion loses identity_id | v1.7.5 |
 | TD-117 | MonitoringTab not displaying MessageLog data | v1.7.5 |
 | TD-113 | Meta Webhook partial flow | v1.7.5 |
+
 | TD-86 | CI Innate Pipeline Broken | v1.6.9 (123 tests passing) |
 | TD-87 | Duplicate Warning Modal Not Triggering | v1.6.9 |
 | TD-90 | META_APP_SECRET Typo Hazard | v1.6.8 |
