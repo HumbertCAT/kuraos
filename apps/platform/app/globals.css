@@ -1048,33 +1048,33 @@ textarea::placeholder {
     @apply transition-all duration-200;
   }
   
-  /* ---- SEMANTIC BADGES ---- */
+  /* ---- SEMANTIC BADGES (v1.7.6 Enhanced Vibrancy) ---- */
   .badge {
-    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border;
   }
   
   .badge-risk {
-    @apply bg-risk/10 text-risk;
+    @apply bg-risk/15 text-risk border-risk/30;
   }
   
   .badge-success {
-    @apply bg-success/10 text-success;
+    @apply bg-success/15 text-success border-success/30;
   }
   
   .badge-warning {
-    @apply bg-warning/10 text-warning;
+    @apply bg-warning/15 text-warning border-warning/30;
   }
   
   .badge-ai {
-    @apply bg-ai/10 text-ai;
+    @apply bg-ai/15 text-ai border-ai/30;
   }
   
   .badge-brand {
-    @apply bg-brand/10 text-brand;
+    @apply bg-brand/15 text-brand border-brand/30;
   }
   
   .badge-muted {
-    @apply bg-muted text-muted-foreground;
+    @apply bg-muted text-muted-foreground border-border;
   }
 
   /* ---- TABS NAVIGATION (Lateral Shadow) ---- */

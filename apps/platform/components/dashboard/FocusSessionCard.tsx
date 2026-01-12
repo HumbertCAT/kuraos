@@ -104,9 +104,11 @@ export function FocusSessionCard({ nextSession, onViewFullAgenda }: FocusSession
                     <div className="flex gap-2">
                         <Link href="/leads" className="btn btn-sm btn-secondary">
                             {t('viewLeads')}
+                            <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
                         <Link href="/patients" className="btn btn-sm btn-secondary">
                             {t('viewClients')}
+                            <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
                     </div>
                 </div>

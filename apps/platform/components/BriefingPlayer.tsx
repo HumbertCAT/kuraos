@@ -116,11 +116,11 @@ export default function BriefingPlayer({ compact = false }: BriefingPlayerProps)
                     {/* Main Content Section */}
                     <div className="p-4">
                         <div className="flex items-center gap-4">
-                            {/* Compact Play Button - slightly XXL but balanced */}
+                            {/* Compact Play Button - with attention ring when idle */}
                             {hasAudio ? (
                                 <button
                                     onClick={handlePlayPause}
-                                    className="w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center shadow-lg hover:scale-105 hover:bg-brand/20 transition-all border border-brand/20 shrink-0"
+                                    className={`relative w-16 h-16 rounded-2xl bg-brand/10 flex items-center justify-center shadow-lg hover:scale-105 hover:bg-brand/20 transition-all border border-brand/20 shrink-0 ${!isPlaying ? 'ring-2 ring-brand/30 ring-offset-2 ring-offset-card animate-pulse' : ''}`}
                                 >
                                     {isPlaying ? (
                                         <Pause className="w-8 h-8 text-brand" />
