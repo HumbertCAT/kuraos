@@ -1,8 +1,9 @@
 # The Identity Vault: Universal Contact Deduplication
 
-> **Status**: Active (v1.6.4+)  
+> **Status**: Active (v1.7.5+)  
 > **Architecture**: GEM Hybrid Approach  
 > **Philosophy**: "One person, one identity, across all domains"
+> **Last Updated**: 2026-01-12
 
 ---
 
@@ -444,5 +445,6 @@ INFO Enriched identity {identity.id} with missing contact data
 
 ---
 
-**Last Updated**: 2026-01-08 (v1.6.4)  
-**Status**: ✅ Production Ready
+**Last Updated**: 2026-01-12 (v1.7.5)  
+**Status**: ✅ Production Ready  
+**See Also**: [whatsapp-monitoring.md](../manuals/whatsapp-monitoring.md) for Meta Cloud API integration

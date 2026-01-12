@@ -1,7 +1,8 @@
 # The Trinity: CONNECT, PRACTICE, GROW
 
-> **Status**: Active (v1.6.0+)  
-> **Philosophy**: "Three intention-based relationship domains, one unified platform"
+> **Status**: Active (v1.7.5+)  
+> **Philosophy**: "Three intention-based relationship domains, one unified platform"  
+> **Last Updated**: 2026-01-12
 
 ---
 
@@ -141,6 +142,8 @@ When a **Lead** completes their first **paid booking**, the system:
 
 **API**: See `/api/v1/contacts/{identity_id}` for timeline view.
 
+**WhatsApp Integration** (v1.7.5): Messages from Meta Cloud API are routed through Identity Vault. See [whatsapp-monitoring.md](../manuals/whatsapp-monitoring.md).
+
 **Implementation**: [identity-vault.md](./identity-vault.md)
 
 ---
@@ -199,4 +202,4 @@ When a **Lead** completes their first **paid booking**, the system:
 
 ---
 
-**Last Updated**: 2026-01-08 (v1.6.4)
+**Last Updated**: 2026-01-12 (v1.7.5)
