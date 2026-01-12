@@ -4,6 +4,7 @@ import { Inter, Space_Grotesk, JetBrains_Mono, Playfair_Display } from "next/fon
 import { AuthProvider } from "@/context/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
 import { HydrationMarker } from "@/components/HydrationMarker";
+import { PWAUpdater } from "@/components/layout/PWAUpdater";
 import type { Metadata, Viewport } from 'next';
 import "../globals.css";
 
@@ -79,6 +80,7 @@ export default async function LocaleLayout({
             </AuthProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
+        <PWAUpdater />
       </body>
     </html>
   );
