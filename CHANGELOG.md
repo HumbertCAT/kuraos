@@ -15,6 +15,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.7.6] - 2026-01-12
+
+### 📱 Mobile UX Polish Release
+
+> **Theme:** Premium mobile experience — density, typography, and update workflow.
+
+**Mobile Layout Fixes:**
+- ✅ **Leads Kanban**: Horizontal scroll with snap on mobile, 4-col grid on desktop
+- ✅ **AletheiaHUD**: Responsive stacking with compact inline score badge on mobile
+- ✅ **Dashboard KPIs**: Compact 3-col row on mobile, full cards on `sm+`
+- ✅ **PageHeader**: Responsive sizing (`text-xl` → `text-2xl`), hidden subtitle on mobile
+- ✅ **Patients List**: "Cargar más" button with safe-area padding on mobile
+
+**Universal UX Enhancements:**
+- 🎨 **Badges vibrantes**: Enhanced with 15% opacity backgrounds, borders, font-semibold
+- 🔔 **Daily Briefing**: Pulsing ring on idle play button for attention
+- ➡️ **Dashboard links**: Arrow icons on "Ver Leads" / "Ver Clientes"
+
+**PWA Update System:**
+- 🔄 **PWAUpdater component**: Detects new service worker versions
+- 📲 **SKIP_WAITING pattern**: Instant update on user approval
+- 🔧 **Service Worker**: Added `sw.js` with cache strategy
+
+**Infrastructure:**
+- `VitalSignCard`: New `compact` prop for mobile density
+- Calendar mobile toolbar deferred to future release
+
+---
+
 ## [1.7.5] - 2026-01-11
 
 ### 🔧 WhatsApp Integration Fixes & Maintenance

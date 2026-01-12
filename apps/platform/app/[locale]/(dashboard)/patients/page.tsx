@@ -399,7 +399,7 @@ export default function PatientsPage() {
                 onClick={() => setPage(page + 1)}
                 className="w-full py-3 px-4 bg-muted hover:bg-muted/80 text-foreground font-medium rounded-xl border border-border transition-all active:scale-[0.98]"
               >
-                Cargar más {terminology.patients.plural.toLowerCase()}
+                Cargar más
               </button>
             </div>
           )}
