@@ -1,8 +1,8 @@
 # Design System
 
-> **Status**: Production (v1.4.14)  
+> **Status**: Production (v1.7.6)  
 > **Aesthetic**: Organic No-White / Cyber-Clinical  
-> **Last Updated**: 2026-01-07
+> **Last Updated**: 2026-01-12
 
 ---
 
@@ -133,7 +133,55 @@ KURA OS uses **class-based dark mode** via `next-themes`:
 
 ---
 
-## 5. Mobile Responsiveness
+## 5. Mobile & PWA Architecture
+
+> **Updated:** v1.7.6 (2026-01-12)
+
+### PWA Foundation
+
+KURA OS is a **Progressive Web App** optimized for iOS/Android home screen installation.
+
+#### Key Files
+
+| File | Purpose |
+|:---|:---|
+| `public/manifest.json` | App name, icons, display mode |
+| `public/sw.js` | Service Worker with cache strategy |
+| `components/layout/PWAUpdater.tsx` | Update notification component |
+
+#### PWA Manifest Configuration
+
+```json
+{
+  "name": "Kura OS",
+  "short_name": "Kura",
+  "display": "standalone",
+  "start_url": "/es/dashboard",
+  "theme_color": "#040F10"
+}
+```
+
+#### Service Worker (SKIP_WAITING Pattern)
+
+The SW enables instant updates when user approves:
+
+```javascript
+// sw.js
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+```
+
+#### PWAUpdater Component
+
+Displays update modal when new version detected:
+```tsx
+<PWAUpdater />  // Added to root layout.tsx
+```
+
+---
 
 ### Breakpoint Strategy
 
@@ -141,32 +189,140 @@ KURA OS is **mobile-first** with progressive enhancement:
 
 | Breakpoint | Width | Usage |
 |:---|:---|:---|
-| `sm` | 640px | Small tablets |
+| `sm` | 640px | Small tablets, compact cards |
 | `md` | 768px | Tablets, small laptops |
-| `lg` | 1024px | Laptops |
+| `lg` | 1024px | Laptops, full sidebar |
 | `xl` | 1280px | Shows Observatory Sidebar |
 
-### Key Mobile Patterns
+---
+
+### Mobile-First Patterns (v1.7.6)
+
+#### Compact Card Variant
+
+`VitalSignCard` supports a `compact` prop for mobile density:
+
+```tsx
+// Mobile: Inline, dense
+<VitalSignCard compact icon={...} value="€1,200" trend={{...}} />
+
+// Desktop: Full height with labels
+<VitalSignCard icon={...} label="Revenue" value="€1,200" trend={{...}} />
+```
+
+#### Responsive Dual-Render Pattern
+
+Show different layouts per breakpoint:
+
+```tsx
+{/* Mobile: Compact 3-col */}
+<div className="grid grid-cols-3 gap-2 sm:hidden">
+  <CompactCard />
+</div>
+
+{/* Desktop: Full cards */}
+<div className="hidden sm:grid sm:grid-cols-3 gap-4">
+  <FullCard />
+</div>
+```
+
+#### Horizontal Snap Scroll (Kanban)
+
+For Kanban/carousel layouts on mobile:
+
+```tsx
+<div className="flex lg:grid lg:grid-cols-4 gap-4 
+                overflow-x-auto pb-4 
+                snap-x snap-mandatory lg:snap-none
+                -mx-4 px-4 lg:mx-0 lg:px-0">
+  <div className="min-w-[280px] lg:min-w-0 snap-center">
+    {/* Column content */}
+  </div>
+</div>
+```
+
+#### Safe Area Padding
+
+For iOS notch/home indicator:
+
+```tsx
+<div className="pb-[env(safe-area-inset-bottom)] mb-4">
+  <button className="w-full">Cargar más</button>
+</div>
+```
+
+---
+
+### Responsive Typography
+
+#### PageHeader Pattern
+
+```tsx
+// Smaller on mobile, larger on desktop
+<h1 className="text-xl lg:text-2xl font-serif">
+  {title}
+</h1>
+
+// Hide subtitle on mobile
+{subtitle && (
+  <div className="hidden sm:block text-sm text-muted-foreground">
+    {subtitle}
+  </div>
+)}
+```
+
+---
+
+### Mobile Component Adaptation
 
 | Component | Mobile | Desktop |
 |:---|:---|:---|
 | **Sidebar** | Hidden (hamburger menu) | Fixed left |
 | **Observatory** | Hidden | `xl:flex` (right sidebar) |
-| **Tables** | Horizontal scroll | Full width |
-| **Header Navigation** | Condensed | Full menu |
-| **Touch Targets** | Minimum 44px | Standard sizing |
+| **VitalSignCards** | Compact 3-col row | Full height cards |
+| **PageHeader** | `text-xl`, no subtitle | `text-2xl`, full subtitle |
+| **Pagination** | "Load More" button | Full pagination toolbar |
+| **Kanban** | Horizontal scroll | 4-col grid |
+| **AletheiaHUD** | Stacked, inline score badge | 12-col grid layout |
 
-### Mobile-First Classes
+---
+
+### Touch Targets
+
+All interactive elements must meet minimum touch size:
+
+| Element | Minimum Size |
+|:---|:---|
+| Buttons | 44x44px |
+| List items | 48px height |
+| Icon buttons | 40x40px with padding |
 
 ```tsx
-// Example: Hide on mobile, show on desktop
+// Example: Large touch target
+<button className="p-3 min-h-[44px] min-w-[44px]">
+  <Icon size={20} />
+</button>
+```
+
+---
+
+### Mobile-First Classes Reference
+
+```tsx
+// Hide on mobile, show on desktop
 className="hidden xl:flex"
 
-// Example: Full width on mobile, constrained on desktop
+// Full width on mobile, auto on desktop
 className="w-full md:w-auto"
 
-// Example: Stack on mobile, row on desktop
+// Stack on mobile, row on desktop
 className="flex flex-col md:flex-row"
+
+// Compact on mobile, spacious on desktop
+className="p-3 lg:p-5"
+
+// Different text sizes
+className="text-xl lg:text-2xl"
 ```
 
 ---

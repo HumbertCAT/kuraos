@@ -1,171 +1,240 @@
-# 📊 Monitorización Premium - Technical Documentation
+# 📊 WhatsApp & Meta Cloud API Integration - Technical Documentation
+
+> **Version:** v1.7.6 | **Last Updated:** 2026-01-12
 
 ## Overview
 
-The **Monitorización** feature provides real-time clinical surveillance of patient WhatsApp communications. It captures, transcribes, analyzes, and visualizes conversations to detect risk patterns and emotional states.
+The **WhatsApp Integration** connects Kura OS to Meta Cloud API for clinical communication surveillance. It captures, transcribes, analyzes, and visualizes patient conversations.
 
 ```mermaid
 flowchart LR
-    A[Patient WhatsApp] --> B[Twilio]
-    B --> C[Webhook Endpoint]
+    A[Patient WhatsApp] --> B[Meta Cloud API]
+    B --> C["/webhooks/meta"]
     C --> D[MessageLog Table]
-    D --> E[APScheduler Cron]
-    E --> F[AletheIA Analysis]
-    F --> G[DailyConversationAnalysis]
-    G --> H[Frontend MonitoringTab]
+    D --> E[MonitoringTab UI]
+    D --> F[APScheduler Cron]
+    F --> G[AletheIA Analysis]
+    G --> H[DailyConversationAnalysis]
 ```
 
 ---
 
-## 1. Ingestion Layer
+## 1. Meta Cloud API Connection
 
-### Twilio Webhook
-**File**: [twilio_webhook.py](file:///Users/humbert/Documents/KuraOS/backend/app/api/v1/twilio_webhook.py)
+### Prerequisites
+- Meta Business Account (verified)
+- WhatsApp Business API approval
+- Phone number registered with Meta (not Twilio)
 
-| Field | Description |
-|-------|-------------|
-| Endpoint | `POST /api/v1/webhooks/twilio/whatsapp` |
-| Auth | Twilio signature (production) |
-| Response | Empty TwiML (no auto-reply) |
+### Current Status
+> 🟡 **Dev Mode Active** — Production requires Meta App Review
 
-**Features**:
-- Cleans phone number (`whatsapp:+34...` → `+34...`)
-- Looks up patient by phone
-- Handles audio messages via Whisper transcription
-- Deduplicates by `MessageSid`
+| Environment | Status | Restrictions |
+|-------------|--------|--------------|
+| Development | ✅ Working | Only pre-added test phones receive messages |
+| Production | ⏳ Pending | Requires App Review submission |
 
-### Audio Transcription
-**File**: `app/services/transcription.py`
+### Configuration
 
-Uses **OpenAI Whisper** API for audio-to-text:
-- Detects audio MIME types (`audio/ogg`, `audio/mpeg`, etc.)
-- Downloads from Twilio with auth
-- Returns transcription appended to message content
+**Environment Variables:**
+```bash
+# .env (backend)
+META_WA_PHONE_ID=your_phone_number_id
+META_WA_TOKEN=your_access_token
+META_WA_VERIFY_TOKEN=your_webhook_verify_token
+META_APP_SECRET=your_app_secret
+```
 
 ---
 
-## 2. Storage Layer
+## 2. Webhook Architecture
 
-### MessageLog Table
-**Model**: [models.py:1424](file:///Users/humbert/Documents/KuraOS/backend/app/db/models.py#L1424-1461)
+### Unified Meta Endpoint
+**File:** `backend/app/api/v1/connect/meta_webhook.py`
+
+| Field | Value |
+|-------|-------|
+| **URL** | `POST /api/v1/webhooks/meta` |
+| **Verify** | `GET /api/v1/webhooks/meta` (Meta challenge) |
+| **Auth** | HMAC signature verification (App Secret) |
+
+### Message Flow
+
+```mermaid
+sequenceDiagram
+    participant Patient
+    participant Meta
+    participant Backend
+    participant DB
+
+    Patient->>Meta: Sends WhatsApp message
+    Meta->>Backend: POST /webhooks/meta
+    Backend->>Backend: Verify signature
+    Backend->>Backend: Extract message content
+    Backend->>DB: Save to MessageLog
+    Backend->>Meta: 200 OK
+    
+    Note over Backend: Async: Audio transcription if media
+```
+
+### Key Functions
+
+| Function | Purpose |
+|----------|---------|
+| `handle_meta_webhook()` | Entry point, routes by object type |
+| `process_message()` | Extracts text/media, finds patient by phone |
+| `save_message_log()` | Persists to MessageLog table |
+| `transcribe_audio()` | Whisper API for voice messages |
+
+---
+
+## 3. Identity Resolution (Sovereign Lookup)
+
+### The Challenge
+Meta webhooks are **anonymous** — they only contain a phone number, not organization context.
+
+### The Solution: Multi-Tenant Lookup
+
+```python
+# Simplified logic from meta_webhook.py
+phone = normalize_phone(message['from'])
+
+# 1. Try Patient lookup
+patient = Patient.query.filter_by(phone=phone).first()
+
+# 2. Try Lead lookup (if no patient)
+if not patient:
+    lead = Lead.query.filter_by(phone=phone).first()
+    if lead:
+        # Route to Lead handler (CRM messages)
+        return handle_lead_message(lead, message)
+
+# 3. Fallback: Create new Lead
+if not patient and not lead:
+    lead = create_lead_from_phone(phone, org_id)
+```
+
+### Identity Vault Link
+Messages are linked via `identity_id` for cross-entity persistence:
+
+| Field | Purpose |
+|-------|---------|
+| `identity_id` | Universal contact UUID |
+| `patient_id` | Clinical entity (nullable) |
+| `lead_id` | CRM entity (nullable) |
+
+---
+
+## 4. MessageLog Storage
+
+**Model:** `backend/app/db/models.py`
 
 | Column | Type | Description |
 |--------|------|-------------|
 | `id` | UUID | Primary key |
-| `patient_id` | FK | Patient reference |
+| `identity_id` | FK | Links to IdentityVault |
+| `patient_id` | FK | Nullable (if patient) |
+| `lead_id` | FK | Nullable (if lead) |
 | `direction` | Enum | `INBOUND` / `OUTBOUND` |
-| `content` | Text | Message text (or transcription) |
-| `provider_id` | String | Twilio MessageSid (unique) |
-| `timestamp` | DateTime | Indexed for batch queries |
-
-### DailyConversationAnalysis Table
-**Model**: [models.py:1464](file:///Users/humbert/Documents/KuraOS/backend/app/db/models.py#L1464-1504)
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | UUID | Primary key |
-| `patient_id` | FK | One per patient per day |
-| `summary` | Text | AletheIA clinical summary |
-| `sentiment_score` | Float | -1.0 (crisis) to 1.0 (positive) |
-| `emotional_state` | String | "Ansioso", "Reflexivo", etc. |
-| `risk_flags` | JSONB | `["Ideación Suicida", ...]` |
-| `suggestion` | Text | Action for therapist |
-| `message_count` | Int | Messages analyzed |
+| `content` | Text | Message text or transcription |
+| `provider_id` | String | Meta `wamid` (dedupe key) |
+| `media_url` | String | Attachment URL |
+| `timestamp` | DateTime | Indexed |
 
 ---
 
-## 3. Analysis Engine
+## 5. WhatsApp Monitoring UI
 
-### APScheduler Cron Job
-**File**: [main.py:56-81](file:///Users/humbert/Documents/KuraOS/backend/app/main.py)
+### MonitoringTab Component
+**File:** `apps/platform/components/MonitoringTab.tsx`
 
-- **Schedule**: Configurable (currently 1 hour interval)
-- **Manual Trigger**: `POST /admin/ai/analyze` (Settings page)
-- **Function**: `analyze_daily_conversations()`
+**Features:**
+- Real-time message feed (raw messages)
+- Risk Alert Banner (pulsing if flags detected)
+- Sentiment trend chart (7-day)
+- Daily AI summaries
 
-### Conversation Analyzer Worker
-**File**: [conversation_analyzer.py](file:///Users/humbert/Documents/KuraOS/backend/app/workers/conversation_analyzer.py)
+**API Endpoints:**
+```
+GET /patients/{id}/monitoring/analyses?days=7
+GET /patients/{id}/monitoring/messages?days=7
+```
 
-**Flow**:
-1. Find patients with messages in last 24h without today's analysis
-2. Build chat transcript: `Paciente: ... / Sistema: ...`
-3. Call `aletheia.analyze_chat_transcript(transcript)`
-4. Store result in `DailyConversationAnalysis`
-5. Trigger `RISK_DETECTED_IN_CHAT` event if flags present
+### Chat UI (Phase 5)
+**File:** `apps/platform/components/ChatFeed.tsx`
 
-### AletheIA Chat Analysis
-**File**: [aletheia.py:549-627](file:///Users/humbert/Documents/KuraOS/backend/app/services/aletheia.py#L549-627)
+Two-way messaging interface:
+- Shows inbound/outbound messages
+- Send button posts to `/connect/send`
+- 24-hour window indicator
 
-**Prompt Philosophy**:
-- Differentiates "integration processing" vs "crisis"
-- Watches for medication compliance keywords
-- Detects crisis indicators: "oscuridad", "sin salida", "voces"
+---
 
-**Output JSON**:
+## 6. Sending Messages
+
+### Outbound API
+**Endpoint:** `POST /api/v1/connect/send`
+
+**Request:**
 ```json
 {
-  "summary": "Paciente reporta insomnio...",
-  "sentiment_score": -0.3,
-  "emotional_state": "Vulnerable/Abierto",
-  "risk_flags": [],
-  "suggestion": "Recomendar técnicas de grounding..."
+  "patient_id": "uuid",
+  "message": "Hola, ¿cómo te encuentras hoy?",
+  "risk_level": "LOW",
+  "auto_mode": false
 }
 ```
 
----
+### Message Types
 
-## 4. Frontend Visualization
+| Type | Meta Template | Use Case |
+|------|--------------|----------|
+| Text | Session message | Within 24h window |
+| Template | `appointment_reminder` | Outside window |
 
-### MonitoringTab Component
-**File**: [MonitoringTab.tsx](file:///Users/humbert/Documents/KuraOS/apps/platform/components/MonitoringTab.tsx)
-
-**API Calls**:
-- `GET /patients/{id}/monitoring/analyses?days=7`
-- `GET /patients/{id}/monitoring/messages?days=7`
-
-**Features**:
-- Risk Alert Banner (pulsing red if `risk_flags.length > 0`)
-- Sentiment Chart (7-day trend)
-- Daily Insights Feed
-
-### Supporting Components
-| Component | Purpose |
-|-----------|---------|
-| `SentimentChart` | Line chart of sentiment_score over time |
-| `DailyInsightsFeed` | Timeline of daily summaries + suggestions |
+> ⚠️ **24-Hour Window:** Free-form messages only allowed within 24h of last customer message. After that, must use approved templates.
 
 ---
 
-## 5. API Endpoints
+## 7. Dev Mode vs Live Mode
 
-**File**: [monitoring.py](file:///Users/humbert/Documents/KuraOS/backend/app/api/v1/monitoring.py)
+| Aspect | Dev Mode | Live Mode |
+|--------|----------|-----------|
+| **Recipients** | Only test phones in Meta dashboard | Any WhatsApp user |
+| **Messages/day** | 1,000 | Based on tier |
+| **Templates** | Pre-approved only | Custom templates |
+| **Approval** | None needed | Meta App Review |
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/patients/{id}/monitoring/analyses` | GET | Daily analyses (7-30 days) |
-| `/patients/{id}/monitoring/messages` | GET | Raw message logs |
-| `/monitoring/alerts` | GET | Org-wide risk alerts (dashboard) |
-
----
-
-## 6. Current State & Observations
-
-| Aspect | Status |
-|--------|--------|
-| **Data Flow** | ✅ Complete end-to-end |
-| **Cron Interval** | 1 hour (configurable in `/admin`) |
-| **Demo Data** | Cleared after Golden Seed (expected) |
-| **Audio** | Whisper transcription active |
-| **Risk Events** | Triggers `RISK_DETECTED_IN_CHAT` automation |
-
-### Note on Empty State
-Since the Golden Seed was run, historical demo messages are cleared. New patients will show "Sin datos de WhatsApp" until real messages arrive via Twilio.
+### Going Live Checklist
+- [ ] Privacy Policy URL configured
+- [ ] Business verification complete
+- [ ] Meta App Review submitted
+- [ ] Production endpoints configured
+- [ ] Webhook URL updated in Meta dashboard
 
 ---
 
-## 7. Future Enhancements (Q1 Roadmap)
+## 8. Troubleshooting
 
-1. **Real-time Updates**: WebSocket push instead of polling
-2. **Outbound Capture**: Log therapist → patient messages
-3. **Media Analysis**: Image/video attachment processing
-4. **Trend Alerts**: Automated flags for sentiment decline over 3+ days
+### Common Issues
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Messages not arriving | Webhook not verified | Check `/webhooks/meta` GET returns challenge |
+| Wrong patient linked | Phone format mismatch | Normalize with `+` prefix |
+| Audio not transcribed | Whisper API error | Check OPENAI_API_KEY |
+| 24h window expired | Template required | Use approved template |
+
+### Debug Logs
+```bash
+# Cloud Run logs
+gcloud run logs read kura-backend --filter="meta_webhook"
+```
+
+---
+
+## References
+
+- [ADR-004: Meta Cloud API Integration](../architecture/decisions/ADR-004-meta-cloud-api-integration.md)
+- [Meta WhatsApp API Docs](https://developers.facebook.com/docs/whatsapp/cloud-api)
+- [Identity Vault Architecture](./identity-vault-crm.md)
