@@ -311,9 +311,16 @@ export default function AletheiaHUD({
 
                     {/* CENTER: Summary */}
                     <div className="lg:col-span-6">
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2 mb-3 flex-wrap">
                             {config.icon}
                             <h3 className={`text-lg font-semibold ${textColor}`}>{hudState.title}</h3>
+                            {/* Mobile-only compact score badge */}
+                            {hudState.score !== null && (
+                                <span className={`lg:hidden inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-bold ${config.badgeBg}`}>
+                                    <span className={config.scoreColor}>{hudState.score >= 0 ? '+' : ''}{hudState.score.toFixed(1)}</span>
+                                    {getTrendIndicator()}
+                                </span>
+                            )}
                             {hudState.hasAudio && (
                                 <span className="flex items-center gap-1 px-2 py-0.5 bg-card/20 border border-white/30 rounded-full text-xs text-white">
                                     <Mic className="w-3 h-3" />
