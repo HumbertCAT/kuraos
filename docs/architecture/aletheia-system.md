@@ -1,7 +1,7 @@
 # AletheIA System Architecture
 
-> **Status**: Production (v1.5.3)  
-> **Last Updated**: 2026-01-07  
+> **Status**: Production (v1.7.7)  
+> **Last Updated**: 2026-01-12  
 > **Source of Truth**: Authoritative documentation for the AletheIA Intelligence Engine.
 
 ---
@@ -236,33 +236,53 @@ def init_telemetry(app: FastAPI):
 
 ## 6. Analysis Protocols
 
-### 6.1 Risk Detection (Keyword-Based)
-**File**: `backend/app/services/risk_detector.py`
+### 6.1 Next-Gen Shield (v1.7.7) ⭐ PREMIUM
+**File**: `backend/app/services/safety/` (WU-016, ADR-016)
 
-```python
-RISK_KEYWORDS = [
-    # Suicidal ideation (ES + EN)
-    "suicid", "suicide", "suicida", "quitarme la vida", "matarme",
-    # Self-harm
-    "harm", "autolesion", "cortarme", "hacerme daño",
-    # Crisis
-    "crisis", "emergencia", "emergency", "urgente",
-    # Death wishes
-    "morir", "muerte", "kill", "die", "quiero morir",
-    # Hopelessness
-    "sin esperanza", "hopeless", "sin salida", "no way out",
-    # Violence
-    "violencia", "violence", "pegar", "golpear",
-]  # 34 keywords total
+> **Evolution**: Replaced keyword-based regex detection with intelligent, context-aware protection.
+
+The **Next-Gen Shield** is a two-layer security architecture that protects clinical AI inference:
+
+```mermaid
+sequenceDiagram
+    participant U as User Input
+    participant PS as PrivacyShield
+    participant SS as SemanticShield  
+    participant AI as Vertex AI
+    
+    U->>PS: Raw text (PII possible)
+    PS->>PS: Cloud DLP sanitization
+    PS->>SS: Sanitized text
+    SS->>AI: Apply safety settings
+    AI-->>SS: Response + Safety Ratings
 ```
 
-| Level | Condition | Action |
+| Layer | Component | Purpose |
 |:---|:---|:---|
-| `HIGH` | Keyword detected | Alert therapist, block (CENTER tier) |
-| `MEDIUM` | Negative sentiment | Dashboard flag |
-| `LOW` | No indicators | Silent |
+| **Layer 1** | `PrivacyShield` | Cloud DLP for PII sanitization (GDPR/HIPAA) |
+| **Layer 2** | `SemanticShield` | Vertex AI Safety with unit-specific thresholds |
+| **Orchestrator** | `NextGenShieldController` | Unified coordination + audit logging |
 
-> **Note**: Current implementation is keyword-based (v0.9.2). Semantic AI analysis planned for ADR-016.
+**InfoTypes Detected (Cloud DLP):**
+- `PERSON_NAME`, `PHONE_NUMBER`, `EMAIL_ADDRESS`
+- `SPAIN_NIE_NUMBER`, `SPAIN_NIF_NUMBER`, `CREDIT_CARD_NUMBER`
+- `LOCATION`
+
+**Safety Profiles:**
+
+| Profile | Units | Dangerous Content Threshold |
+|:---|:---|:---|
+| **STANDARD** | HELPER, PULSE, NOW | `BLOCK_LOW_AND_ABOVE` (Strict) |
+| **CLINICAL** | SENTINEL, ORACLE, CORTEX | `BLOCK_ONLY_HIGH` (Permissive Input) |
+
+> [!IMPORTANT]
+> **Clinical Sovereignty**: Clinical units can **read** mentions of risk (suicidal ideation, self-harm) to detect them, but are blocked from **generating** harmful content. This is essential for SENTINEL's triage function.
+
+**Key Benefits:**
+- ✅ Context-aware: Distinguishes "quiero matar este hábito" from actual harm intent
+- ✅ PII Protection: Patient names, phones, emails masked before LLM inference
+- ✅ Fail-Safe: DLP errors trigger fail-open with critical alerts (clinical workflow continues)
+- ✅ GDPR/HIPAA: Audit logs for all PII detections
 
 ### 6.2 Engagement Score
 **File**: `backend/app/api/v1/insights.py` → `_generate_fallback_insights()`
@@ -605,7 +625,7 @@ CortexSwitch.set_state(SwitchState.FULL)
 
 | ADR | Feature | Status |
 |:---|:---|:---|
-| ADR-016 | Content Safety & Sensitive Data Protection | 📋 Planned |
+| **ADR-016** | **Next-Gen Shield (Cloud DLP + Vertex AI Safety)** | ✅ **v1.7.7** |
 | ADR-017 | Supervised Fine-Tuning for Clinical Personas | 📋 Planned |
 | ADR-018 | Vector Search & Long-Term Memory | 📋 Planned |
 | ADR-020 | Golden Datasets for Evaluation | 📋 Planned |

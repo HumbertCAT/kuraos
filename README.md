@@ -102,7 +102,8 @@ Clinical intelligence that never sleeps.
 | ❓ **HELPER** | Platform support assistant |
 
 #### Key Capabilities
-- **Risk Detection**: Suicide, self-harm, integration crisis
+- **🛡️ Next-Gen Shield** (v1.7.7): Two-layer AI security (Cloud DLP + Vertex AI Safety)
+- **Risk Detection**: Context-aware clinical risk analysis (not keyword blacklists)
 - **Session Synthesis**: From notes and audio transcription
 - **Sentinel Pulse**: 7-day emotional trajectory
 - **Light Memory**: Previous session context injection (v1.4.12)
