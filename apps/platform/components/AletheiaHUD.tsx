@@ -289,10 +289,10 @@ export default function AletheiaHUD({
     return (
         <div className={`${config.bg} ${config.border} border rounded-2xl shadow-lg mb-6 overflow-hidden`}>
             <div className="p-6">
-                <div className="grid grid-cols-12 gap-6">
+                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-6">
 
-                    {/* LEFT: Score / Status */}
-                    <div className="col-span-3 flex flex-col items-center justify-center border-r border-white/20 pr-6">
+                    {/* LEFT: Score / Status - Hidden on mobile, shown on lg+ */}
+                    <div className="hidden lg:flex col-span-3 flex-col items-center justify-center border-r border-white/20 pr-6">
                         {hudState.score !== null ? (
                             <>
                                 <div className={`text-5xl font-bold mb-2 ${config.scoreColor}`}>
@@ -310,7 +310,7 @@ export default function AletheiaHUD({
                     </div>
 
                     {/* CENTER: Summary */}
-                    <div className="col-span-6">
+                    <div className="lg:col-span-6">
                         <div className="flex items-center gap-2 mb-3">
                             {config.icon}
                             <h3 className={`text-lg font-semibold ${textColor}`}>{hudState.title}</h3>
@@ -350,8 +350,8 @@ export default function AletheiaHUD({
                         )}
                     </div>
 
-                    {/* RIGHT: Actions */}
-                    <div className="col-span-3 flex flex-col justify-center gap-3 border-l border-border pl-6">
+                    {/* RIGHT: Actions - Stack horizontally on mobile, vertically on desktop */}
+                    <div className="lg:col-span-3 flex flex-col sm:flex-row lg:flex-col justify-center gap-2 lg:gap-3 lg:border-l border-border lg:pl-6 pt-4 lg:pt-0 border-t lg:border-t-0">
                         <CyberButton
                             variant="surface"
                             onClick={onViewChat}

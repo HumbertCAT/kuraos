@@ -343,11 +343,11 @@ export default function LeadsPage() {
 
             {/* Kanban Board */}
             <DragDropContext onDragEnd={handleDragEnd}>
-                <div className="grid grid-cols-4 gap-6">
+                <div className="flex lg:grid lg:grid-cols-4 gap-4 lg:gap-6 overflow-x-auto pb-4 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory lg:snap-none">
                     {COLUMNS.map(column => (
                         <div
                             key={column.id}
-                            className={`${column.bgColor} ${column.borderColor} border rounded-2xl p-4 shadow-[0_0_60px_-15px_rgba(0,0,0,0.15),0_0_25px_-5px_rgba(0,0,0,0.05)] dark:shadow-[0_0_50px_-20px_rgba(0,0,0,0.6)]`}
+                            className={`min-w-[280px] lg:min-w-0 snap-center ${column.bgColor} ${column.borderColor} border rounded-2xl p-4 shadow-[0_0_60px_-15px_rgba(0,0,0,0.15),0_0_25px_-5px_rgba(0,0,0,0.05)] dark:shadow-[0_0_50px_-20px_rgba(0,0,0,0.6)]`}
                         >
                             {/* Column Header */}
                             <div className="flex items-center justify-between mb-4">
