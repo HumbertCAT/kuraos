@@ -215,8 +215,44 @@ export default function DashboardPage() {
                         onViewFullAgenda={() => router.push('/calendar')}
                     />
 
-                    {/* Financial Cards - 3 columns on desktop */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Financial Cards - Compact on mobile, full on desktop */}
+                    {/* Mobile: Compact inline row */}
+                    <div className="grid grid-cols-3 gap-2 sm:hidden">
+                        <VitalSignCard
+                            label={t('vitalSigns.monthlyIncome')}
+                            value={`€${data.monthlyRevenue.toFixed(0)}`}
+                            trend={{
+                                direction: data.monthlyRevenue > 0 ? 'up' : 'neutral',
+                                label: '',
+                                isPositive: true,
+                            }}
+                            icon={<Wallet className="w-4 h-4" />}
+                            iconColor="text-success"
+                            compact
+                        />
+                        <VitalSignCard
+                            label={t('vitalSigns.newLeads')}
+                            value={data.newLeadsThisWeek}
+                            trend={{ direction: 'neutral', label: '' }}
+                            icon={<Target className="w-4 h-4" />}
+                            iconColor="text-brand"
+                            compact
+                        />
+                        <VitalSignCard
+                            label={t('vitalSigns.occupancyRate')}
+                            value={`${data.occupancyRate}%`}
+                            trend={{
+                                direction: data.occupancyRate > 50 ? 'up' : 'neutral',
+                                label: '',
+                                isPositive: true,
+                            }}
+                            icon={<Activity className="w-4 h-4" />}
+                            iconColor="text-ai"
+                            compact
+                        />
+                    </div>
+                    {/* Desktop: Full cards */}
+                    <div className="hidden sm:grid sm:grid-cols-3 gap-4">
                         <VitalSignCard
                             label={t('vitalSigns.monthlyIncome')}
                             value={`€${data.monthlyRevenue.toFixed(0)}`}

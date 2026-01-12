@@ -18,6 +18,7 @@ interface VitalSignCardProps {
     };
     icon: React.ReactNode;
     iconColor?: string;
+    compact?: boolean; // Mobile compact mode
 }
 
 export function VitalSignCard({
@@ -29,6 +30,7 @@ export function VitalSignCard({
     action,
     icon,
     iconColor = 'text-brand',
+    compact = false,
 }: VitalSignCardProps) {
     const badgeClasses = {
         default: 'bg-muted text-muted-foreground',
@@ -54,6 +56,26 @@ export function VitalSignCard({
             ? TrendingDown
             : Minus;
 
+    // Compact mode: smaller, denser card
+    if (compact) {
+        return (
+            <div className="card p-3 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                    <span className={`${iconColor} shrink-0`}>{icon}</span>
+                    <span className="text-lg font-bold font-mono text-foreground truncate">
+                        {value}
+                    </span>
+                </div>
+                {trend && (
+                    <div className={`shrink-0 ${getTrendColor()}`}>
+                        <TrendIcon className="w-3.5 h-3.5" />
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    // Full mode: standard card with all details
     return (
         <div className="card p-5 flex flex-col justify-between h-32">
             {/* Header: Icon + Label */}
@@ -89,3 +111,4 @@ export function VitalSignCard({
         </div>
     );
 }
+

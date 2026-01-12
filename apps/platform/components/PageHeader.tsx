@@ -97,13 +97,14 @@ export default function PageHeader({
     };
 
     return (
-        <div className={`space-y-6 mb-6 ${className}`}>
+        <div className={`space-y-4 lg:space-y-6 mb-4 lg:mb-6 ${className}`}>
             {/* Top Row: Meta, Title & Action */}
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
-                    {/* Glass Icon Box */}
-                    <div className="w-12 h-12 rounded-xl bg-brand/5 border border-brand/10 text-brand flex items-center justify-center shrink-0 shadow-sm">
-                        <Icon size={24} />
+                <div className="flex items-start gap-3 lg:gap-4">
+                    {/* Glass Icon Box - Smaller on mobile */}
+                    <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-brand/5 border border-brand/10 text-brand flex items-center justify-center shrink-0 shadow-sm">
+                        <Icon size={20} className="lg:hidden" />
+                        <Icon size={24} className="hidden lg:block" />
                     </div>
 
                     <div className="min-w-0">
@@ -112,11 +113,11 @@ export default function PageHeader({
                                 {kicker}
                             </p>
                         )}
-                        <h1 className="type-h1 leading-tight tracking-tight">
+                        <h1 className="text-xl lg:text-2xl font-serif font-medium tracking-tight leading-tight">
                             {title}
                         </h1>
                         {subtitle && (
-                            <div className="text-sm text-muted-foreground mt-1">
+                            <div className="text-sm text-muted-foreground mt-1 hidden sm:block">
                                 {subtitle}
                             </div>
                         )}

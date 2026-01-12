@@ -389,12 +389,28 @@ export default function PatientsPage() {
           </table>
         </div>
       )}
-      {/* Pagination Footer */}
+      {/* Pagination Footer - Mobile: Load More, Desktop: Toolbar */}
       {meta && meta.filtered > 0 && (
-        <PaginationToolbar
-          meta={meta}
-          onPageChange={(p) => setPage(p)}
-        />
+        <>
+          {/* Mobile: Load More button with safe area */}
+          {meta.page < Math.ceil(meta.filtered / meta.page_size) && (
+            <div className="sm:hidden pb-[env(safe-area-inset-bottom)] mb-4">
+              <button
+                onClick={() => setPage(page + 1)}
+                className="w-full py-3 px-4 bg-muted hover:bg-muted/80 text-foreground font-medium rounded-xl border border-border transition-all active:scale-[0.98]"
+              >
+                Cargar más {terminology.patients.plural.toLowerCase()}
+              </button>
+            </div>
+          )}
+          {/* Desktop: Standard pagination toolbar */}
+          <div className="hidden sm:block">
+            <PaginationToolbar
+              meta={meta}
+              onPageChange={(p) => setPage(p)}
+            />
+          </div>
+        </>
       )}
     </div>
   );
