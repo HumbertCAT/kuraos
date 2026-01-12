@@ -15,6 +15,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [1.7.7] - 2026-01-12
+
+### 🛡️ Next-Gen Shield (WU-016)
+
+> **Theme:** Intelligent Safety & Privacy Layer — from regex to semantic defense.
+
+**New Components:**
+- ✅ `PrivacyShield`: Cloud DLP integration for PII sanitization
+  - InfoTypes: PERSON_NAME, PHONE_NUMBER, EMAIL, NIE, NIF, CREDIT_CARD, LOCATION
+  - Singleton pattern, async, fail-open with critical alert
+- ✅ `SemanticShield`: Vertex AI Safety Settings manager
+  - STANDARD profile: `BLOCK_LOW_AND_ABOVE` (strict)
+  - CLINICAL profile: `BLOCK_ONLY_HIGH` (allows reading risk content)
+- ✅ `NextGenShieldController`: Orchestrator for both layers
+- ✅ AletheIA integration with unit-specific safety thresholds
+
+**Security Improvements:**
+- Replaced insecure `BLOCK_NONE` with proper safety settings
+- Clinical units (SENTINEL, ORACLE) can analyze risk mentions
+- Standard units (HELPER, PULSE) use strict blocking
+
+**Dependencies:**
+- Added `google-cloud-dlp==3.13.0` to requirements-heavy.txt
+
+**ADR:** [ADR-016](./docs/architecture/decisions/ADR-016-content-safety-and-dlp.md)
+
+---
+
 ## [1.7.6] - 2026-01-12
 
 ### 📱 Mobile UX Polish Release

@@ -35,12 +35,12 @@ Revenue: 2 · Compliance: 5 · Unlocks: 2 · Effort: 2 · BlockedBy: 0
 
 **ADR:** [ADR-016](./docs/architecture/decisions/ADR-016-content-safety-and-dlp.md)
 
-- [ ] `PrivacyShield` con Cloud DLP
-- [ ] `SemanticShield` con Vertex AI Safety
-- [ ] Tests de bypass para contexto clínico
+- [x] `PrivacyShield` con Cloud DLP
+- [x] `SemanticShield` con Vertex AI Safety
+- [x] Integración con AletheIA (unit-specific thresholds)
 
 ---
-**Score: 32** · Size: M · Status: 🔵 BACKLOG  
+**Score: 32** · Size: M · Status: ✅ COMPLETED (v1.7.7)  
 Revenue: 0 · Compliance: 5 · Unlocks: 1 · Effort: 2 · BlockedBy: 0
 
 ### WU-022 · The Panopticon

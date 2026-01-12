@@ -18,6 +18,7 @@ google-cloud-storage==2.19.0
 google-cloud-profiler==4.1.0
 google-cloud-trace==1.17.0
 google-cloud-billing==1.17.0
+google-cloud-dlp==3.13.0  # WU-016: Next-Gen Shield (Privacy)
 
 # OpenTelemetry (ADR-019 Observability)
 opentelemetry-api==1.39.1

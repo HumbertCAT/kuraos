@@ -29,12 +29,15 @@ from app.services.ai.prompts import (
     CHAT_ANALYSIS_PROMPT,
 )
 
+# v1.7.7: Next-Gen Shield integration (WU-016)
+from app.services.safety import NextGenShieldController
+
 
 class AletheIA:
     """AI Clinical Analysis Service using Google Gemini.
 
     v1.3.5: Refactored to use per-task model routing via Task Routing settings.
-    No longer holds a single global model - each task gets its configured model.
+    v1.7.7: Integrated NextGenShieldController for PII sanitization and semantic safety.
     """
 
     def __init__(self):
@@ -69,6 +72,16 @@ class AletheIA:
         self._user_id = None
         self._patient_id = None
 
+        # v1.7.7: Initialize Next-Gen Shield (WU-016)
+        try:
+            self._shield = NextGenShieldController()
+            print("[AletheIA] NextGenShield initialized successfully")
+        except Exception as e:
+            print(
+                f"[AletheIA] NextGenShield initialization failed (continuing without): {e}"
+            )
+            self._shield = None
+
     def set_context(self, db=None, organization_id=None, user_id=None, patient_id=None):
         """Set context for AI usage logging."""
         self._db = db
@@ -95,14 +108,47 @@ class AletheIA:
             print(f"[AletheIA] Failed to get routed model for {task_type}: {e}")
             model_name = settings.AI_MODEL
 
+        # v1.7.7: Get safety settings from Shield based on task type
+        safety_settings = self._safety_settings  # Default (legacy)
+        if self._shield:
+            # Map task types to AletheIA units for Shield
+            unit_map = {
+                "triage": "sentinel",
+                "clinical_analysis": "oracle",
+                "chat": "pulse",
+                "form_analysis": "scan",
+                "briefing": "now",
+                "audio_synthesis": "oracle",
+                "document_analysis": "oracle",
+            }
+            unit = unit_map.get(task_type, "default")
+            shield_settings = self._shield.get_safety_config(unit)
+
+            # Convert Shield format to genai format
+            safety_settings = {
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: (
+                    HarmBlockThreshold.BLOCK_ONLY_HIGH
+                    if "BLOCK_ONLY_HIGH"
+                    in str(shield_settings.get("HARM_CATEGORY_DANGEROUS_CONTENT", ""))
+                    else HarmBlockThreshold.BLOCK_LOW_AND_ABOVE
+                ),
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            }
+
+            # Clinical units get permissive settings
+            if self._shield.is_clinical_context(unit):
+                safety_settings[HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT] = (
+                    HarmBlockThreshold.BLOCK_ONLY_HIGH
+                )
+                safety_settings[HarmCategory.HARM_CATEGORY_HATE_SPEECH] = (
+                    HarmBlockThreshold.BLOCK_ONLY_HIGH
+                )
+
         return genai.GenerativeModel(
             model_name=model_name,
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            },
+            safety_settings=safety_settings,
             generation_config={
                 "temperature": 0.4,
                 "top_p": 0.95,
